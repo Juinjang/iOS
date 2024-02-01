@@ -121,7 +121,6 @@ class ImjangNoteViewController: UIViewController {
         setConstraints()
         upButton.addTarget(self, action: #selector(upToTop), for: .touchUpInside)
         setReportStackViewClick()
-        setImageStackViewClick()
         NotificationCenter.default.addObserver(self, selector: #selector(didStoppedChildScroll), name: NSNotification.Name("didStoppedChildScroll"), object: nil)
         recordingSegmentedVC.imjangNoteViewController = self
     }
@@ -145,17 +144,6 @@ class ImjangNoteViewController: UIViewController {
             let reportVC = ReportViewController()
             navigationController?.pushViewController(reportVC, animated: true)
         }
-    }
-    
-    func setImageStackViewClick() {
-        stackView.isUserInteractionEnabled = true
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showImjangImageListVC))
-        stackView.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc func showImjangImageListVC() {
-        let imjangImageListVC = ImjangImageListViewController()
-        navigationController?.pushViewController(imjangImageListVC, animated: true)
     }
     
     @objc func didStoppedChildScroll() {
@@ -285,6 +273,9 @@ class ImjangNoteViewController: UIViewController {
                      distribution: .fill,
                      spacing: 12,
                      isImageRight: false)
+//                    textColor: UIColor(named:"textGray")!)
+        
+
         
         // 리포트 보기 레이블
         designLabel(showReportLabel, text: "리포트 보기",

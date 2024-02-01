@@ -98,7 +98,7 @@
 		611F145A2B4707CC00B983F1 /* RecordingRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */; };
 		611F145E2B471ECA00B983F1 /* CALayer+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F145D2B471ECA00B983F1 /* CALayer+Extension.swift */; };
 		616408E12B405B7200EC3B5E /* ImjangNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616408E02B405B7200EC3B5E /* ImjangNoteViewController.swift */; };
-		616408EC2B407A2D00EC3B5E /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616408EB2B407A2D00EC3B5E /* UIView+Extension.swift */; };
+		616408EC2B407A2D00EC3B5E /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616408EB2B407A2D00EC3B5E /* UIView+Extensions.swift */; };
 		616409022B407FB300EC3B5E /* UIFont+Pretendard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616409012B407FB300EC3B5E /* UIFont+Pretendard.swift */; };
 		61864BE22B5FFA890073C175 /* UIImageView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61864BE12B5FFA890073C175 /* UIImageView+Extension.swift */; };
 		61864BEA2B6003520073C175 /* UIButton+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61864BE92B6003520073C175 /* UIButton+Extension.swift */; };
@@ -131,9 +131,6 @@
 		61AD50A92B58039B00314673 /* DeletePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61AD50A82B58039B00314673 /* DeletePopupViewController.swift */; };
 		61B0C99B2B697B2F00BE86D2 /* DeleteImjangTableHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B0C99A2B697B2F00BE86D2 /* DeleteImjangTableHeaderView.swift */; };
 		61B0C9A72B6A143A00BE86D2 /* ButtonTappedDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B0C9A62B6A143A00BE86D2 /* ButtonTappedDelegate.swift */; };
-		61B0C9D22B6C0B0000BE86D2 /* ImjangImageListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B0C9D12B6C0B0000BE86D2 /* ImjangImageListViewController.swift */; };
-		61B0C9D42B6C10CD00BE86D2 /* UIStackView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B0C9D32B6C10CC00BE86D2 /* UIStackView+Extension.swift */; };
-		61B0C9D72B6C16BD00BE86D2 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61B0C9D62B6C16BD00BE86D2 /* ImageCollectionViewCell.swift */; };
 		61D925052B486508002A16B4 /* RecordingFileViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D925042B486508002A16B4 /* RecordingFileViewCell.swift */; };
 		61D925082B486706002A16B4 /* RecordingFileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D925072B486706002A16B4 /* RecordingFileItem.swift */; };
 		61D9250A2B49506D002A16B4 /* RecordingFilesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D925092B49506D002A16B4 /* RecordingFilesViewController.swift */; };
@@ -214,7 +211,7 @@
 		611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingRoomViewController.swift; sourceTree = "<group>"; };
 		611F145D2B471ECA00B983F1 /* CALayer+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extension.swift"; sourceTree = "<group>"; };
 		616408E02B405B7200EC3B5E /* ImjangNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImjangNoteViewController.swift; sourceTree = "<group>"; };
-		616408EB2B407A2D00EC3B5E /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		616408EB2B407A2D00EC3B5E /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		616409012B407FB300EC3B5E /* UIFont+Pretendard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Pretendard.swift"; sourceTree = "<group>"; };
 		61864BE12B5FFA890073C175 /* UIImageView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extension.swift"; sourceTree = "<group>"; };
 		61864BE92B6003520073C175 /* UIButton+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIButton+Extension.swift"; sourceTree = "<group>"; };
@@ -247,9 +244,6 @@
 		61AD50A82B58039B00314673 /* DeletePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeletePopupViewController.swift; sourceTree = "<group>"; };
 		61B0C99A2B697B2F00BE86D2 /* DeleteImjangTableHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteImjangTableHeaderView.swift; sourceTree = "<group>"; };
 		61B0C9A62B6A143A00BE86D2 /* ButtonTappedDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonTappedDelegate.swift; sourceTree = "<group>"; };
-		61B0C9D12B6C0B0000BE86D2 /* ImjangImageListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImjangImageListViewController.swift; sourceTree = "<group>"; };
-		61B0C9D32B6C10CC00BE86D2 /* UIStackView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extension.swift"; sourceTree = "<group>"; };
-		61B0C9D62B6C16BD00BE86D2 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		61D925042B486508002A16B4 /* RecordingFileViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFileViewCell.swift; sourceTree = "<group>"; };
 		61D925072B486706002A16B4 /* RecordingFileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFileItem.swift; sourceTree = "<group>"; };
 		61D925092B49506D002A16B4 /* RecordingFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFilesViewController.swift; sourceTree = "<group>"; };
@@ -351,7 +345,6 @@
 			isa = PBXGroup;
 			children = (
 				0A3D5D612B4D703700574686 /* RecordBottomSheet */,
-				61B0C9D02B6C0A5D00BE86D2 /* ImjangImages */,
 				616408E02B405B7200EC3B5E /* ImjangNoteViewController.swift */,
 				611F14542B47070B00B983F1 /* RecordingSegmentedViewController.swift */,
 				611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */,
@@ -561,14 +554,13 @@
 		616408EA2B407A2100EC3B5E /* Extension */ = {
 			isa = PBXGroup;
 			children = (
-				616408EB2B407A2D00EC3B5E /* UIView+Extension.swift */,
+				616408EB2B407A2D00EC3B5E /* UIView+Extensions.swift */,
 				616409012B407FB300EC3B5E /* UIFont+Pretendard.swift */,
 				611F145D2B471ECA00B983F1 /* CALayer+Extension.swift */,
 				61D925102B4983A1002A16B4 /* UILabel+Extension.swift */,
 				61864BE12B5FFA890073C175 /* UIImageView+Extension.swift */,
 				61864BE92B6003520073C175 /* UIButton+Extension.swift */,
 				61864C4C2B653E140073C175 /* UIViewController+Extension.swift */,
-				61B0C9D32B6C10CC00BE86D2 /* UIStackView+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -649,26 +641,9 @@
 			path = ImjangList;
 			sourceTree = "<group>";
 		};
-		61B0C9D02B6C0A5D00BE86D2 /* ImjangImages */ = {
-			isa = PBXGroup;
-			children = (
-				61B0C9D12B6C0B0000BE86D2 /* ImjangImageListViewController.swift */,
-			);
-			path = ImjangImages;
-			sourceTree = "<group>";
-		};
-		61B0C9D52B6C16A900BE86D2 /* ImageList */ = {
-			isa = PBXGroup;
-			children = (
-				61B0C9D62B6C16BD00BE86D2 /* ImageCollectionViewCell.swift */,
-			);
-			path = ImageList;
-			sourceTree = "<group>";
-		};
 		61D925032B4864E8002A16B4 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
-				61B0C9D52B6C16A900BE86D2 /* ImageList */,
 				619269EB2B67747F00D4DD3E /* ImjangList */,
 				61D925042B486508002A16B4 /* RecordingFileViewCell.swift */,
 			);
@@ -804,7 +779,6 @@
 			files = (
 				0A14E36F2B569A840008FD28 /* SignUpViewController.swift in Sources */,
 				345855782B689AC900432C06 /* BottomTableViewCell.swift in Sources */,
-				61B0C9D22B6C0B0000BE86D2 /* ImjangImageListViewController.swift in Sources */,
 				345855842B689D9000432C06 /* QnAModel.swift in Sources */,
 				3458558A2B689E0D00432C06 /* QnAViewController.swift in Sources */,
 				345855882B689E0100432C06 /* UseViewController.swift in Sources */,
@@ -842,7 +816,6 @@
 				0A554CE02B52DB100023BB49 /* RecordViewController.swift in Sources */,
 				619269D92B6773FE00D4DD3E /* ImjangListViewController.swift in Sources */,
 				0A129BE92B6251E10022819B /* ChecklistManager.swift in Sources */,
-				61B0C9D42B6C10CD00BE86D2 /* UIStackView+Extension.swift in Sources */,
 				61D925082B486706002A16B4 /* RecordingFileItem.swift in Sources */,
 				0A2DED1C2B551CB100A96BAA /* RecordPlaybackViewController.swift in Sources */,
 				0A2DED1E2B551CEE00A96BAA /* RecordTopViewController.swift in Sources */,
@@ -880,7 +853,6 @@
 				0A1EC4862B6A17FD009248E4 /* NotEnteredCheckListViewController.swift in Sources */,
 				345855952B692DF100432C06 /* ReportViewController.swift in Sources */,
 				0A4EBE342B5EA25300909B7A /* ExpandedCalendarTableViewCell.swift in Sources */,
-				616408EC2B407A2D00EC3B5E /* UIView+Extension.swift in Sources */,
 				616408EC2B407A2D00EC3B5E /* UIView+Extensions.swift in Sources */,
 				345855DB2B6B8D5100432C06 /* CompareSearchViewController.swift in Sources */,
 				345855C02B6A42B600432C06 /* LoginViewController.swift in Sources */,
@@ -898,7 +870,6 @@
 				0A4EBE362B5EA27B00909B7A /* ExpandedScoreTableViewCell.swift in Sources */,
 				0A95D72F2B682013000A9C06 /* ToSViewController.swift in Sources */,
 				0AF968242B5BDF3300A3CBBB /* CheckListViewController.swift in Sources */,
-				61B0C9D72B6C16BD00BE86D2 /* ImageCollectionViewCell.swift in Sources */,
 				0A9E0A472B3DCAB90094595A /* AppDelegate.swift in Sources */,
 				0A2DED202B551CF900A96BAA /* RecordBottomViewController.swift in Sources */,
 				611F145A2B4707CC00B983F1 /* RecordingRoomViewController.swift in Sources */,
