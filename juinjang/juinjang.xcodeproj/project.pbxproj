@@ -53,6 +53,8 @@
 		0AE388892B5986BC0041A979 /* CategoryItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE388882B5986BC0041A979 /* CategoryItemTableViewCell.swift */; };
 		0AE3888B2B5992870041A979 /* CheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE3888A2B5992870041A979 /* CheckListItem.swift */; };
 		0AEB63C02B616DF200427EA7 /* SwiftyMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 0AEB63BF2B616DF200427EA7 /* SwiftyMenu */; };
+		0AF89D9D2B746F5E00C9AD81 /* HelperDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF89D9C2B746F5E00C9AD81 /* HelperDelegate.swift */; };
+		0AF89D9F2B74701100C9AD81 /* UITableView+Extenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF89D9E2B74701100C9AD81 /* UITableView+Extenstion.swift */; };
 		0AF968242B5BDF3300A3CBBB /* CheckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF968232B5BDF3300A3CBBB /* CheckListViewController.swift */; };
 		3458556B2B68998A00432C06 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 3458556A2B68998A00432C06 /* DGCharts */; };
 		3458556D2B68998A00432C06 /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 3458556C2B68998A00432C06 /* DGChartsDynamic */; };
@@ -185,6 +187,8 @@
 		0AB34CC02B4F11B000150A15 /* OpenNewPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenNewPageViewController.swift; sourceTree = "<group>"; };
 		0AE388882B5986BC0041A979 /* CategoryItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryItemTableViewCell.swift; sourceTree = "<group>"; };
 		0AE3888A2B5992870041A979 /* CheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListItem.swift; sourceTree = "<group>"; };
+		0AF89D9C2B746F5E00C9AD81 /* HelperDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperDelegate.swift; sourceTree = "<group>"; };
+		0AF89D9E2B74701100C9AD81 /* UITableView+Extenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extenstion.swift"; sourceTree = "<group>"; };
 		0AF968232B5BDF3300A3CBBB /* CheckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListViewController.swift; sourceTree = "<group>"; };
 		345855712B689A5300432C06 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		345855732B689A7E00432C06 /* BottomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -418,7 +422,6 @@
 			isa = PBXGroup;
 			children = (
 				61B0C9E32B6CD9E200BE86D2 /* CustomView */,
-				345855BE2B6A42A100432C06 /* Login */,
 				345855932B692DE300432C06 /* Report */,
 				345855792B689CC300432C06 /* Setting */,
 				619269E42B67745900D4DD3E /* Constants */,
@@ -566,6 +569,7 @@
 				61864BE92B6003520073C175 /* UIButton+Extension.swift */,
 				61864C4C2B653E140073C175 /* UIViewController+Extension.swift */,
 				61B0C9D32B6C10CC00BE86D2 /* UIStackView+Extension.swift */,
+				0AF89D9E2B74701100C9AD81 /* UITableView+Extenstion.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -618,6 +622,7 @@
 			children = (
 				619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */,
 				61B0C9A62B6A143A00BE86D2 /* ButtonTappedDelegate.swift */,
+				0AF89D9C2B746F5E00C9AD81 /* HelperDelegate.swift */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -901,6 +906,7 @@
 				619269F42B67747F00D4DD3E /* ImjangNoteTableViewCell.swift in Sources */,
 				345855722B689A5300432C06 /* MainViewController.swift in Sources */,
 				61AD50A92B58039B00314673 /* DeletePopupViewController.swift in Sources */,
+				0AF89D9D2B746F5E00C9AD81 /* HelperDelegate.swift in Sources */,
 				345855902B689E3B00432C06 /* DimmedViewController.swift in Sources */,
 				0A3D5D632B4D707300574686 /* BottomSheetViewController.swift in Sources */,
 				0A4EBE362B5EA27B00909B7A /* ExpandedScoreTableViewCell.swift in Sources */,
@@ -908,6 +914,7 @@
 				0AF968242B5BDF3300A3CBBB /* CheckListViewController.swift in Sources */,
 				61B0C9D72B6C16BD00BE86D2 /* ImageCollectionViewCell.swift in Sources */,
 				0A9E0A472B3DCAB90094595A /* AppDelegate.swift in Sources */,
+				0AF89D9F2B74701100C9AD81 /* UITableView+Extenstion.swift in Sources */,
 				0A2DED202B551CF900A96BAA /* RecordBottomViewController.swift in Sources */,
 				611F145A2B4707CC00B983F1 /* RecordingRoomViewController.swift in Sources */,
 			);

@@ -11,6 +11,10 @@ class CategoryItemTableViewCell: UITableViewCell {
     
     var itemCategory: [Category] = []
     
+    let innerTableView = UITableView()
+    var helperDelegate: HelperDelegate?
+    var headerView = UIView()
+    
     let categoryImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
         $0.image = UIImage(named: "deadline-item")
@@ -33,10 +37,10 @@ class CategoryItemTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         print("CategoryItemTableViewCell initialized")
-        
+        contentView.addSubview(headerView)
         [categoryImage,
          categoryLabel,
-         expandButton].forEach { addSubview($0) }
+         expandButton].forEach { headerView.addSubview($0) }
         setupLayout()
     }
     
