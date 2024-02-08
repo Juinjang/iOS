@@ -98,6 +98,7 @@ class ExpandedCalendarTableViewCell: UITableViewCell {
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.equalToSuperview().offset(-24)
             $0.top.equalTo(contentLabel.snp.bottom).offset(12)
+            $0.height.equalTo(273)
             $0.bottom.equalTo(contentView.snp.bottom).offset(-30)
         }
         

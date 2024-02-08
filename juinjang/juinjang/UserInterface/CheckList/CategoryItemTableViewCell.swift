@@ -31,8 +31,8 @@ class CategoryItemTableViewCell: UITableViewCell {
         $0.register(ExpandedDropdownTableViewCell.self, forCellReuseIdentifier: ExpandedDropdownTableViewCell.identifier)
         $0.isScrollEnabled = false
         $0.separatorStyle = .none
-//        $0.estimatedRowHeight = 98.0
-//        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 200.0
+        $0.rowHeight = UITableView.automaticDimension
     }
     
     var helperDelegate: HelperDelegate?
@@ -75,6 +75,7 @@ class CategoryItemTableViewCell: UITableViewCell {
          expandButton].forEach { headerView.addSubview($0) }
         setupLayout()
         addTapEvent()
+        innerTableView.reloadData()
     }
     
     required init?(coder: NSCoder) {
@@ -101,6 +102,8 @@ class CategoryItemTableViewCell: UITableViewCell {
         headerView.snp.makeConstraints {
             $0.height.equalTo(63)
         }
+        
+        
         
         categoryImage.snp.makeConstraints {
             $0.height.equalTo(18)
@@ -180,8 +183,8 @@ extension CategoryItemTableViewCell: UITableViewDelegate, UITableViewDataSource 
         let item = category?.items[indexPath.row]
         print("ddddd")
         if item is CalendarItem {
-            print("dsfdsf")
-            return 443
+            print("나 캘린더")
+            return 500
         } else if item is ScoreItem {
             print("score")
             return 98

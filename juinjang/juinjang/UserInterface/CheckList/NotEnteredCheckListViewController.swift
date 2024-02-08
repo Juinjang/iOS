@@ -143,7 +143,7 @@ extension NotEnteredCheckListViewController : UITableViewDelegate, UITableViewDa
                     // 선택 상태에 따라 배경색 설정
                     cell.backgroundColor = UIColor(named: "gray0")
                     cell.contentLabel.textColor = UIColor(named: "lightGray")
-                    cell.pickerView.isUserInteractionEnabled = false
+//                    cell.pickerView.isUserInteractionEnabled = false
 //                    cell.backgroundColor = selectionItem.isSelected ? UIColor(named: "lightOrange") : UIColor.clear
                     
                     return cell
