@@ -55,6 +55,7 @@
 		0AEB63C02B616DF200427EA7 /* SwiftyMenu in Frameworks */ = {isa = PBXBuildFile; productRef = 0AEB63BF2B616DF200427EA7 /* SwiftyMenu */; };
 		0AF89D9D2B746F5E00C9AD81 /* HelperDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF89D9C2B746F5E00C9AD81 /* HelperDelegate.swift */; };
 		0AF89D9F2B74701100C9AD81 /* UITableView+Extenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF89D9E2B74701100C9AD81 /* UITableView+Extenstion.swift */; };
+		0AF89DA12B74ACF300C9AD81 /* SelfSizingTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF89DA02B74ACF300C9AD81 /* SelfSizingTableView.swift */; };
 		0AF968242B5BDF3300A3CBBB /* CheckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF968232B5BDF3300A3CBBB /* CheckListViewController.swift */; };
 		3458556B2B68998A00432C06 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 3458556A2B68998A00432C06 /* DGCharts */; };
 		3458556D2B68998A00432C06 /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 3458556C2B68998A00432C06 /* DGChartsDynamic */; };
@@ -189,6 +190,7 @@
 		0AE3888A2B5992870041A979 /* CheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListItem.swift; sourceTree = "<group>"; };
 		0AF89D9C2B746F5E00C9AD81 /* HelperDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperDelegate.swift; sourceTree = "<group>"; };
 		0AF89D9E2B74701100C9AD81 /* UITableView+Extenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extenstion.swift"; sourceTree = "<group>"; };
+		0AF89DA02B74ACF300C9AD81 /* SelfSizingTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSizingTableView.swift; sourceTree = "<group>"; };
 		0AF968232B5BDF3300A3CBBB /* CheckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListViewController.swift; sourceTree = "<group>"; };
 		345855712B689A5300432C06 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		345855732B689A7E00432C06 /* BottomCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -384,6 +386,7 @@
 				0A2471242B697E3D00A7382B /* EditBasicInfoViewController.swift */,
 				0A2471262B69803000A7382B /* EditBasicInfoDetailViewController.swift */,
 				0A0FE7562B6C0031001866C8 /* ReportPopupViewController.swift */,
+				0AF89DA02B74ACF300C9AD81 /* SelfSizingTableView.swift */,
 			);
 			path = CheckList;
 			sourceTree = "<group>";
@@ -843,6 +846,7 @@
 				345855822B689D7200432C06 /* QnATableViewCell.swift in Sources */,
 				345855A32B69504500432C06 /* SelectMaemullViewController.swift in Sources */,
 				3458558E2B689E2D00432C06 /* AccountDeleteViewController.swift in Sources */,
+				0AF89DA12B74ACF300C9AD81 /* SelfSizingTableView.swift in Sources */,
 				61B0C9D92B6C1B9600BE86D2 /* EnlargePhotoViewController.swift in Sources */,
 				61864BEA2B6003520073C175 /* UIButton+Extension.swift in Sources */,
 				0A2DED1A2B55198D00A96BAA /* STTLoadingViewController.swift in Sources */,

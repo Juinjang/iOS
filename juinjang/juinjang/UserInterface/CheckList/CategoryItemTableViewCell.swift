@@ -24,15 +24,15 @@ class CategoryItemTableViewCell: UITableViewCell {
         }
     }
     
-    let innerTableView = UITableView().then {
+    let innerTableView = SelfSizingTableView().then {
         $0.register(ExpandedCalendarTableViewCell.self, forCellReuseIdentifier: ExpandedCalendarTableViewCell.identifier)
         $0.register(ExpandedScoreTableViewCell.self, forCellReuseIdentifier: ExpandedScoreTableViewCell.identifier)
         $0.register(ExpandedTextFieldTableViewCell.self, forCellReuseIdentifier: ExpandedTextFieldTableViewCell.identifier)
         $0.register(ExpandedDropdownTableViewCell.self, forCellReuseIdentifier: ExpandedDropdownTableViewCell.identifier)
         $0.isScrollEnabled = false
         $0.separatorStyle = .none
-        $0.estimatedRowHeight = 200.0
-        $0.rowHeight = UITableView.automaticDimension
+//        $0.estimatedRowHeight = 443
+//        $0.rowHeight = UITableView.automaticDimension
     }
     
     var helperDelegate: HelperDelegate?
@@ -102,8 +102,6 @@ class CategoryItemTableViewCell: UITableViewCell {
         headerView.snp.makeConstraints {
             $0.height.equalTo(63)
         }
-        
-        
         
         categoryImage.snp.makeConstraints {
             $0.height.equalTo(18)
@@ -193,6 +191,7 @@ extension CategoryItemTableViewCell: UITableViewDelegate, UITableViewDataSource 
         } else if item is SelectionItem {
             return 114
         }
-        return UITableView.automaticDimension
+       return UITableView.automaticDimension
     }
+    
 }

@@ -10,7 +10,7 @@ import SnapKit
 
 class CheckListViewController: UIViewController {
     
-    lazy var tableView = UITableView().then {
+    lazy var tableView = SelfSizingTableView().then {
         $0.separatorStyle = .none
         $0.showsVerticalScrollIndicator = false
         $0.isScrollEnabled = true
