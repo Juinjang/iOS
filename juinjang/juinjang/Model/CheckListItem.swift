@@ -79,6 +79,10 @@ protocol DataUpdateDelegate: AnyObject {
 }
 
 var categories: [Category] = [
+    Category(image: UIImage(named: "deadline-item")!, name: "기한", items: [
+            CalendarItem(content: "입주 가능 날짜는 어떻게 되나요?"),
+            CalendarItem(content: "잔금은 언제까지 치뤄야 하나요?")
+        ]),
     Category(image: UIImage(named: "location-conditions-item")!, name: "입지여건", items: [
         ScoreItem(content: "역세권인가요?"),
         SelectionItem(content: "지하철 노선도를 선택해 주세요.", options: ["선택안함", "1호선", "2호선", "3호선", "4호선", "5호선", "6호선", "7호선", "8호선", "9호선", "수인분당", "경의중앙", "신분당", "공항철도", "경춘선"]),
