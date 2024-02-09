@@ -9,7 +9,8 @@ import UIKit
 import Then
 import SnapKit
 
-class SettingViewController : UIViewController{
+class SettingViewController : UIViewController {
+    
     static let id = "SettingViewController"
     
     //MARK: - 프로필 사진, 닉네임
@@ -79,6 +80,7 @@ class SettingViewController : UIViewController{
         $0.image = UIImage(named:"KAKAO")
     }
     var logInfoMailLabel = UILabel().then {
+        let vc = ToSViewController()
         $0.text = "juinjang@daum.net"
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -163,7 +165,7 @@ class SettingViewController : UIViewController{
     }
     
     @objc func logoutButtonTap() {
-        let popupViewController = LogoutPopupViewController(name: "땡땡", email: "juinjang@daum.net", ment: "계정에서 로그아웃할까요?")
+        let popupViewController = LogoutPopupViewController(name: "땡땡", email: logInfoMailLabel.text!, ment: "계정에서 로그아웃할까요?")
         popupViewController.modalPresentationStyle = .overFullScreen
         self.present(popupViewController, animated: false)
     }
@@ -257,6 +259,17 @@ class SettingViewController : UIViewController{
         self.navigationItem.hidesBackButton = true
         self.navigationItem.rightBarButtonItem = backButtonItem
     }
+    
+    /*func setUserInfo() {
+        UserApi.shared.me { (user, error) in
+            if let error = error {
+                print(error)
+            } else {
+               // self.logInfoMailLabel.text = user?.kakaoAccount?.profile?.nickname
+                self.logInfoMailLabel.text = user?.kakaoAccount?.email
+            }
+        }
+    }*/
     
     func setConstraint() {
         profileImageView.snp.makeConstraints{
@@ -358,7 +371,6 @@ class SettingViewController : UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         designNavigationBar()
-        
         view.addSubview(profileImageView)
         view.addSubview(editButton)
         view.addSubview(nicknameLabel)
@@ -386,7 +398,7 @@ class SettingViewController : UIViewController{
         accountDeleteButton.addSubview(accountDeleteLabel)
         
         view.backgroundColor = .white
-        
+        //setUserInfo()
         addTarget()
         setConstraint()
     }

@@ -15,7 +15,11 @@ protocol TextFieldDelegate: AnyObject {
 class ExpandedTextFieldTableViewCell: UITableViewCell {
     
     var inputAnswer: String?
+    var inputItems: [String: (inputAnswer: String?, isSelected: Bool)] = [:]
     weak var delegate: TextFieldDelegate?
+    
+    // 입력한 답변을 외부로 전달하는 콜백 클로저
+    var inputHandler: ((String) -> Void)?
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -85,6 +89,32 @@ class ExpandedTextFieldTableViewCell: UITableViewCell {
             $0.height.equalTo(31)
         }
     }
+    
+    func saveInputAnswer() {
+        if let inputAnswer = inputAnswer {
+            UserDefaults.standard.set(inputAnswer, forKey: "AnswerKey")
+        } else {
+            // 선택된 버튼이 nil인 경우 UserDefaults에서 해당 키의 값을 제거
+            UserDefaults.standard.removeObject(forKey: "AnswerKey")
+        }
+    }
+    
+    func loadInputAnswer() -> String? {
+        return UserDefaults.standard.value(forKey: "AnswerKey") as? String
+    }
+    
+    private func updateInputItem(withContent content: String, inputAnswer: String) {
+        // 찾으려는 content와 일치하는 inputItem을 찾음
+        if let index = inputItems.index(forKey: content) {
+            inputItems.updateValue((inputAnswer, true), forKey: content)
+            
+            // 딕셔너리 확인
+            for (content, inputAnswer) in inputItems {
+                print("\(content): \(inputAnswer)")
+            }
+            saveInputAnswer()
+        }
+    }
 }
 
 extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
@@ -117,6 +147,8 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
             backgroundColor = UIColor(named: "lightOrange")
             questionImage.image = UIImage(named: "question-selected-image")
             textField.backgroundColor = .white
+            inputAnswer = textField.text ?? ""
+            
             // 입력된 텍스트에 따라 동적으로 너비 조절
             let calculatedWidth = calculateTextFieldWidth(for: text, maxCharacterCount: 20)
             let leftPadding = (342 - calculatedWidth) / 2
@@ -127,6 +159,12 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
             updateTextFieldWidthConstraint(for: textField, constant: calculatedWidth, shouldRemoveLeadingConstraint: true)
             textField.layoutIfNeeded()
             textField.contentHorizontalAlignment = .left
+        
+            // 외부로 답변 전달
+            inputHandler?(inputAnswer ?? String())
+            
+            // 답변 해당 InputItem에 저장
+            updateInputItem(withContent: contentLabel.text ?? "", inputAnswer: inputAnswer ?? "")
         } else {
             // 비어있는 경우 기존 너비로
             backgroundColor = .white

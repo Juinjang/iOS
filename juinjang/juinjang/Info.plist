@@ -2,12 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>사질 앨범에 접근하려면 허용이 필요합니다.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>카메라 접근 권한이 필요합니다.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>마이크 접근 권한을 허용하는 경우에만 녹음을 통한 노트 생성 및 음성 인식 서비스 이용이 가능합니다. (필수 권한)</string>
 	<key></key>
 	<string></string>
 	<key>CFBundleURLTypes</key>
@@ -27,7 +21,12 @@
 	<array>
 		<string>kakaokompassauth</string>
 		<string>kakaolink</string>
-  </array>
+	</array>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoadsInWebContent</key>
+		<true/>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Black.otf</string>

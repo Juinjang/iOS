@@ -16,9 +16,13 @@ class ExpandedScoreTableViewCell: UITableViewCell {
     
     var score: String? // 선택된 버튼의 값을 저장할 변수
     var indexPath: IndexPath?
+    var scoreItems: [String: (score: String?, isSelected: Bool)] = [:]
     var item: Item?
     weak var delegate: ExpandedScoreCellDelegate?
     var cellIndex: Int?
+    
+    // 선택된 점수를 외부로 전달하는 콜백 클로저
+    var selectionHandler: ((String) -> Void)?
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -121,6 +125,12 @@ class ExpandedScoreTableViewCell: UITableViewCell {
     @objc func buttonPressed(_ sender: UIButton) {
         sender.isSelected.toggle()
         
+        // 외부로 선택된 점수 전달
+        selectionHandler?(score ?? String())
+        
+        // 선택된 점수를 해당 ScoreItem에 저장
+        updateScoreItem(withContent: contentLabel.text ?? "", score: String(sender.tag))
+        
         // 선택한 버튼이 아닌 경우 선택 해제
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
             if button != sender {
@@ -140,19 +150,6 @@ class ExpandedScoreTableViewCell: UITableViewCell {
                 if button != sender {
                     button.isSelected = false
                     button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
-                    // 버튼이 눌렸을 때 호출되는 메서드
-//                    guard let indexPath = indexPath, let delegate = delegate else {
-//                        return
-//                    }
-//
-//                    // 버튼의 선택 상태 업데이트
-//                    let buttonTag = sender.tag
-//
-//                    // 선택 상태에 따라 다른 동작 수행
-//                    guard let index = cellIndex else {
-//                        return
-//                    }
-//                    delegate.buttonTapped(at: index)
                 }
             }
         } else {
@@ -168,6 +165,32 @@ class ExpandedScoreTableViewCell: UITableViewCell {
             print("Button Pressed: \(score)")
         } else {
             print("Button Pressed: No answer")
+        }
+    }
+    
+    func saveSelectedScore() {
+        if let score = score {
+            UserDefaults.standard.set(score, forKey: "SelectedScoreKey")
+        } else {
+            // 선택된 버튼이 nil인 경우 UserDefaults에서 해당 키의 값을 제거
+            UserDefaults.standard.removeObject(forKey: "SelectedScoreKey")
+        }
+    }
+    
+    func loadSelectedScore() -> String? {
+        return UserDefaults.standard.value(forKey: "SelectedScoreKey") as? String
+    }
+    
+    private func updateScoreItem(withContent content: String, score: String) {
+        // 찾으려는 content와 일치하는 ScoreItem을 찾음
+        if let index = scoreItems.index(forKey: content) {
+            scoreItems.updateValue((score, true), forKey: content)
+            
+            // 딕셔너리 확인
+            for (content, score) in scoreItems {
+                print("\(content): \(score)")
+            }
+            saveSelectedScore()
         }
     }
 }

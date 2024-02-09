@@ -10,7 +10,7 @@ import SnapKit
 import Tabman
 import Pageboy
 
-class RecordingSegmentedViewController: TabmanViewController {
+class RecordingSegmentedViewController: TabmanViewController, MoveWarningMessageDelegate {
     
     let tabView = UIView().then {
         $0.backgroundColor = .white
@@ -117,6 +117,18 @@ class RecordingSegmentedViewController: TabmanViewController {
             $0.height.equalTo(1)
         }
     }
+    
+    func getWarningMessage() -> String {
+        // viewControllers[0]가 CheckListViewController 일 때의 처리를 추가
+        if let currentViewController = viewControllers.first, currentViewController is CheckListViewController {
+            dismiss(animated: false) {
+                self.scrollToPage(.next, animated: true) // 페이지 전환
+            }
+            return "기록룸으로 이동할까요?\n저장하지 않은 수정사항은 사라집니다."
+        } else {
+            return "임장노트로 이동할까요?\n저장하지 않은 수정사항은 사라집니다."
+        }
+    }
 }
 
 extension RecordingSegmentedViewController: PageboyViewControllerDataSource, TMBarDataSource {
@@ -140,6 +152,7 @@ extension RecordingSegmentedViewController: PageboyViewControllerDataSource, TMB
             print("현재 ViewController", currentViewController)
             imjangNoteViewController?.editButton.isHidden = false
             imjangNoteViewController?.upButton.isHidden = true
+            
         } else {
             print("현재 ViewController", currentViewController)
             imjangNoteViewController?.editButton.isHidden = true
@@ -150,6 +163,14 @@ extension RecordingSegmentedViewController: PageboyViewControllerDataSource, TMB
     
     func defaultPage(for pageboyViewController: Pageboy.PageboyViewController) -> Pageboy.PageboyViewController.Page? {
         return .at(index: 0)
+    }
+    
+    // 팝업창
+    func showPopUp() {
+        let warningPopup = CheckListPopUpViewController()
+        warningPopup.moveWarningDelegate = self
+        warningPopup.modalPresentationStyle = .overCurrentContext
+        present(warningPopup, animated: true)
     }
 }
 

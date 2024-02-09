@@ -14,7 +14,7 @@ import KakaoSDKAuth
 import KakaoSDKUser
 
 class SignUpViewController: UIViewController {
-    
+
     lazy var juinjangLogoImage = UIImageView().then {
         $0.image = UIImage(named: "juinjang-logo-image")
         $0.contentMode = .scaleAspectFill
@@ -28,14 +28,12 @@ class SignUpViewController: UIViewController {
     lazy var kakaoLoginButton = UIButton().then {
         $0.setBackgroundImage(UIImage(named: "kakao-logo"), for: .normal)
         $0.contentMode = .scaleAspectFill
-        $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(loginButtonTapped(_:)), for: .touchUpInside)
     }
     
     lazy var appleLoginButton = UIButton().then {
         $0.setBackgroundImage(UIImage(named: "apple-logo"), for: .normal)
         $0.contentMode = .scaleAspectFill
-        $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(loginButtonTapped(_:)), for: .touchUpInside)
     }
     
@@ -99,32 +97,35 @@ class SignUpViewController: UIViewController {
     }
     
     @objc func loginButtonTapped(_ sender: UIButton) {
-        // -TODO: 로그인 처리
-        if UserApi.isKakaoTalkLoginAvailable() {
+        let vc = SignUpWebViewController()
+        present(vc, animated: true)
+        
+        /*if UserApi.isKakaoTalkLoginAvailable() {
             // 카카오톡 로그인. api 호출 결과를 클로저로 전달.
             loginWithApp()
         } else {
             // 만약, 카카오톡이 깔려있지 않을 경우에는 웹 브라우저로 카카오 로그인함.
             loginWithWeb()
-        }
+        }*/
     }
 }
 
-extension SignUpViewController {
+/*extension SignUpViewController {
     
     // 카카오톡 앱으로 로그인
     func loginWithApp() {
-        UserApi.shared.loginWithKakaoTalk {(_, error) in
+        UserApi.shared.loginWithKakaoTalk {(oauthToken, error) in
             if let error = error {
                 print(error)
             } else {
                 print("loginWithKakaoTalk() success.")
-                
+                _ = oauthToken
                 UserApi.shared.me {(user, error) in
                     if let error = error {
                         print(error)
                     } else {
                         self.presentToMain()
+                        _ = user
                     }
                 }
             }
@@ -133,16 +134,18 @@ extension SignUpViewController {
     
     // 카카오톡 웹으로 로그인
     func loginWithWeb() {
-        UserApi.shared.loginWithKakaoAccount {(_, error) in
+        UserApi.shared.loginWithKakaoAccount {(oauthToken, error) in
             if let error = error {
                 print(error)
             } else {
                 print("loginWithKakaoAccount() success.")
+                _ = oauthToken
                 
                 UserApi.shared.me {(user, error) in
                     if let error = error {
                         print(error)
                     } else {
+                        print("me() success")
                         self.presentToMain()
                     }
                 }
@@ -153,4 +156,4 @@ extension SignUpViewController {
         let nextVC = ToSViewController()
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
-}
+}*/

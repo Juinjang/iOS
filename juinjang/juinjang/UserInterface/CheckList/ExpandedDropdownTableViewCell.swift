@@ -14,7 +14,11 @@ protocol DropdownDelegate: AnyObject {
 
 class ExpandedDropdownTableViewCell: UITableViewCell {
     var selectedOption: String?
+    var selectionItems: [String: (option: String?, isSelected: Bool)] = [:]
     weak var delegate: DropdownDelegate?
+    
+    // 선택된 점수를 외부로 전달하는 콜백 클로저
+    var selectionHandler: ((String) -> Void)?
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -153,9 +157,6 @@ class ExpandedDropdownTableViewCell: UITableViewCell {
         transparentView.addGestureRecognizer(tapgesture)
     }
 
-
-
-
     @objc func removeTransparentView() {
         transparentView.removeFromSuperview()
         itemPickerView.removeFromSuperview()
@@ -187,6 +188,32 @@ class ExpandedDropdownTableViewCell: UITableViewCell {
         selectedButton = sender
         addTransparentView(frames: sender.frame)
     }
+    
+    func saveSelectedOption() {
+        if let option = selectedOption {
+            UserDefaults.standard.set(option, forKey: "SelectedOptionKey")
+        } else {
+            // 선택된 버튼이 nil인 경우 UserDefaults에서 해당 키의 값을 제거
+            UserDefaults.standard.removeObject(forKey: "SelectedOptionKey")
+        }
+    }
+    
+    func loadSelectedOption() -> String? {
+        return UserDefaults.standard.value(forKey: "SelectedOptionKey") as? String
+    }
+    
+    private func updateSelectionItem(withContent content: String, option: String) {
+        // 찾으려는 content와 일치하는 ScoreItem을 찾음
+        if let index = selectionItems.index(forKey: content) {
+            selectionItems.updateValue((option, true), forKey: content)
+            
+            // 딕셔너리 확인
+            for (content, option) in selectionItems {
+                print("\(content): \(option)")
+            }
+            saveSelectedOption()
+        }
+    }
 }
 
 extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataSource {
@@ -207,6 +234,12 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
         let selectedOption = options[row]
         print("Selected option: \(selectedOption)")
+        
+        // 외부로 선택된 점수 전달
+        selectionHandler?(selectedOption.option)
+        
+        // 선택된 점수를 해당 ScoreItem에 저장
+        updateSelectionItem(withContent: contentLabel.text ?? "", option: selectedOption.option)
         
         // 선택한 옵션으로 selectedButton 설정
         setSelectedInset()

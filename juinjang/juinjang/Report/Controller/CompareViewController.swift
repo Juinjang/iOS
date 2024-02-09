@@ -37,7 +37,7 @@ class CompareViewController : UIViewController {
     }
     
     var compareView2 = UIImageView().then {
-        $0.image = UIImage(named: "compareView1")
+        $0.image = UIImage(named: "compareView2")
         $0.tintColor = UIColor(named: "300")
     }
     var closeButton = UIButton().then {
@@ -68,7 +68,26 @@ class CompareViewController : UIViewController {
         $0.textColor = UIColor(named: "300")
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
+    var insideLabel2 = UILabel().then {
+        $0.text = "실내"
+        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
+        $0.textColor = UIColor(named: "300")
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    
     var insideRateLabel1 = UILabel().then {
+        let text1 = NSTextAttachment()
+        text1.image = UIImage(named: "compareStar")
+        let text2 = " " + "4.5"
+        let text3 = NSMutableAttributedString(string: "")
+        text3.append(NSAttributedString(attachment: text1))
+        text3.append(NSAttributedString(string: text2))
+        $0.attributedText = text3
+        $0.textColor = UIColor(named: "300")
+        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    var insideRateLabel2 = UILabel().then {
         let text1 = NSTextAttachment()
         text1.image = UIImage(named: "compareStar")
         let text2 = " " + "4.5"
@@ -87,7 +106,25 @@ class CompareViewController : UIViewController {
         $0.textColor = UIColor(named: "300")
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
+    var publicSpaceLabel2 = UILabel().then {
+        $0.text = "공용 공간"
+        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
+        $0.textColor = UIColor(named: "300")
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
     var publicSpaceRateLabel1 = UILabel().then {
+        let text1 = NSTextAttachment()
+        text1.image = UIImage(named: "compareStar")
+        let text2 = " " + "4.5"
+        let text3 = NSMutableAttributedString(string: "")
+        text3.append(NSAttributedString(attachment: text1))
+        text3.append(NSAttributedString(string: text2))
+        $0.attributedText = text3
+        $0.textColor = UIColor(named: "300")
+        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    var publicSpaceRateLabel2 = UILabel().then {
         let text1 = NSTextAttachment()
         text1.image = UIImage(named: "compareStar")
         let text2 = " " + "4.5"
@@ -118,6 +155,24 @@ class CompareViewController : UIViewController {
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
+    var locationConditionLabel2 = UILabel().then {
+        $0.text = "입지 여건"
+        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
+        $0.textColor = UIColor(named: "300")
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    var locationConditionRateLabel2 = UILabel().then {
+        let text1 = NSTextAttachment()
+        text1.image = UIImage(named: "compareStar")
+        let text2 = " " + "4.5"
+        let text3 = NSMutableAttributedString(string: "")
+        text3.append(NSAttributedString(attachment: text1))
+        text3.append(NSAttributedString(string: text2))
+        $0.attributedText = text3
+        $0.textColor = UIColor(named: "300")
+        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
     
     var totalLabel1 = UILabel().then {
         $0.text = "총점"
@@ -126,6 +181,24 @@ class CompareViewController : UIViewController {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var totalRateLabel1 = UILabel().then {
+        let text1 = NSTextAttachment()
+        text1.image = UIImage(named: "compareStarColor")
+        let text2 = " " + "4.5"
+        let text3 = NSMutableAttributedString(string: "")
+        text3.append(NSAttributedString(attachment: text1))
+        text3.append(NSAttributedString(string: text2))
+        $0.attributedText = text3
+        $0.textColor = UIColor(named: "juinjang")
+        $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    var totalLabel2 = UILabel().then {
+        $0.text = "총점"
+        $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
+        $0.textColor = UIColor(named: "300")
+        $0.translatesAutoresizingMaskIntoConstraints = false
+    }
+    var totalRateLabel2 = UILabel().then {
         let text1 = NSTextAttachment()
         text1.image = UIImage(named: "compareStarColor")
         let text2 = " " + "4.5"
@@ -369,26 +442,20 @@ class CompareViewController : UIViewController {
         }
         
     }
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "reportBG")
-        view.addSubview(backgroundImageView)
-        view.addSubview(compareLabel1)
-        view.addSubview(vsImageView)
-        view.addSubview(compareView1)
-        compareView1.addSubview(insideLabel1)
-        compareView1.addSubview(insideRateLabel1)
-        compareView1.addSubview(publicSpaceLabel1)
-        compareView1.addSubview(publicSpaceRateLabel1)
-        compareView1.addSubview(locationConditionLabel1)
-        compareView1.addSubview(locationConditionRateLabel1)
-        compareView1.addSubview(totalLabel1)
-        compareView1.addSubview(totalRateLabel1)
-        view.addSubview(compareViewEmpty)
+    
+    func isCompare() {
+        
         if isCompared == true {
             compareViewEmpty.isHidden = true
-            
             view.addSubview(compareView2)
+            compareView2.addSubview(insideLabel2)
+            compareView2.addSubview(insideRateLabel2)
+            compareView2.addSubview(publicSpaceLabel2)
+            compareView2.addSubview(publicSpaceRateLabel2)
+            compareView2.addSubview(locationConditionLabel2)
+            compareView2.addSubview(locationConditionRateLabel2)
+            compareView2.addSubview(totalLabel2)
+            compareView2.addSubview(totalRateLabel2)
             view.addSubview(closeButton)
             view.addSubview(compareLabel2)
             view.addSubview(chartCompareLabel1)
@@ -428,8 +495,67 @@ class CompareViewController : UIViewController {
                 $0.left.equalTo(chartCompareImageView2.snp.right).offset(4)
                 $0.height.equalTo(17)
             }
+            insideLabel2.snp.makeConstraints{
+                $0.top.equalToSuperview().offset(12)
+                $0.left.equalToSuperview().offset(12)
+                $0.height.equalTo(20)
+            }
+            insideRateLabel2.snp.makeConstraints{
+                $0.top.equalToSuperview().offset(12)
+                $0.right.equalToSuperview().inset(13)
+                $0.height.equalTo(20)
+            }
+            
+            publicSpaceLabel2.snp.makeConstraints{
+                $0.top.equalToSuperview().offset(36)
+                $0.left.equalToSuperview().offset(12)
+                $0.height.equalTo(20)
+            }
+            publicSpaceRateLabel2.snp.makeConstraints{
+                $0.top.equalToSuperview().offset(36)
+                $0.right.equalToSuperview().inset(13)
+                $0.height.equalTo(20)
+            }
+            locationConditionLabel2.snp.makeConstraints{
+                $0.top.equalToSuperview().offset(60)
+                $0.left.equalToSuperview().offset(12)
+                $0.height.equalTo(20)
+            }
+            locationConditionRateLabel2.snp.makeConstraints{
+                $0.top.equalToSuperview().offset(60)
+                $0.right.equalToSuperview().inset(13)
+                $0.height.equalTo(20)
+            }
+            totalLabel2.snp.makeConstraints{
+                $0.bottom.equalToSuperview().inset(12)
+                $0.left.equalToSuperview().offset(12)
+                $0.height.equalTo(20)
+            }
+            totalRateLabel2.snp.makeConstraints{
+                $0.bottom.equalToSuperview().inset(12)
+                $0.right.equalToSuperview().inset(12)
+                $0.height.equalTo(20)
+            }
         }
-        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = UIColor(named: "reportBG")
+        view.addSubview(backgroundImageView)
+        view.addSubview(compareLabel1)
+        view.addSubview(vsImageView)
+        view.addSubview(compareView1)
+        compareView1.addSubview(insideLabel1)
+        compareView1.addSubview(insideRateLabel1)
+        compareView1.addSubview(publicSpaceLabel1)
+        compareView1.addSubview(publicSpaceRateLabel1)
+        compareView1.addSubview(locationConditionLabel1)
+        compareView1.addSubview(locationConditionRateLabel1)
+        compareView1.addSubview(totalLabel1)
+        compareView1.addSubview(totalRateLabel1)
+        view.addSubview(compareViewEmpty)
+        isCompare()
         view.addSubview(radarChartView)
         setData()
         

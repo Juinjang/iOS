@@ -75,7 +75,7 @@
     {
       "identity" : "tabman",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/uias/Tabman.git",
+      "location" : "https://github.com/uias/Tabman",
       "state" : {
         "revision" : "e32c0d821b03566ed966753f941113883f268da0",
         "version" : "3.0.2"

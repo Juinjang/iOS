@@ -5,6 +5,7 @@ import Lottie
 
 
 class MainViewController: UIViewController {
+    
 // MARK: - 변수, 상수 설정
     //설정 버튼, 메인 로고, 스피커 버튼
     var mainLogoImageView = UIImageView().then {

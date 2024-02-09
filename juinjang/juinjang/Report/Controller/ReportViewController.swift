@@ -96,8 +96,7 @@ class ReportViewController : UIViewController {
         self.navigationItem.rightBarButtonItem = .none
     }
     @objc func backBtnTap() {
-        let vc = ImjangNoteViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        navigationController?.popViewController(animated: true)
     }
     @objc func shareBtnTap() {
         if ShareApi.isKakaoTalkSharingAvailable() {

@@ -35,23 +35,22 @@ class KakaoZipCodeViewController: UIViewController {
             else { return }
         let request = URLRequest(url: url) // URLRequest 생성해서
         webView.load(request) // webView가 URL 로드
-        indicator.startAnimating()
     }
 
     func setupLayout() {
         guard let webView = webView else { return }
         view.addSubview(webView)
-        webView.addSubview(indicator)
+        //webView.addSubview(indicator)
         
         webView.snp.makeConstraints {
             $0.top.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
         }
 
-        indicator.snp.makeConstraints {
+        /*indicator.snp.makeConstraints {
             $0.centerX.equalTo(webView.snp.centerX)
             $0.centerY.equalTo(webView.snp.centerY)
-        }
+        }*/
     }
 }
 

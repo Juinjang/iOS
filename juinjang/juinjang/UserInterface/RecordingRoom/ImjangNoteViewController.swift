@@ -470,7 +470,7 @@ class ImjangNoteViewController: UIViewController {
             $0.edges.equalTo(scrollView.contentLayoutGuide)
             $0.width.equalTo(scrollView.frameLayoutGuide)
 //            $0.height.equalTo(view).multipliedBy(1.6)
-            $0.height.equalTo(view).multipliedBy(3) // 체크리스트 뷰 컨트롤러에서는 변경될 수 있게 적절한 값으로 설정 필요
+            $0.height.equalTo(view).multipliedBy(5) // 체크리스트 뷰 컨트롤러에서는 변경될 수 있게 적절한 값으로 설정 필요
         }
         
         setImageViewConstraints()

@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import KakaoSDKUser
+import KakaoSDKAuth
+import KakaoSDKCommon
 
 class TopTableViewCell: UITableViewCell {
     
@@ -76,6 +79,8 @@ class TopTableViewCell: UITableViewCell {
         }
     
 //MARK: - 함수 구현
+    
+    
     private func addContentView() {
         contentView.addSubview(greetLabel)
         contentView.addSubview(myNoteButton)

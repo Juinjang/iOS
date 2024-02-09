@@ -28,7 +28,6 @@
 		0A3D5D4C2B4D333900574686 /* TransactionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D5D4A2B4D333900574686 /* TransactionModel.swift */; };
 		0A3D5D632B4D707300574686 /* BottomSheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3D5D622B4D707300574686 /* BottomSheetViewController.swift */; };
 		0A3EBEBE2B654E71004D8DCE /* OpenNewPagePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A3EBEBD2B654E71004D8DCE /* OpenNewPagePopupViewController.swift */; };
-		0A4095CC2B71750F009AF679 /* EditKakaoZipCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4095CB2B71750F009AF679 /* EditKakaoZipCodeViewController.swift */; };
 		0A4EBE272B5E9E5F00909B7A /* Then in Frameworks */ = {isa = PBXBuildFile; productRef = 0A4EBE262B5E9E5F00909B7A /* Then */; };
 		0A4EBE2A2B5E9E6A00909B7A /* Tabman in Frameworks */ = {isa = PBXBuildFile; productRef = 0A4EBE292B5E9E6A00909B7A /* Tabman */; };
 		0A4EBE2D2B5E9E8B00909B7A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 0A4EBE2C2B5E9E8B00909B7A /* SnapKit */; };
@@ -51,6 +50,7 @@
 		0A9E0AA92B3DD4D20094595A /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 0A9E0AA82B3DD4D20094595A /* .gitignore */; };
 		0AB34CC12B4F11B000150A15 /* OpenNewPage2ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB34CBE2B4F11B000150A15 /* OpenNewPage2ViewController.swift */; };
 		0AB34CC32B4F11B000150A15 /* OpenNewPageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AB34CC02B4F11B000150A15 /* OpenNewPageViewController.swift */; };
+		0AD529D62B729B6500FE7D9E /* CheckListPopUpViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AD529D52B729B6500FE7D9E /* CheckListPopUpViewController.swift */; };
 		0AE388892B5986BC0041A979 /* CategoryItemTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE388882B5986BC0041A979 /* CategoryItemTableViewCell.swift */; };
 		0AE3888B2B5992870041A979 /* CheckListItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AE3888A2B5992870041A979 /* CheckListItem.swift */; };
 		0AF968242B5BDF3300A3CBBB /* CheckListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF968232B5BDF3300A3CBBB /* CheckListViewController.swift */; };
@@ -92,9 +92,14 @@
 		345855D72B6B7F7600432C06 /* KakaoSDKTemplate in Frameworks */ = {isa = PBXBuildFile; productRef = 345855D62B6B7F7600432C06 /* KakaoSDKTemplate */; };
 		345855D92B6B7F7600432C06 /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 345855D82B6B7F7600432C06 /* KakaoSDKUser */; };
 		345855DB2B6B8D5100432C06 /* CompareSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855DA2B6B8D5000432C06 /* CompareSearchViewController.swift */; };
+		346C7E582B753C6C00B4E044 /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 346C7E572B753C6C00B4E044 /* SnapKit */; };
+		346C7E5A2B753C6C00B4E044 /* SnapKit-Dynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 346C7E592B753C6C00B4E044 /* SnapKit-Dynamic */; };
+		346C7E5C2B753C8900B4E044 /* DGCharts in Frameworks */ = {isa = PBXBuildFile; productRef = 346C7E5B2B753C8900B4E044 /* DGCharts */; };
+		346C7E5E2B753C8900B4E044 /* DGChartsDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 346C7E5D2B753C8900B4E044 /* DGChartsDynamic */; };
 		346CF6AE2B70B46B00C70C7A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346CF6AD2B70B46B00C70C7A /* SplashViewController.swift */; };
 		346CF6B02B70B4D300C70C7A /* splash-ezgif.com-gif-to-mp4-converter.mp4.lottie.json in Resources */ = {isa = PBXBuildFile; fileRef = 346CF6AF2B70B4D300C70C7A /* splash-ezgif.com-gif-to-mp4-converter.mp4.lottie.json */; };
 		346CF6B32B70B54B00C70C7A /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 346CF6B22B70B54B00C70C7A /* Lottie */; };
+		3485CD692B73D3A700E8B9D6 /* SignUpWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3485CD682B73D3A700E8B9D6 /* SignUpWebViewController.swift */; };
 		611757382B67D5E60043E958 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 611757372B67D5E60043E958 /* Assets.xcassets */; };
 		611F14552B47070B00B983F1 /* RecordingSegmentedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F14542B47070B00B983F1 /* RecordingSegmentedViewController.swift */; };
 		611F145A2B4707CC00B983F1 /* RecordingRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */; };
@@ -171,7 +176,6 @@
 		0A3D5D4A2B4D333900574686 /* TransactionModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionModel.swift; sourceTree = "<group>"; };
 		0A3D5D622B4D707300574686 /* BottomSheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomSheetViewController.swift; sourceTree = "<group>"; };
 		0A3EBEBD2B654E71004D8DCE /* OpenNewPagePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenNewPagePopupViewController.swift; sourceTree = "<group>"; };
-		0A4095CB2B71750F009AF679 /* EditKakaoZipCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditKakaoZipCodeViewController.swift; sourceTree = "<group>"; };
 		0A4EBE332B5EA25300909B7A /* ExpandedCalendarTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedCalendarTableViewCell.swift; sourceTree = "<group>"; };
 		0A4EBE352B5EA27B00909B7A /* ExpandedScoreTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedScoreTableViewCell.swift; sourceTree = "<group>"; };
 		0A4EBE372B5EDD6F00909B7A /* ExpandedTextFieldTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedTextFieldTableViewCell.swift; sourceTree = "<group>"; };
@@ -190,6 +194,7 @@
 		0A9E0AA82B3DD4D20094595A /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; name = .gitignore; path = ../.gitignore; sourceTree = "<group>"; };
 		0AB34CBE2B4F11B000150A15 /* OpenNewPage2ViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenNewPage2ViewController.swift; sourceTree = "<group>"; };
 		0AB34CC02B4F11B000150A15 /* OpenNewPageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenNewPageViewController.swift; sourceTree = "<group>"; };
+		0AD529D52B729B6500FE7D9E /* CheckListPopUpViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListPopUpViewController.swift; sourceTree = "<group>"; };
 		0AE388882B5986BC0041A979 /* CategoryItemTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryItemTableViewCell.swift; sourceTree = "<group>"; };
 		0AE3888A2B5992870041A979 /* CheckListItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListItem.swift; sourceTree = "<group>"; };
 		0AF968232B5BDF3300A3CBBB /* CheckListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListViewController.swift; sourceTree = "<group>"; };
@@ -219,6 +224,7 @@
 		345855DA2B6B8D5000432C06 /* CompareSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareSearchViewController.swift; sourceTree = "<group>"; };
 		346CF6AD2B70B46B00C70C7A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		346CF6AF2B70B4D300C70C7A /* splash-ezgif.com-gif-to-mp4-converter.mp4.lottie.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "splash-ezgif.com-gif-to-mp4-converter.mp4.lottie.json"; sourceTree = "<group>"; };
+		3485CD682B73D3A700E8B9D6 /* SignUpWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpWebViewController.swift; sourceTree = "<group>"; };
 		611757372B67D5E60043E958 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		611F14542B47070B00B983F1 /* RecordingSegmentedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSegmentedViewController.swift; sourceTree = "<group>"; };
 		611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingRoomViewController.swift; sourceTree = "<group>"; };
@@ -282,11 +288,14 @@
 				345855D72B6B7F7600432C06 /* KakaoSDKTemplate in Frameworks */,
 				0A4EBE2F2B5E9E8B00909B7A /* SnapKit-Dynamic in Frameworks */,
 				345855D12B6B7F7600432C06 /* KakaoSDKNavi in Frameworks */,
+				346C7E582B753C6C00B4E044 /* SnapKit in Frameworks */,
 				346CF6B32B70B54B00C70C7A /* Lottie in Frameworks */,
+				346C7E5C2B753C8900B4E044 /* DGCharts in Frameworks */,
 				0A4EBE322B5EA21100909B7A /* FSCalendar in Frameworks */,
 				345855C72B6B7F7600432C06 /* KakaoSDKCert in Frameworks */,
 				61D9250F2B4965D0002A16B4 /* IQKeyboardManagerSwift in Frameworks */,
 				345855D32B6B7F7600432C06 /* KakaoSDKShare in Frameworks */,
+				346C7E5A2B753C6C00B4E044 /* SnapKit-Dynamic in Frameworks */,
 				345855C92B6B7F7600432C06 /* KakaoSDKCertCore in Frameworks */,
 				0A4EBE2D2B5E9E8B00909B7A /* SnapKit in Frameworks */,
 				0A4EBE2A2B5E9E6A00909B7A /* Tabman in Frameworks */,
@@ -296,6 +305,7 @@
 				3458556D2B68998A00432C06 /* DGChartsDynamic in Frameworks */,
 				0A4EBE272B5E9E5F00909B7A /* Then in Frameworks */,
 				345855CB2B6B7F7600432C06 /* KakaoSDKCommon in Frameworks */,
+				346C7E5E2B753C8900B4E044 /* DGChartsDynamic in Frameworks */,
 				345855D52B6B7F7600432C06 /* KakaoSDKTalk in Frameworks */,
 				345855C52B6B7F7600432C06 /* KakaoSDKAuth in Frameworks */,
 				345855CD2B6B7F7600432C06 /* KakaoSDKFriend in Frameworks */,
@@ -317,6 +327,7 @@
 			isa = PBXGroup;
 			children = (
 				0A14E36E2B569A840008FD28 /* SignUpViewController.swift */,
+				3485CD682B73D3A700E8B9D6 /* SignUpWebViewController.swift */,
 				0A95D72E2B682013000A9C06 /* ToSViewController.swift */,
 				0A95D7302B682FB4000A9C06 /* ToSItemTableViewCell.swift */,
 				0A24711C2B69147200A7382B /* ToSDetailViewController.swift */,
@@ -355,8 +366,8 @@
 			children = (
 				3458556E2B6899D300432C06 /* Main */,
 				619269D22B6773FE00D4DD3E /* ImjangList */,
-				0A14E36D2B569A2E0008FD28 /* SignUp */,
 				0A3D5D5F2B4D37B000574686 /* CheckList */,
+				0A14E36D2B569A2E0008FD28 /* SignUp */,
 				0A3D5D5E2B4D379300574686 /* RecordingRoom */,
 				0A3D5D5C2B4D370A00574686 /* OpenNewpage */,
 			);
@@ -392,7 +403,7 @@
 				0A2471242B697E3D00A7382B /* EditBasicInfoViewController.swift */,
 				0A2471262B69803000A7382B /* EditBasicInfoDetailViewController.swift */,
 				0A0FE7562B6C0031001866C8 /* ReportPopupViewController.swift */,
-				0A4095CB2B71750F009AF679 /* EditKakaoZipCodeViewController.swift */,
+				0AD529D52B729B6500FE7D9E /* CheckListPopUpViewController.swift */,
 			);
 			path = CheckList;
 			sourceTree = "<group>";
@@ -766,6 +777,10 @@
 				345855D62B6B7F7600432C06 /* KakaoSDKTemplate */,
 				345855D82B6B7F7600432C06 /* KakaoSDKUser */,
 				346CF6B22B70B54B00C70C7A /* Lottie */,
+				346C7E572B753C6C00B4E044 /* SnapKit */,
+				346C7E592B753C6C00B4E044 /* SnapKit-Dynamic */,
+				346C7E5B2B753C8900B4E044 /* DGCharts */,
+				346C7E5D2B753C8900B4E044 /* DGChartsDynamic */,
 			);
 			productName = juinjang;
 			productReference = 0A9E0A432B3DCAB90094595A /* juinjang.app */;
@@ -864,11 +879,13 @@
 				616408E12B405B7200EC3B5E /* ImjangNoteViewController.swift in Sources */,
 				0A24711D2B69147200A7382B /* ToSDetailViewController.swift in Sources */,
 				0A7AC0F12B6412760032C9DF /* KakaoZipCodeViewController.swift in Sources */,
+				3485CD692B73D3A700E8B9D6 /* SignUpWebViewController.swift in Sources */,
 				0A4EBE382B5EDD6F00909B7A /* ExpandedTextFieldTableViewCell.swift in Sources */,
 				345855A42B69E44D00432C06 /* NoMaemullPopupView.swift in Sources */,
 				0A554CE42B5420F20023BB49 /* WarningMessageViewController.swift in Sources */,
 				0A14E3712B56B31A0008FD28 /* SetNickNameViewController.swift in Sources */,
 				0AE388892B5986BC0041A979 /* CategoryItemTableViewCell.swift in Sources */,
+				0AD529D62B729B6500FE7D9E /* CheckListPopUpViewController.swift in Sources */,
 				0A14E3732B56B6F70008FD28 /* WelcomeViewController.swift in Sources */,
 				345855822B689D7200432C06 /* QnATableViewCell.swift in Sources */,
 				345855A32B69504500432C06 /* SelectMaemullViewController.swift in Sources */,
@@ -900,7 +917,6 @@
 				619269D82B6773FE00D4DD3E /* ImjangSearchViewController.swift in Sources */,
 				61D925052B486508002A16B4 /* RecordingFileViewCell.swift in Sources */,
 				611F14552B47070B00B983F1 /* RecordingSegmentedViewController.swift in Sources */,
-				0A4095CC2B71750F009AF679 /* EditKakaoZipCodeViewController.swift in Sources */,
 				0A4EBE3B2B5EF2BC00909B7A /* ExpandedDropdownTableViewCell.swift in Sources */,
 				0A95D7312B682FB4000A9C06 /* ToSItemTableViewCell.swift in Sources */,
 				61B0C9E52B6CDA0300BE86D2 /* PaddingLabel.swift in Sources */,
@@ -1000,6 +1016,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = DNJ2FDQWSL;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1017,7 +1034,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1061,6 +1078,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = DNJ2FDQWSL;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -1072,7 +1090,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -1089,10 +1107,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = T2Q8P9627P;
+				DEVELOPMENT_TEAM = DNJ2FDQWSL;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = juinjang/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "마이크 접근 권한을 허용하는 경우에만 녹음을 통한 노트 생성 및 음성 인식 서비스 이용이 가능합니다. (필수 권한)";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "사질 앨범에 접근하려면 허용이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -1122,10 +1142,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = T2Q8P9627P;
+				DEVELOPMENT_TEAM = "";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = juinjang/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "카메라 접근 권한이 필요합니다.";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "마이크 접근 권한을 허용하는 경우에만 녹음을 통한 노트 생성 및 음성 인식 서비스 이용이 가능합니다. (필수 권한)";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "사질 앨범에 접근하려면 허용이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -1346,6 +1368,24 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 345855C12B6B7F7600432C06 /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		346C7E572B753C6C00B4E044 /* SnapKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SnapKit;
+		};
+		346C7E592B753C6C00B4E044 /* SnapKit-Dynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "SnapKit-Dynamic";
+		};
+		346C7E5B2B753C8900B4E044 /* DGCharts */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 345855692B68998A00432C06 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGCharts;
+		};
+		346C7E5D2B753C8900B4E044 /* DGChartsDynamic */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 345855692B68998A00432C06 /* XCRemoteSwiftPackageReference "Charts" */;
+			productName = DGChartsDynamic;
 		};
 		346CF6B22B70B54B00C70C7A /* Lottie */ = {
 			isa = XCSwiftPackageProductDependency;
