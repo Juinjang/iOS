@@ -151,7 +151,6 @@
 		61D9250F2B4965D0002A16B4 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 61D9250E2B4965D0002A16B4 /* IQKeyboardManagerSwift */; };
 		61D925112B4983A1002A16B4 /* UILabel+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61D925102B4983A1002A16B4 /* UILabel+Extension.swift */; };
 		61E8EC0C2B726C9100BEAFE5 /* DeleteImjangPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E8EC0B2B726C9100BEAFE5 /* DeleteImjangPopupViewController.swift */; };
-		61E8ECA62B74773D00BEAFE5 /* QuestionDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61E8ECA52B74773D00BEAFE5 /* QuestionDto.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -275,7 +274,6 @@
 		61D925092B49506D002A16B4 /* RecordingFilesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingFilesViewController.swift; sourceTree = "<group>"; };
 		61D925102B4983A1002A16B4 /* UILabel+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+Extension.swift"; sourceTree = "<group>"; };
 		61E8EC0B2B726C9100BEAFE5 /* DeleteImjangPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteImjangPopupViewController.swift; sourceTree = "<group>"; };
-		61E8ECA52B74773D00BEAFE5 /* QuestionDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuestionDto.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -726,7 +724,6 @@
 		61E8ECA32B7476C000BEAFE5 /* Decodable */ = {
 			isa = PBXGroup;
 			children = (
-				61E8ECA52B74773D00BEAFE5 /* QuestionDto.swift */,
 			);
 			path = Decodable;
 			sourceTree = "<group>";
@@ -932,7 +929,6 @@
 				61E8EC0C2B726C9100BEAFE5 /* DeleteImjangPopupViewController.swift in Sources */,
 				61B0C9E72B6F5AD300BE86D2 /* DeleteImjangImagePopupView.swift in Sources */,
 				345855A72B6A039600432C06 /* ReportImjangListTableViewCell.swift in Sources */,
-				61E8ECA62B74773D00BEAFE5 /* QuestionDto.swift in Sources */,
 				345855972B692DFB00432C06 /* GraphViewController.swift in Sources */,
 				61D925112B4983A1002A16B4 /* UILabel+Extension.swift in Sources */,
 				619269F32B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift in Sources */,

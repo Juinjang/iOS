@@ -140,13 +140,15 @@ class ImjangListViewController: UIViewController {
     @objc func bookMarkButtonClicked(sender: UIButton) {
         var imjangNote = imjangList[sender.tag]
         imjangNote.isBookmarked.toggle()
-        if scrapImjangList.count < 10 {
-            scrapImjangList.insert(imjangNote, at: 0)
-        }
-        
+        if imjangNote.isBookmarked == true {
+            if scrapImjangList.count < 10 {
+                scrapImjangList.insert(imjangNote, at: 0)
+            }
+        } 
         imjangList[sender.tag] = imjangNote
         imjangTableView.reloadData()
     }
+    
     
     @objc func openNewPageVC() {
         let openNewPageVC = OpenNewPageViewController()
