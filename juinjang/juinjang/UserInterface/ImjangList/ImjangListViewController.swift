@@ -54,7 +54,11 @@ class ImjangListViewController: UIViewController {
         $0.backgroundColor = .white
     }
     
-    var scrapImjangList: [ImjangNote] = []
+    var scrapImjangList: [ImjangNote] = [] {
+        didSet {
+            imjangTableView.invalidateIntrinsicContentSize()
+        }
+    }
     var imjangList: [ImjangNote] = ImjangList.list
     
     var menuChildren: [UIMenuElement] = []
@@ -137,7 +141,7 @@ class ImjangListViewController: UIViewController {
         var imjangNote = imjangList[sender.tag]
         imjangNote.isBookmarked.toggle()
         if scrapImjangList.count < 10 {
-            scrapImjangList.append(imjangNote)
+            scrapImjangList.insert(imjangNote, at: 0)
         }
         
         imjangList[sender.tag] = imjangNote
@@ -153,6 +157,17 @@ class ImjangListViewController: UIViewController {
         let imjangNoteVC = ImjangNoteViewController()
         self.navigationController?.pushViewController(imjangNoteVC, animated: true)
     }
+    
+    @objc func scrapBookMarkButtonClicked(sender: UIButton) {
+        sender.isSelected.toggle()
+        print(sender.isSelected)
+        scrapImjangList.remove(at: sender.tag)
+        var imjangNote = imjangList[sender.tag]
+        imjangNote.isBookmarked = sender.isSelected
+        imjangList[sender.tag] = imjangNote
+        imjangTableView.performBatchUpdates(nil)
+        imjangTableView.reloadData()
+    }
 }
 
 extension ImjangListViewController: UITableViewDelegate, UITableViewDataSource {
@@ -160,7 +175,7 @@ extension ImjangListViewController: UITableViewDelegate, UITableViewDataSource {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
 //        print(scrollView.contentOffset.y, CGFloat(imjangTableView.tableHeaderView?.frame.minY ?? 181) - 54)
         
-        let filterY = scrapImjangList.isEmpty ? 132.0 : 280.0
+        let filterY = scrapImjangList.isEmpty ? 132.0 : 296.0
         // 필터뷰의 시작 Y를 통해 sticky 타이밍을 계산
         let shouldShowSticky = scrollView.contentOffset.y >= filterY
         
@@ -170,8 +185,10 @@ extension ImjangListViewController: UITableViewDelegate, UITableViewDataSource {
     // 헤더의 높이 설정
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if scrapImjangList.isEmpty {
+            print("비었음")
             return 186
         } else {
+            print("안빔")
             return 354
         }
         
@@ -181,14 +198,18 @@ extension ImjangListViewController: UITableViewDelegate, UITableViewDataSource {
         guard let imjangListHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ImjangListHeaderView.identifier) as? ImjangListHeaderView else {
             return UIView()
         }
-        imjangListHeaderView.scrapedList = scrapImjangList
+        imjangListHeaderView.collectionView.delegate = self
+        imjangListHeaderView.collectionView.dataSource = self
         imjangListHeaderView.deleteButton.addTarget(self, action: #selector(showDeleteImjangVC), for: .touchUpInside)
+        imjangListHeaderView.collectionView.reloadData()
         if scrapImjangList.isEmpty {
             imjangListHeaderView.setFilterView(isEmpty: true)
         }
         else {
             imjangListHeaderView.setFilterView(isEmpty: false)
         }
+        print("\(scrapImjangList.count)개")
+        print(imjangListHeaderView.bounds.height)
         return imjangListHeaderView
     }
     
@@ -213,6 +234,29 @@ extension ImjangListViewController: UITableViewDelegate, UITableViewDataSource {
         showImjangNoteVC()
     }
 }
+
+extension ImjangListViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        scrapImjangList.count
+    }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrapCollectionViewCell.identifier, for: indexPath) as? ScrapCollectionViewCell else {
+            return UICollectionViewCell()
+        }
+    
+        cell.bookMarkButton.tag = indexPath.row
+        cell.setData(imjangNote: scrapImjangList[indexPath.row])
+        cell.bookMarkButton.addTarget(self, action: #selector(scrapBookMarkButtonClicked), for: .touchUpInside)
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        showImjangNoteVC()
+    }
+}
+
+
 extension ImjangListViewController {
     // 네비게이션 바 디자인
     func designNavigationBar() {

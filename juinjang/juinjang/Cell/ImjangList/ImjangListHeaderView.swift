@@ -35,7 +35,7 @@ class ImjangListHeaderView: UITableViewHeaderFooterView {
     lazy var clipImageView = UIImageView()
     lazy var clipEmptyMessageLabel = UILabel()
     
-    var list: [ImjangNote] = [] 
+//    var list: [ImjangNote] = [] 
     
     // collectionView
     let collectionView: UICollectionView = {
@@ -50,7 +50,7 @@ class ImjangListHeaderView: UITableViewHeaderFooterView {
         collectionView.isPagingEnabled = false  // 한 페이지의 넓이를 조절할 수 없기 때문에 scrollViewWillEndDragging을 사용하여 구현
         collectionView.contentInsetAdjustmentBehavior = .never // 내부적으로 safe area에 의해 가려지는 것을 방지하기 위해서 자동으로 indset 조정해주는 것을 비활성화
         collectionView.contentInset = Const.collectionViewContentInset
-        collectionView.decelerationRate = .fast // 스크롤이 빠르게 되도록 (페이징 애니메이션같이 보이게 하기 위함)
+//        collectionView.decelerationRate = .fast // 스크롤이 빠르게 되도록 (페이징 애니메이션같이 보이게 하기 위함)
         collectionView.backgroundColor = .clear
         collectionView.register(ScrapCollectionViewCell.self, forCellWithReuseIdentifier: ScrapCollectionViewCell.identifier)
         return collectionView
@@ -87,8 +87,8 @@ class ImjangListHeaderView: UITableViewHeaderFooterView {
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)
         configureHierarchy()
-        collectionView.delegate = self
-        collectionView.dataSource = self
+//        collectionView.delegate = self
+//        collectionView.dataSource = self
         setupConstraints()
         configureView()
         setFilterData()
@@ -231,29 +231,17 @@ class ImjangListHeaderView: UITableViewHeaderFooterView {
         }
     }
     
-    @objc func bookMarkButtonClicked(sender: UIButton) {
-        scrapedList.remove(at: sender.tag)
-        collectionView.reloadData()
-    }
+//    @objc func bookMarkButtonClicked(sender: UIButton) {
+//        scrapedList.remove(at: sender.tag)
+//        collectionView.reloadData()
+//    }
 }
 
-extension ImjangListHeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        scrapedList.count
-    }
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrapCollectionViewCell.identifier, for: indexPath) as! ScrapCollectionViewCell
-        
-        cell.bookMarkButton.tag = indexPath.row
-        cell.setData(imjangNote: scrapedList[indexPath.row])
-        cell.bookMarkButton.addTarget(self, action: #selector(bookMarkButtonClicked), for: .touchUpInside)
-        
-        return cell
-    }
-    
-    
-}
+//extension ImjangListHeaderView: UICollectionViewDelegate, UICollectionViewDataSource {
+//    
+//
+//    
+//}
 
 //var currentIndex = 0
 //
