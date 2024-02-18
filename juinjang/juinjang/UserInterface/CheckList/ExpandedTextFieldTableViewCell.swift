@@ -67,20 +67,20 @@ class ExpandedTextFieldTableViewCell: UITableViewCell {
     
     func configure(with data: InputItem, at indexPath: IndexPath) {
         // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
-        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
-        let content = currentItem.content
-        contentLabel.text = content
-
-        // 입력한 내용이 있으면 표시
-        if let storedData = inputItems[content] {
-            inputAnswer = storedData.inputAnswer
-            
-            answerTextField.text = inputAnswer
-
-        } else {
-            // 선택된 날짜가 없으면 표시 초기화
-            inputAnswer = nil
-        }
+//        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
+//        let content = currentItem.content
+//        contentLabel.text = content
+//
+//        // 입력한 내용이 있으면 표시
+//        if let storedData = inputItems[content] {
+//            inputAnswer = storedData.inputAnswer
+//            
+//            answerTextField.text = inputAnswer
+//
+//        } else {
+//            // 선택된 날짜가 없으면 표시 초기화
+//            inputAnswer = nil
+//        }
     }
     
     override func prepareForReuse() {

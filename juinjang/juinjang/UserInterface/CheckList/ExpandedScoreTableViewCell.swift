@@ -188,28 +188,28 @@ class ExpandedScoreTableViewCell: UITableViewCell {
     }
     
     func configure(with data: ScoreItem, at indexPath: IndexPath) {
-        // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
-        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
-        let content = currentItem.content
-        contentLabel.text = content
-
-        // 선택된 날짜가 있으면 표시
-        if let storedData = scoreItems[content] {
-            score = storedData.score
-
-            for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
-                if String(button.tag) == score {
-                    button.isSelected = true
-                    button.setImage(UIImage(named: "checked-button"), for: .normal)
-                } else {
-                    button.isSelected = false
-                    button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
-                }
-            }
-        } else {
-            // 선택된 날짜가 없으면 표시 초기화
-            score = nil
-        }
+//        // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
+//        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
+//        let content = currentItem.content
+//        contentLabel.text = content
+//
+//        // 선택된 날짜가 있으면 표시
+//        if let storedData = scoreItems[content] {
+//            score = storedData.score
+//
+//            for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
+//                if String(button.tag) == score {
+//                    button.isSelected = true
+//                    button.setImage(UIImage(named: "checked-button"), for: .normal)
+//                } else {
+//                    button.isSelected = false
+//                    button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
+//                }
+//            }
+//        } else {
+//            // 선택된 날짜가 없으면 표시 초기화
+//            score = nil
+//        }
     }
     
     override func prepareForReuse() {

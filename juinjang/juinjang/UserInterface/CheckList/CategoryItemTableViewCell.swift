@@ -10,6 +10,41 @@ import UIKit
 class CategoryItemTableViewCell: UITableViewCell {
     
     var itemCategory: [Category] = []
+    var categoryItemList = CategoryItem.allCases
+    var index = Int()
+    var category: CheckListResponseDto?
+//        didSet {
+//            if let _categories = category {
+//                innerTableView.isHidden = !_categories.isExpanded
+//                categoryLabel.text = _categories.
+//                categoryImage.image = _categories.image
+//                innerTableView.dataSource = self
+//                innerTableView.delegate = self
+//                innerTableView.reloadData()
+//            }
+//        }
+//    }
+    
+    let innerTableView = SelfSizingTableView().then {
+        $0.register(ExpandedCalendarTableViewCell.self, forCellReuseIdentifier: ExpandedCalendarTableViewCell.identifier)
+        $0.register(ExpandedScoreTableViewCell.self, forCellReuseIdentifier: ExpandedScoreTableViewCell.identifier)
+        $0.register(ExpandedTextFieldTableViewCell.self, forCellReuseIdentifier: ExpandedTextFieldTableViewCell.identifier)
+        $0.register(ExpandedDropdownTableViewCell.self, forCellReuseIdentifier: ExpandedDropdownTableViewCell.identifier)
+        $0.isScrollEnabled = false
+        $0.separatorStyle = .none
+        //        $0.estimatedRowHeight = 443
+        //        $0.rowHeight = UITableView.automaticDimension
+    }
+    
+    var helperDelegate: HelperDelegate?
+    var headerView = UIView()
+    
+    let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.alignment = .fill
+        $0.distribution = .fill
+        $0.spacing = 0
+    }
     
     let categoryImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -33,9 +68,15 @@ class CategoryItemTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         print("CategoryItemTableViewCell initialized")
-        
-        [categoryImage, categoryLabel, expandButton].forEach { addSubview($0) }
+        contentView.addSubview(stackView)
+        stackView.addArrangedSubview(headerView)
+        stackView.addArrangedSubview(innerTableView)
+        [categoryImage,
+         categoryLabel,
+         expandButton].forEach { headerView.addSubview($0) }
         setupLayout()
+        addTapEvent()
+        innerTableView.reloadData()
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +86,7 @@ class CategoryItemTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         self.backgroundColor = UIColor(named: "lightBackgroundOrange")
@@ -53,24 +94,136 @@ class CategoryItemTableViewCell: UITableViewCell {
     }
     
     func setupLayout() {
+        stackView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            //            $0.leading.trailing.equalToSuperview()
+            //            $0.top.equalToSuperview()
+        }
+        
+        headerView.snp.makeConstraints {
+            $0.height.equalTo(63)
+        }
+        
         categoryImage.snp.makeConstraints {
             $0.height.equalTo(18)
             $0.width.equalTo(18)
-            $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(24)
+            $0.centerY.equalTo(headerView)
+            $0.leading.equalTo(headerView).offset(24)
         }
         
         categoryLabel.snp.makeConstraints {
             $0.leading.equalTo(categoryImage.snp.trailing).offset(8)
-            $0.centerY.equalToSuperview()
-            $0.height.height.equalTo(24)
+            $0.centerY.equalTo(headerView)
+            $0.height.equalTo(24)
         }
         
         expandButton.snp.makeConstraints {
-            $0.trailing.equalToSuperview().offset(-24)
-            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(headerView).offset(-24)
+            $0.centerY.equalTo(headerView)
             $0.height.equalTo(22)
             $0.width.equalTo(22)
         }
     }
+    
+    func addTapEvent() {
+        let panGesture = UITapGestureRecognizer(target: self, action: #selector(handelerAction))
+        headerView.addGestureRecognizer(panGesture)
+    }
+    
+    @objc private func handelerAction() {
+        guard let isExpanded = category?.isExpanded else {
+            return
+        }
+        innerTableView.isHidden = isExpanded
+        UIView.animate(withDuration: 0.3) {
+            self.stackView.setNeedsLayout()
+            self.helperDelegate?.heightChanged(index: self.index, value: !isExpanded)
+        }
+        category?.isExpanded = !isExpanded
+    }
+    
+    func configure(checkListResponseDto: CheckListResponseDto) {
+        let categoryId = checkListResponseDto.category
+        categoryImage.image = categoryItemList[categoryId].image
+        categoryLabel.text = categoryItemList[categoryId].title
+    }
+}
+
+enum CategoryItem: Int, CaseIterable {
+    case deadline           // 기한
+    case locationConditions // 입지여건
+    case indoor             // 실내
+    case commonSpace        // 공용공간
+    
+    var title: String {
+        switch self {
+        case .deadline: return "기한"
+        case .locationConditions: return "입지여건"
+        case .indoor: return "실내"
+        case .commonSpace: return "공용공간"
+        }
+    }
+    
+    var image: UIImage {
+        switch self {
+        case .deadline: return UIImage(named: "deadline-item")!
+        case .locationConditions: return UIImage(named: "location-conditions-item")!
+        case .indoor: return UIImage(named: "indoor-item")!
+        case .commonSpace: return UIImage(named: "public-space-item")!
+        }
+    }
+}
+
+extension CategoryItemTableViewCell: UITableViewDelegate, UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return category?.questionDtos.count ?? 0
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let item = category?.questionDtos[indexPath.row]
+        if item is CalendarItem {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ExpandedCalendarTableViewCell.identifier, for: indexPath) as? ExpandedCalendarTableViewCell else { return UITableViewCell() }
+            
+            cell.contentLabel.text = item?.question
+            
+            return cell
+        } else if item is ScoreItem {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ExpandedScoreTableViewCell.identifier, for: indexPath) as? ExpandedScoreTableViewCell else { return UITableViewCell()}
+            cell.contentLabel.text = item?.question
+            
+            return cell
+        } else if item is InputItem {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ExpandedTextFieldTableViewCell.identifier, for: indexPath) as? ExpandedTextFieldTableViewCell else { return UITableViewCell() }
+            cell.contentLabel.text = item?.question
+            return cell
+        } else if item is SelectionItem {
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ExpandedDropdownTableViewCell.identifier, for: indexPath) as? ExpandedDropdownTableViewCell else { return UITableViewCell() }
+            cell.contentLabel.text = item?.question
+            return cell
+        }
+        return UITableViewCell()
+    }
+    
+//    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+//        tableView.invalidateIntrinsicContentSize()
+//        tableView.layoutIfNeeded()
+//    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let item = category?.questionDtos[indexPath.row]
+        print("ddddd")
+        if item is CalendarItem {
+            print("나 캘린더")
+            return 500
+        } else if item is ScoreItem {
+            print("score")
+            return 98
+        } else if item is InputItem {
+            return 98
+        } else if item is SelectionItem {
+            return 114
+        }
+       return UITableView.automaticDimension
+    }
+    
 }

@@ -20,7 +20,7 @@ class RecordingSegmentedViewController: TabmanViewController, MoveWarningMessage
     }
     let border = UIView()
     
-    var viewControllers: Array<UIViewController> = [NotEnteredCheckListViewController(), RecordingRoomViewController()]
+    var viewControllers: Array<UIViewController> = [CheckListViewController(), RecordingRoomViewController()]
     let tabTitles = ["체크리스트", "기록룸"]
     
     var imjangNoteViewController: ImjangNoteViewController?
@@ -50,24 +50,24 @@ class RecordingSegmentedViewController: TabmanViewController, MoveWarningMessage
     }
     
     func addViewControllers() {
-        let checkListVC = NotEnteredCheckListViewController()
+        let checkListVC = CheckListViewController()
         let recordingRoomVC = RecordingRoomViewController()
         recordingRoomVC.imjangId = imjangId
         viewControllers.append(contentsOf: [checkListVC, recordingRoomVC])
     }
     
     @objc func handleEditButtonToggled(_ notification: Notification) {
-        if let isSelected = notification.object as? Bool {
-            let checkListVC: UIViewController = isSelected ? CheckListViewController() : NotEnteredCheckListViewController()
-
-            if let index = viewControllers.firstIndex(where: { $0 is NotEnteredCheckListViewController }) {
-                viewControllers[index] = checkListVC
-                self.reloadData()
-            } else if let index = viewControllers.firstIndex(where: { $0 is CheckListViewController }) {
-                viewControllers[index] = checkListVC
-                self.reloadData()
-            }
-        }
+//        if let isSelected = notification.object as? Bool {
+//            let checkListVC: UIViewController = isSelected ? CheckListViewController() : NotEnteredCheckListViewController()
+//
+//            if let index = viewControllers.firstIndex(where: { $0 is NotEnteredCheckListViewController }) {
+//                viewControllers[index] = checkListVC
+//                self.reloadData()
+//            } else if let index = viewControllers.firstIndex(where: { $0 is CheckListViewController }) {
+//                viewControllers[index] = checkListVC
+//                self.reloadData()
+//            }
+//        }
     }
     
     @objc func editCheckList() {

@@ -105,22 +105,22 @@ class ExpandedDropdownTableViewCell: UITableViewCell {
     
     func configure(with data: SelectionItem, at indexPath: IndexPath) {
         // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
-        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
-        let content = currentItem.content
-        contentLabel.text = content
-
-        // 선택된 옵션이 있으면 표시
-        if let storedData = selectionItems[content] as? SelectionItem {
-            selectedOption = storedData.selectAnswer
-
-            // selectedOption이 몇 번째 행에 해당하는지 찾기
-            if let row = storedData.options.firstIndex(where: { $0.option == selectedOption }) {
-                itemPickerView.selectRow(row, inComponent: 0, animated: false)
-            }
-        } else {
-            // 선택된 옵션이 없으면 표시 초기화
-            selectedOption = nil
-        }
+//        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
+//        let content = currentItem.content
+//        contentLabel.text = content
+//
+//        // 선택된 옵션이 있으면 표시
+//        if let storedData = selectionItems[content] as? SelectionItem {
+//            selectedOption = storedData.selectAnswer
+//
+//            // selectedOption이 몇 번째 행에 해당하는지 찾기
+//            if let row = storedData.options.firstIndex(where: { $0.option == selectedOption }) {
+//                itemPickerView.selectRow(row, inComponent: 0, animated: false)
+//            }
+//        } else {
+//            // 선택된 옵션이 없으면 표시 초기화
+//            selectedOption = nil
+//        }
     }
     
     override func prepareForReuse() {

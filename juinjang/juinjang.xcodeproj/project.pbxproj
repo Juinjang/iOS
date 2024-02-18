@@ -38,6 +38,9 @@
 		0A4EBE3B2B5EF2BC00909B7A /* ExpandedDropdownTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A4EBE3A2B5EF2BC00909B7A /* ExpandedDropdownTableViewCell.swift */; };
 		0A554CE02B52DB100023BB49 /* RecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A554CDF2B52DB100023BB49 /* RecordViewController.swift */; };
 		0A554CE42B5420F20023BB49 /* WarningMessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A554CE32B5420F20023BB49 /* WarningMessageViewController.swift */; };
+		0A6A15BC2B814DFF00CCBB49 /* SelfSizingTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A15BB2B814DFF00CCBB49 /* SelfSizingTableView.swift */; };
+		0A6A15BE2B814E7200CCBB49 /* HelperDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A15BD2B814E7200CCBB49 /* HelperDelegate.swift */; };
+		0A6A15C02B8150B900CCBB49 /* CheckListResponseDto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A6A15BF2B8150B900CCBB49 /* CheckListResponseDto.swift */; };
 		0A73E60D2B5855CD00EF1C89 /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A73E60C2B5855CD00EF1C89 /* UserInfo.swift */; };
 		0A7AC0F12B6412760032C9DF /* KakaoZipCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A7AC0F02B6412760032C9DF /* KakaoZipCodeViewController.swift */; };
 		0A95D72F2B682013000A9C06 /* ToSViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A95D72E2B682013000A9C06 /* ToSViewController.swift */; };
@@ -199,6 +202,9 @@
 		0A4EBE3A2B5EF2BC00909B7A /* ExpandedDropdownTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpandedDropdownTableViewCell.swift; sourceTree = "<group>"; };
 		0A554CDF2B52DB100023BB49 /* RecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordViewController.swift; sourceTree = "<group>"; };
 		0A554CE32B5420F20023BB49 /* WarningMessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WarningMessageViewController.swift; sourceTree = "<group>"; };
+		0A6A15BB2B814DFF00CCBB49 /* SelfSizingTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelfSizingTableView.swift; sourceTree = "<group>"; };
+		0A6A15BD2B814E7200CCBB49 /* HelperDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HelperDelegate.swift; sourceTree = "<group>"; };
+		0A6A15BF2B8150B900CCBB49 /* CheckListResponseDto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckListResponseDto.swift; sourceTree = "<group>"; };
 		0A73E60C2B5855CD00EF1C89 /* UserInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInfo.swift; sourceTree = "<group>"; };
 		0A7AC0F02B6412760032C9DF /* KakaoZipCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoZipCodeViewController.swift; sourceTree = "<group>"; };
 		0A95D72E2B682013000A9C06 /* ToSViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToSViewController.swift; sourceTree = "<group>"; };
@@ -442,6 +448,7 @@
 				0A0FE7562B6C0031001866C8 /* ReportPopupViewController.swift */,
 				0AD529D52B729B6500FE7D9E /* CheckListPopUpViewController.swift */,
 				0AF89DA22B74C5D500C9AD81 /* ContentWrappingTableView.swift */,
+				0A6A15BB2B814DFF00CCBB49 /* SelfSizingTableView.swift */,
 			);
 			path = CheckList;
 			sourceTree = "<group>";
@@ -640,6 +647,7 @@
 				6108CFF12B76295200EF302F /* ImagesListDto.swift */,
 				6108CFF32B762AA400EF302F /* ReportDto.swift */,
 				6108CFF52B762CA600EF302F /* ProfileDto.swift */,
+				0A6A15BF2B8150B900CCBB49 /* CheckListResponseDto.swift */,
 			);
 			path = Decodable;
 			sourceTree = "<group>";
@@ -720,6 +728,7 @@
 			children = (
 				619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */,
 				61B0C9A62B6A143A00BE86D2 /* ButtonTappedDelegate.swift */,
+				0A6A15BD2B814E7200CCBB49 /* HelperDelegate.swift */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -927,6 +936,7 @@
 				0A14E36F2B569A840008FD28 /* SignUpViewController.swift in Sources */,
 				345855782B689AC900432C06 /* BottomTableViewCell.swift in Sources */,
 				61B0C9D22B6C0B0000BE86D2 /* ImjangImageListViewController.swift in Sources */,
+				0A6A15BC2B814DFF00CCBB49 /* SelfSizingTableView.swift in Sources */,
 				345855842B689D9000432C06 /* QnAModel.swift in Sources */,
 				3458558A2B689E0D00432C06 /* QnAViewController.swift in Sources */,
 				345855882B689E0100432C06 /* UseViewController.swift in Sources */,
@@ -981,6 +991,7 @@
 				0A2DED1E2B551CEE00A96BAA /* RecordTopViewController.swift in Sources */,
 				0A2471212B69693400A7382B /* ToSDetailItem.swift in Sources */,
 				0AB34CC32B4F11B000150A15 /* OpenNewPageViewController.swift in Sources */,
+				0A6A15BE2B814E7200CCBB49 /* HelperDelegate.swift in Sources */,
 				61864BE22B5FFA890073C175 /* UIImageView+Extension.swift in Sources */,
 				611F145E2B471ECA00B983F1 /* CALayer+Extension.swift in Sources */,
 				0AF89DA32B74C5D500C9AD81 /* ContentWrappingTableView.swift in Sources */,
@@ -1031,6 +1042,7 @@
 				0A9E0A492B3DCAB90094595A /* SceneDelegate.swift in Sources */,
 				3458559B2B692E0C00432C06 /* CompareViewController.swift in Sources */,
 				6108CFF42B762AA400EF302F /* ReportDto.swift in Sources */,
+				0A6A15C02B8150B900CCBB49 /* CheckListResponseDto.swift in Sources */,
 				619269F42B67747F00D4DD3E /* ImjangNoteTableViewCell.swift in Sources */,
 				345855722B689A5300432C06 /* MainViewController.swift in Sources */,
 				6108CFFA2B76395B00EF302F /* JuinjangAPIManager.swift in Sources */,

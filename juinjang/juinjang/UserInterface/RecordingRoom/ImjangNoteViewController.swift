@@ -138,6 +138,14 @@ class ImjangNoteViewController: UIViewController {
                 recordingRoomVC.imjangId = imjangId
             }
         }
+        passImjangId()
+    }
+    
+    func passImjangId() {
+        let notEnteredCheckListVC = NotEnteredCheckListViewController()
+        let checkListVC = CheckListViewController()
+        notEnteredCheckListVC.imjangId = imjangId
+        checkListVC.imjangId = imjangId
     }
     
     func callRequest() {
