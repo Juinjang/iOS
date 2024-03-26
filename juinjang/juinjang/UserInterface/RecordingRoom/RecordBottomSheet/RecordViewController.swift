@@ -115,6 +115,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
            let recordingURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
            // 녹음 파일 목록에 추가
            fileURLs = recordingURLs.filter { $0.pathExtension == "m4a" } // .m4a 확장자를 가진 파일만 필터링
+           //RecordingRoomViewController().recordingFileTableView.reloadData()
        } catch {
            print("Failed to load recordings: \(error)")
        }
@@ -192,6 +193,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
         } else {
             print("Recording failed")
         }
+        
         
     }
     
@@ -293,7 +295,10 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
     
     @objc func completedButtonPressed(_ sender: UIButton) {
         audioRecorder.stop()
-        RecordingFilesViewController().recordingFileTableView.reloadData()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "HH:mm"
+       
+        //RecordingFilesViewController().recordingFileTableView.reloadData()
         endTime = Date() // 녹음 종료 시간 기록
         updateEndTimeLabel()
         let loadingVC = STTLoadingViewController()
@@ -308,6 +313,7 @@ class RecordViewController: UIViewController, AVAudioRecorderDelegate {
             
             bottomSheetViewController?.transitionToViewController(recordPlaybackVC)
         }
+        
     }
     
     

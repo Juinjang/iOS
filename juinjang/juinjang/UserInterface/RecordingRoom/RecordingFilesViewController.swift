@@ -32,7 +32,7 @@ class RecordingFilesViewController: UIViewController {
     }
     
     var fileURLs : [URL] = []
-   // var fileItems: [RecordingFileItem] = []
+    //var fileItems: [RecordingFileItem] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -73,9 +73,9 @@ class RecordingFilesViewController: UIViewController {
     }
     
     @objc func back(_ sender: Any) {
-//        let vc = ImjangNoteViewController()
-//        navigationController?.pushViewController(vc, animated: true)
-        navigationController?.popViewController(animated: true)
+        let vc = ImjangNoteViewController()
+        navigationController?.pushViewController(vc, animated: true)
+       // navigationController?.popViewController(animated: true)
     }
     
     @objc func startRecording(_ sender: Any) {
@@ -88,13 +88,6 @@ class RecordingFilesViewController: UIViewController {
     
 //    func setItemData() {
 //        fileItems.append(contentsOf: [
-//            .init(name: "녹음_001", recordedDate: Date(), recordedTime: "1:22"),
-//            .init(name: "녹음_002", recordedDate: Date(), recordedTime: "2:12"),
-//            .init(name: "녹음_003", recordedDate: Date(), recordedTime: "2:43"),
-//            .init(name: "녹음_004", recordedDate: Date(), recordedTime: "3:11"),
-//            .init(name: "녹음_005", recordedDate: Date(), recordedTime: "2:41"),
-//            .init(name: "녹음_006", recordedDate: Date(), recordedTime: "1:03"),
-//            .init(name: "녹음_007", recordedDate: Date(), recordedTime: "2:42"),
 //            .init(name: "보일러 관련", recordedDate: Date(), recordedTime: "1:30"),
 //            .init(name: "화장실 관련", recordedDate: Date(), recordedTime: "1:50"),
 //            .init(name: "인테리어 관련", recordedDate: Date(), recordedTime: "4:20"),
@@ -191,12 +184,14 @@ extension RecordingFilesViewController: UITableViewDelegate, UITableViewDataSour
         let recordingURL = fileURLs[indexPath.row]
         let playVC = PlayRecordViewController()
         playVC.bottomViewController.audioFile = fileURLs[indexPath.row]
+        playVC.bottomViewController.initPlay1()
         cell.selectionStyle = .none
-        //cell.setData(fileItem: fileItems[indexPath.row])
-//        cell.setData(fileTitle: "\(playVC.bottomViewController.titleTextField.text ?? "녹음 001")", time: "\(playVC.bottomViewController.remainingTimeLabel.text ?? "0:00")")
-        cell.recordingFileNameLabel.text = playVC.bottomViewController.titleTextField.text
+        //cell.setData(fileItem: fileURLs[indexPath.row])
+        cell.setData(fileTitle: "\(fileURLs[indexPath.row].lastPathComponent)", time: "\(playVC.bottomViewController.remainingTimeLabel.text ?? "0:00")")
+        //cell.recordingFileNameLabel.text = fileURLs[indexPath.row].lastPathComponent
         return cell
     }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // 새로운 뷰 컨트롤러를 생성하고 데이터를 전달합니다.
         let vc = BottomSheetViewController()
@@ -204,6 +199,8 @@ extension RecordingFilesViewController: UITableViewDelegate, UITableViewDataSour
         
         let playVC = PlayRecordViewController()
         playVC.bottomViewController.audioFile = fileURLs[indexPath.row]
+        playVC.bottomViewController.titleTextField.text = fileURLs[indexPath.row].lastPathComponent
+        
         vc.transitionToViewController(playVC)
         
         // 새로운 뷰 컨트롤러를 present 합니다.

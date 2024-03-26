@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-class UseViewController : UIViewController {
+class Use2ViewController : UIViewController {
    private let scrollView = UIScrollView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.isScrollEnabled = true
@@ -19,7 +19,7 @@ class UseViewController : UIViewController {
     }
     
     private let contentLabel1 = UILabel().then {
-        $0.text = "개인정보처리방침"
+        $0.text = "주인장 개인정보처리방침"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.numberOfLines = 0
         $0.textAlignment = .center
@@ -132,9 +132,9 @@ class UseViewController : UIViewController {
 //MARK: - 함수
     func designNavigationBar() {
         self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "이용약관"
+        navigationItem.title = "주인장 이용약관"
         
-        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"X"), style: .plain, target: self, action: #selector(tapCloseButton))
+        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapCloseButton))
         closeButtonItem.tintColor = UIColor(named: "300")
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 

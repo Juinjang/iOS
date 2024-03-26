@@ -19,7 +19,7 @@ class PlayViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDe
     
 
     var titleTextField = UITextField().then {
-        $0.text = "녹음_001"
+        $0.text = "\(RecordingFileViewCell().recordingFileNameLabel.text ?? "녹음파일_001")"
         $0.textAlignment = .center
         $0.textColor = UIColor(named: "lightGray")
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
@@ -109,6 +109,9 @@ class PlayViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDe
         elapsedTimeLabel.text = convertNSTimeInterval2String(audioPlayer.currentTime)
         //pvProgressPlay.progress = Float(audioPlayer.currentTime/audioPlayer.duration)
         recordingSlider.value = Float(audioPlayer.currentTime / audioPlayer.duration)
+        if recordingSlider.value == 0 {
+            recordButton.setImage(UIImage(named: "record-button"), for: .normal)
+        }
     }
     
     //정지 버튼 클릭 시 음악 재생 종료
@@ -189,7 +192,7 @@ class PlayViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDe
         if let title = newTitle {
             print("녹음 파일 제목: \(title)")
             titleTextField.text = title
-//            RecordingFileViewCell().setData(fileTitle: title, time: remainingTimeLabel.text)
+            RecordingFileViewCell().setData(fileTitle: title, time: remainingTimeLabel.text)
             
         }
     }

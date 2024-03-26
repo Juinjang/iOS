@@ -81,12 +81,13 @@ class RecordingRoomViewController: UIViewController, PassDataDelegate {
         print(Date())
         setDelegate()
         addSubView()
-        //setItemData()
+       // setItemData()
         loadRecordings()
         designViews()
         setConstraints()
         hideKeyboardWhenTappedArround()
         showTotalRecordingButton.addTarget(self, action: #selector(showRecordingFilesVC), for: .touchUpInside)
+        addRecordingButton.addTarget(self, action: #selector(addRecordingFilesVC), for: .touchUpInside)
         callFetchRequest()
         NotificationCenter.default.addObserver(self, selector: #selector(didStoppedParentScroll), name: NSNotification.Name("didStoppedParentScroll"), object: nil)
     }
@@ -193,6 +194,12 @@ class RecordingRoomViewController: UIViewController, PassDataDelegate {
         let RecordingFilesVC = RecordingFilesViewController()
         self.navigationController?.pushViewController(RecordingFilesVC, animated: true)
     }
+    @objc
+    func addRecordingFilesVC() {
+        let bottomSheetViewController = BottomSheetViewController()
+        bottomSheetViewController.modalPresentationStyle = .custom
+        self.present(bottomSheetViewController, animated: false, completion: nil)
+    }
     
     // 키보드 내리기
     func hideKeyboardWhenTappedArround() {
@@ -205,21 +212,21 @@ class RecordingRoomViewController: UIViewController, PassDataDelegate {
         view.endEditing(true)
     }
     
-    func setItemData() {
-        fileURLs.append(contentsOf: [
+//    func setItemData() {
+//        fileItems.append(contentsOf: [
 //            .init(name: "보일러 관련", recordedDate: Date(), recordedTime: "1:30"),
 //            .init(name: "녹음_002", recordedDate: Date(), recordedTime: "2:12"),
 //            .init(name: "녹음_001", recordedDate: Date(), recordedTime: "1:57"),
 //            .init(name: "으아앙", recordedDate: Date(), recordedTime: "3:10")
-        ])
-        
-        if fileURLs.isEmpty {
-            tableBackgroundView.isHidden = false
-        } else {
-            tableBackgroundView.isHidden = true
-        }
-        recordingFileTableView.reloadData()
-    }
+//        ])
+//        
+//        if fileItems.isEmpty {
+//            tableBackgroundView.isHidden = false
+//        } else {
+//            tableBackgroundView.isHidden = true
+//        }
+//        recordingFileTableView.reloadData()
+//    }
     
     func setDelegate() {
         recordingFileTableView.dataSource = self
@@ -414,6 +421,7 @@ class RecordingRoomViewController: UIViewController, PassDataDelegate {
 }
 
 extension RecordingRoomViewController: UITableViewDataSource, UITableViewDelegate {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if fileURLs.isEmpty {
             return 0
@@ -424,8 +432,18 @@ extension RecordingRoomViewController: UITableViewDataSource, UITableViewDelegat
         } else {
             return 3
         }
-        
     }
+//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//        if fileURLs.isEmpty {
+//            return 0
+//        } else if fileURLs.count == 1{
+//            return 1
+//        } else if fileURLs.count == 2{
+//            return 2
+//        } else {
+//            return 3
+//        }
+//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: RecordingFileViewCell.identifier, for: indexPath) as? RecordingFileViewCell else {
@@ -434,8 +452,10 @@ extension RecordingRoomViewController: UITableViewDataSource, UITableViewDelegat
         cell.selectionStyle = .none
         let playVC = PlayRecordViewController()
         playVC.bottomViewController.audioFile = fileURLs[indexPath.row]
+        playVC.bottomViewController.initPlay1()
+       // playVC.bottomViewController.audioFile = fileItems[indexPath.row].url
         //cell.setData(fileItem: fileItems[indexPath.row])
-        cell.setData(fileTitle: "\(playVC.bottomViewController.titleTextField.text ?? "녹음 001")", time: "\(playVC.bottomViewController.remainingTimeLabel.text ?? "0:00")")
+        cell.setData(fileTitle: "\(fileURLs[indexPath.row].lastPathComponent)", time: "\(playVC.bottomViewController.remainingTimeLabel.text ?? "0:00")")
         return cell
     }
     

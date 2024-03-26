@@ -24,7 +24,7 @@ class RecordingFileViewCell: UITableViewCell {
         $0.textColor = UIColor(named: "gray1")
     }
     
-    let recordedTimeLabel = UILabel().then {
+    var recordedTimeLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.textColor = UIColor(named: "textBlack")
         $0.textAlignment = .right
@@ -65,7 +65,7 @@ class RecordingFileViewCell: UITableViewCell {
         //self.setData(fileItem: nil)
     }
     
-    // 데이터 넣기
+    //데이터 넣기
 //    func setData(fileItem: RecordingFileItem?) {
 //        guard let fileItem = fileItem else { return }
 //        recordingFileNameLabel.text = fileItem.name
@@ -96,7 +96,7 @@ class RecordingFileViewCell: UITableViewCell {
             $0.trailing.equalTo(playButton.snp.leading).offset(-14)
             $0.centerY.equalTo(contentView)
             $0.height.equalTo(22)
-            $0.width.equalTo(34)
+            //$0.width.equalTo(34)
         }
         
         recordedDateLabel.snp.makeConstraints {

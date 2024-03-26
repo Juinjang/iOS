@@ -66,7 +66,7 @@
 		345855822B689D7200432C06 /* QnATableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855812B689D7200432C06 /* QnATableViewCell.swift */; };
 		345855842B689D9000432C06 /* QnAModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855832B689D9000432C06 /* QnAModel.swift */; };
 		345855862B689DEC00432C06 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855852B689DEC00432C06 /* SettingViewController.swift */; };
-		345855882B689E0100432C06 /* UseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855872B689E0100432C06 /* UseViewController.swift */; };
+		345855882B689E0100432C06 /* Use1ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855872B689E0100432C06 /* Use1ViewController.swift */; };
 		3458558A2B689E0D00432C06 /* QnAViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 345855892B689E0D00432C06 /* QnAViewController.swift */; };
 		3458558C2B689E1E00432C06 /* LogoutPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3458558B2B689E1E00432C06 /* LogoutPopupViewController.swift */; };
 		3458558E2B689E2D00432C06 /* AccountDeleteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3458558D2B689E2D00432C06 /* AccountDeleteViewController.swift */; };
@@ -97,9 +97,10 @@
 		346CF6AE2B70B46B00C70C7A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346CF6AD2B70B46B00C70C7A /* SplashViewController.swift */; };
 		346CF6B32B70B54B00C70C7A /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 346CF6B22B70B54B00C70C7A /* Lottie */; };
 		3485CD692B73D3A700E8B9D6 /* SignUpWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3485CD682B73D3A700E8B9D6 /* SignUpWebViewController.swift */; };
+		349E30182BAD5E3F00B59D35 /* UseSelectViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349E30172BAD5E3F00B59D35 /* UseSelectViewController.swift */; };
+		349E301A2BAEBCD900B59D35 /* Use3ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349E30192BAEBCD900B59D35 /* Use3ViewController.swift */; };
 		34AA14E92B7DA04200CF10FC /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 34AA14E82B7DA04200CF10FC /* Toast */; };
 		34AA14EB2B7DA5C700CF10FC /* Animation - 1707961785957.json in Resources */ = {isa = PBXBuildFile; fileRef = 34AA14EA2B7DA5C600CF10FC /* Animation - 1707961785957.json */; };
-		34AA14F12B8218EF00CF10FC /* Cruel Summer.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 34AA14F02B8218EE00CF10FC /* Cruel Summer.mp3 */; };
 		34AA14F52B82E46300CF10FC /* PlayRecordViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AA14F42B82E46300CF10FC /* PlayRecordViewController.swift */; };
 		34AA14F72B82E98C00CF10FC /* PlayViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34AA14F62B82E98C00CF10FC /* PlayViewController.swift */; };
 		6108CFDF2B761AA300EF302F /* JuinjangAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6108CFDE2B761AA300EF302F /* JuinjangAPI.swift */; };
@@ -233,7 +234,7 @@
 		345855812B689D7200432C06 /* QnATableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QnATableViewCell.swift; sourceTree = "<group>"; };
 		345855832B689D9000432C06 /* QnAModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QnAModel.swift; sourceTree = "<group>"; };
 		345855852B689DEC00432C06 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
-		345855872B689E0100432C06 /* UseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseViewController.swift; sourceTree = "<group>"; };
+		345855872B689E0100432C06 /* Use1ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Use1ViewController.swift; sourceTree = "<group>"; };
 		345855892B689E0D00432C06 /* QnAViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QnAViewController.swift; sourceTree = "<group>"; };
 		3458558B2B689E1E00432C06 /* LogoutPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutPopupViewController.swift; sourceTree = "<group>"; };
 		3458558D2B689E2D00432C06 /* AccountDeleteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountDeleteViewController.swift; sourceTree = "<group>"; };
@@ -250,8 +251,9 @@
 		345855DA2B6B8D5000432C06 /* CompareSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompareSearchViewController.swift; sourceTree = "<group>"; };
 		346CF6AD2B70B46B00C70C7A /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; wrapsLines = 0; };
 		3485CD682B73D3A700E8B9D6 /* SignUpWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpWebViewController.swift; sourceTree = "<group>"; };
+		349E30172BAD5E3F00B59D35 /* UseSelectViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UseSelectViewController.swift; sourceTree = "<group>"; };
+		349E30192BAEBCD900B59D35 /* Use3ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Use3ViewController.swift; sourceTree = "<group>"; };
 		34AA14EA2B7DA5C600CF10FC /* Animation - 1707961785957.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "Animation - 1707961785957.json"; sourceTree = "<group>"; };
-		34AA14F02B8218EE00CF10FC /* Cruel Summer.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = "Cruel Summer.mp3"; sourceTree = "<group>"; };
 		34AA14F42B82E46300CF10FC /* PlayRecordViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayRecordViewController.swift; sourceTree = "<group>"; };
 		34AA14F62B82E98C00CF10FC /* PlayViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayViewController.swift; sourceTree = "<group>"; };
 		6108CFDE2B761AA300EF302F /* JuinjangAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JuinjangAPI.swift; sourceTree = "<group>"; };
@@ -462,7 +464,6 @@
 				34AA14F42B82E46300CF10FC /* PlayRecordViewController.swift */,
 				34AA14F62B82E98C00CF10FC /* PlayViewController.swift */,
 				34AA14EA2B7DA5C600CF10FC /* Animation - 1707961785957.json */,
-				34AA14F02B8218EE00CF10FC /* Cruel Summer.mp3 */,
 				0A2DED212B55433900A96BAA /* RecordPlayback */,
 			);
 			path = RecordBottomSheet;
@@ -566,7 +567,9 @@
 			isa = PBXGroup;
 			children = (
 				345855852B689DEC00432C06 /* SettingViewController.swift */,
-				345855872B689E0100432C06 /* UseViewController.swift */,
+				349E30172BAD5E3F00B59D35 /* UseSelectViewController.swift */,
+				345855872B689E0100432C06 /* Use1ViewController.swift */,
+				349E30192BAEBCD900B59D35 /* Use3ViewController.swift */,
 				345855892B689E0D00432C06 /* QnAViewController.swift */,
 				3458558B2B689E1E00432C06 /* LogoutPopupViewController.swift */,
 				3458558D2B689E2D00432C06 /* AccountDeleteViewController.swift */,
@@ -935,7 +938,6 @@
 				0A1C8F312B7A0DF1006B6B2B /* omyu pretty.ttf in Resources */,
 				61A7B92E2B4C4EC300795B49 /* Pretendard-ExtraBold.otf in Resources */,
 				61A7B9262B4C4EC300795B49 /* Pretendard-Regular.otf in Resources */,
-				34AA14F12B8218EF00CF10FC /* Cruel Summer.mp3 in Resources */,
 				61A7B9292B4C4EC300795B49 /* Pretendard-Thin.otf in Resources */,
 				61A7B92A2B4C4EC300795B49 /* Pretendard-Medium.otf in Resources */,
 				61A7B92C2B4C4EC300795B49 /* Pretendard-Black.otf in Resources */,
@@ -960,7 +962,7 @@
 				61B0C9D22B6C0B0000BE86D2 /* ImjangImageListViewController.swift in Sources */,
 				345855842B689D9000432C06 /* QnAModel.swift in Sources */,
 				3458558A2B689E0D00432C06 /* QnAViewController.swift in Sources */,
-				345855882B689E0100432C06 /* UseViewController.swift in Sources */,
+				345855882B689E0100432C06 /* Use1ViewController.swift in Sources */,
 				619269E02B67742B00D4DD3E /* Filter.swift in Sources */,
 				616408E12B405B7200EC3B5E /* ImjangNoteViewController.swift in Sources */,
 				6108D0012B78A83B00EF302F /* String+Extension.swift in Sources */,
@@ -1023,6 +1025,8 @@
 				61864BEF2B600E920073C175 /* ImjangNote.swift in Sources */,
 				0A73E60D2B5855CD00EF1C89 /* UserInfo.swift in Sources */,
 				345855802B689D4C00432C06 /* LogoutPopupView.swift in Sources */,
+				349E301A2BAEBCD900B59D35 /* Use3ViewController.swift in Sources */,
+				349E30182BAD5E3F00B59D35 /* UseSelectViewController.swift in Sources */,
 				619269D82B6773FE00D4DD3E /* ImjangSearchViewController.swift in Sources */,
 				6108CFEC2B76233200EF302F /* PostResponseDto.swift in Sources */,
 				61D925052B486508002A16B4 /* RecordingFileViewCell.swift in Sources */,

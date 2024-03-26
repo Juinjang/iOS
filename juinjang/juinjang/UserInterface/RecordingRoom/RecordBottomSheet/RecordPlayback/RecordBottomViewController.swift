@@ -22,7 +22,7 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
     
 
     lazy var titleTextField = UITextField().then {
-        $0.text = "녹음_001"
+        $0.text = "\(RecordingFileViewCell().recordingFileNameLabel.text ?? "녹음파일_001")"
         $0.textAlignment = .center
         $0.textColor = UIColor(named: "lightGray")
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
@@ -142,6 +142,9 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
         elapsedTimeLabel.text = convertNSTimeInterval2String(audioPlayer.currentTime)
         //pvProgressPlay.progress = Float(audioPlayer.currentTime/audioPlayer.duration)
         recordingSlider.value = Float(audioPlayer.currentTime / audioPlayer.duration)
+        if recordingSlider.value == 0 {
+            recordButton.setImage(UIImage(named: "record-button"), for: .normal)
+        }
     }
     
     //정지 버튼 클릭 시 음악 재생 종료
