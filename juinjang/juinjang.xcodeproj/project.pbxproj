@@ -96,9 +96,7 @@
 		346CF6AE2B70B46B00C70C7A /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 346CF6AD2B70B46B00C70C7A /* SplashViewController.swift */; };
 		346CF6B32B70B54B00C70C7A /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = 346CF6B22B70B54B00C70C7A /* Lottie */; };
 		3485CD692B73D3A700E8B9D6 /* SignUpWebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3485CD682B73D3A700E8B9D6 /* SignUpWebViewController.swift */; };
-		34AA14D72B7C911300CF10FC /* splash.mp4.lottie.json in Resources */ = {isa = PBXBuildFile; fileRef = 34AA14D62B7C911300CF10FC /* splash.mp4.lottie.json */; };
 		34AA14D92B7C948400CF10FC /* 1_ezgif.com_crop.json in Resources */ = {isa = PBXBuildFile; fileRef = 34AA14D82B7C948400CF10FC /* 1_ezgif.com_crop.json */; };
-		34AA14DB2B7CA45B00CF10FC /* 1-ezgif.com-gif-to-mp4-converter.mp4.lottie.json in Resources */ = {isa = PBXBuildFile; fileRef = 34AA14DA2B7CA45B00CF10FC /* 1-ezgif.com-gif-to-mp4-converter.mp4.lottie.json */; };
 		34AA14E92B7DA04200CF10FC /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 34AA14E82B7DA04200CF10FC /* Toast */; };
 		34AA14EB2B7DA5C700CF10FC /* Animation - 1707961785957.json in Resources */ = {isa = PBXBuildFile; fileRef = 34AA14EA2B7DA5C600CF10FC /* Animation - 1707961785957.json */; };
 		6108CFDF2B761AA300EF302F /* JuinjangAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6108CFDE2B761AA300EF302F /* JuinjangAPI.swift */; };
@@ -123,7 +121,6 @@
 		611F14552B47070B00B983F1 /* RecordingSegmentedViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F14542B47070B00B983F1 /* RecordingSegmentedViewController.swift */; };
 		611F145A2B4707CC00B983F1 /* RecordingRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */; };
 		611F145E2B471ECA00B983F1 /* CALayer+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611F145D2B471ECA00B983F1 /* CALayer+Extension.swift */; };
-		614649642B7CFFC400DA894C /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = 614649632B7CFFC400DA894C /* Toast */; };
 		616408E12B405B7200EC3B5E /* ImjangNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616408E02B405B7200EC3B5E /* ImjangNoteViewController.swift */; };
 		616408EC2B407A2D00EC3B5E /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616408EB2B407A2D00EC3B5E /* UIView+Extension.swift */; };
 		616409022B407FB300EC3B5E /* UIFont+Pretendard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 616409012B407FB300EC3B5E /* UIFont+Pretendard.swift */; };
@@ -270,7 +267,6 @@
 		611F14542B47070B00B983F1 /* RecordingSegmentedViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingSegmentedViewController.swift; sourceTree = "<group>"; };
 		611F14592B4707CC00B983F1 /* RecordingRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingRoomViewController.swift; sourceTree = "<group>"; };
 		611F145D2B471ECA00B983F1 /* CALayer+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extension.swift"; sourceTree = "<group>"; };
-		614649652B7D16DB00DA894C /* HoustAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = HoustAnimation.json; sourceTree = "<group>"; };
 		616408E02B405B7200EC3B5E /* ImjangNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImjangNoteViewController.swift; sourceTree = "<group>"; };
 		616408EB2B407A2D00EC3B5E /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		616409012B407FB300EC3B5E /* UIFont+Pretendard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Pretendard.swift"; sourceTree = "<group>"; };
@@ -615,7 +611,6 @@
 		346CF6AC2B70B41F00C70C7A /* Splash */ = {
 			isa = PBXGroup;
 			children = (
-				614649652B7D16DB00DA894C /* HoustAnimation.json */,
 				34AA14D82B7C948400CF10FC /* 1_ezgif.com_crop.json */,
 				34AA14D62B7C911300CF10FC /* splash.mp4.lottie.json */,
 				34AA14DA2B7CA45B00CF10FC /* 1-ezgif.com-gif-to-mp4-converter.mp4.lottie.json */,
@@ -918,7 +913,6 @@
 				0A9E0A532B3DCAB90094595A /* LaunchScreen.storyboard in Resources */,
 				611757382B67D5E60043E958 /* Assets.xcassets in Resources */,
 				34AA14D92B7C948400CF10FC /* 1_ezgif.com_crop.json in Resources */,
-				614649662B7D16DB00DA894C /* HoustAnimation.json in Resources */,
 				61A7B92B2B4C4EC300795B49 /* Pretendard-Light.otf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
