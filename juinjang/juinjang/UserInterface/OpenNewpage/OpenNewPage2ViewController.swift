@@ -434,8 +434,8 @@ class OpenNewPage2ViewController: UIViewController, WarningMessageDelegate {
         
         // 별명 설명 Label
         explanationLabel.snp.makeConstraints {
-            $0.leading.equalTo(houseNicknameLabel.snp.trailing).offset(1)
-            $0.bottom.equalTo(houseNicknameTextField.snp.top).offset(-14)
+            $0.leading.equalTo(view.snp.leading).offset(82)
+            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(44)
         }
         
         // 집 별명 TextField
@@ -504,7 +504,7 @@ class OpenNewPage2ViewController: UIViewController, WarningMessageDelegate {
         let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.isEmpty ?? true
         
         // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = (!addressTextFieldEmpty || !addressDetailTextFieldFieldEmpty) && !houseNicknameTextFieldEmpty
+        let allTextFieldsFilled = (!addressTextFieldEmpty && !houseNicknameTextFieldEmpty) || (!addressTextFieldEmpty && !addressDetailTextFieldFieldEmpty && !houseNicknameTextFieldEmpty)
         
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
         if allTextFieldsFilled {

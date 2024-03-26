@@ -9,30 +9,34 @@ import Foundation
 
 extension String {
     // 숫자를 가격으로 바꾸기
+    
     func formatToKoreanCurrencyWithZero() -> String {
         guard let price = Int(self) else { return self }
-        let billion = price / 100_000_000 // 억 단위
-        let million = (price % 100_000_000) / 10_000 // 만 단위
-        let remainder = price % 10_000 // 원 단위
-
-        var parts: [String] = []
-
-        if billion > 0 {
-            parts.append("\(billion)억")
+        // 숫자를 한국 원(KRW) 단위로 변환합니다.
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal // 세자리마다 콤마를 찍어주는 스타일
+        formatter.locale = Locale(identifier: "ko_KR") // 한국어 로케일 설정
+        
+        // 단위 배열
+        let units = ["", "만", "억", "조", "경"]
+        var formattedString = ""
+        var value = price
+        
+        // 단위별로 숫자를 나누어 변환합니다.
+        for unit in units {
+            let rem = value % 10000
+            if rem > 0 {
+                if let formattedRem = formatter.string(from: NSNumber(value: rem)) {
+                    formattedString = formattedRem + unit + " " + formattedString
+                }
+            }
+            value /= 10000
+            if value == 0 {
+                break
+            }
         }
-        if million > 0 || (billion > 0 && million == 0) {
-            // "억" 단위가 있고 "만" 단위가 0일 경우 "0만"을 추가
-            parts.append("\(million)천만")
-        }
-        if remainder > 0 || (parts.isEmpty && remainder == 0) {
-            // "억" 또는 "만" 단위가 없고 "원" 단위만 있는 경우 또는 전부 0인 경우
-            parts.append("\(remainder)원")
-        } else if !parts.isEmpty && remainder == 0 {
-            // "억" 또는 "만" 단위가 있고 "원" 단위가 0일 경우 "원"만 추가
-            parts.append("원")
-        }
-
-        return parts.joined(separator: " ")
+        
+        return formattedString.trimmingCharacters(in: .whitespaces) + "원"
     }
     
     static func dateToString(target: String) -> String {

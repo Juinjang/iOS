@@ -19,7 +19,7 @@ class RecordTopViewController: UIViewController {
         $0.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
     }
     
-    lazy var titleLabel = UILabel().then {
+    var titleLabel = UILabel().then {
         $0.text = "녹음_001"
         $0.textAlignment = .center
         $0.textColor = UIColor(named: "textWhite")
@@ -79,7 +79,7 @@ class RecordTopViewController: UIViewController {
         }
         
         titleLabel.snp.makeConstraints {
-            $0.trailing.equalTo(cancelButton.snp.leading).offset(-125)
+            $0.centerX.equalTo(view.snp.centerX)
             $0.top.equalTo(view.snp.top).offset(24)
         }
         

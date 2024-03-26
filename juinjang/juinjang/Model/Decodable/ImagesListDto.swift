@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct ImagesListDto: Decodable {
+struct ImagesListDto: Codable {
     let images: [ImageDto]
 }
 
-struct ImageDto: Decodable {
+struct ImageDto: Codable {
     let imageId: Int
     let imageUrl: String
 }

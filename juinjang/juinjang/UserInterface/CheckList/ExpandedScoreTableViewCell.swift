@@ -17,6 +17,7 @@ class ExpandedScoreTableViewCell: UITableViewCell {
     var score: String? // 선택된 버튼의 값을 저장할 변수
     var scoreItems: [String: (score: String?, isSelected: Bool)] = [:]
     weak var delegate: ExpandedScoreCellDelegate?
+    var categories: [CheckListResponseDto]!
     
     // 선택된 점수를 외부로 전달하는 콜백 클로저
     var selectionHandler: ((String) -> Void)?
@@ -187,31 +188,6 @@ class ExpandedScoreTableViewCell: UITableViewCell {
         }
     }
     
-    func configure(with data: ScoreItem, at indexPath: IndexPath) {
-        // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
-        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
-        let content = currentItem.content
-        contentLabel.text = content
-
-        // 선택된 날짜가 있으면 표시
-        if let storedData = scoreItems[content] {
-            score = storedData.score
-
-            for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
-                if String(button.tag) == score {
-                    button.isSelected = true
-                    button.setImage(UIImage(named: "checked-button"), for: .normal)
-                } else {
-                    button.isSelected = false
-                    button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
-                }
-            }
-        } else {
-            // 선택된 날짜가 없으면 표시 초기화
-            score = nil
-        }
-    }
-    
     override func prepareForReuse() {
         super.prepareForReuse()
         // 버튼 초기화
@@ -236,6 +212,29 @@ class ExpandedScoreTableViewCell: UITableViewCell {
                 print("\(content): \(score)")
             }
             saveSelectedScore()
+        }
+    }
+    
+    func configure(with questionDto: QuestionDto, at indexPath: IndexPath) {
+        let content = questionDto.question
+        contentLabel.text = content
+        
+        // 선택된 날짜가 있으면 표시
+        if let storedData = scoreItems[content] {
+            score = storedData.score
+
+            for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
+                if String(button.tag) == score {
+                    button.isSelected = true
+                    button.setImage(UIImage(named: "checked-button"), for: .normal)
+                } else {
+                    button.isSelected = false
+                    button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
+                }
+            }
+        } else {
+            // 선택된 날짜가 없으면 표시 초기화
+            score = nil
         }
     }
 }

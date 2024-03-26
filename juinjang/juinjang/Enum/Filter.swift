@@ -10,13 +10,21 @@ import Foundation
 enum Filter: Int, CaseIterable {
     case update
     case star
-    case registration
+    case created
     
     var title: String {
         switch self {
         case .update: return "업데이트순"
         case .star: return "별점순"
-        case .registration: return "등록순"
+        case .created: return "등록순"
+        }
+    }
+    
+    var sortValue: String {
+        switch self {
+        case .update: return "UPDATED"
+        case .star: return "STAR"
+        case .created: return "CREATED"
         }
     }
 }

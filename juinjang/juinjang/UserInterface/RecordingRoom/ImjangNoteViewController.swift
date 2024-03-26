@@ -10,8 +10,11 @@ import SnapKit
 import Then
 import Kingfisher
 
-class ImjangNoteViewController: UIViewController {
+class ImjangNoteViewController: UIViewController{
+    
     var version: VersionInfo?
+    var isEditMode: Bool = false // 수정 모드 여부
+    
     // 스크롤뷰
     let scrollView = UIScrollView().then {
         $0.backgroundColor = .white
@@ -104,12 +107,13 @@ class ImjangNoteViewController: UIViewController {
     }
     
     let recordingSegmentedVC = RecordingSegmentedViewController()
+    let checkListVC = CheckListViewController()
     
     var roomName: String = "판교푸르지오월드마크"
     var roomPriceString: String = "30억 1천만원"
     var roomAddress: String = "경기도 성남시 분당구 삼평동 741"
     var mDateString: String = "23.12.01"
-    var passDataDelegate: PassDataDelegate?
+    var completionHandler: (() -> Void)?
     
 //    lazy var images: [UIImage?] = [UIImage(named: "1"), UIImage(named: "2"), UIImage(named: "3")]
     lazy var images: [String] = []
@@ -130,11 +134,14 @@ class ImjangNoteViewController: UIViewController {
 //        setUpImageUI()
         upButton.addTarget(self, action: #selector(upToTop), for: .touchUpInside)
         setReportStackViewClick()
-        setImageStackViewClick()
+//        setImageStackViewClick()
         NotificationCenter.default.addObserver(self, selector: #selector(didStoppedChildScroll), name: NSNotification.Name("didStoppedChildScroll"), object: nil)
         recordingSegmentedVC.imjangNoteViewController = self
         if let imjangId = imjangId {
-            if let recordingRoomVC = recordingSegmentedVC.viewControllers[1] as? RecordingRoomViewController {
+            if let checkListVC = recordingSegmentedVC.viewControllers[0] as?
+                CheckListViewController {
+                    checkListVC.imjangId = imjangId
+            } else if let recordingRoomVC = recordingSegmentedVC.viewControllers[1] as? RecordingRoomViewController {
                 recordingRoomVC.imjangId = imjangId
             }
         }
@@ -165,7 +172,6 @@ class ImjangNoteViewController: UIViewController {
     }
     
     func setData(detailDto: DetailDto) {
-        print(#function)
         self.navigationItem.title = detailDto.nickname
         roomNameLabel.text = detailDto.nickname
         setPriceLabel(priceList: detailDto.priceList)
@@ -215,26 +221,43 @@ class ImjangNoteViewController: UIViewController {
     
     @objc func showReportVC() {
         // 현재 ViewController를 검사해서 미입력 상태라면
-        if let currentVC = recordingSegmentedVC.currentViewController,
-           currentVC.isKind(of: NotEnteredCheckListViewController.self) {
-            // 팝업창이 뜸
-            let reportPopupVC = ReportPopupViewController()
-            reportPopupVC.modalPresentationStyle = .overCurrentContext
-            present(reportPopupVC, animated: false, completion: nil)
-        } else {
-            // 아니라면 ReportViewController로 이동
-            let reportVC = ReportViewController()
-            navigationController?.pushViewController(reportVC, animated: true)
+        if let currentVC = recordingSegmentedVC.currentViewController as? CheckListViewController {
+            // 모든 문항이 값이 null인지 확인
+            let allItemsAreNull = currentVC.categories.allSatisfy { category in
+                return category.questionDtos.allSatisfy { questionDto in
+                    return questionDto.answer == nil
+                }
+            }
+            if allItemsAreNull {
+                // 팝업창이 뜸
+                let reportPopupVC = ReportPopupViewController()
+                reportPopupVC.modalPresentationStyle = .overCurrentContext
+                present(reportPopupVC, animated: false, completion: nil)
+            } else {
+                // 아니라면 ReportViewController로 이동
+                let reportVC = ReportViewController()
+                navigationController?.pushViewController(reportVC, animated: true)
+            }
         }
     }
     
     // 방 사진 클릭했을 때 - showImjangImageListVC. 호출
-    func setImageStackViewClick() {
-        stackView.isUserInteractionEnabled = true
-        noImageBackgroundView.isUserInteractionEnabled = true
+    func setImageStackViewClick(isEmpty: Bool) {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showImjangImageListVC))
-        stackView.addGestureRecognizer(tapGesture)
-        noImageBackgroundView.addGestureRecognizer(tapGesture)
+        if isEmpty {
+            noImageBackgroundView.addGestureRecognizer(tapGesture)
+        } else {
+            stackView.addGestureRecognizer(tapGesture)
+        }
+    }
+    
+    func setUserInteraction(isEmpty: Bool) {
+        stackView.isUserInteractionEnabled = isEmpty ? false : true
+        vStackView.isUserInteractionEnabled = isEmpty ? false : true
+        firstImage.isUserInteractionEnabled = isEmpty ? false : true
+        secondImage.isUserInteractionEnabled = isEmpty ? false : true
+        thirdImage.isUserInteractionEnabled = isEmpty ? false : true
+        noImageBackgroundView.isUserInteractionEnabled = isEmpty ? true : false
     }
     
     // 이미지 리스트 화면으로 이동
@@ -242,6 +265,10 @@ class ImjangNoteViewController: UIViewController {
         guard let imjangId = imjangId else { return }
         let imjangImageListVC = ImjangImageListViewController()
         imjangImageListVC.imjangId = imjangId
+        imjangImageListVC.completionHandler = { imageStrings in
+            self.images = imageStrings
+            self.setUpImageUI()
+        }
         navigationController?.pushViewController(imjangImageListVC, animated: true)
     }
     
@@ -270,7 +297,6 @@ class ImjangNoteViewController: UIViewController {
        
         // UIBarButtonItem 생성 및 이미지 설정
         let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        
         let editButtonItem = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(editView))
         backButtonItem.tintColor = ColorStyle.textGray
         editButtonItem.tintColor = ColorStyle.textGray
@@ -288,7 +314,8 @@ class ImjangNoteViewController: UIViewController {
             let nav = UINavigationController(rootViewController: mainVC)
             nav.modalPresentationStyle = .fullScreen
             present(nav, animated: true)
-        case .imjangList:
+        case .imjangList, .main:
+            completionHandler?()
             navigationController?.popViewController(animated: true)
         }
     }
@@ -343,8 +370,6 @@ class ImjangNoteViewController: UIViewController {
     
     // 뷰들 디자인
     func designViews() {
-        print(#function)
-        
         upButton.alpha = 0
         designImageView(maximizeImageView, image: UIImage(named: "maximize"), contentMode: .scaleAspectFit)
         
@@ -431,11 +456,18 @@ class ImjangNoteViewController: UIViewController {
     // 이미지 개수에 따라 stackView 설정
     func setUpImageUI() {
         noImageBackgroundView.isHidden = true
+        stackView.isHidden = false
+        maximizeImageView.isHidden = false
+        setUserInteraction(isEmpty: false)
+        setImageStackViewClick(isEmpty: false)
         let imageCount = images.count
-        print("이미지 개수\(imageCount)")
         switch imageCount {
         case 0:
             noImageBackgroundView.isHidden = false
+            stackView.isHidden = true
+            maximizeImageView.isHidden = true
+            setUserInteraction(isEmpty: true)
+            setImageStackViewClick(isEmpty: true)
         case 1:
             setImage1()
         case 2:
@@ -445,23 +477,15 @@ class ImjangNoteViewController: UIViewController {
         default:
             print("오류")
         }
-
     }
     
     func setImage1() {
-        [firstImage].forEach { stackView.addArrangedSubview($0)}
-        firstImage.addSubview(maximizeImageView)
         let imageWidth = view.frame.width - (24*2)
+        stackView.spacing = 0
         
-        firstImage.snp.makeConstraints {
+        firstImage.snp.remakeConstraints {
             $0.width.equalTo(imageWidth)
             $0.height.equalTo(firstImage.snp.width).multipliedBy(171.0 / 342.0)
-        }
-        
-        maximizeImageView.snp.makeConstraints {
-            $0.bottom.equalTo(firstImage.snp.bottom).offset(-12)
-            $0.trailing.equalTo(firstImage.snp.trailing).offset(-12)
-            $0.width.height.equalTo(24)
         }
         
         if let image = images.first, let url = URL(string: image) {
@@ -471,23 +495,17 @@ class ImjangNoteViewController: UIViewController {
     
     func setImage2() {
 //        let imagesWidth = view.frame.width - (24*2) - 8
-        [firstImage, secondImage].forEach { stackView.addArrangedSubview($0)}
-        secondImage.addSubview(maximizeImageView)
+        stackView.spacing = 8
+        vStackView.spacing = 0
         
-        firstImage.snp.makeConstraints {
+        firstImage.snp.remakeConstraints {
             $0.height.equalTo(firstImage.snp.width).multipliedBy(171.0 / 225.0)
         }
         
-        secondImage.snp.makeConstraints {
+        secondImage.snp.remakeConstraints {
             $0.height.equalTo(secondImage.snp.width).multipliedBy(171.0 / 109.0)
         }
-        
-        maximizeImageView.snp.makeConstraints {
-            $0.bottom.equalTo(secondImage.snp.bottom).offset(-12)
-            $0.trailing.equalTo(secondImage.snp.trailing).offset(-12)
-            $0.width.height.equalTo(24)
-        }
-
+     
         if let image1 = images.first, let url1 = URL(string: image1) {
             firstImage.kf.setImage(with: url1, placeholder: UIImage(named: "1"))
         }
@@ -498,36 +516,19 @@ class ImjangNoteViewController: UIViewController {
     }
     
     func setImage3() {
-//        let images = [firstImage, secondImage, thirdImage]
-//        let imagesWidth = view.frame.width - (24 * 2)
-        
-        [firstImage,vStackView].forEach {
-            stackView.addArrangedSubview($0)
-        }
-        
-        [secondImage, thirdImage].forEach {
-            vStackView.addArrangedSubview($0)
-        }
-        
-        thirdImage.addSubview(maximizeImageView)
-        
-        firstImage.snp.makeConstraints {
+        stackView.spacing = 8
+        vStackView.spacing = 8
+
+        firstImage.snp.remakeConstraints {
             $0.height.equalTo(firstImage.snp.width).multipliedBy(171.0 / 225.0)
         }
-//        let vstackHeight = images[0].frame.height - 8
         
-        secondImage.snp.makeConstraints {
+        secondImage.snp.remakeConstraints {
             $0.height.equalTo(secondImage.snp.width).multipliedBy(89.0 / 109.0)
         }
         
-        thirdImage.snp.makeConstraints {
+        thirdImage.snp.remakeConstraints {
             $0.height.equalTo(thirdImage.snp.width).multipliedBy(74.0 / 109.0)
-        }
-        
-        maximizeImageView.snp.makeConstraints {
-            $0.bottom.equalTo(thirdImage.snp.bottom).offset(-12)
-            $0.trailing.equalTo(thirdImage.snp.trailing).offset(-12)
-            $0.width.height.equalTo(24)
         }
         
         if let image1 = images.first, let url1 = URL(string: image1) {
@@ -569,6 +570,20 @@ class ImjangNoteViewController: UIViewController {
             topView = noImageBackgroundView
         } else {
             topView = stackView
+        }
+        
+        [firstImage,vStackView].forEach {
+            stackView.addArrangedSubview($0)
+        }
+        
+        [secondImage, thirdImage].forEach {
+            vStackView.addArrangedSubview($0)
+        }
+   
+        stackView.addSubview(maximizeImageView)
+        maximizeImageView.snp.makeConstraints {
+            $0.bottom.trailing.equalTo(stackView).inset(12)
+            $0.width.height.equalTo(24)
         }
         
         upButton.snp.makeConstraints {
@@ -723,15 +738,16 @@ class ImjangNoteViewController: UIViewController {
     // 수정 버튼 클릭
     @objc func editButtonTapped(_ sender: UIButton) {
         sender.isSelected.toggle()
+        isEditMode.toggle()
         if sender.isSelected {
             editButton.setImage(UIImage(named: "completed-button"), for: .normal)
-            NotificationCenter.default.post(name: NSNotification.Name("EditButtonToggled"), object: sender.isSelected)
         } else {
             editButton.setImage(UIImage(named: "edit-button"), for: .normal)
-            NotificationCenter.default.post(name: NSNotification.Name("EditButtonToggled"), object: sender.isSelected)
+            NotificationCenter.default.post(name: NSNotification.Name("EditButtonTapped"), object: nil)
             let reportVC = ReportViewController()
             self.navigationController?.pushViewController(reportVC, animated: true)
         }
+        NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: nil, userInfo: ["isEditMode": isEditMode])
     }
 }
 
@@ -747,7 +763,7 @@ extension ImjangNoteViewController: UIScrollViewDelegate {
         if (scrollView.contentOffset.y > 0) && (scrollView.contentOffset.y > containerY - 10){
             DispatchQueue.main.async {
                 scrollView.isScrollEnabled = false
-                UIView.animate(withDuration: 0.1) {
+                UIView.animate(withDuration: 0.05) {
                     scrollView.contentOffset.y = containerY
                 }
             }
@@ -765,4 +781,3 @@ extension ImjangNoteViewController: UIScrollViewDelegate {
         }
     }
 }
-

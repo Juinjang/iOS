@@ -10,4 +10,5 @@ import Foundation
 enum PreviousVCType {
     case createImjangVC
     case imjangList
+    case main
 }

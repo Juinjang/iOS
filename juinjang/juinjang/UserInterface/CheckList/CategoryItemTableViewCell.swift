@@ -9,7 +9,8 @@ import UIKit
 
 class CategoryItemTableViewCell: UITableViewCell {
     
-    var itemCategory: [Category] = []
+    var categories: [Category]?
+    var categoryItemList = CategoryItem.allCases
     
     let categoryImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
@@ -63,7 +64,7 @@ class CategoryItemTableViewCell: UITableViewCell {
         categoryLabel.snp.makeConstraints {
             $0.leading.equalTo(categoryImage.snp.trailing).offset(8)
             $0.centerY.equalToSuperview()
-            $0.height.height.equalTo(24)
+            $0.height.equalTo(24)
         }
         
         expandButton.snp.makeConstraints {
@@ -71,6 +72,37 @@ class CategoryItemTableViewCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.height.equalTo(22)
             $0.width.equalTo(22)
+        }
+    }
+    
+    func configure(checkListResponseDto: CheckListResponseDto) {
+        let categoryId = checkListResponseDto.category
+        categoryImage.image = categoryItemList[categoryId].image
+        categoryLabel.text = categoryItemList[categoryId].title
+    }
+}
+
+enum CategoryItem: Int, CaseIterable {
+    case deadline           // 기한
+    case locationConditions // 입지여건
+    case commonSpace        // 공용공간
+    case indoor             // 실내
+    
+    var title: String {
+        switch self {
+        case .deadline: return "기한"
+        case .locationConditions: return "입지여건"
+        case .commonSpace: return "공용공간"
+        case .indoor: return "실내"
+        }
+    }
+    
+    var image: UIImage {
+        switch self {
+        case .deadline: return UIImage(named: "deadline-item")!
+        case .locationConditions: return UIImage(named: "location-conditions-item")!
+        case .commonSpace: return UIImage(named: "public-space-item")!
+        case .indoor: return UIImage(named: "indoor-item")!
         }
     }
 }

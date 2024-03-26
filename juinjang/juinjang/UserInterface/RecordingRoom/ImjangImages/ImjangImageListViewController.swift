@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import PhotosUI
+import Kingfisher
 
 class ImjangImageListViewController: UIViewController {
     let noImageBackgroundView = UIView()
@@ -18,12 +19,16 @@ class ImjangImageListViewController: UIViewController {
     let imagePicker = UIImagePickerController()
     
     lazy var imageCollectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewFlowLayout())
-    var imageList: [String] = ["1", "2", "3"]  // 일단 String 배열
-    var imageArr: [UIImage?] = []
+    var imageList: [ImageDto] = [] {
+        didSet {
+            checkImage()
+        }
+    }// 일단 String 배열
     
     var isLongTap: Bool = false
     var selectedIndexs: Set<Int> = []
     var imjangId: Int? = nil
+    var completionHandler: (([String]) -> Void)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,48 +36,82 @@ class ImjangImageListViewController: UIViewController {
         checkImage()
         configureCollectionView()
         configureHierarchy()
-        imagePicker.delegate = self
         configureLayout()
         configureView()
+        callFetchImageRequest()
+    }
+    
+    // 이미지 전체 조회 요청
+    func callFetchImageRequest() {
+        guard let imjangId = imjangId else { return }
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<ImagesListDto>.self, api: .fetchImage(imjangId: imjangId)) { response, error in
+            if error == nil {
+                guard let response = response else { return }
+                guard let imagesListDto = response.result else { return }
+                self.imageList = imagesListDto.images
+            } else {
+                guard let error else { return }
+                switch error {
+                case .failedRequest:
+                    print("failedRequest")
+                case .noData:
+                    print("noData")
+                case .invalidResponse:
+                    print("invalidResponse")
+                case .invalidData:
+                    print("invalidData")
+                }
+            }
+        }
+    }
+    
+    // 추가된 이미지 등록 요청
+    func callAddImageRequest(images: [UIImage]) {
+        guard let imjangId = imjangId else { return }
+        JuinjangAPIManager.shared.uploadImages(imjangId: imjangId, images: images, api: .addImage) { result in
+            self.callFetchImageRequest()    // 이미지가 추가됐으니 다시 전체 이미지를 조회하자
+        }
     }
     
     @objc func popView() {
+        let imageDtos = imageList.prefix(3)
+        var imageStrings: [String] = []
+        for image in imageDtos {
+            imageStrings.append(image.imageUrl)
+        }
+        completionHandler?(imageStrings)
         navigationController?.popViewController(animated: true)
     }
     
     @objc func addImage() { // + 버튼 눌렀을 때 -> 이미지 추가
         var configuration = PHPickerConfiguration()
         configuration.selectionLimit = 5
-        configuration.filter = .any(of: [.images])
+        configuration.filter = .images
         
         let picker = PHPickerViewController(configuration: configuration)
         picker.delegate = self
         self.present(picker, animated: true, completion: nil)
-//        let alert =  UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-//        let library =  UIAlertAction(title: "앨범에서 가져오기", style: .default) { (action) in self.openLibrary() }
-//        let camera =  UIAlertAction(title: "카메라", style: .default) { (action) in self.openCamera() }
-//        let cancel = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-//        alert.addAction(library)
-//        alert.addAction(camera)
-//        alert.addAction(cancel)
-//        present(alert, animated: true, completion: nil)
     }
     
     func checkImage() {
         if imageList.isEmpty {
+            print("비었냐?")
             setEmptyLayout(true)
         } else {
+            print("안비었는뎅...")
             setEmptyLayout(false)
+            DispatchQueue.main.async {
+                self.isLongTap = false
+                self.imageCollectionView.reloadData()
+                print(self.selectedIndexs)
+            }
         }
     }
     
     func setEmptyLayout(_ isEmpty: Bool) {
-        if isEmpty {
-            imageCollectionView.isHidden = true
-            noImageBackgroundView.isHidden = false
-        } else {
-            imageCollectionView.isHidden = false
-            noImageBackgroundView.isHidden = true
+        DispatchQueue.main.async {
+            self.imageCollectionView.isHidden = isEmpty ? true : false
+            self.noImageBackgroundView.isHidden = isEmpty ? false : true
         }
     }
     
@@ -85,12 +124,13 @@ class ImjangImageListViewController: UIViewController {
             guard let indexPath = imageCollectionView.indexPathForItem(at: location) else { return }
             // 해당 셀을 선택 상태로 변경
             isLongTap = true
-            selectedIndexs.insert(indexPath.row)
+            selectedIndexs.insert(imageList[indexPath.row].imageId) // 배열에 선택된 이미지의 아이디 넣기
             imageCollectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
             // UICollectionViewDelegate 메서드를 수동으로 호출하여 선택을 처리
             imageCollectionView.delegate?.collectionView?(imageCollectionView, didSelectItemAt: indexPath)
         case .ended:
             // 드래그 종료 시 필요한 작업 수행
+            isLongTap = false
             break
         default:
             break
@@ -134,24 +174,57 @@ class ImjangImageListViewController: UIViewController {
         self.navigationItem.rightBarButtonItems = [addButtonItem, deleteImageButtonItem]
     }
     
+    // 선택된 이미지 삭제 요청
+    func callDeleteImageRequest(imageIds: [Int]) {
+        if imageIds.isEmpty { return }
+        let parameter: [String:Any] = [
+            "imageIdList": imageIds
+        ]
+        
+        JuinjangAPIManager.shared.postData(type: BaseResponseString.self, api: .deleteImage, parameter: parameter) { response, error in
+            if error == nil {
+                guard let response = response else { return }
+                print(response)
+                self.selectedIndexs.removeAll()
+                self.callFetchImageRequest()  // 삭제 완료시 전체 이미지 조회
+            } else {
+                guard let error else { return }
+                switch error {
+                case .failedRequest:
+                    print("failedRequest")
+                case .noData:
+                    print("noData")
+                case .invalidResponse:
+                    print("invalidResponse")
+                case .invalidData:
+                    print("invalidData")
+                }
+            }
+        }
+    }
+    
+    // 모두 선택 해제
+    func deselectAll() {
+        if let selectedItems = self.imageCollectionView.indexPathsForSelectedItems {
+            for indexPath in selectedItems {
+                self.imageCollectionView.deselectItem(at: indexPath, animated: true)
+            }
+        }
+    }
+    
     @objc func deleteImages() {
         // 선택된 인덱스에 해당하는 요소를 배열에서 삭제
         if selectedIndexs.isEmpty {
             return
         }
         
-        print("우잉")
         let deletePopupVC = DeleteImjangImagePopupView()
         deletePopupVC.selectedCount = selectedIndexs.count
         deletePopupVC.modalPresentationStyle = .overFullScreen
-        deletePopupVC.completionHandler = {
-            self.selectedIndexs.sorted(by: >)
-            for index in self.selectedIndexs {
-                if index < self.imageList.count {
-                    self.imageList.remove(at: index)
-                }
-            }
-            self.imageCollectionView.reloadData()
+        deletePopupVC.completionHandler = { // 선택된 이미지 삭제
+            let indexes = self.selectedIndexs.sorted(by: >)
+            print("삭제할 id들: \(indexes)")
+            self.callDeleteImageRequest(imageIds: indexes)
         }
         present(deletePopupVC, animated: false)
     }
@@ -164,7 +237,6 @@ class ImjangImageListViewController: UIViewController {
             noImageStackView.addArrangedSubview($0)
         }
     }
-    
     func configureLayout() {
         view.backgroundColor = .white
         
@@ -201,35 +273,30 @@ class ImjangImageListViewController: UIViewController {
         noImageMessageLabel.textAlignment = .center
     }
     
-    func showEnlargePhotoVC(index: Int, photoList: [String]) {
+    // 이미지 확대 화면으로 이동
+    func showEnlargePhotoVC(index: Int, photoList: [ImageDto]) {
         let enlargePhotoVC = EnlargePhotoViewController()
         enlargePhotoVC.currentIndex = index
         enlargePhotoVC.photoList = photoList
         enlargePhotoVC.modalPresentationStyle = .overFullScreen
         present(enlargePhotoVC, animated: false)
     }
-    
-    // imagePicker로 화면 전환
-    func openLibrary(){
-        imagePicker.sourceType = .photoLibrary
-        present(imagePicker, animated: false, completion: nil)
-    }
-    func openCamera(){
-        imagePicker.sourceType = .camera
-        present(imagePicker, animated: false, completion: nil)
-    }
 }
 
 extension ImjangImageListViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        imageList.count
+        return imageList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageCollectionViewCell.identifier, for: indexPath) as? ImageCollectionViewCell else { return UICollectionViewCell() }
-        
-        cell.imageView.image = UIImage(named: imageList[indexPath.row])
-        
+        cell.contentView.layer.borderWidth = 0
+        let item = imageList[indexPath.row]
+        if let url = URL(string: item.imageUrl) {
+            cell.imageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
+        } else {
+            cell.imageView.image = UIImage(named: "1")
+        }
         return cell
     }
     
@@ -249,39 +316,45 @@ extension ImjangImageListViewController: UICollectionViewDelegate, UICollectionV
         guard let cell = collectionView.cellForItem(at: indexPath) else { return }
         // 선택 해제된 셀의 시각적 강조 해제, 예를 들면 배경색을 원래대로
         cell.contentView.layer.borderWidth = 0
-        selectedIndexs.sorted(by: >)
-        for index in selectedIndexs {
-            if index < imageList.count {
-                imageList.remove(at: index)
-            }
-        }
+        let item = imageList[indexPath.row]
+        selectedIndexs.remove(item.imageId)
+        print(selectedIndexs)
     }
 }
+
 
 extension ImjangImageListViewController: PHPickerViewControllerDelegate {
     func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
+        let group = DispatchGroup()
         
-        let itemProvider = results.first?.itemProvider
-        
-        if let itemProvider = itemProvider,
-           itemProvider.canLoadObject(ofClass: UIImage.self) {
-            itemProvider.loadObject(ofClass: UIImage.self) { image, error in
-                self.imageArr.append(image as? UIImage ?? nil)
+        if !(results.isEmpty) {
+            var images: [UIImage] = []
+            for result in results {
+                group.enter()
+                let itemProvider = result.itemProvider
+                
+                if itemProvider.canLoadObject(ofClass: UIImage.self) {
+                    itemProvider.loadObject(ofClass: UIImage.self) { image, error in
+                        if let image = image as? UIImage {
+                            images.append(image)
+                            group.leave()
+                        }
+                        
+                        if let error = error {
+                            group.leave()
+                            return
+                        }
+                    }
+                } else {
+                    print("이미지 가져오기 실패")
+                }
             }
-        } else {
-            print("이미지 가져오기 실패")
+            group.notify(queue: .main) {
+                self.callAddImageRequest(images: images)
+            }
         }
     }
     
     
-}
-
-extension ImjangImageListViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage{
-            
-        }
-        dismiss(animated: true, completion: nil)
-    }
 }

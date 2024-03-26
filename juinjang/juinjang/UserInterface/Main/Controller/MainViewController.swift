@@ -29,15 +29,94 @@ class MainViewController: UIViewController {
         $0.register(BottomTableViewCell.self, forCellReuseIdentifier: BottomTableViewCell.id)
     }
     
+    var mainImjangList: [LimjangDto] = []
+    
+    
+    // MARK: - viewDidLoad()
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        refreshToken()
+        UserDefaultManager.shared.userStatus = true
+        tableView.delegate = self
+        tableView.dataSource = self
+        tableView.separatorStyle = .none
+        tableView.rowHeight = 710
+        tableView.backgroundColor = .clear
+        view.backgroundColor = .white
+        
+        view.addSubview(backgroundImageView)
+        view.addSubview(tableView)
+       
+        designNavigationBar()
+        setConstraint()
+        callMainImjangRequest()
+    }
+    
+    func callMainImjangRequest() {
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self, api: .mainImjang) { response, error in
+            if error == nil {
+                guard let response = response else { return }
+                guard let result = response.result else { return }
+//                print(response)
+                self.mainImjangList = result.recentUpdatedList
+                self.tableView.reloadData()
+            } else {
+                guard let error else { return }
+                switch error {
+                case .failedRequest:
+                    print("failedRequest")
+                case .noData:
+                    print("noData")
+                case .invalidResponse:
+                    print("invalidResponse")
+                case .invalidData:
+                    print("invalidData")
+                }
+            }
+        }
+    }
+    
+    // 네비게이션 바 디자인
+    func designNavigationBar() {
+        self.navigationController?.navigationBar.tintColor = .black
+        navigationItem.titleView = mainLogoImageView
+        
+        // 이미지 로드
+        let speaker = UIImage(named:"speaker")
+
+        // UIBarButtonItem 생성 및 이미지 설정
+        let speakerButtonItem = UIBarButtonItem(image: speaker, style: .plain, target: self, action: nil)
+        speakerButtonItem.tintColor = UIColor(named: "300")
+        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
+        
+        let settingButtonItem = UIBarButtonItem(image: UIImage(named:"setting"), style: .plain, target: self, action: #selector(setttingBtnTap))
+        settingButtonItem.tintColor = UIColor(named: "300")
+        settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
+        // 네비게이션 아이템에 백 버튼 아이템 설정
+        self.navigationItem.leftBarButtonItem = settingButtonItem
+        self.navigationItem.rightBarButtonItem = speakerButtonItem
+        
+    }
+    
+    func showImjangNoteVC(imjangId: Int?) {
+        guard let imjangId = imjangId else { return }
+        let imjangNoteVC = ImjangNoteViewController()
+        imjangNoteVC.imjangId = imjangId
+        imjangNoteVC.previousVCType = .main
+        imjangNoteVC.completionHandler = {
+            self.callMainImjangRequest()
+        }
+        navigationController?.pushViewController(imjangNoteVC, animated: true)
+    }
     @objc func newImjangBtnTap() {
-        let vc = OpenNewPageViewController()
+        //let vc = OpenNewPageViewController()
+        let vc = ImjangNoteViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
     @objc func myImjangBtnTap() {
         let vc = ImjangListViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    
     @objc func setttingBtnTap() {
         let vc = SettingViewController()
         self.navigationController?.pushViewController(vc, animated: false)
@@ -70,14 +149,13 @@ class MainViewController: UIViewController {
                         settingViewController.logout()
                     }
                 } catch {
-                    print("Error decoding JSON: \(error)")
+//                    print("Error decoding JSON: \(error)")
                 }
             case .failure(let error):
                 print("Error: \(error)")
             }
         }
     }
-    
     func setConstraint() {
         //배경
         backgroundImageView.snp.makeConstraints{
@@ -95,46 +173,6 @@ class MainViewController: UIViewController {
             $0.left.right.bottom.equalToSuperview()
         }
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        refreshToken()
-        UserDefaultManager.shared.userStatus = true
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.separatorStyle = .none
-        tableView.rowHeight = 710
-        tableView.backgroundColor = .clear
-        view.backgroundColor = .white
-        
-        view.addSubview(backgroundImageView)
-        view.addSubview(tableView)
-       
-        designNavigationBar()
-        setConstraint()
-    }
-    
-    // 네비게이션 바 디자인
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.titleView = mainLogoImageView
-        
-        // 이미지 로드
-        let speaker = UIImage(named:"speaker")
-
-        // UIBarButtonItem 생성 및 이미지 설정
-        let speakerButtonItem = UIBarButtonItem(image: speaker, style: .plain, target: self, action: nil)
-        speakerButtonItem.tintColor = UIColor(named: "300")
-        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-        
-        let settingButtonItem = UIBarButtonItem(image: UIImage(named:"setting"), style: .plain, target: self, action: #selector(setttingBtnTap))
-        settingButtonItem.tintColor = UIColor(named: "300")
-        settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = settingButtonItem
-        self.navigationItem.rightBarButtonItem = speakerButtonItem
-        
-    }
 }
 
 //MARK: - extension
@@ -145,21 +183,29 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "TopTableViewCell", for: indexPath) as? TopTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: TopTableViewCell.identifier, for: indexPath) as? TopTableViewCell
             else{
                 return UITableViewCell()
             }
             cell.selectionStyle = .none
+            cell.backgroundColor = .clear
+        
             cell.newImjangButton.addTarget(self, action: #selector(newImjangBtnTap), for: .touchUpInside)
             cell.myNoteButton.addTarget(self, action: #selector(myImjangBtnTap), for: .touchUpInside)
             return cell
         }
         else {
-            guard let cell = tableView.dequeueReusableCell(withIdentifier: "BottomTableViewCell", for: indexPath) as? BottomTableViewCell
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: BottomTableViewCell.identifier, for: indexPath) as? BottomTableViewCell
             else{
                 return UITableViewCell()
             }
+            print("임장 개수: \(mainImjangList.count)")
             cell.selectionStyle = .none
+            cell.backgroundColor = .clear
+            cell.collectionView.delegate = self
+            cell.collectionView.dataSource = self
+            cell.isHidden(mainImjangList.isEmpty)
+            cell.collectionView.reloadData()
             return cell
         }
     }
@@ -171,31 +217,32 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             return BottomTableViewCell.cellHeight
         }
     }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        cell.backgroundColor = .clear
-        guard let tableViewCell = cell as? BottomTableViewCell else {
-            return
-        }
-        tableViewCell.setCollectionViewDataSourceDelegate(dataSourceDelegate: self, forRow: indexPath.row)
-    }
 }
      
 extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-     return 5
-     }
+        return mainImjangList.count
+    }
      
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "BottomCollectionViewCell", for: indexPath) as?
-                BottomCollectionViewCell else{
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BottomCollectionViewCell.identifier, for: indexPath) as? BottomCollectionViewCell else {
             return UICollectionViewCell()
-     }
+        }
+        
+        print("으아아앙")
+        let item = mainImjangList[indexPath.row]
+        cell.configureCell(listDto: item)
+        
         return cell
      }
      
      func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
          return CGSize(width: 143 , height: 204)
      }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let item = mainImjangList[indexPath.row]
+        showImjangNoteVC(imjangId: item.limjangId)
+    }
 }
 

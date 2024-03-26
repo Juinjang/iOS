@@ -17,6 +17,7 @@ class ExpandedTextFieldTableViewCell: UITableViewCell {
     var inputAnswer: String?
     var inputItems: [String: (inputAnswer: String?, isSelected: Bool)] = [:]
     weak var delegate: TextFieldDelegate?
+    var categories: [CheckListResponseDto]!
     
     // 입력한 답변을 외부로 전달하는 콜백 클로저
     var inputHandler: ((String) -> Void)?
@@ -63,24 +64,6 @@ class ExpandedTextFieldTableViewCell: UITableViewCell {
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         // Configure the view for the selected state
-    }
-    
-    func configure(with data: InputItem, at indexPath: IndexPath) {
-        // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
-        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
-        let content = currentItem.content
-        contentLabel.text = content
-
-        // 입력한 내용이 있으면 표시
-        if let storedData = inputItems[content] {
-            inputAnswer = storedData.inputAnswer
-            
-            answerTextField.text = inputAnswer
-
-        } else {
-            // 선택된 날짜가 없으면 표시 초기화
-            inputAnswer = nil
-        }
     }
     
     override func prepareForReuse() {
@@ -142,6 +125,22 @@ class ExpandedTextFieldTableViewCell: UITableViewCell {
                 print("\(content): \(inputAnswer)")
             }
             saveInputAnswer()
+        }
+    }
+    
+    func configure(with questionDto: QuestionDto, at indexPath: IndexPath) {
+        let content = questionDto.question
+        contentLabel.text = content
+
+        // 입력한 내용이 있으면 표시
+        if let storedData = inputItems[content] {
+            inputAnswer = storedData.inputAnswer
+            
+            answerTextField.text = inputAnswer
+
+        } else {
+            // 선택된 날짜가 없으면 표시 초기화
+            inputAnswer = nil
         }
     }
 }

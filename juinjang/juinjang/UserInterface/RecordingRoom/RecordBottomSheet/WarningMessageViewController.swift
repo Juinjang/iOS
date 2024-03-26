@@ -131,6 +131,7 @@ class WarningMessageViewController: UIViewController {
         checkButton.snp.makeConstraints {
             $0.height.equalTo(20)
             $0.centerX.equalTo(bottomSheetView.snp.centerX)
+            $0.width.equalTo(140)
             $0.top.equalTo(warningMessageImage.snp.bottom).offset(30)//38.51
         }
         

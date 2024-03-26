@@ -31,12 +31,16 @@ class PhotoCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        configureCell(image: nil, index: nil, totalCount: nil)
+        configureCell(imageDto: nil, index: nil, totalCount: nil)
     }
     
-    func configureCell(image: UIImage?, index: Int?, totalCount: Int?) {
-        guard let image else { return }
-        imageView.image = image
+    func configureCell(imageDto: ImageDto?, index: Int?, totalCount: Int?) {
+        guard let imageDto else { return }
+        if let url = URL(string: imageDto.imageUrl) {
+            imageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
+        } else {
+            imageView.image = UIImage(named: "1")
+        }
         if let index, let totalCount {
             photoStatusLabel.text = "\(index)/\(totalCount)"
         }

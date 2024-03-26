@@ -84,8 +84,9 @@ class ScrapCollectionViewCell: UICollectionViewCell {
                 self.firstImage.kf.setImage(with: url, placeholder: UIImage(named: "1"))
             }
         }
-        
-        totalStackView.addArrangedSubview(firstImage)
+        totalStackView.spacing = 0
+        imageVStackView.spacing = 0
+//        totalStackView.addArrangedSubview(firstImage)
     }
     
     func setImage2(images: [String]) {
@@ -99,18 +100,15 @@ class ScrapCollectionViewCell: UICollectionViewCell {
                 self.secondImage.kf.setImage(with: url2, placeholder: UIImage(named: "2"))
             }
         }
-//        DispatchQueue.main.async {
-//            self.firstImage.image = UIImage(named: images[0])
-//            self.secondImage.image = UIImage(named: images[1])
-//        }
-//        let imagesWidth = contentView.frame.width - (12*2) - 4
-        [firstImage, secondImage].forEach { totalStackView.addArrangedSubview($0)}
+        totalStackView.spacing = 4
+        imageVStackView.spacing = 0
+//        [firstImage, secondImage].forEach { totalStackView.addArrangedSubview($0)}
   
-        firstImage.snp.makeConstraints {
+        firstImage.snp.remakeConstraints {
             $0.height.equalTo(firstImage.snp.width).multipliedBy(117.0 / 190.0)
         }
         
-        secondImage.snp.makeConstraints {
+        secondImage.snp.remakeConstraints {
             $0.height.equalTo(secondImage.snp.width).multipliedBy(117.0 / 85.0)
         }
     }
@@ -128,9 +126,11 @@ class ScrapCollectionViewCell: UICollectionViewCell {
         }
         if let url3 = URL(string: images[2]) {
             DispatchQueue.main.async {
-                self.secondImage.kf.setImage(with: url3, placeholder: UIImage(named: "3"))
+                self.thirdImage.kf.setImage(with: url3, placeholder: UIImage(named: "3"))
             }
         }
+        totalStackView.spacing = 4
+        imageVStackView.spacing = 4
 //        DispatchQueue.main.async {
 //            self.firstImage.image = UIImage(named: images[0])
 //            self.secondImage.image = UIImage(named: images[1])
@@ -138,24 +138,24 @@ class ScrapCollectionViewCell: UICollectionViewCell {
 //        }
 //        let imagesWidth = contentView.frame.width - (12 * 2)
         
-        [firstImage, imageVStackView].forEach {
-            totalStackView.addArrangedSubview($0)
-        }
-        
-        [secondImage, thirdImage].forEach {
-            imageVStackView.addArrangedSubview($0)
-        }
+//        [firstImage, imageVStackView].forEach {
+//            totalStackView.addArrangedSubview($0)
+//        }
+//        
+//        [secondImage, thirdImage].forEach {
+//            imageVStackView.addArrangedSubview($0)
+//        }
        
-        firstImage.snp.makeConstraints {
+        firstImage.snp.remakeConstraints {
             $0.height.equalTo(firstImage.snp.width).multipliedBy(117.0 / 190.0)
         }
 //        let vstackHeight = firstImage.frame.height - 4
         
-        secondImage.snp.makeConstraints {
+        secondImage.snp.remakeConstraints {
             $0.height.equalTo(secondImage.snp.width).multipliedBy(66.0 / 85.0)
         }
         
-        thirdImage.snp.makeConstraints {
+        thirdImage.snp.remakeConstraints {
             $0.height.equalTo(thirdImage.snp.width).multipliedBy(47.0 / 85.0)
         }
         
@@ -169,11 +169,41 @@ class ScrapCollectionViewCell: UICollectionViewCell {
         thirdImage.image = nil
     }
     
+    func setPriceLabel(priceList: [String]) {
+        switch priceList.count {
+        case 1:
+            let priceString = priceList[0]
+            roomPriceLabel.text = priceString.formatToKoreanCurrencyWithZero()
+        case 2:
+            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
+            let priceString2 = priceList[1].formatToKoreanCurrencyWithZero()
+            roomPriceLabel.text = "\(priceString1) • 월 \(priceString2)"
+            roomPriceLabel.asColor(targetString: "•", color: ColorStyle.mainStrokeOrange)
+        default:
+            roomPriceLabel.text = "편집을 통해 가격을 설정해주세요."
+        }
+    }
+    
+    func setRate(totalAverage: String?) {
+        if let score = totalAverage {
+            DispatchQueue.main.async {
+                self.starIcon.image = ImageStyle.star
+            }
+            scoreLabel.text = String(format: "%.1f", score)
+        } else {
+            DispatchQueue.main.async {
+                self.starIcon.image = ImageStyle.starEmpty
+            }
+            scoreLabel.text = "0.0"
+            scoreLabel.textColor = ColorStyle.null
+        }
+    }
+    
     func setData(imjangNote: ListDto?) {
         guard let imjangNote else { return }
         roomNameLabel.text = imjangNote.nickname
-        scoreLabel.text = String(format: "%.1f", imjangNote.totalAverage ?? 0.0)
-        roomPriceLabel.text = imjangNote.priceList[0]
+        setRate(totalAverage: imjangNote.totalAverage)
+        setPriceLabel(priceList: imjangNote.priceList)
         roomAddressLabel.text = imjangNote.address
         let bookmarkImage = imjangNote.isScraped ? ImageStyle.bookmarkSelected : ImageStyle.bookmark
         bookMarkButton.setImage(bookmarkImage, for: .normal)
@@ -214,6 +244,14 @@ class ScrapCollectionViewCell: UICollectionViewCell {
         [starIcon, scoreLabel].forEach {
             starStackView.addArrangedSubview($0)
         }
+        
+        [firstImage, imageVStackView].forEach {
+            totalStackView.addArrangedSubview($0)
+        }
+        
+        [secondImage, thirdImage].forEach {
+            imageVStackView.addArrangedSubview($0)
+        }
     }
     
     override func draw(_ rect: CGRect) {
@@ -240,6 +278,7 @@ class ScrapCollectionViewCell: UICollectionViewCell {
     }
     
     func setupConstraints() {
+
         totalStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(12)
             $0.height.equalTo(117)

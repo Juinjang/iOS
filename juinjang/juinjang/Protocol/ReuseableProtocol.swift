@@ -14,32 +14,30 @@ protocol ReuseableProtocol {
 
 extension UITableViewCell: ReuseableProtocol {
     static var identifier: String {
-        get {
-            String(describing: self)
-        }
+        String(describing: self)
     }
 }
 
 extension UICollectionViewCell: ReuseableProtocol {
     static var identifier: String {
-        get {
-            String(describing: self)
-        }
+        return String(describing: self)
     }
 }
 
 extension UIViewController: ReuseableProtocol {
     static var identifier: String {
-        get {
-            String(describing: self)
-        }
+        String(describing: self)
     }
 }
 
 extension UITableViewHeaderFooterView: ReuseableProtocol {
     static var identifier: String {
-        get {
-            String(describing: self)
-        }
+        String(describing: self)
     }
 }
+
+//extension UICollectionReusableView: ReuseableProtocol {
+//    static var identifier: String {
+//        String(describing: self)
+//    }
+//}

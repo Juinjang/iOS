@@ -36,6 +36,7 @@ class RecordPlaybackViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         bottomSheetView.backgroundColor = UIColor(named: "textBlack")
         addSubViews()
         setupLayout()
@@ -43,6 +44,7 @@ class RecordPlaybackViewController: UIViewController {
         print("topHeight: \(topHeight)")
         print("bottomHeight: \(bottomHeight)")
     }
+    
     
     func addSubViews() {
         view.addSubview(bottomSheetView)

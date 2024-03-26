@@ -13,7 +13,7 @@ class EnlargePhotoViewController: UIViewController {
     lazy var photoCollectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewFlowLayout())
     
     var currentIndex: Int?
-    var photoList: [String] = []
+    var photoList: [ImageDto] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -95,9 +95,9 @@ extension EnlargePhotoViewController: UICollectionViewDelegate, UICollectionView
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PhotoCollectionViewCell.identifier, for: indexPath) as? PhotoCollectionViewCell else { return UICollectionViewCell() }
         
-        let image = UIImage(named: photoList[indexPath.row])
+        let item = photoList[indexPath.row]
         
-        cell.configureCell(image: image, index: indexPath.row + 1, totalCount: photoList.count)
+        cell.configureCell(imageDto: item, index: indexPath.row + 1, totalCount: photoList.count)
         
         return cell
     }

@@ -24,7 +24,10 @@ class ImageCollectionViewCell: UICollectionViewCell {
     
     func configureCell(image: UIImage?) {
         guard let image else { return }
-        imageView.image = image
+        print("뭐야;;;")
+        DispatchQueue.main.async {
+            self.imageView.image = image
+        }
     }
     
     override func draw(_ rect: CGRect) {

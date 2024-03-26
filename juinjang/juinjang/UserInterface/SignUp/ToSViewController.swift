@@ -31,19 +31,18 @@ class ToSViewController: UIViewController {
     }
     
     lazy var checkButton = UIButton().then {
-        $0.setTitle("약관 모두 동의하기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textBlack"), for: .normal)
-        $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
         $0.addTarget(self, action: #selector(checkButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
 
         $0.setImage(UIImage(named: "check-off"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
-
-        $0.semanticContentAttribute = .forceLeftToRight
-        $0.contentHorizontalAlignment = .left
+    }
     
-        $0.imageEdgeInsets = UIEdgeInsets(top: 0, left: -12, bottom: 0, right: 4)
+    lazy var allAgreeLabel = UILabel().then {
+        $0.text = "약관 모두 동의하기"
+        $0.textColor = UIColor(named: "textBlack")
+        $0.font = .pretendard(size: 16, weight: .semiBold)
+        $0.isUserInteractionEnabled = true // 터치 이벤트 활성화
     }
     
     var isChecked = false {
@@ -77,9 +76,20 @@ class ToSViewController: UIViewController {
         setNavigationBar()
         addSubViews()
         setupLayout()
+        setCheckButton()
         NotificationCenter.default.addObserver(self, selector: #selector(updateCell(_:)), name: NSNotification.Name("UpdateCell"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleCheckButtonChecked), name: NSNotification.Name("CheckButtonChecked"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleCheckButtonUnchecked), name: NSNotification.Name("CheckButtonUnchecked"), object: nil)
+    }
+    
+    func setCheckButton() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(agreeLabelTapped))
+        allAgreeLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func agreeLabelTapped(sender: UITapGestureRecognizer) {
+        // 동의하기 버튼을 클릭한 것처럼 처리
+        checkButton.sendActions(for: .touchUpInside)
     }
     
     func setNavigationBar() {
@@ -96,7 +106,7 @@ class ToSViewController: UIViewController {
          agreeToAllTermsView,
          itemtableView,
          nextButton].forEach { view.addSubview($0) }
-        agreeToAllTermsView.addSubview(checkButton)
+        [checkButton, allAgreeLabel].forEach { agreeToAllTermsView.addSubview($0) }
     }
     
     func setupLayout() {
@@ -123,12 +133,17 @@ class ToSViewController: UIViewController {
         
         // 약관 모두 동의 Button
         checkButton.snp.makeConstraints {
-            $0.height.equalTo(20)
-            $0.leading.equalToSuperview().offset(27)
-            $0.top.equalToSuperview().offset(20)
+            $0.leading.equalToSuperview().offset(12)
+            $0.centerY.equalToSuperview()
         }
         
         checkButton.bringSubviewToFront(agreeToAllTermsView)
+        
+        // 약관 모두 동의 Label
+        allAgreeLabel.snp.makeConstraints {
+            $0.leading.equalTo(checkButton.snp.trailing).offset(12)
+            $0.centerY.equalToSuperview()
+        }
         
         // 약관 동의 tableView
         itemtableView.snp.makeConstraints {

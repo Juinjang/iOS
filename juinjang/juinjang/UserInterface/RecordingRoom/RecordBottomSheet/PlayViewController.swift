@@ -1,27 +1,24 @@
 //
-//  RecordBottomViewController.swift
+//  PlayViewController.swift
 //  juinjang
 //
-//  Created by 임수진 on 2024/01/15.
+//  Created by 박도연 on 2/19/24.
 //
 
 import UIKit
 import SnapKit
 import AVFoundation
 
-var recordTime : String!
-
-class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDelegate {
+class PlayViewController: UIViewController, UITextFieldDelegate, AVAudioPlayerDelegate {
     
     weak var topViewController: RecordTopViewController?
-    var fileURLs : [URL] = []
     
     var audioFile : URL! // 재생할 오디오의 파일명 변수
     var audioPlayer : AVAudioPlayer! //avaudioplayer인스턴스 변수
     var progressTimer : Timer! //타이머를 위한 변수
     
 
-    lazy var titleTextField = UITextField().then {
+    var titleTextField = UITextField().then {
         $0.text = "\(RecordingFileViewCell().recordingFileNameLabel.text ?? "녹음파일_001")"
         $0.textAlignment = .center
         $0.textColor = UIColor(named: "lightGray")
@@ -29,7 +26,7 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
     }
     
     var recordStartTimeLabel = UILabel().then {
-        $0.text = "\(recordTime ?? "오후 4:00")" // - TODO: 녹음 파일 추가할 때의 시간 반영
+        $0.text = "오후 4:00" // - TODO: 녹음 파일 추가할 때의 시간 반영
         $0.textColor = UIColor(named: "gray1")
         $0.font = UIFont(name: "Pretendard-Regular", size: 16)
     }
@@ -53,15 +50,6 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
         $0.text = "4:10"
     }
     
-    // 임의로 넣어둠 -TODO: 음성 녹음 파일 연결 필요
-//    var player: AVPlayer = {
-//        guard let url = URL(string: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3") else { fatalError() }
-//        let player = AVPlayer()
-//        let playerItem = AVPlayerItem(url: url)
-//        player.replaceCurrentItem(with: playerItem) // AVPlayer는 한번에 하나씩만 다룰 수 있음
-//        return player
-//    }()
-    
     lazy var rewindButton = UIButton().then {
         $0.setImage(UIImage(named: "rewind"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
@@ -69,7 +57,7 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
     }
     
     lazy var recordButton = UIButton().then {
-        $0.setImage(UIImage(named: "being-recorded-button"), for: .normal)
+        $0.setImage(UIImage(named: "record-button"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(startRecordPressed(_:)), for: .touchUpInside)
@@ -88,32 +76,11 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
         setupLayout()
         titleTextField.delegate = self
         
-        loadRecordings()
-        playSet()
-        audioPlayer.stop()
-        audioPlayer.play()
-        progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updatePlayTime), userInfo: nil, repeats: true)
+        initPlay1()
+        progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updatePlayTime1), userInfo: nil, repeats: true)
     }
     
-    func loadRecordings() {
-       let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-       do {
-           // 문서 디렉토리에서 녹음 파일들을 가져옴
-           let recordingURLs = try FileManager.default.contentsOfDirectory(at: documentsDirectory, includingPropertiesForKeys: nil, options: [])
-           // 녹음 파일 목록에 추가
-           fileURLs = recordingURLs.filter { $0.pathExtension == "m4a" } // .m4a 확장자를 가진 파일만 필터링
-       } catch {
-           print("Failed to load recordings: \(error)")
-       }
-   }
-    func playSet() {
-        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        audioFile = documentDirectory.appendingPathComponent("recordfile\(fileURLs.count-1).m4a")
-        //audioFile = Bundle.main.url(forResource: "Cruel Summer", withExtension: "mp3")
-        initPlay()
-    }
-    
-    func initPlay(){
+    func initPlay1(){
         do {
             audioPlayer = try AVAudioPlayer(contentsOf: audioFile)
         } catch let error as NSError {
@@ -138,7 +105,7 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
     }
     
     //0.1초마다 호출되어 재생 시간 표시
-    @objc func updatePlayTime() {
+    @objc func updatePlayTime1() {
         elapsedTimeLabel.text = convertNSTimeInterval2String(audioPlayer.currentTime)
         //pvProgressPlay.progress = Float(audioPlayer.currentTime/audioPlayer.duration)
         recordingSlider.value = Float(audioPlayer.currentTime / audioPlayer.duration)
@@ -148,13 +115,12 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
     }
     
     //정지 버튼 클릭 시 음악 재생 종료
-    @objc func btnStopAudio(_ sender: UIButton) {
+    @objc func btnStopAudio1(_ sender: UIButton) {
         audioPlayer.stop()
         audioPlayer.currentTime = 0
         elapsedTimeLabel.text = convertNSTimeInterval2String(0)
         progressTimer.invalidate()
     }
-    
     
     func addSubViews() {
         [titleTextField,
@@ -226,14 +192,16 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
         if let title = newTitle {
             print("녹음 파일 제목: \(title)")
             titleTextField.text = title
-            RecordingFileViewCell().recordingFileNameLabel.text = title
+            RecordingFileViewCell().setData(fileTitle: title, time: remainingTimeLabel.text)
+            
         }
     }
+    
     
     @objc func startRecordPressed(_ sender: UIButton) {
         if recordButton.isSelected {
             audioPlayer.play()
-            progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updatePlayTime), userInfo: nil, repeats: true)
+            progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updatePlayTime1), userInfo: nil, repeats: true)
             recordButton.setImage(UIImage(named: "being-recorded-button"), for: .normal)
         } else {
             audioPlayer.pause()
@@ -248,3 +216,4 @@ class RecordBottomViewController: UIViewController, UITextFieldDelegate, AVAudio
         audioPlayer.currentTime = newTime
     }
 }
+

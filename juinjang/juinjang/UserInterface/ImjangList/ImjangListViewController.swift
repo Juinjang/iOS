@@ -9,6 +9,11 @@ import UIKit
 import SnapKit
 import Then
 
+enum Section: Int, CaseIterable {
+    case scrap
+    case list
+}
+
 class ImjangListViewController: UIViewController {
     
     // 임장 노트가 존재하지 않을 때의 뷰
@@ -45,18 +50,32 @@ class ImjangListViewController: UIViewController {
         tableView.showsVerticalScrollIndicator = false
         tableView.backgroundColor = ColorStyle.textWhite
         tableView.register(ImjangListHeaderView.self, forHeaderFooterViewReuseIdentifier: ImjangListHeaderView.identifier)
+        tableView.register(ScrapTableViewCell.self, forCellReuseIdentifier: ScrapTableViewCell.identifier)
         tableView.register(ImjangNoteTableViewCell.self, forCellReuseIdentifier: ImjangNoteTableViewCell.identifier)
         return tableView
     }()
     
+//    typealias DataSource = UICollectionViewDiffableDataSource<Section, ListDto>
+//    private lazy var dataSource = createDataSource()
+//    lazy var imjangCollectionView: UICollectionView = {
+//        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
+//        collectionView.delegate = self
+//        collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+//        collectionView.register(ImjangNoteCollectionViewCell.self, forCellWithReuseIdentifier: ImjangNoteCollectionViewCell.identifier)
+//        collectionView.register(ScrapCollectionViewCell.self, forCellWithReuseIdentifier: ScrapCollectionViewCell.identifier)
+//        collectionView.register(ImjangListHeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ImjangListHeaderView.identifier)
+//        return collectionView
+//    }()
+//    
     
     let stickyfilterBackgroundView = UIView().then {
         $0.backgroundColor = .white
     }
     
+    var tableViewSections = Section.allCases
     var scrapImjangList: [ListDto] = []
     var imjangList: [ListDto] = []
-    
+
     var menuChildren: [UIMenuElement] = []
     lazy var filterList = Filter.allCases
     
@@ -69,12 +88,15 @@ class ImjangListViewController: UIViewController {
         setEmptyConstraints()
         setupConstraints()
         configureTableView()
-//        setData()
-        callRequest()   // 서버 요청 (total Imjang List)
-//        designView()
+        designView()
         setFilterData()
 //        imjangTableView.reloadData()
         newPageButton.addTarget(self, action: #selector(showNewPageVC), for: .touchUpInside)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        callRequest()   // 서버 요청 (total Imjang List)
     }
     
     @objc func showNewPageVC() {
@@ -83,15 +105,14 @@ class ImjangListViewController: UIViewController {
     }
     
     func callRequest() {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang) { response, error in
+        
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: Filter.update.sortValue)) { response, error in
             if error == nil {
                 guard let response = response else { return }
                 guard let result = response.result else { return }
-//                print(result)
-                self.imjangList = result.scrapedList
-                self.imjangList.append(contentsOf: result.notScrapedList)
-                self.setData(scrapedList: result.scrapedList)
-                self.designView()
+                self.imjangList = result.limjangList
+                self.setData(scrapedList: result.limjangList)   // 스크랩된것들 scrapList에 추가
+                self.setEmptyUI(isEmpty: self.imjangList.isEmpty)
                 self.imjangTableView.reloadData()
             } else {
                 guard let error else { return }
@@ -111,11 +132,14 @@ class ImjangListViewController: UIViewController {
     
     // 스크랩 리스트 설정
     func setData(scrapedList: [ListDto]) {
+        scrapImjangList = []
         for item in scrapedList {
             if item.isScraped && scrapImjangList.count < 10 {
                 scrapImjangList.append(item)
             }
         }
+//        applyScrapSnapshot(with: scrapImjangList)
+//        imjangTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
     }
     
     func configureTableView() {
@@ -134,7 +158,7 @@ class ImjangListViewController: UIViewController {
         for filter in filterList {
             menuChildren.append(UIAction(title: filter.title, state: .off,handler: {  (action: UIAction) in
                 self.changefilterTitle(filter.title)
-                self.callRequestFiltered(sort: filter.title)
+                self.callRequestFiltered(sort: filter)
             }))
         }
         filterselectBtn.menu = UIMenu(options: .displayAsPalette, preferredElementSize: .small ,children: menuChildren)
@@ -152,11 +176,7 @@ class ImjangListViewController: UIViewController {
         filterselectBtn.configuration = config
     }
     
-    func callRequestFiltered(sort: String) {
-        
-    }
-    
-    @objc func deleteButtonClicked() {
+    func callRequestFiltered(sort: Filter) {
         
     }
     
@@ -165,33 +185,20 @@ class ImjangListViewController: UIViewController {
         self.navigationController?.pushViewController(DeleteImjangVC, animated: true)
     }
     
-    
+    func setScrap(imjangNote: ListDto) {
+        if scrapImjangList.count < 10 {
+            scrapImjangList.append(imjangNote)
+        }
+    }
     
     @objc func bookMarkButtonClicked(sender: UIButton) {
         var imjangNote = imjangList[sender.tag]
-        imjangNote.isScraped.toggle()
         scrapRequest(imjangId: imjangNote.limjangId)
-//        if scrapImjangList.count < 10 {
-//            scrapImjangList.append(imjangNote)
-//        }
-//
-//        imjangList[sender.tag] = imjangNote
-//        imjangTableView.reloadData()
     }
     
     @objc func scrapBookMarkButtonClicked(sender: UIButton) {
         var imjangNote = scrapImjangList[sender.tag]
-        
-        imjangNote.isScraped.toggle()
         scrapRequest(imjangId: imjangNote.limjangId)
-//        callRequest()
-//        if scrapImjangList.count < 10 {
-//            scrapImjangList.append(imjangNote)
-//        }
-//        
-//        imjangList[sender.tag] = imjangNote
-//        imjangTableView.reloadData()
-
     }
     
     func scrapRequest(imjangId: Int) {
@@ -226,6 +233,9 @@ class ImjangListViewController: UIViewController {
         let imjangNoteVC = ImjangNoteViewController()
         imjangNoteVC.imjangId = imjangId
         imjangNoteVC.previousVCType = .imjangList
+        imjangNoteVC.completionHandler = {
+            self.callRequest()
+        }
         self.navigationController?.pushViewController(imjangNoteVC, animated: true)
     }
 }
@@ -242,48 +252,83 @@ extension ImjangListViewController: UITableViewDelegate, UITableViewDataSource {
         stickyfilterBackgroundView.isHidden = !shouldShowSticky
     }
     
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return tableViewSections.count
+    }
+    
     // 헤더의 높이 설정
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if scrapImjangList.isEmpty {
-            return 186
-        } else {
-            return 354
+        switch section {
+        case Section.scrap.rawValue:
+            return 0
+        case Section.list.rawValue:
+            return 49
+        default:
+            return 0
         }
-        
     }
-    // headerView 정의 (콜렉션뷰, 필터뷰)
+    // headerView 정의 (필터뷰)
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let imjangListHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ImjangListHeaderView.identifier) as? ImjangListHeaderView else {
-            return UIView()
+        if section == Section.list.rawValue {
+            guard let imjangListHeaderView = tableView.dequeueReusableHeaderFooterView(withIdentifier: ImjangListHeaderView.identifier) as? ImjangListHeaderView else {
+                return UIView()
+            }
+
+            imjangListHeaderView.deleteButton.addTarget(self, action: #selector(showDeleteImjangVC), for: .touchUpInside)
+
+            return imjangListHeaderView
         }
-        imjangListHeaderView.scrapedList = scrapImjangList
-        imjangListHeaderView.collectionView.delegate = self
-        imjangListHeaderView.collectionView.dataSource = self
-        imjangListHeaderView.deleteButton.addTarget(self, action: #selector(showDeleteImjangVC), for: .touchUpInside)
-        if scrapImjangList.isEmpty {
-            imjangListHeaderView.setFilterView(isEmpty: true)
-        }
-        else {
-            imjangListHeaderView.setFilterView(isEmpty: false)
-        }
-        return imjangListHeaderView
+        return nil
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return imjangList.count
+        switch section {
+        case Section.scrap.rawValue:
+            return 1
+        case Section.list.rawValue:
+            return imjangList.count
+        default:
+            return 0
+        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImjangNoteTableViewCell.identifier, for: indexPath) as! ImjangNoteTableViewCell
-        cell.selectionStyle = .none
-        cell.configureCell(imjangNote: imjangList[indexPath.row])
-        cell.bookMarkButton.tag = indexPath.row
-        cell.bookMarkButton.addTarget(self, action: #selector(bookMarkButtonClicked), for: .touchUpInside)
-        return cell
+        switch indexPath.section {
+        case Section.scrap.rawValue:   // 스크랩 섹션일 때
+            guard let cell = tableView.dequeueReusableCell(withIdentifier: ScrapTableViewCell.identifier, for: indexPath) as? ScrapTableViewCell else {
+                return UITableViewCell()
+            }
+            
+            cell.collectionView.delegate = self
+            cell.collectionView.dataSource = self
+            cell.setEmptyUI(isEmpty: scrapImjangList.isEmpty)
+            cell.collectionView.reloadData()
+            
+            return cell
+            
+        case Section.list.rawValue:    // 전체 리스트 섹션일 때
+            let cell = tableView.dequeueReusableCell(withIdentifier: ImjangNoteTableViewCell.identifier, for: indexPath) as! ImjangNoteTableViewCell
+            cell.selectionStyle = .none
+            cell.configureCell(imjangNote: imjangList[indexPath.row])
+            cell.bookMarkButton.tag = indexPath.row
+            cell.bookMarkButton.addTarget(self, action: #selector(bookMarkButtonClicked), for: .touchUpInside)
+            return cell
+        default:
+            return UITableViewCell()
+        }
+        
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 116
+        switch indexPath.section {
+        case Section.scrap.rawValue:
+            return 252
+//            return scrapImjangList.isEmpty ? 114 : 252
+        case Section.list.rawValue:
+            return 116
+        default:
+            return UITableView.automaticDimension
+        }
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -304,6 +349,11 @@ extension ImjangListViewController: UICollectionViewDelegate, UICollectionViewDa
         cell.bookMarkButton.addTarget(self, action: #selector(bookMarkButtonClicked), for: .touchUpInside)
         
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let item = scrapImjangList[indexPath.row]
+        showImjangNoteVC(imjangId: item.limjangId)
     }
 }
 
@@ -328,6 +378,7 @@ extension ImjangListViewController {
     }
     
     func addSubviews() {
+//        view.addSubview(imjangTableView)
         view.addSubview(imjangTableView)
         view.addSubview(emptyBackgroundView)
         [emptyLogoImageView, emptyMessageLabel, newPageButton].forEach {
@@ -362,15 +413,12 @@ extension ImjangListViewController {
         
         deleteButton.design(image: ImageStyle.trash, backgroundColor: .clear)
         
-        imjangTableView.backgroundColor = .white
-        
-        if imjangList.isEmpty {
-            emptyBackgroundView.isHidden = false
-            imjangTableView.isHidden = true
-        } else {
-            emptyBackgroundView.isHidden = true
-            imjangTableView.isHidden = false
-        }
+//        imjangTableView.backgroundColor = .white
+    }
+    
+    func setEmptyUI(isEmpty: Bool) {
+        emptyBackgroundView.isHidden = isEmpty ? false : true
+        imjangTableView.isHidden = isEmpty ? true : false
     }
     
     func setupConstraints() {
@@ -445,6 +493,107 @@ extension ImjangListViewController {
 }
 
 
-#Preview {
-    ImjangListViewController()
-}
+//extension ImjangListViewController: UICollectionViewDelegate {
+//    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+//        guard let item = dataSource.itemIdentifier(for: indexPath) else { return }
+//        showImjangNoteVC(imjangId: item.limjangId)
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+//        guard kind == UICollectionView.elementKindSectionHeader, indexPath.section == Section.list.rawValue else {
+//            fatalError()
+//        }
+//        guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ImjangListHeaderView.identifier, for: indexPath) as? ImjangListHeaderView else {
+//            return UICollectionReusableView()
+//        }
+//
+//        return headerView
+//    }
+//
+//    func createDataSource() -> DataSource {
+//        UICollectionViewDiffableDataSource(collectionView: imjangCollectionView, cellProvider: { (collectionView, indexPath, item) in
+//            switch indexPath.section {
+//            case Section.scrap.rawValue:
+//                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrapCollectionViewCell.identifier, for: indexPath) as? ScrapCollectionViewCell else {
+//                    return UICollectionViewCell()
+//                }
+//
+//                cell.setData(imjangNote: item)
+//
+//                return cell
+//            case Section.list.rawValue:
+//                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImjangNoteCollectionViewCell.identifier, for: indexPath) as? ImjangNoteCollectionViewCell else {
+//                    return UICollectionViewCell()
+//                }
+//                print("sdnadjfablsfd으멍나ㅠㄹㅁㅇ노류머ㅗ닝ㄹ")
+//                cell.configureCell(imjangNote: item)
+//                cell.bookMarkButton.tag = indexPath.row
+//                cell.bookMarkButton.addTarget(self, action: #selector(self.bookMarkButtonClicked), for: .touchUpInside)
+//
+//                return cell
+//            default:
+//                return UICollectionViewCell()
+//            }
+//        })
+//    }
+//
+//
+//    private func createLayout() -> UICollectionViewLayout {
+//        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
+//            // 섹션에 따라 다른 레이아웃을 설정
+//            let sectionKind = Section.allCases[sectionIndex]
+//            switch sectionKind {
+//            case .scrap:
+//                return self.createScrapLayout()
+//            case .list:
+//                return self.createListLayout()
+//            }
+//        }
+//        return layout
+//    }
+//
+//    func createScrapLayout() -> NSCollectionLayoutSection {
+//        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+//                                              heightDimension: .fractionalHeight(1.0))
+//        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+//        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 6, bottom: 0, trailing: 6)
+//
+//        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.8), heightDimension: .absolute(252))
+//        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+//
+//        let section = NSCollectionLayoutSection(group: group)
+//        section.orthogonalScrollingBehavior = .groupPagingCentered
+//        return section
+//    }
+//
+//    func createListLayout() -> NSCollectionLayoutSection {
+//        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1),
+//                                              heightDimension: .fractionalHeight(1))
+//        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+//        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 8, trailing: 24)
+//
+//        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.9),
+//                                               heightDimension: .absolute(106))
+//        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+//
+//        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(49))
+//        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+//
+//        let section = NSCollectionLayoutSection(group: group)
+//        section.boundarySupplementaryItems = [sectionHeader]
+//        return section
+//    }
+//    func applyScrapSnapshot(with listDto: [ListDto]) {
+//        var snapShot = NSDiffableDataSourceSnapshot<Section, ListDto>()
+//        snapShot.appendSections([.scrap])
+//        snapShot.appendItems(listDto, toSection: .scrap)
+//        dataSource.apply(snapShot, animatingDifferences: false)
+//    }
+//
+//    func applySnapshot(with listDto: [ListDto]) {
+//        var snapShot = NSDiffableDataSourceSnapshot<Section, ListDto>()
+//        snapShot.appendSections([.list])
+//        snapShot.appendItems(listDto)
+//        dataSource.apply(snapShot, animatingDifferences: false)
+//    }
+//}

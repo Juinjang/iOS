@@ -13,7 +13,6 @@ class BottomTableViewCell: UITableViewCell{
     
     static let id = "BottomTableViewCell"
     static let cellHeight = 250.0
-    var yesRecentImjang : Bool = true
     //MARK: - 변수 설정
     //컬렉션 뷰
     let collectionView: UICollectionView = {
@@ -22,22 +21,16 @@ class BottomTableViewCell: UITableViewCell{
         layout.sectionInset = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
+        cv.showsHorizontalScrollIndicator = false
+        cv.register(BottomCollectionViewCell.self, forCellWithReuseIdentifier: BottomCollectionViewCell.identifier)
         return cv
     }()
     
-    func setCollectionViewDataSourceDelegate(dataSourceDelegate : UICollectionViewDelegate & UICollectionViewDataSource, forRow row: Int){
-        collectionView.delegate = dataSourceDelegate
-        collectionView.dataSource = dataSourceDelegate
-        collectionView.tag = row
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.register(BottomCollectionViewCell.self, forCellWithReuseIdentifier: BottomCollectionViewCell.identifier)
-    }
     //최근 본 임장
     var recentImjangLabel = UILabel().then {
         $0.text = "최근 본 임장"
-        $0.textColor = .black
-        $0.font = UIFont(name: "Pretendard-Bold", size: 20)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.textColor = ColorStyle.textBlack
+        $0.font = .pretendard(size: 20, weight: .bold)
     }
     
     //최근 본 임장이 없을 때
@@ -48,8 +41,7 @@ class BottomTableViewCell: UITableViewCell{
     var noImjangLabel = UILabel().then {
         $0.text = "아직 등록된 집이 없어요"
         $0.textColor = UIColor(named: "450")
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 16, weight: .semiBold)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -62,25 +54,16 @@ class BottomTableViewCell: UITableViewCell{
         fatalError("init(coder:) has not been implemented")
     }
         
-    func isHidden() {
-        if yesRecentImjang == true {
-            noImjangLabel.isHidden = true
-            noImjangImageView.isHidden = true
-        } else {
-            collectionView.isHidden = true
-        }
+    func isHidden(_ isEmpty: Bool) {
+        noImjangLabel.isHidden = isEmpty ? false : true
+        noImjangImageView.isHidden = isEmpty ? false : true
+        collectionView.isHidden = isEmpty ? true : false
     }
+    
     private func addContentView() {
-        contentView.addSubview(recentImjangLabel)
-        
-        //최근 본 임장 없을 때
-        contentView.addSubview(noImjangImageView)
-        contentView.addSubview(noImjangLabel)
-        
-        //최근 본 임장 있을 때
-        contentView.addSubview(collectionView)
-        
-        isHidden()
+        [recentImjangLabel, noImjangImageView, noImjangLabel, collectionView].forEach {
+            contentView.addSubview($0)
+        }
     }
         
     private func autoLayout() {

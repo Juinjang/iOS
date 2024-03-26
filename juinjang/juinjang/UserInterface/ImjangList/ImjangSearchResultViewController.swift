@@ -61,8 +61,7 @@ class ImjangSearchResultViewController: UIViewController {
                 if error == nil {
                     guard let response = response else { return }
                     guard let result = response.result else { return }
-                    self.searchedImjangList = result.scrapedList
-                    self.searchedImjangList.append(contentsOf: result.notScrapedList)
+                    self.searchedImjangList = result.limjangList
                     print("요청성공")
                     self.searchedTableView.reloadData()
                 } else {

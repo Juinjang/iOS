@@ -20,7 +20,7 @@ struct DetailDto: Codable {
     let updatedAt: String
 }
 
-struct RecordMemoDto: Decodable {
+struct RecordMemoDto: Codable {
     let limjangId: Int
     let memo: String
     let createdAt: String
@@ -28,7 +28,7 @@ struct RecordMemoDto: Decodable {
     let recordDto: [RecordDto]
 }
 
-struct RecordDto: Decodable {
+struct RecordDto: Codable {
     let limjangId: Int
     let recordTime: Int
     let recordScript: String
@@ -42,5 +42,5 @@ struct MemoDto: Codable {
     let limjangId: Int
     let createdAt: String
     let updatedAt: String
-    let memo: String
+    let memo: String?
 }

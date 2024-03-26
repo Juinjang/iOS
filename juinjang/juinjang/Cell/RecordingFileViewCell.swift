@@ -8,8 +8,11 @@
 import UIKit
 import SnapKit
 import Then
+import AVFoundation
 
 class RecordingFileViewCell: UITableViewCell {
+    
+    var audioPlayer: AVAudioPlayer?
     
     let recordingFileNameLabel = UILabel().then {
         $0.font = .pretendard(size: 18, weight: .semiBold)
@@ -21,16 +24,15 @@ class RecordingFileViewCell: UITableViewCell {
         $0.textColor = UIColor(named: "gray1")
     }
     
-    let recordedTimeLabel = UILabel().then {
+    var recordedTimeLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.textColor = UIColor(named: "textBlack")
         $0.textAlignment = .right
     }
     
-    let playButton = UIButton().then {
+    var playButton = UIButton().then {
         $0.setImage(UIImage(named: "play"), for: .normal)
     }
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -38,15 +40,18 @@ class RecordingFileViewCell: UITableViewCell {
             addSubview($0)
         }
         setConstraints()
+        playButton.isUserInteractionEnabled = true
+        
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //var playButtonAction: (() -> Void)?
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
+        
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -57,15 +62,20 @@ class RecordingFileViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        self.setData(fileItem: nil)
+        //self.setData(fileItem: nil)
     }
     
-    // 데이터 넣기
-    func setData(fileItem: RecordingFileItem?) {
-        guard let fileItem = fileItem else { return }
-        recordingFileNameLabel.text = fileItem.name
-        recordedDateLabel.text = fileItem.recordedDateString
-        recordedTimeLabel.text = fileItem.recordedTime
+    //데이터 넣기
+//    func setData(fileItem: RecordingFileItem?) {
+//        guard let fileItem = fileItem else { return }
+//        recordingFileNameLabel.text = fileItem.name
+//        recordedDateLabel.text = fileItem.recordedDateString
+//        recordedTimeLabel.text = fileItem.recordedTime
+//    }
+
+    func setData(fileTitle: String?, time : String!) {
+        recordingFileNameLabel.text = fileTitle
+        recordedTimeLabel.text = time
     }
     
     func setConstraints() {
@@ -86,7 +96,7 @@ class RecordingFileViewCell: UITableViewCell {
             $0.trailing.equalTo(playButton.snp.leading).offset(-14)
             $0.centerY.equalTo(contentView)
             $0.height.equalTo(22)
-            $0.width.equalTo(34)
+            //$0.width.equalTo(34)
         }
         
         recordedDateLabel.snp.makeConstraints {

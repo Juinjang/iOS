@@ -13,18 +13,17 @@ class ToSItemTableViewCell: UITableViewCell {
     var indexPath: IndexPath?
     
     lazy var checkButton = UIButton().then {
-        $0.setTitleColor(UIColor(named: "textBlack"), for: .normal)
-        $0.titleLabel?.font = .pretendard(size: 16, weight: .medium)
         $0.addTarget(self, action: #selector(checkButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
 
         $0.setImage(UIImage(named: "record-check-off"), for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
-
-        $0.semanticContentAttribute = .forceLeftToRight
-        $0.contentHorizontalAlignment = .left
+    }
     
-        $0.imageEdgeInsets = UIEdgeInsets(top: 0, left: -12, bottom: 0, right: 4)
+    lazy var itemLabel = UILabel().then {
+        $0.textColor = UIColor(named: "textBlack")
+        $0.font = .pretendard(size: 16, weight: .medium)
+        $0.isUserInteractionEnabled = true // 터치 이벤트 활성화
     }
     
     lazy var openContentButton = UIButton().then {
@@ -39,8 +38,9 @@ class ToSItemTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
         
-        [checkButton, openContentButton].forEach { contentView.addSubview($0) }
+        [checkButton, itemLabel, openContentButton].forEach { contentView.addSubview($0) }
         setupLayout()
+        setItemButton()
     }
     
     required init?(coder: NSCoder) {
@@ -60,8 +60,14 @@ class ToSItemTableViewCell: UITableViewCell {
     func setupLayout() {
         // 동의 Button
         checkButton.snp.makeConstraints {
-            $0.leading.equalToSuperview().offset(26)
+            $0.leading.equalToSuperview().offset(12)
             $0.top.equalToSuperview().offset(22)
+        }
+        
+        // 동의 사항 항목 Label
+        itemLabel.snp.makeConstraints {
+            $0.leading.equalTo(checkButton.snp.trailing).offset(10)
+            $0.centerY.equalToSuperview()
         }
         
         // 파일 열기 Button
@@ -69,6 +75,16 @@ class ToSItemTableViewCell: UITableViewCell {
             $0.trailing.equalToSuperview().offset(-12)
             $0.top.equalToSuperview().offset(21)
         }
+    }
+    
+    func setItemButton() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(itemLabelTapped))
+        itemLabel.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func itemLabelTapped(sender: UITapGestureRecognizer) {
+        // 동의하기 버튼을 클릭한 것처럼 처리
+        checkButton.sendActions(for: .touchUpInside)
     }
     
     @objc func checkButtonPressed(_ sender: UIButton) {
@@ -129,7 +145,7 @@ class ToSItemTableViewCell: UITableViewCell {
             attributedString.addAttribute(.foregroundColor, value: UIColor(named: "textGray")!, range: NSRange(range, in: cleanedContent))
         }
 
-        checkButton.setAttributedTitle(attributedString, for: .normal)
+        itemLabel.attributedText = attributedString
         checkButton.isSelected = isChecked
         let imageName = isChecked ? "record-check-on" : "record-check-off"
         checkButton.setImage(UIImage(named: imageName), for: .normal)

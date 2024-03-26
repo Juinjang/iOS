@@ -20,29 +20,7 @@ class ExpandedCalendarTableViewCell: UITableViewCell {
     var isExpanded: Bool = true
     var selectedDate: Date?
     var monthPosition: FSCalendarMonthPosition?
-    
-    func configure(with data: CalendarItem, at indexPath: IndexPath) {
-        // indexPath를 사용하여 특정 위치에 해당하는 업데이트 로직 수행
-        let currentItem = categories[indexPath.section].items[indexPath.row - 1]
-        let content = currentItem.content
-        contentLabel.text = content
-
-        // 선택된 날짜가 있으면 표시
-        if let storedData = calendarItems[content] {
-            selectedDate = storedData.inputDate
-
-            if let position = monthPosition, let selectedCell = calendar.cell(for: storedData.inputDate!, at: position) {
-                selectedCell.layer.cornerRadius = 9.97
-                selectedCell.layer.borderWidth = 1.5
-                selectedCell.layer.borderColor = UIColor(named: "mainOrange")?.cgColor
-            } else {
-                selectedDate = nil
-            }
-        } else {
-            // 선택된 날짜가 없으면 표시 초기화
-            selectedDate = nil
-        }
-    }
+    var categories: [CheckListResponseDto]!
     
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -272,6 +250,27 @@ class ExpandedCalendarTableViewCell: UITableViewCell {
                 print("\(content): \(data)")
             }
 //            saveSelectedDate()
+        }
+    }
+    
+    func configure(with questionDto: QuestionDto, at indexPath: IndexPath) {
+        let content = questionDto.question
+        contentLabel.text = content
+
+        // 선택된 날짜가 있으면 표시
+        if let storedData = calendarItems[content] {
+            selectedDate = storedData.inputDate
+
+            if let position = monthPosition, let selectedCell = calendar.cell(for: storedData.inputDate!, at: position) {
+                selectedCell.layer.cornerRadius = 9.97
+                selectedCell.layer.borderWidth = 1.5
+                selectedCell.layer.borderColor = UIColor(named: "mainOrange")?.cgColor
+            } else {
+                selectedDate = nil
+            }
+        } else {
+            // 선택된 날짜가 없으면 표시 초기화
+            selectedDate = nil
         }
     }
 }

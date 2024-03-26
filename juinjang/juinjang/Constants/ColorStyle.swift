@@ -8,6 +8,7 @@
 import UIKit
 
 enum ColorStyle {
+    static let priceColor = UIColor(named: "price")!        // #4B4B4B
     static let darkGray = UIColor(named: "darkGray")!       // #4A4A4A
     static let emptyGray = UIColor(named: "emptyGray")!     // #F3F3F3
     static let gray0 = UIColor(named: "gray0")!             // #F8F8F8

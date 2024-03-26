@@ -113,6 +113,7 @@ class SignUpWebViewController: UIViewController {
         
     }
     func getUserInfo(userToken : String) {
+        MainViewController().refreshToken()
         if userToken.isEmpty == false {
             // 로그아웃 API의 URL
             let urlString = "http://juinjang1227.com:8080/api/profile"
