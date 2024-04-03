@@ -312,7 +312,15 @@ class ImjangNoteViewController: UIViewController{
         case .createImjangVC:
             let mainVC = MainViewController()
             let nav = UINavigationController(rootViewController: mainVC)
+            let previousVC = ImjangListViewController()
             nav.modalPresentationStyle = .fullScreen
+            // 더 좋은 방법이 있다면 그걸 써주세요오
+            // previousVC 이동, mainVC는 rootViewController로 설정
+            if let navigationController = self.navigationController {
+                navigationController.setViewControllers([mainVC, previousVC], animated: false)
+            } else {
+                print("Navigation controller가 아님")
+            }
             present(nav, animated: true)
         case .imjangList, .main:
             completionHandler?()
