@@ -10,7 +10,10 @@ import SnapKit
 import Alamofire
 import RealmSwift
 
-class CheckListViewController: UIViewController {
+class CheckListViewController: UIViewController  {
+    
+    var allCategory: [String] = []
+    var checkListCategories: [CheckListCategory] = []
     
     var calendarItems: [String: (inputDate: String?, isSelected: Bool)] = [:]
     var scoreItems: [String: (score: String?, isSelected: Bool)] = [:]
@@ -24,15 +27,12 @@ class CheckListViewController: UIViewController {
     }
 
     var isEditMode: Bool = false // 수정 모드 여부
-    
+    var version: Int = 0
     var imjangId: Int? {
         didSet {
             print("체크리스트 \(imjangId)")
-            filterVersionAndCategory(isEditMode: isEditMode) { [weak self] categories in
-                    print("검사하기")
-//                    print(categories)
-                
-
+            filterVersionAndCategory(isEditMode: isEditMode, version: version) { [weak self] categories in
+                self?.showCheckList()
                 DispatchQueue.main.async {
                     print("카테고리 개수: \(self?.checkListCategories.count)")
                     print(self?.checkListCategories)
@@ -43,12 +43,6 @@ class CheckListViewController: UIViewController {
             }
         }
     }
-    
-    var categories: [CheckListResponseDto] = []
-    var checkListItems: [CheckListItem] = []
-    var checkListCategories: [CheckListCategory] = []
-//    var filteredcheckListCategories: [CheckListCategory] = []
-    var allCategory: [String] = []
     
     override func viewDidLoad() {
         addCheckListModel()
@@ -62,21 +56,20 @@ class CheckListViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(didStoppedParentScroll), name: NSNotification.Name("didStoppedParentScroll"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleEditModeChange(_:)), name: Notification.Name("EditModeChanged"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleEditButtonTappedNotification), name: NSNotification.Name("EditButtonTapped"), object: nil)
-        
     }
     
     @objc func handleEditModeChange(_ notification: Notification) {
         if let isEditMode = notification.object as? Bool {
             print("isEditMode 상태: \(isEditMode)")
             self.isEditMode = isEditMode
-            filterVersionAndCategory(isEditMode: isEditMode) { [weak self] result in
+            version = 1
+            filterVersionAndCategory(isEditMode: isEditMode, version: version) { [weak self] result in
                 self?.tableView.reloadData()
             }
         }
     }
 
     @objc func handleEditButtonTappedNotification() {
-        print("체크리스트 저장 좀 하고 싶다")
         saveAnswer()
     }
     
@@ -107,7 +100,6 @@ class CheckListViewController: UIViewController {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(48)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(698)
-//            $0.bottom.equalToSuperview()
         }
     }
     
@@ -132,12 +124,11 @@ class CheckListViewController: UIViewController {
                     realm.add(items)
                     realm.add(oneRoomItems)
                     addOptionData()
-                    print("CheckListItem 데이터 추가")
+                    print("CheckListItem DB 생성")
                 }
             } else {
                 print("CheckListItem 데이터베이스에 이미 데이터가 존재합니다.")
             }
-            
             print(Realm.Configuration.defaultConfiguration.fileURL!)
         } catch let error as NSError {
             print("DB 추가 실패: \(error.localizedDescription)")
@@ -145,11 +136,14 @@ class CheckListViewController: UIViewController {
         }
     }
     
-    func filterVersionAndCategory(isEditMode: Bool, completion: @escaping ([CheckListItem]) -> Void) {
+    // -MARK: 버전 조회
+    func filterVersionAndCategory(isEditMode: Bool, version: Int, completion: @escaping ([CheckListItem]) -> Void) {
         do {
             let realm = try Realm()
             var result = realm.objects(CheckListItem.self)
-            result = result.filter("version == 0")
+            
+            print("체크리스트 버전: \(version)")
+            result = result.filter("version == \(version)")
             
             let checkListItems = Array(result)
             
@@ -173,6 +167,33 @@ class CheckListViewController: UIViewController {
         }
     }
     
+    func showCheckList() {
+        print("호출!")
+        guard let imjangId = imjangId else { return }
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[CheckListResponseDto]>.self, api: .showChecklist(imjangId: imjangId)) { response, error in
+            if error == nil {
+                guard let response = response else { return }
+                if let firstCheckList = response.result?.first,
+                   let version = firstCheckList.questionDtos.first?.version {
+                    self.version = version
+                    print(version)
+                }
+            } else {
+                guard let error = error else { return }
+                switch error {
+                case .failedRequest:
+                    print("failedRequest")
+                case .noData:
+                    print("noData")
+                case .invalidResponse:
+                    print("invalidResponse")
+                case .invalidData:
+                    print("invalidData")
+                }
+            }
+        }
+    }
+    
     func saveAnswer() {
         print("saveAnswer 함수 호출")
         guard let imjangId = imjangId else { return }
@@ -180,16 +201,9 @@ class CheckListViewController: UIViewController {
         
         print("토큰값 \(UserDefaultManager.shared.accessToken)")
         
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[CheckListResponseDto]>.self, api: .showChecklist(imjangId: imjangId)) { response, error in
-            guard let checkListResponse = response else {
-                // 실패 시 에러 처리
-                print("실패: \(error?.localizedDescription ?? "error")")
-                return
-            }
-
             // 달력
             for (key, value) in self.calendarItems {
-                if let questionId = self.findQuestionId(forQuestion: key, in: checkListResponse) {
+                if let questionId = findQuestionId(forQuestion: key, in: checkListCategories) {
                     let parameter = CheckListRequestDto(questionId: questionId, answer: value.inputDate ?? "")
                     checkListItems.append(parameter)
                 }
@@ -197,7 +211,7 @@ class CheckListViewController: UIViewController {
 
             // 점수형
             for (key, value) in self.scoreItems {
-                if let questionId = self.findQuestionId(forQuestion: key, in: checkListResponse) {
+                if let questionId = findQuestionId(forQuestion: key, in: checkListCategories) {
                     let parameter = CheckListRequestDto(questionId: questionId, answer: value.score ?? "")
                     checkListItems.append(parameter)
                 }
@@ -205,7 +219,7 @@ class CheckListViewController: UIViewController {
 
             // 입력형
             for (key, value) in self.inputItems {
-                if let questionId = self.findQuestionId(forQuestion: key, in: checkListResponse) {
+                if let questionId = findQuestionId(forQuestion: key, in: checkListCategories) {
                     let parameter = CheckListRequestDto(questionId: questionId, answer: value.inputAnswer ?? "")
                     checkListItems.append(parameter)
                 }
@@ -213,17 +227,18 @@ class CheckListViewController: UIViewController {
 
             // 선택형
             for (key, value) in self.selectionItems {
-                if let questionId = self.findQuestionId(forQuestion: key, in: checkListResponse) {
+                if let questionId = findQuestionId(forQuestion: key, in: checkListCategories) {
                     let parameter = CheckListRequestDto(questionId: questionId, answer: value.option ?? "")
                     checkListItems.append(parameter)
                 }
             }
+        
+            print(checkListItems)
             
             let parameters: [[String: Any?]] = checkListItems.map {
                 var answer: Any? = $0.answer
-                // NaN 값 nil로 설정
-                if let answerAsDouble = Double($0.answer), answerAsDouble.isNaN {
-                    answer = nil
+                if !(answer != nil) {
+                    answer = answer
                 }
                 return ["questionId": $0.questionId, "answer": answer]
             }
@@ -252,18 +267,14 @@ class CheckListViewController: UIViewController {
             } catch {
                 print("encoding 에러: \(error)")
             }
-        }
     }
     
-    func findQuestionId(forQuestion question: String, in checkListResponse: BaseResponse<[CheckListResponseDto]>) -> Int? {
-        guard let result = checkListResponse.result else {
-            return nil
-        }
+    func findQuestionId(forQuestion question: String, in checkListCategory: [CheckListCategory]) -> Int? {
         
-        for category in result {
-            for questionDto in category.questionDtos {
-                if questionDto.question == question {
-                    return questionDto.questionId
+        for category in checkListCategory {
+            for item in category.checkListitem {
+                if item.question == question {
+                    return item.questionId
                 }
             }
         }
@@ -283,6 +294,7 @@ class CheckListViewController: UIViewController {
         }
     }
 }
+
 
 extension CheckListViewController : UITableViewDelegate, UITableViewDataSource, UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -353,7 +365,6 @@ extension CheckListViewController : UITableViewDelegate, UITableViewDataSource, 
                     // SelectionItem
                     let cell: ExpandedDropdownTableViewCell = tableView.dequeueReusableCell(withIdentifier: ExpandedDropdownTableViewCell.identifier, for: indexPath) as! ExpandedDropdownTableViewCell
                     cell.configure(with: questionDto, at: indexPath)
-                    cell.categories = categories
 
                     cell.selectionItems = selectionItems
                     cell.itemButton.isUserInteractionEnabled = true
@@ -364,7 +375,6 @@ extension CheckListViewController : UITableViewDelegate, UITableViewDataSource, 
                     // InputItem
                     let cell: ExpandedTextFieldTableViewCell = tableView.dequeueReusableCell(withIdentifier: ExpandedTextFieldTableViewCell.identifier, for: indexPath) as! ExpandedTextFieldTableViewCell
                     cell.configure(with: questionDto, at: indexPath)
-                    cell.categories = categories
                     
 
                     cell.inputItems = inputItems

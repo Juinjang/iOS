@@ -223,21 +223,21 @@ class ImjangNoteViewController: UIViewController{
         // 현재 ViewController를 검사해서 미입력 상태라면
         if let currentVC = recordingSegmentedVC.currentViewController as? CheckListViewController {
             // 모든 문항이 값이 null인지 확인
-            let allItemsAreNull = currentVC.categories.allSatisfy { category in
-                return category.questionDtos.allSatisfy { questionDto in
-                    return questionDto.answer == nil
-                }
-            }
-            if allItemsAreNull {
-                // 팝업창이 뜸
-                let reportPopupVC = ReportPopupViewController()
-                reportPopupVC.modalPresentationStyle = .overCurrentContext
-                present(reportPopupVC, animated: false, completion: nil)
-            } else {
-                // 아니라면 ReportViewController로 이동
-                let reportVC = ReportViewController()
-                navigationController?.pushViewController(reportVC, animated: true)
-            }
+//            let allItemsAreNull = currentVC.checkListCategories.allSatisfy { category in
+//                return category.checkListitem.allSatisfy { questionDto in
+//                    return questionDto. == nil
+//                }
+//            }
+//            if allItemsAreNull {
+//                // 팝업창이 뜸
+//                let reportPopupVC = ReportPopupViewController()
+//                reportPopupVC.modalPresentationStyle = .overCurrentContext
+//                present(reportPopupVC, animated: false, completion: nil)
+//            } else {
+//                // 아니라면 ReportViewController로 이동
+//                let reportVC = ReportViewController()
+//                navigationController?.pushViewController(reportVC, animated: true)
+//            }
         }
     }
     
