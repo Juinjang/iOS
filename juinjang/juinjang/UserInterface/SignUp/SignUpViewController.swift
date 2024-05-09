@@ -170,7 +170,7 @@ extension SignUpViewController {
     }
     
     func sendPostRequest(email: String, nickname: String?) {
-        let url = "http://juinjang1227.com:8080/api/auth/kakao"
+        let url = "http://juinjang1227.com:8080/api/auth/kakao/login"
         
         let requestBody = RequestBody(email: email, nickname: nickname)
             
