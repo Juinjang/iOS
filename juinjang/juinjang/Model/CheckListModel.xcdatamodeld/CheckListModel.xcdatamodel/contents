@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22522" systemVersion="23C71" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithSwiftData="YES" userDefinedModelVersionIdentifier="">
+    <entity name="CalendarItem" representedClassName="CalendarItem" syncable="YES" codeGenerationType="class">
+        <attribute name="inputDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+    </entity>
+    <entity name="Category" representedClassName="Category" syncable="YES" codeGenerationType="class">
+        <attribute name="image" optional="YES" attributeType="Binary"/>
+        <attribute name="isExpanded" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="items" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Item"/>
+    </entity>
+    <entity name="InputItem" representedClassName="InputItem" syncable="YES" codeGenerationType="class">
+        <attribute name="inputAnswer" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Item" representedClassName="Item" syncable="YES" codeGenerationType="class">
+        <attribute name="content" optional="YES" attributeType="String"/>
+        <attribute name="isAnswered" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="category" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Category"/>
+    </entity>
+    <entity name="ScoreItem" representedClassName="ScoreItem" syncable="YES" codeGenerationType="class">
+        <attribute name="score" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="SelectionItem" representedClassName="SelectionItem" syncable="YES" codeGenerationType="class">
+        <attribute name="options" optional="YES" attributeType="Binary"/>
+        <attribute name="selectAnswer" optional="YES" attributeType="String"/>
+    </entity>
+</model>
