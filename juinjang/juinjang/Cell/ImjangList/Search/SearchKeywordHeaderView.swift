@@ -31,9 +31,9 @@ final class SearchKeywordHeaderView: UITableViewHeaderFooterView {
     }
     
     private func configureView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         recentKeywordLabel.design(text: "최근 검색어", font: .pretendard(size: 16, weight: .semiBold))
-        removeAllButton.design(title: "전체 삭제", font: .pretendard(size: 14, weight: .medium), titleColor: ColorStyle.textGray, backgroundColor: .white)
+        removeAllButton.design(title: "전체 삭제", font: .pretendard(size: 14, weight: .medium), titleColor: .gray400, backgroundColor: .mainWhite)
     }
     
     private func setupConstraints() {

@@ -19,7 +19,7 @@ final class ImjangNoteViewController: BaseViewController,
                                 SendCheckListData {
     // 스크롤뷰
     let scrollView = UIScrollView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.showsVerticalScrollIndicator = false
     }
     
@@ -28,7 +28,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 하우스 이미지뷰
     let noImageBackgroundView = UIView().then {
-        $0.backgroundColor = ColorStyle.emptyGray
+        $0.backgroundColor = .stroke2
         $0.layer.cornerRadius = 5
     }
     let noImageIcon = UIImageView().then {
@@ -67,7 +67,7 @@ final class ImjangNoteViewController: BaseViewController,
     let roomAddressLabel = UILabel()
     let addressStackView = UIStackView()
     let addressBackgroundView = UIView().then {
-        $0.backgroundColor = ColorStyle.gray0
+        $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
     }
     
@@ -92,7 +92,7 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     let containerView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 5
     }
     
@@ -102,7 +102,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     let editButton = UIButton().then {
         $0.setImage(UIImage(named: "edit-button"), for: .normal)
-        $0.layer.shadowColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.13).cgColor
+        $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
         $0.layer.shadowOffset = CGSize(width: 0, height: 4)
         $0.layer.shadowOpacity = 1
         $0.addTarget(self, action: #selector(editButtonTapped(_:)), for: .touchUpInside)
@@ -140,7 +140,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         setDelegate()
         designNavigationBar()
         addSubView()
@@ -413,8 +413,8 @@ final class ImjangNoteViewController: BaseViewController,
         // UIBarButtonItem 생성 및 이미지 설정
         let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
         let editButtonItem = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(editView))
-        backButtonItem.tintColor = ColorStyle.textGray
-        editButtonItem.tintColor = ColorStyle.textGray
+        backButtonItem.tintColor = .gray400
+        editButtonItem.tintColor = .gray400
         
         // 네비게이션 아이템에 백 버튼 아이템 설정
         self.navigationItem.leftBarButtonItem = backButtonItem
@@ -517,7 +517,7 @@ final class ImjangNoteViewController: BaseViewController,
         designLabel(roomNameLabel,
                     alignment: .left,
                     font: UIFont.pretendard(size: 20, weight: .extraBold),
-                    textColor: ColorStyle.mainOrange)
+                    textColor: .main)
         
         // 방 이름 스택뷰
         setStackView(roomStackView,
@@ -530,12 +530,12 @@ final class ImjangNoteViewController: BaseViewController,
         // 방 가격 레이블
         designLabel(roomPriceLabel,
                     font: UIFont.pretendard(size: 20, weight: .semiBold),
-                    textColor: ColorStyle.darkGray)
+                    textColor: .gray450)
         
         // 방 주소 레이블
         designLabel(roomAddressLabel,
                     font: UIFont.pretendard(size: 16, weight: .medium),
-                    textColor: ColorStyle.textGray, numberOfLines: 2)
+                    textColor: .gray400, numberOfLines: 2)
         designImageView(roomLocationIcon,
                         image: UIImage(named: "location"),
                         contentMode: .scaleAspectFit)
@@ -552,7 +552,7 @@ final class ImjangNoteViewController: BaseViewController,
         designLabel(showReportLabel, text: "리포트 보기",
                     alignment: .left,
                     font: UIFont.pretendard(size: 14, weight: .bold),
-                    textColor: ColorStyle.textBlack)
+                    textColor: .gray500)
         
         // 리포트 이미지뷰
         designImageView(reportImageView,
@@ -571,12 +571,12 @@ final class ImjangNoteViewController: BaseViewController,
         designLabel(modifiedDateStringLabel,
                     text: "최근 수정날짜",
                     font: UIFont.pretendard(size: 14, weight: .semiBold),
-                    textColor: ColorStyle.textGray)
+                    textColor: .gray400)
         
         // 최근 수정날짜값 레이블
         designLabel(modifiedDate,
                     font: UIFont.pretendard(size: 14, weight: .semiBold),
-                    textColor: ColorStyle.textGray)
+                    textColor: .gray400)
         
         
     }

@@ -37,15 +37,15 @@ final class CompareSearchViewController: BaseViewController {
     let mentLabel = UILabel().then {
         $0.text = "일치하는 매물이 없습니다."
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        $0.textColor = UIColor(named: "450")
+        $0.textColor = .gray400
     }
     
     var applyBtn = UIButton().then{
-        $0.backgroundColor = ColorStyle.null
+        $0.backgroundColor = .null
         $0.layer.cornerRadius = 10
         $0.setTitle("적용하기", for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.setTitleColor(UIColor.white, for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         $0.isHidden = true
     }
     
@@ -64,7 +64,7 @@ final class CompareSearchViewController: BaseViewController {
 
         // UIBarButtonItem 생성 및 이미지 설정
         let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        backButtonItem.tintColor = UIColor(named: "300")
+        backButtonItem.tintColor = .gray450
         backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
     
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -193,7 +193,7 @@ final class CompareSearchViewController: BaseViewController {
         callRequest(setScrap: true, excludingId: imjangId)
         designNavigationBar()
         
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         searchBar.delegate = self
         searchedTableView.delegate = self
         searchedTableView.dataSource = self
@@ -234,10 +234,10 @@ extension CompareSearchViewController: UITableViewDelegate, UITableViewDataSourc
         
         if cell.isSelect == false {
             cell.isSelect = true
-            cell.contentView.backgroundColor = UIColor(named: "main100")
-            cell.contentView.layer.borderColor = ColorStyle.mainOrange.cgColor
+            cell.contentView.backgroundColor = .main100
+            cell.contentView.layer.borderColor = UIColor.main.cgColor
             print("id : \(compareImjangId)")
-            applyBtn.backgroundColor = UIColor(named: "500")
+            applyBtn.backgroundColor = .gray500
             if let score = cell.scoreLabel.text {
                 let moveTo = (score != "0.0")
                 scoreStates[applyBtn] = moveTo
@@ -246,9 +246,9 @@ extension CompareSearchViewController: UITableViewDelegate, UITableViewDataSourc
         }
         else {
             cell.isSelect = false
-            cell.contentView.backgroundColor = .white
-            cell.contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
-            applyBtn.backgroundColor = ColorStyle.null
+            cell.contentView.backgroundColor = .mainWhite
+            cell.contentView.layer.borderColor = UIColor.stroke.cgColor
+            applyBtn.backgroundColor = .null
             applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
         }
     }
@@ -256,9 +256,9 @@ extension CompareSearchViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! ReportImjangListTableViewCell
         cell.isSelect = false
-        cell.contentView.backgroundColor = .white
-        cell.contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
-        applyBtn.backgroundColor = UIColor(named: "null")
+        cell.contentView.backgroundColor = .mainWhite
+        cell.contentView.layer.borderColor = UIColor.stroke.cgColor
+        applyBtn.backgroundColor = .null
         applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
     }
     

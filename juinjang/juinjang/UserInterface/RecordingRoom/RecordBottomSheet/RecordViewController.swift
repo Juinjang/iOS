@@ -18,7 +18,7 @@ struct Recording {
 final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     
     lazy var bottomSheetView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
@@ -41,13 +41,13 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     lazy var recordLabel = UILabel().then {
         $0.text = "녹음하기"
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "textWhite")
+        $0.textColor = .mainWhite
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 18)
     }
     
     lazy var timeLabel = UILabel().then {
         $0.text = "00:00.00"
-        $0.textColor = UIColor(named: "lightGray")
+        $0.textColor = .null
 //        $0.font = UIFont(name: "Pretendard-Bold", size: 24)
         $0.font = UIFont.monospacedDigitSystemFont(ofSize: 24, weight: .bold)
     }
@@ -62,7 +62,7 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     lazy var limitLabel = UILabel().then {
         $0.text = "녹음은 5분까지만 가능해요"
         $0.textAlignment = .center
-        $0.textColor = UIColor(red: 0.38, green: 0.38, blue: 0.38, alpha: 1)
+        $0.textColor = .gray420
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
     }
     
@@ -81,7 +81,7 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     
     lazy var completedButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-Bold", size: 18)
         $0.addTarget(self, action: #selector(completedButtonPressed(_:)), for: .touchUpInside)
     }
@@ -111,7 +111,7 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bottomSheetView.backgroundColor = UIColor(named: "textBlack")
+        bottomSheetView.backgroundColor = .gray500
         addSubViews()
         setupLayout()
         requestSpeechRecognitionAuthorization()
@@ -304,6 +304,6 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     
     private func configureView() {
         waveFormView.shouldDrawSilencePadding = true
-        waveFormView.configuration = waveFormView.configuration.with(backgroundColor: ColorStyle.textBlack, style: .striped(.init(color: ColorStyle.mainOrange, width: 3, spacing: 3)), damping: waveFormView.configuration.damping?.with(percentage: 0.25, sides: .both))
+        waveFormView.configuration = waveFormView.configuration.with(backgroundColor: .gray500, style: .striped(.init(color: .main, width: 3, spacing: 3)), damping: waveFormView.configuration.damping?.with(percentage: 0.25, sides: .both))
     }
 }

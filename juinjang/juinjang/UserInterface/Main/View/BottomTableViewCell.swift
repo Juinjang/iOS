@@ -29,7 +29,7 @@ final class BottomTableViewCell: UITableViewCell{
     //최근 본 임장
     var recentImjangLabel = UILabel().then {
         $0.text = "최근 본 임장"
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
         $0.font = .pretendard(size: 20, weight: .bold)
     }
     
@@ -40,7 +40,7 @@ final class BottomTableViewCell: UITableViewCell{
     }
     var noImjangLabel = UILabel().then {
         $0.text = "아직 등록된 집이 없어요"
-        $0.textColor = ColorStyle.textGray
+        $0.textColor = .gray400
         $0.font = .pretendard(size: 16, weight: .semiBold)
     }
     

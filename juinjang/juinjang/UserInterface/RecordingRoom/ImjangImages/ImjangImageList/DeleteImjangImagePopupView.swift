@@ -11,7 +11,7 @@ import SnapKit
 
 final class DeleteImjangImagePopupView: UIViewController {
     lazy var popupView = UIView().then { // 팝업창 뷰
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -28,7 +28,7 @@ final class DeleteImjangImagePopupView: UIViewController {
     
     lazy var messageLabel = UILabel().then {
         $0.text = "사진을 정말 삭제할까요?\n삭제한 사진은 다시 되돌릴 수 없습니다."
-        $0.textColor = UIColor(named: "nomalText")
+        $0.textColor = .gray600
         $0.numberOfLines = 0
         $0.textAlignment = .center
     }
@@ -56,13 +56,13 @@ final class DeleteImjangImagePopupView: UIViewController {
     }
     
     func designViews() {
-        designButton(cancelButton, title: "아니요", backgroundColor: ColorStyle.gray3)
-        designButton(confirmButton, title: "삭제하기", backgroundColor: ColorStyle.textBlack, textColor: .white)
+        designButton(cancelButton, title: "아니요", backgroundColor: .gray3)
+        designButton(confirmButton, title: "삭제하기", backgroundColor: .gray500, textColor: .mainWhite)
         if let selectedCount {
             messageLabel.text = "총 \(selectedCount)개의 사진을 정말 삭제할까요?\n삭제한 사진은 다시 되돌릴 수 없습니다."
             messageLabel.font = .pretendard(size: 16, weight: .medium)
             messageLabel.setLineSpacing(spacing: 4)
-            messageLabel.asColor(targetString: "총 \(selectedCount)개", color: ColorStyle.mainOrange)
+            messageLabel.asColor(targetString: "총 \(selectedCount)개", color: .main)
             messageLabel.textAlignment = .center
         } else {
             messageLabel.text = "녹음 파일을 정말 삭제할까요?"
@@ -105,7 +105,7 @@ final class DeleteImjangImagePopupView: UIViewController {
         dismiss(animated: false, completion: nil)
     }
     
-    func designButton(_ button: UIButton, title: String = "삭제하기", backgroundColor: UIColor = .white, textColor: UIColor = UIColor(named: "textBlack")!) {
+    func designButton(_ button: UIButton, title: String = "삭제하기", backgroundColor: UIColor = .mainWhite, textColor: UIColor = .gray500) {
         button.setTitle(title, for: .normal)
         button.setTitleColor(textColor, for: .normal)
         

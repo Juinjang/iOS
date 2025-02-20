@@ -9,7 +9,7 @@ import UIKit
 
 final class ImjangListHeader: UICollectionReusableView {
     let filterBackgroundView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     lazy var filterselectBtn: UIButton = {
@@ -18,10 +18,10 @@ final class ImjangListHeader: UICollectionReusableView {
         var container = AttributeContainer()
         container.font = .pretendard(size: 14, weight: .semiBold)
         configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
-        configuration.baseBackgroundColor = ColorStyle.textWhite
-        configuration.baseForegroundColor = ColorStyle.darkGray
+        configuration.baseBackgroundColor = .mainWhite
+        configuration.baseForegroundColor = .gray450
         configuration.image = ImageStyle.arrowDown
-        configuration.image?.withTintColor(ColorStyle.darkGray)
+        configuration.image?.withTintColor(.gray450)
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 6
         let button = UIButton(configuration: configuration, primaryAction: nil)
@@ -105,7 +105,7 @@ extension ImjangListHeader {
     }
     
     private func configureView() {
-        backgroundColor = .white
+        backgroundColor = .mainWhite
         deleteButton.design(image: ImageStyle.trash, backgroundColor: .clear)
     }
 }

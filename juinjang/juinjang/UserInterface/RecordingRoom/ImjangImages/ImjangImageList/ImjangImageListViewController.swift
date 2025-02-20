@@ -308,12 +308,12 @@ extension ImjangImageListViewController: UICollectionViewDelegate, UICollectionV
             print(#function, index)
             guard let cell = collectionView.cellForItem(at: indexPath) else { return }
             cell.contentView.layer.borderWidth = 3
-            cell.contentView.layer.borderColor = ColorStyle.mainStrokeOrange?.cgColor
+            cell.contentView.layer.borderColor = UIColor.mainStroke.cgColor
             isLongTap = false
         } else if isDeleteMode {
             guard let cell = collectionView.cellForItem(at: indexPath) else { return }
             cell.contentView.layer.borderWidth = 3
-            cell.contentView.layer.borderColor = ColorStyle.mainStrokeOrange?.cgColor
+            cell.contentView.layer.borderColor = UIColor.mainStroke.cgColor
             selectedIndexs.insert(imageList[indexPath.row].imageId)
         } else {
             showEnlargePhotoVC(index: index, photoList: imageList)

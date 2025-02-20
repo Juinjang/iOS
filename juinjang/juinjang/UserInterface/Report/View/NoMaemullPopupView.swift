@@ -10,7 +10,7 @@ import Then
 
 final class NoMaemullPopupView: UIView {
     private let popupView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
     }
@@ -20,14 +20,14 @@ final class NoMaemullPopupView: UIView {
     }
     
     private let mentLabel = UILabel().then {
-        $0.textColor = UIColor(named: "600")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.numberOfLines = 0
         $0.textAlignment = .center
     }
     let Button = UIButton().then {
-        $0.setTitleColor(UIColor.white, for: .normal)
-        $0.backgroundColor = UIColor(named: "500")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 10
         $0.addTarget(self, action: #selector(NoMaemullPopupViewController.btnTap(_:)) , for: .touchUpInside)
     }

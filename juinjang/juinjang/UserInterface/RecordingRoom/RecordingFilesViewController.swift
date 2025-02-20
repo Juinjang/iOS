@@ -22,7 +22,7 @@ final class RecordingFilesViewController: BaseViewController {
     private let emptyLabel = UILabel().then {
         $0.text = "아직 녹음된 파일이 없어요"
         $0.font = .pretendard(size: 16, weight: .medium)
-        $0.textColor = ColorStyle.textGray
+        $0.textColor = .gray400
         $0.alpha = 0
     }
     
@@ -53,7 +53,7 @@ final class RecordingFilesViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         addSubViews()
         setConstraints()
         configureView()
@@ -78,7 +78,7 @@ final class RecordingFilesViewController: BaseViewController {
     
     private func showSkeletonView() {
         setEmptyView(false)
-        recordingFileTableView.showAnimatedSkeleton(usingColor: ColorStyle.gray0, transition: .crossDissolve(0.5))
+        recordingFileTableView.showAnimatedSkeleton(usingColor: .gray100, transition: .crossDissolve(0.5))
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             self.recordingFileTableView.stopSkeletonAnimation()
             self.recordingFileTableView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.5))
@@ -145,7 +145,7 @@ final class RecordingFilesViewController: BaseViewController {
     
     private func designNavigationBar() {
         self.navigationItem.title = "녹음 파일"     // TODO: - 나중에 roomName 으로 연결
-        self.navigationController?.navigationBar.tintColor = ColorStyle.textBlack
+        self.navigationController?.navigationBar.tintColor = .gray500
         navigationItem.setHidesBackButton(true, animated: true)
 
         // UIBarButtonItem 생성 및 이미지 설정
@@ -162,7 +162,7 @@ final class RecordingFilesViewController: BaseViewController {
         // 네비게이션 아이템에 백 버튼 아이템 설정
         self.navigationItem.leftBarButtonItem = backButtonItem
         self.navigationItem.rightBarButtonItem = addButtonItem
-        self.navigationItem.rightBarButtonItem?.tintColor = ColorStyle.mainOrange
+        self.navigationItem.rightBarButtonItem?.tintColor = .main
     }
     
     @objc private func back(_ sender: Any) {
@@ -332,7 +332,7 @@ extension RecordingFilesViewController: UITableViewDelegate, UITableViewDataSour
             completionHandler(true)
         }
         
-        deleteAction.backgroundColor = ColorStyle.mainOrange
+        deleteAction.backgroundColor = .main
         let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
         return configuration
     }

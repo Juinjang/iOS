@@ -77,9 +77,9 @@ final class OnboardingContainerViewController: UIViewController {
     }
     
     private func configureView() {
-        view.backgroundColor = ColorStyle.textWhite
-        pageControl.currentPageIndicatorTintColor = ColorStyle.mainOrange
-        pageControl.pageIndicatorTintColor = ColorStyle.lightBackgroundOrange
+        view.backgroundColor = .mainWhite
+        pageControl.currentPageIndicatorTintColor = .main
+        pageControl.pageIndicatorTintColor = .main100
         pageControl.backgroundColor = .clear
         
         pageControl.numberOfPages = pageViewControllerList.count
@@ -90,8 +90,8 @@ final class OnboardingContainerViewController: UIViewController {
         var config = UIButton.Configuration.filled()
         config.title = "로그인 페이지로"
         config.titleAlignment = .center
-        config.baseForegroundColor = ColorStyle.textWhite
-        config.baseBackgroundColor = ColorStyle.textBlack
+        config.baseForegroundColor = .mainWhite
+        config.baseBackgroundColor = .gray500
         config.background.cornerRadius = 10
  
         var container = AttributeContainer()

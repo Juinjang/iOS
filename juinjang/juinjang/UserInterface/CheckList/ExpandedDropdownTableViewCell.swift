@@ -20,17 +20,17 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
     
     lazy var contentLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .regular)
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
     }
     
     lazy var itemButton = UIButton().then {
-        $0.backgroundColor = UIColor(named: "shadowGray")
+        $0.backgroundColor = .gray200
         $0.titleLabel?.font = .pretendard(size: 16, weight: .regular)
         $0.addTarget(self, action: #selector(openItemOptions(_:)), for: .touchUpInside)
-        $0.layer.backgroundColor = UIColor(named: "shadowGray")?.cgColor
+        $0.layer.backgroundColor = UIColor.gray200.cgColor
         $0.layer.cornerRadius = 15
         $0.setTitle("선택안함", for: .normal)
-        $0.setTitleColor(UIColor(named: "darkGray"), for: .normal)
+        $0.setTitleColor(.gray450, for: .normal)
         $0.contentHorizontalAlignment = .left
         
         let buttonImage = UIImage(named: "item-arrow-down")
@@ -51,16 +51,16 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
     lazy var itemPickerView = UIPickerView().then {
         $0.layer.cornerRadius = 20
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(named: "gray4")?.cgColor
-        $0.layer.backgroundColor = UIColor(named: "textWhite")?.cgColor
+        $0.layer.borderColor = UIColor.stroke.cgColor
+        $0.layer.backgroundColor = UIColor.mainWhite.cgColor
 //        $0.separatorStyle = .none
     }
     
     lazy var etcTextField = UITextField().then {
         $0.layer.cornerRadius = 15
-        $0.layer.backgroundColor = UIColor(named: "lightBackgroundOrange")?.cgColor
+        $0.layer.backgroundColor = UIColor.main100.cgColor
         $0.font = .pretendard(size: 16, weight: .regular)
-        $0.textColor = UIColor(named: "darkGray")
+        $0.textColor = .gray450
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
         $0.leftView = paddingView
         $0.rightView = paddingView
@@ -110,7 +110,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         let buttonImage = UIImage(named: "item-arrow-down")
         itemButton.setTitle("선택안함", for: .normal)
         itemButton.setImage(buttonImage, for: .normal)
-        itemButton.layer.backgroundColor = UIColor(named: "shadowGray")?.cgColor
+        itemButton.layer.backgroundColor = UIColor.gray200.cgColor
         itemButton.semanticContentAttribute = .forceRightToLeft
     
         // 여백 설정
@@ -121,7 +121,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         itemButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: itemButton.bounds.width - 35, bottom: 0, right: -imageInset)
 
         // 배경색 초기화
-        backgroundColor = .white
+        backgroundColor = .mainWhite
         questionImage.image = UIImage(named: "question-image")
     
         // 버튼 위치 초기화
@@ -190,8 +190,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         
         // 선택한 옵션이 "기타"일 경우
         if selectedButton.title(for: .normal) == "기타" {
-            selectedButton.backgroundColor = UIColor(named: "shadowGray")
-            selectedButton.setTitleColor(UIColor(named: "darkGray"), for: .normal)
+            selectedButton.backgroundColor = .gray200
+            selectedButton.setTitleColor(.gray450, for: .normal)
             selectedButton.snp.updateConstraints {
                 $0.trailing.equalToSuperview().offset(-250)
             }
@@ -228,8 +228,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
     // 보기 모드
     func viewModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
-        contentLabel.textColor = UIColor(named: "lightGray")
-        backgroundColor = UIColor(named: "gray0")
+        contentLabel.textColor = .null
+        backgroundColor = .gray100
         
         // 보기 모드 설정
         itemButton.isUserInteractionEnabled = false
@@ -239,8 +239,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
     // 수정 모드
     func editModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = .white
+        contentLabel.textColor = .gray500
+        backgroundColor = .mainWhite
         
         var optionValues: [Option] = []
 
@@ -273,8 +273,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         if let selectedIndex = options.firstIndex(where: { $0.option == answer }) {
             itemPickerView.selectRow(selectedIndex, inComponent: 0, animated: true)
             questionImage.image = UIImage(named: "question-selected-image")
-            contentLabel.textColor = UIColor(named: "500")
-            backgroundColor = .white
+            contentLabel.textColor = .gray500
+            backgroundColor = .mainWhite
             
             let selectedOption = options[selectedIndex]
             itemButton.setTitle(selectedOption.option, for: .normal)
@@ -290,8 +290,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
                 itemButton.setImage(nil, for: .normal)
             }
 
-            itemButton.backgroundColor = UIColor(named: "lightBackgroundOrange")
-            itemButton.setTitleColor(UIColor(named: "darkGray"), for: .normal)
+            itemButton.backgroundColor = .main100
+            itemButton.setTitleColor(.gray450, for: .normal)
             itemButton.semanticContentAttribute = .forceLeftToRight
             setSavedInset()
         } else {
@@ -299,8 +299,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
                 if !answer.isEmpty && answer != nil {
                     itemPickerView.selectRow(selectedIndex, inComponent: 0, animated: true)
                     questionImage.image = UIImage(named: "question-selected-image")
-                    contentLabel.textColor = UIColor(named: "500")
-                    backgroundColor = .white
+                    contentLabel.textColor = .gray500
+                    backgroundColor = .mainWhite
                     
                     let selectedOption = options[selectedIndex]
                     itemButton.setTitle(selectedOption.option, for: .normal)
@@ -319,14 +319,14 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
                         $0.width.equalTo(218)
                     }
                     etcTextField.text = answer
-                    etcTextField.backgroundColor = UIColor(named: "lightBackgroundOrange")
+                    etcTextField.backgroundColor = .main100
                     let padding: CGFloat = 27
                     let etcTextFieldSize = (etcTextField.text ?? "").width(forFont: etcTextField.font ?? UIFont.systemFont(ofSize: 16)) + padding
                     updateTextFieldWidthConstraint(for: etcTextField, constant: etcTextFieldSize, shouldRemoveLeadingConstraint: false)
                 }
             } else {
                 print("값을 찾을 수 없습니다.")
-                itemButton.backgroundColor = .white
+                itemButton.backgroundColor = .mainWhite
             }
         }
         selectedOption = answer
@@ -354,14 +354,14 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
             } else {
                 itemButton.setImage(nil, for: .normal)
             }
-            itemButton.backgroundColor = .white
+            itemButton.backgroundColor = .mainWhite
         } else {
             let selectedIndex = options.firstIndex(where: { $0.option == "기타" })!
             itemPickerView.selectRow(selectedIndex, inComponent: 0, animated: true)
             itemButton.setTitle("기타", for: .normal)
             itemButton.setImage(nil, for: .normal)
-            itemButton.backgroundColor = UIColor(named: "shadowGray")
-            etcTextField.backgroundColor = .white
+            itemButton.backgroundColor = .gray200
+            etcTextField.backgroundColor = .mainWhite
             etcTextField.text = answer
             itemButton.snp.updateConstraints {
                 $0.trailing.equalToSuperview().offset(-250)
@@ -382,10 +382,10 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         }
         
         setSavedInset()
-        itemButton.setTitleColor(UIColor(named: "darkGray"), for: .normal)
+        itemButton.setTitleColor(.gray450, for: .normal)
         questionImage.image = UIImage(named: "question-selected-image")
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = UIColor(named: "lightOrange")
+        contentLabel.textColor = .gray500
+        backgroundColor = .main150
         
         selectedOption = answer
     }
@@ -416,8 +416,8 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
         
         // 선택한 옵션으로 selectedButton 설정
         selectedButton.setTitle(selectedOption, for: .normal)
-        selectedButton.backgroundColor = .white
-        selectedButton.setTitleColor(UIColor(named: "darkGray"), for: .normal)
+        selectedButton.backgroundColor = .mainWhite
+        selectedButton.setTitleColor(.gray450, for: .normal)
         
         if let image = UIImage(data: options[row].image) {
             selectedButton.setImage(image, for: .normal)
@@ -441,9 +441,9 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
         
         // 기본값 설정
         if row == 0 {
-            backgroundColor = .white
+            backgroundColor = .mainWhite
             questionImage.image = UIImage(named: "question-image")
-            itemButton.layer.backgroundColor = UIColor(named: "shadowGray")?.cgColor
+            itemButton.layer.backgroundColor = UIColor.gray200.cgColor
             setBasicInset()
             handleOptionSelection(options[row].option)
         } else {
@@ -452,12 +452,12 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
                     $0.width.equalTo(218)
                 }
                 etcTextField.layoutIfNeeded()
-                etcTextField.backgroundColor = UIColor(named: "lightBackgroundOrange")
+                etcTextField.backgroundColor = .main100
                 // 기타 선택했을 때 선택지 중에 있는지 확인
                 if let existingOption = options.first(where: { $0.option == etcTextField.text }) {
                     // UI 설정
                     questionImage.image = UIImage(named: "question-selected-image")
-                    backgroundColor = UIColor(named: "lightOrange")
+                    backgroundColor = .main150
 
                     // 값 전달
                     handleOptionSelection(existingOption.option)
@@ -465,11 +465,11 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
                     // 선택지 중에 없는 경우 사용자 입력값으로 처리
                     if let etcText = etcTextField.text, !etcText.isEmpty {
                         questionImage.image = UIImage(named: "question-selected-image")
-                        backgroundColor = UIColor(named: "lightOrange")
+                        backgroundColor = .main150
                         handleOptionSelection(etcText)
                     } else {
                         questionImage.image = UIImage(named: "question-image")
-                        backgroundColor = .white
+                        backgroundColor = .mainWhite
                         etcTextField.removeConstraints(etcTextField.constraints)
                         etcTextField.removeFromSuperview()
                         handleOptionSelection(options[0].option)
@@ -477,7 +477,7 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
                 }
             } else {
                 questionImage.image = UIImage(named: "question-selected-image")
-                backgroundColor = UIColor(named: "lightOrange")
+                backgroundColor = .main150
                 handleOptionSelection(options[row].option)
             }
         }
@@ -612,9 +612,9 @@ extension ExpandedDropdownTableViewCell: UITextFieldDelegate {
         guard textField.text!.count < 8 else { return false }
         
         textField.becomeFirstResponder()
-        backgroundColor = UIColor(named: "lightOrange")
+        backgroundColor = .main150
         questionImage.image = UIImage(named: "question-selected-image")
-        textField.backgroundColor = UIColor(named: "lightBackgroundOrange")
+        textField.backgroundColor = .main100
         updateTextFieldWidthConstraint(for: textField, constant: 218, shouldRemoveLeadingConstraint: false)
     
         return true
@@ -623,9 +623,9 @@ extension ExpandedDropdownTableViewCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty {
             // 텍스트 필드가 비어 있지 않은 경우
-            backgroundColor = UIColor(named: "lightOrange")
+            backgroundColor = .main150
             questionImage.image = UIImage(named: "question-selected-image")
-            textField.backgroundColor = .white
+            textField.backgroundColor = .mainWhite
             
             // 입력된 텍스트에 따라 동적으로 너비 조절
             let calculatedWidth = calculateTextFieldWidth(for: text, maxCharacterCount: 8)
@@ -636,9 +636,9 @@ extension ExpandedDropdownTableViewCell: UITextFieldDelegate {
             handleOptionSelection(text)
         } else {
             // 비어있는 경우 기존 너비로
-            backgroundColor = .white
+            backgroundColor = .mainWhite
             questionImage.image = UIImage(named: "question-image")
-            textField.backgroundColor = UIColor(named: "lightBackgroundOrange")
+            textField.backgroundColor = .main100
             etcTextField.snp.updateConstraints {
                 $0.width.equalTo(218)
             }

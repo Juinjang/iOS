@@ -15,7 +15,7 @@ protocol CheckWarningMessageDelegate {
 final class WarningMessageViewController: BaseViewController {
     
     lazy var bottomSheetView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
@@ -42,9 +42,9 @@ final class WarningMessageViewController: BaseViewController {
         $0.text = "녹음 파일을 법적인 상황에서 활용하려면\n반드시 녹음한 사람의 목소리가 함께 들어가야 해요."
         $0.numberOfLines = 2
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.asColor(targetString: "녹음한 사람의 목소리가 함께", color: UIColor(named: "mainOrange"))
+        $0.asColor(targetString: "녹음한 사람의 목소리가 함께", color: .main)
     }
     
     lazy var warningMessageImage = UIImageView().then {
@@ -54,7 +54,7 @@ final class WarningMessageViewController: BaseViewController {
     
     lazy var checkButton = UIButton().then {
         $0.setTitle("오늘 하루 보지 않기", for: .normal)
-        $0.setTitleColor(UIColor(named: "normalText"), for: .normal)
+        $0.setTitleColor(.gray600, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.addTarget(self, action: #selector(checkButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
@@ -69,9 +69,9 @@ final class WarningMessageViewController: BaseViewController {
 
     lazy var recordStartButton = UIButton().then {
         $0.setTitle("녹음 시작!", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(confirmButtonPressed(_:)), for: .touchUpInside)
         

@@ -15,11 +15,11 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
         $0.alignment = .fill
         $0.distribution = .equalSpacing
         $0.spacing = 4
-        $0.backgroundColor = ColorStyle.emptyGray
+        $0.backgroundColor = .stroke2
     }
     
     let emptyBackgroundView = UIView().then {
-        $0.backgroundColor = ColorStyle.emptyGray
+        $0.backgroundColor = .stroke2
     }
     let emptyImage = UIImageView().then {
         $0.image = ImageStyle.gallery
@@ -263,7 +263,7 @@ extension ScrapCollectionViewCell {
     
     private func setScoreStyle(empty: Bool = true) {
         starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
-        scoreLabel.textColor = empty ? ColorStyle.lightGray : ColorStyle.mainOrange
+        scoreLabel.textColor = empty ? .null : .main
     }
     
     private func setStackViewBackground(isEmpty: Bool) {
@@ -275,7 +275,7 @@ extension ScrapCollectionViewCell {
                 $0.size.equalTo(50)
             }
         }
-        totalStackView.backgroundColor = isEmpty ? ColorStyle.emptyGray : UIColor.white
+        totalStackView.backgroundColor = isEmpty ? .stroke2 : .mainWhite
     }
 }
 
@@ -344,9 +344,9 @@ extension ScrapCollectionViewCell {
     }
     
     private func configureView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         
-        contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
+        contentView.layer.borderColor = UIColor.stroke.cgColor
         contentView.layer.borderWidth = 1.5
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
@@ -361,9 +361,9 @@ extension ScrapCollectionViewCell {
         roomIcon.design(image: ImageStyle.house, contentMode: .scaleAspectFit)
         
         starIcon.design(image: ImageStyle.starEmpty, contentMode: .scaleAspectFit)
-        scoreLabel.design(textColor: ColorStyle.lightGray, font: .pretendard(size: 16, weight: .semiBold))
+        scoreLabel.design(textColor: .null, font: .pretendard(size: 16, weight: .semiBold))
         roomPriceLabel.design(text: "", font: .pretendard(size: 16, weight: .semiBold))
-        roomAddressLabel.design(text: "", textColor: ColorStyle.textGray, font: .pretendard(size: 14, weight: .medium))
-        bookMarkButton.design(image: ImageStyle.bookmark, backgroundColor: .white)
+        roomAddressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
+        bookMarkButton.design(image: ImageStyle.bookmark, backgroundColor: .mainWhite)
     }
 }

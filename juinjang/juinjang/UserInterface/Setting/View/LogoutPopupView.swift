@@ -10,7 +10,7 @@ import Then
 
 final class LogoutPopupView: UIView {
     private let popupView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
     }
@@ -19,30 +19,30 @@ final class LogoutPopupView: UIView {
         $0.spacing = 8
     }
     private let nameLabel = UILabel().then {
-        $0.textColor = UIColor(named: "mainOrange")
+        $0.textColor = .main
         $0.font = UIFont(name: "Pretendard-Medium", size: 18)
         $0.numberOfLines = 0
     }
     private let emailLabel = UILabel().then {
-        $0.textColor = UIColor(named: "450")
+        $0.textColor = .gray400
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.numberOfLines = 0
     }
     private let mentLabel = UILabel().then {
-        $0.textColor = UIColor(named: "600")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 18)
         $0.numberOfLines = 0
     }
     private let leftButton = UIButton().then {
-        $0.setTitleColor(UIColor(named: "500"), for: .normal)
-        $0.backgroundColor = UIColor(named: "gray3")
+        $0.setTitleColor(.gray500, for: .normal)
+        $0.backgroundColor = .gray3
         $0.layer.cornerRadius = 10
         $0.addTarget(self, action: #selector(LogoutPopupViewController.no(_:)), for: .touchUpInside)
     }
     
     private let rightButton = UIButton().then {
-        $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = UIColor(named: "500")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 10
         $0.addTarget(self, action: #selector(LogoutPopupViewController.yes(_:)), for: .touchUpInside)
     }

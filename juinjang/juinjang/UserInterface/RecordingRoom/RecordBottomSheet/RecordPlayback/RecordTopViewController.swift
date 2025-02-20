@@ -21,20 +21,20 @@ final class RecordTopViewController: BaseViewController {
     
     var titleLabel = UILabel().then {
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "textWhite")
+        $0.textColor = .mainWhite
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 18)
     }
     
     lazy var recordTextView = UITextView().then {
-        $0.textColor = UIColor(named: "textWhite")
-        $0.backgroundColor = UIColor(named: "normalText")
+        $0.textColor = .mainWhite
+        $0.backgroundColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 18)
         $0.isEditable = false
     }
     
     lazy var sttLabel = UILabel().then {
         $0.text = "Speech to text"
-        $0.textColor = UIColor(named: "textGray")
+        $0.textColor = .gray400
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
     }
     
@@ -69,7 +69,7 @@ final class RecordTopViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "normalText")
+        view.backgroundColor = .gray600
         addSubViews()
         setupLayout()
         setRecordData()

@@ -16,7 +16,7 @@ final class SetNickNameViewController: BaseViewController {
         $0.text = "당신을 위한 노트를 준비했어요"
         $0.numberOfLines = 2
         $0.textAlignment = .center
-        $0.textColor = ColorStyle.normalText
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
     }
     
@@ -24,9 +24,9 @@ final class SetNickNameViewController: BaseViewController {
         $0.text = "임장 노트에\n이름을 적어볼까요?"
         $0.numberOfLines = 2
         $0.textAlignment = .left
-        $0.textColor = ColorStyle.normalText
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
-        $0.asColor(targetString: "임장 노트", color: ColorStyle.mainOrange)
+        $0.asColor(targetString: "임장 노트", color: .main)
     }
 
     lazy var imjangNoteImage = UIImageView().then {
@@ -35,21 +35,21 @@ final class SetNickNameViewController: BaseViewController {
     }
     
     lazy var textFieldContainerView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 5
     }
     
     lazy var nickNameTextField = UITextField().then {
         $0.layer.cornerRadius = 3
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = ColorStyle.mainOrange.cgColor
+        $0.layer.borderColor = UIColor.main.cgColor
         $0.textAlignment = .center
-        $0.textColor = ColorStyle.normalText
+        $0.textColor = .gray600
         $0.font = UIFont(name: "omyu pretty", size: 20)
         $0.attributedPlaceholder = NSAttributedString(
             string: "8자 이내",
             attributes: [
-                .foregroundColor: ColorStyle.gray0 as Any,
+                .foregroundColor: UIColor.gray100,
                 .font: UIFont(name: "Pretendard-Regular", size: 20) ?? UIFont.systemFont(ofSize: 20)
             ]
         )
@@ -57,8 +57,8 @@ final class SetNickNameViewController: BaseViewController {
     
     lazy var nextButton = UIButton().then {
         $0.setTitle("입력 완료!", for: .normal)
-        $0.setTitleColor(ColorStyle.textWhite, for: .normal)
-        $0.backgroundColor = ColorStyle.lightGray
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .null
         $0.layer.cornerRadius = 8
         $0.isEnabled = false
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
@@ -67,7 +67,7 @@ final class SetNickNameViewController: BaseViewController {
     }
     
     override func viewDidLoad() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         super.viewDidLoad()
         nickNameTextField.delegate = self
         setNavigationBar()
@@ -180,7 +180,7 @@ final class SetNickNameViewController: BaseViewController {
     
     func checkNextButtonActivation() {
         nextButton.isEnabled = true
-        nextButton.backgroundColor = ColorStyle.textBlack
+        nextButton.backgroundColor = .gray500
     }
 }
 

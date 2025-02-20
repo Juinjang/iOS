@@ -18,7 +18,7 @@ final class GraphViewController : BaseViewController {
     var label1 = UILabel().then {
         $0.text = "이곳은 한 마디로..."
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 0.6)
+        $0.textColor = .gray600.withAlphaComponent(0.6)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -32,12 +32,12 @@ final class GraphViewController : BaseViewController {
     var indoorLabel = UILabel().then {
         $0.text = "상당히 쾌적한 실내"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var indoorRateLabel = UILabel().then {
         $0.textAlignment = .left
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -48,12 +48,12 @@ final class GraphViewController : BaseViewController {
     var publicLabel = UILabel().then {
         $0.text = "훌륭한 공용공간"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var publicRateLabel = UILabel().then {
         $0.textAlignment = .left
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -64,18 +64,18 @@ final class GraphViewController : BaseViewController {
     var locationLabel = UILabel().then {
         $0.text = "좋은 편인 입지 여건"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var locationRateLabel = UILabel().then {
         $0.textAlignment = .left
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     var graphContainerView = UIView().then{
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     var radarChartView = RadarChartView().then {
@@ -88,11 +88,11 @@ final class GraphViewController : BaseViewController {
         
         let xAxis = $0.xAxis
         xAxis.labelFont = UIFont(name: "Pretendard-SemiBold`", size: 14) ?? .systemFont(ofSize: 14)
-        xAxis.labelTextColor = UIColor(red: 0.292, green: 0.292, blue: 0.292, alpha: 1)
+        xAxis.labelTextColor = .gray450
         xAxis.xOffset = 0
         xAxis.yOffset = 0
         xAxis.valueFormatter = XAxisFormatter()
-        xAxis.axisLineColor = UIColor(named: "juinjang")!
+        xAxis.axisLineColor = .main
         
         let yAxis = $0.yAxis
         yAxis.labelCount = 5
@@ -107,11 +107,11 @@ final class GraphViewController : BaseViewController {
     func updateLabel(with status1: String, status2: String, status3: String) {
         print("실행")
         indoorLabel.text = "\(status1) 실내"
-        indoorLabel.asColor(targetString: status1, color: UIColor(named: "juinjang"))
+        indoorLabel.asColor(targetString: status1, color: .main)
         locationLabel.text = "\(status2) 입지 여건"
-        locationLabel.asColor(targetString: status2, color: UIColor(named: "juinjang"))
+        locationLabel.asColor(targetString: status2, color: .main)
         publicLabel.text = "\(status3) 공용공간"
-        publicLabel.asColor(targetString: status3, color: UIColor(named: "juinjang"))
+        publicLabel.asColor(targetString: status3, color: .main)
     }
     
     func updateRate(rate: String, label: UILabel){
@@ -187,12 +187,12 @@ final class GraphViewController : BaseViewController {
         // 하나만 1이고 나머지가 0인지 확인
         if (entries.filter { $0 == 0 }.count == 2) {
             compareDataSet1.lineWidth = 1
-            compareDataSet1.setColor(UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1))
+            compareDataSet1.setColor(.main)
         } else {
             compareDataSet1.lineWidth = 0 // 기본 lineWidth 값을 설정
         }
         
-        let dataColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 0.3)
+        let dataColor = UIColor.main.withAlphaComponent(0.3)
         let dataColor1 = UIColor.red
         dataSet1.colors = [dataColor]
         
@@ -209,7 +209,7 @@ final class GraphViewController : BaseViewController {
         dataSet4.fillColor = dataColor
         dataSet5.fillColor = dataColor
         compareDataSet1.fillAlpha = CGFloat(0.6)
-        compareDataSet1.fillColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        compareDataSet1.fillColor = .main
         
         dataSet1.valueFormatter = DataSetValueFormatter()
         dataSet2.valueFormatter = DataSetValueFormatter()
@@ -280,7 +280,7 @@ final class GraphViewController : BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = UIColor(named: "reportBG")
+        view.backgroundColor = .bg
         view.addSubview(backgroundImageView)
         view.addSubview(label1)
         

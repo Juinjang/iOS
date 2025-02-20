@@ -28,7 +28,7 @@ final class ReportViewController : BaseViewController {
     //MARK: - 총 평점 멘트, 가격, 주소
     var totalGradeLabel = UILabel().then {
         $0.text = "판교푸르지오월드마크"
-        $0.textColor = UIColor(named: "600")
+        $0.textColor = .gray600
         $0.numberOfLines = 0
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
@@ -38,13 +38,13 @@ final class ReportViewController : BaseViewController {
     }
     var priceLabel = UILabel().then {
         $0.text = "30억 1천만원"
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 20)
     }
     var addressLabel = UILabel().then {
         $0.text = "경기도 성남시 분당구 삼평동 741"
-        $0.textColor = UIColor(named: "450")
+        $0.textColor = .gray400
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
     }
@@ -107,7 +107,7 @@ final class ReportViewController : BaseViewController {
         
         //let shareButtonItem = UIBarButtonItem(image: UIImage(named: "share"), style: .plain, target: self, action: #selector(shareBtnTap))
         let backButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = UIColor(named: "300")
+        backButtonItem.tintColor = .gray450
         //backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -126,7 +126,7 @@ final class ReportViewController : BaseViewController {
         star.image = UIImage(named: "bigStar")
         let attrString = NSMutableAttributedString(string: "\(String(format: "%.2f", totalRate))점입니다")
         let range = ("\(String(format: "%.2f", totalRate))점입니다" as NSString).range(of: "\(String(format: "%.2f", totalRate))점")
-        attrString.addAttribute(.foregroundColor, value: UIColor(named: "juinjang")!, range: range)
+        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
         let text3 = NSMutableAttributedString(string: "\(imjangLabel.text ?? "판교푸르지오월드마크")의\n총점은 ")
         text3.append(NSAttributedString(attachment: star))
         text3.append(NSAttributedString(attributedString: attrString))
@@ -263,7 +263,7 @@ final class ReportViewController : BaseViewController {
         designNavigationBar()
         getReportInfo(limjangId: imjangId, accessToken: UserDefaultManager.shared.accessToken)
         print(imjangId)
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         view.addSubview(totalGradeLabel)
         view.addSubview(priceLabel)

@@ -12,13 +12,12 @@ extension UIButton {
     func design(title: String="",
                 font: UIFont?=nil,
                 image: UIImage?=nil,
-                tintColor: UIColor = ColorStyle.darkGray,
-                titleColor: UIColor = ColorStyle.textWhite,
-                backgroundColor: UIColor = ColorStyle.mainOrange,
+                tintColor: UIColor = .gray450,
+                titleColor: UIColor = .mainWhite,
+                backgroundColor: UIColor = .main,
                 cornerRadius: CGFloat = 0, borderColor: CGColor?=nil
     ) {
         self.tintColor = tintColor
-        self.backgroundColor = .systemGray5
         self.setTitle(title, for: .normal)
         if let font {
             self.titleLabel?.font = font

@@ -24,7 +24,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         tableView.rowHeight = 116
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
-        tableView.backgroundColor = ColorStyle.textWhite
+        tableView.backgroundColor = .mainWhite
         tableView.register(ImjangNoteTableViewCell.self, forCellReuseIdentifier: ImjangNoteTableViewCell.identifier)
         tableView.isSkeletonable = true
         return tableView
@@ -40,7 +40,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         let emptyLabel = UILabel()
         emptyLabel.text = "일치하는 매물이 없어요"
         emptyLabel.font = .pretendard(size: 16, weight: .medium)
-        emptyLabel.textColor = ColorStyle.textGray
+        emptyLabel.textColor = .gray400
         return emptyLabel
     }()
     
@@ -67,7 +67,7 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     private func showSkeletonView() {
         setEmptyView(false)
-        searchedTableView.showAnimatedSkeleton(usingColor: ColorStyle.gray0, transition: .crossDissolve(0.5))
+        searchedTableView.showAnimatedSkeleton(usingColor: .gray100, transition: .crossDissolve(0.5))
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
             self.searchedTableView.stopSkeletonAnimation()
             self.searchedTableView.hideSkeleton()
@@ -158,7 +158,7 @@ final class ImjangSearchResultViewController: BaseViewController {
     }
 
     private func designView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         searchBar.text = searchKeyword
         searchBar.delegate = self
         searchedTableView.delegate = self

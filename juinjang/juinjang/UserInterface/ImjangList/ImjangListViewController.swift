@@ -109,7 +109,7 @@ extension ImjangListViewController {
     }
     
     private func showSkeletonView() {
-        mainView.collectionView.showAnimatedSkeleton(usingColor: ColorStyle.gray0, transition: .crossDissolve(0.5))
+        mainView.collectionView.showAnimatedSkeleton(usingColor: .gray100, transition: .crossDissolve(0.5))
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
             self.mainView.collectionView.stopSkeletonAnimation()
             self.mainView.collectionView.hideSkeleton(reloadDataAfter: true, transition: .crossDissolve(0.5))

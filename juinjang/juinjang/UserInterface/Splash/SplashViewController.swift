@@ -26,7 +26,7 @@ final class SplashViewController: UIViewController, View {
     }
     
     func configureAnimation() {
-        view.backgroundColor = UIColor(named: "splash")
+        view.backgroundColor = .splash
         view.addSubview(animationView)
         animationView.center = view.center
 

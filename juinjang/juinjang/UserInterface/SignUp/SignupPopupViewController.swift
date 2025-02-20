@@ -13,14 +13,14 @@ final class SignupPopupViewController: BaseViewController {
     
     // 팝업 View
     lazy var popupView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
     }
     
     // 팝업 메시지 Label
     lazy var messageLabel = UILabel().then {
         $0.text = "회원가입이 거의 끝났어요"
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
         $0.numberOfLines = 0
         $0.textAlignment = .center
@@ -29,7 +29,7 @@ final class SignupPopupViewController: BaseViewController {
     // 팝업 상세 메시지 Label
     lazy var messageDetailLabel = UILabel().then {
         $0.text = "잠시 뒤면 바로 주인장의\n다양한 서비스를 이용할 수 있어요.\n가입을 이어서 진행할까요?"
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.numberOfLines = 3
         $0.setLineSpacing(spacing: 3)
@@ -39,9 +39,9 @@ final class SignupPopupViewController: BaseViewController {
     // 아니요 Button
     lazy var cancelButton = UIButton().then {
         $0.setTitle("아니요", for: .normal)
-        $0.setTitleColor(UIColor(named: "textBlack"), for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "gray3")
+        $0.backgroundColor = .gray3
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -55,9 +55,9 @@ final class SignupPopupViewController: BaseViewController {
     // 진행 Button
     lazy var continueButton = UIButton().then {
         $0.setTitle("진행할게요", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)

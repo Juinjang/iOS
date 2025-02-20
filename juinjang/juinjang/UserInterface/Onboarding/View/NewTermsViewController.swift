@@ -24,7 +24,7 @@ final class NewTermsViewController : BaseViewController {
     private let titleLabel = UILabel().then {
         $0.text = "주인장 개인정보처리방침"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        $0.textColor = .gray600
         $0.textAlignment = .center
     }
     
@@ -33,10 +33,10 @@ final class NewTermsViewController : BaseViewController {
         $0.isScrollEnabled = true
         $0.indicatorStyle = .black
         $0.showsVerticalScrollIndicator = true
-        $0.backgroundColor = UIColor(named: "100")
+       $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(red: 0.892, green: 0.892, blue: 0.892, alpha: 1).cgColor
+       $0.layer.borderColor = UIColor.stroke.cgColor
     }
     
     private let contentLabel1 = UILabel().then {
@@ -110,8 +110,8 @@ final class NewTermsViewController : BaseViewController {
     private let agreeButton = UIButton().then {
         $0.setTitle("동의하고 화면 닫기", for: .normal)
         $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
-        $0.titleLabel?.textColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
-        $0.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+        $0.titleLabel?.textColor = .mainWhite
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 10
     }
     
@@ -228,7 +228,7 @@ final class NewTermsViewController : BaseViewController {
         contentLabel7.asFont(targetString: "5. 개인정보의 파기 절차 및 방법", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         contentLabel8.asFont(targetString: "6. 이용자 및 법정대리인의 권리와 그 행사방법", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         contentLabel9.asFont(targetString: "7. 개인정보에 관한 민원서비스", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         setConstraint()
     }

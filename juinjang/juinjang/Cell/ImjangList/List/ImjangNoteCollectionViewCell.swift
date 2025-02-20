@@ -123,7 +123,7 @@ extension ImjangNoteCollectionViewCell {
     
     func setScoreStyle(empty: Bool = true) {
         starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
-        scoreLabel.textColor = empty ? ColorStyle.lightGray : ColorStyle.mainOrange
+        scoreLabel.textColor = empty ? .null : .main
     }
 }
 
@@ -192,13 +192,13 @@ extension ImjangNoteCollectionViewCell {
         contentView.clipsToBounds = true
         contentView.layer.cornerRadius = 10
         contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
+        contentView.layer.borderColor = UIColor.stroke.cgColor
         roomThumbnailImageView.layer.cornerRadius = 5
         roomThumbnailImageView.clipsToBounds = true
     }
     
     private func configureView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         
         roomThumbnailImageView.contentMode = .scaleAspectFill
         roomNameStackView.axis = .horizontal
@@ -217,8 +217,8 @@ extension ImjangNoteCollectionViewCell {
         priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
         starIcon.design(image: ImageStyle.star, contentMode: .scaleAspectFit)
-        scoreLabel.design(text:"", textColor: ColorStyle.mainOrange, font: .pretendard(size: 14, weight: .semiBold))
-        addressLabel.design(text: "", textColor: ColorStyle.textGray, font: .pretendard(size: 14, weight: .medium))
+        scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
+        addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         
         bookMarkButton.design(image: ImageStyle.bookmark, backgroundColor: .clear)
     }

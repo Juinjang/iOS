@@ -19,7 +19,7 @@ final class CategoryItemTableViewCell: UITableViewCell {
     
     let categoryLabel = UILabel().then {
         $0.font = .pretendard(size: 18, weight: .bold)
-        $0.textColor = UIColor(named: "mainOrange")
+        $0.textColor = .main
     }
     
     let expandButton = UIButton().then {
@@ -28,7 +28,7 @@ final class CategoryItemTableViewCell: UITableViewCell {
     
     let expandedItemLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .regular)
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -45,7 +45,7 @@ final class CategoryItemTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        self.backgroundColor = UIColor(named: "lightBackgroundOrange")
+        self.backgroundColor = .main100
         // Configure the view for the selected state
     }
     

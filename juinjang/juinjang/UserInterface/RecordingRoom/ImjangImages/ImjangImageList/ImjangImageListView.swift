@@ -15,12 +15,12 @@ final class ImjangImageListView: BaseView {
     
     let deleteImageButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
         button.setImage(ImageStyle.trash, for: .normal)
-        button.tintColor = ColorStyle.darkGray
+        button.tintColor = .gray450
     }
     
     let addImageButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
         button.setImage(ImageStyle.add, for: .normal)
-        button.tintColor = ColorStyle.darkGray
+        button.tintColor = .gray450
     }
     
     // 이미지 없을 때 표시할 컴포넌트들
@@ -72,7 +72,7 @@ final class ImjangImageListView: BaseView {
         noImageStackView.design(axis: .vertical, spacing: 16)
         galleryImageView.design(image: ImageStyle.gallery, contentMode: .scaleAspectFit)
         noImageMessageLabel.design(text: "아직 등록된 사진이 없어요\n사진을 추가해 볼까요?",
-                                   textColor: ColorStyle.textGray,
+                                   textColor: .gray400,
                                    font: .pretendard(size: 16, weight: .medium),
                                    numberOfLines: 2)
         noImageMessageLabel.setLineSpacing(spacing: 4)
@@ -87,7 +87,7 @@ extension ImjangImageListView {
     func setEmptyLayout(_ isEmpty: Bool) {
         imageCollectionView.isHidden = isEmpty ? true : false
         noImageBackgroundView.isHidden = isEmpty ? false : true
-        deleteImageButtonItem.tintColor = isEmpty ? ColorStyle.lightGray : ColorStyle.darkGray
+        deleteImageButtonItem.tintColor = isEmpty ? .null : .gray450
         deleteImageButtonItem.isEnabled = !isEmpty
     }
     
@@ -105,8 +105,8 @@ extension ImjangImageListView {
             deleteImageButton.design(
                 title: "삭제하기",
                 font: .pretendard(size: 16, weight: .semiBold),
-                tintColor: .white,
-                backgroundColor: ColorStyle.lightGray,
+                tintColor: .mainWhite,
+                backgroundColor: .null,
                 cornerRadius: 10
             )
             deleteImageButton.isEnabled = false
@@ -146,6 +146,6 @@ extension ImjangImageListView {
     
     func setIsSelectedIndexsEmptyUI(isEmpty: Bool) {
         deleteImageButton.isEnabled = !isEmpty
-        deleteImageButton.backgroundColor = isEmpty ? ColorStyle.lightGray : ColorStyle.textBlack
+        deleteImageButton.backgroundColor = isEmpty ? .null : .gray500
     }
 }

@@ -147,7 +147,7 @@ final class OnboardingViewController: UIViewController {
         titleLabel.design(text: onboardingType.item1.title, font: .pretendard(size: 24, weight: .bold), numberOfLines: 0)
         titleLabel.setLineSpacing(spacing: 10)
         titleLabel.textAlignment = .center
-        titleLabel.asColor(targetString: onboardingType.item1.keyword, color: ColorStyle.mainOrange)
+        titleLabel.asColor(targetString: onboardingType.item1.keyword, color: .main)
         titleLabel.layer.shouldRasterize = true
         titleLabel.layer.rasterizationScale = UIScreen.main.scale
         
@@ -159,7 +159,7 @@ final class OnboardingViewController: UIViewController {
     
     private func setTitle(_ title: String, keyword: String) {
         titleLabel.text = title
-        titleLabel.asColor(targetString: keyword, color: ColorStyle.mainOrange)
+        titleLabel.asColor(targetString: keyword, color: .main)
     }
     
     private func setUIHidden(_ isHidden: Bool, hiddenAlpha: Double = 0.2) {

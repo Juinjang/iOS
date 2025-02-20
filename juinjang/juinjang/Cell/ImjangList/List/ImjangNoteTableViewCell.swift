@@ -119,7 +119,7 @@ final class ImjangNoteTableViewCell: UITableViewCell {
     
     private func setScoreStyle(empty: Bool = true) {
         starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
-        scoreLabel.textColor = empty ? ColorStyle.lightGray : ColorStyle.mainOrange
+        scoreLabel.textColor = empty ? .null : .main
     }
     
     private func configureHierarchy() {
@@ -193,7 +193,7 @@ final class ImjangNoteTableViewCell: UITableViewCell {
         contentView.clipsToBounds = true
         contentView.layer.cornerRadius = 10
         contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
+        contentView.layer.borderColor = UIColor.stroke.cgColor
         DispatchQueue.main.async {
             self.roomThumbnailImageView.layer.cornerRadius = 5
             self.roomThumbnailImageView.clipsToBounds = true
@@ -201,7 +201,7 @@ final class ImjangNoteTableViewCell: UITableViewCell {
     }
     
     private func configureView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         
         roomThumbnailImageView.contentMode = .scaleAspectFill
         roomNameStackView.axis = .horizontal
@@ -217,11 +217,11 @@ final class ImjangNoteTableViewCell: UITableViewCell {
         
         roomIcon.design(image: ImageStyle.house, contentMode: .scaleAspectFit)
         roomNameLabel.design(text:"", font: .pretendard(size: 16, weight: .bold))
-        priceLabel.design(text:"", textColor: ColorStyle.darkGray, font: .pretendard(size: 14, weight: .semiBold))
+        priceLabel.design(text:"", textColor: .gray450, font: .pretendard(size: 14, weight: .semiBold))
         
         starIcon.design(image: ImageStyle.starEmpty, contentMode: .scaleAspectFit)
-        scoreLabel.design(text:"", textColor: ColorStyle.lightGray, font: .pretendard(size: 14, weight: .semiBold))
-        addressLabel.design(text: "", textColor: ColorStyle.textGray, font: .pretendard(size: 14, weight: .medium))
+        scoreLabel.design(text:"", textColor: .null, font: .pretendard(size: 14, weight: .semiBold))
+        addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         
         bookMarkButton.design(image: ImageStyle.bookmark, backgroundColor: .clear)
     }

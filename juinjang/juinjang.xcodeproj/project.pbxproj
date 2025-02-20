@@ -182,7 +182,6 @@
 		619269E32B67743A00D4DD3E /* ReuseableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */; };
 		619269E82B67745900D4DD3E /* ImageStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E52B67745900D4DD3E /* ImageStyle.swift */; };
 		619269E92B67745900D4DD3E /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E62B67745900D4DD3E /* UserDefaultManager.swift */; };
-		619269EA2B67745900D4DD3E /* ColorStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E72B67745900D4DD3E /* ColorStyle.swift */; };
 		619269F22B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269EC2B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift */; };
 		619269F32B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269ED2B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift */; };
 		619269F52B67747F00D4DD3E /* ScrapCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269EF2B67747F00D4DD3E /* ScrapCollectionViewCell.swift */; };
@@ -381,7 +380,6 @@
 		619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReuseableProtocol.swift; sourceTree = "<group>"; };
 		619269E52B67745900D4DD3E /* ImageStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStyle.swift; sourceTree = "<group>"; };
 		619269E62B67745900D4DD3E /* UserDefaultManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
-		619269E72B67745900D4DD3E /* ColorStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ColorStyle.swift; sourceTree = "<group>"; };
 		619269EC2B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteImjangNoteTableViewCell.swift; sourceTree = "<group>"; };
 		619269ED2B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentSearchKeywordTableViewCell.swift; sourceTree = "<group>"; };
 		619269EF2B67747F00D4DD3E /* ScrapCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScrapCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1008,7 +1006,6 @@
 			children = (
 				619269E52B67745900D4DD3E /* ImageStyle.swift */,
 				619269E62B67745900D4DD3E /* UserDefaultManager.swift */,
-				619269E72B67745900D4DD3E /* ColorStyle.swift */,
 			);
 			path = Constants;
 			sourceTree = "<group>";
@@ -1302,7 +1299,6 @@
 				346CF6AE2B70B46B00C70C7A /* SplashViewController.swift in Sources */,
 				3458558C2B689E1E00432C06 /* LogoutPopupViewController.swift in Sources */,
 				616F1E532C07291D0049461F /* BaseViewController.swift in Sources */,
-				619269EA2B67745900D4DD3E /* ColorStyle.swift in Sources */,
 				61D9250A2B49506D002A16B4 /* RecordingFilesViewController.swift in Sources */,
 				345855762B689AAE00432C06 /* TopTableViewCell.swift in Sources */,
 				0AC1F6392D103EA500EC620E /* ToS3ViewController.swift in Sources */,
@@ -1589,6 +1585,7 @@
 			baseConfigurationReference = 61D33EAA2D58CC7C00E32C07 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = juinjang/juinjang.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
@@ -1634,6 +1631,7 @@
 			baseConfigurationReference = 61D33EAC2D58CC8D00E32C07 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = juinjang/juinjang.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";

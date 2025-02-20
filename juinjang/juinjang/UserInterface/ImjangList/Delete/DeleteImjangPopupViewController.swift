@@ -11,7 +11,7 @@ import SnapKit
 
 final class DeleteImjangPopupViewController: BaseViewController {
     lazy var popupView = UIView().then { // 팝업창 뷰
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -28,7 +28,7 @@ final class DeleteImjangPopupViewController: BaseViewController {
     
     lazy var messageLabel = UILabel().then {
         $0.text = "정말 삭제할까요?"
-        $0.textColor = UIColor(named: "nomalText")
+        $0.textColor = .gray600
         $0.numberOfLines = 0
         $0.textAlignment = .center
     }
@@ -57,8 +57,8 @@ final class DeleteImjangPopupViewController: BaseViewController {
     }
     
     private func designViews() {
-        designButton(cancelButton, title: "아니요", backgroundColor: UIColor(named: "gray3")!)
-        designButton(confirmButton, title: "삭제하기", backgroundColor: UIColor(named: "textBlack")!, textColor: .white)
+        designButton(cancelButton, title: "아니요", backgroundColor: .gray3)
+        designButton(confirmButton, title: "삭제하기", backgroundColor: .gray500, textColor: .mainWhite)
         messageLabel.setLineSpacing(spacing: 4)
         messageLabel.font = .pretendard(size: 16, weight: .medium)
         if let selectedCount, let selectedRoomName {
@@ -68,7 +68,7 @@ final class DeleteImjangPopupViewController: BaseViewController {
                 messageLabel.text = "\(selectedRoomName)\n외 \(selectedCount - 1)건을 정말 삭제할까요?"
             }
             messageLabel.asFont(targetString: "\(selectedRoomName)", font: .pretendard(size: 16, weight: .bold))
-            messageLabel.asColor(targetString: "외 \(selectedCount - 1)건", color: ColorStyle.mainOrange)
+            messageLabel.asColor(targetString: "외 \(selectedCount - 1)건", color: .main)
         } else {
             messageLabel.text = "녹음 파일을 정말 삭제할까요?"
         }
@@ -112,7 +112,7 @@ final class DeleteImjangPopupViewController: BaseViewController {
         dismiss(animated: false, completion: nil)
     }
     
-    private func designButton(_ button: UIButton, title: String = "삭제하기", backgroundColor: UIColor = .white, textColor: UIColor = UIColor(named: "textBlack")!) {
+    private func designButton(_ button: UIButton, title: String = "삭제하기", backgroundColor: UIColor = .mainWhite, textColor: UIColor = .gray500) {
         button.setTitle(title, for: .normal)
         button.setTitleColor(textColor, for: .normal)
         

@@ -15,11 +15,11 @@ final class TopTableViewCell: UITableViewCell {
     var greetLabel = UILabel().then {
         $0.text = "반가워요, \(UserDefaultManager.shared.nickname)님 \n오늘은 어떤 집으로 가볼까요?"
         $0.numberOfLines = 0
-        $0.textColor = ColorStyle.normalText
+        $0.textColor = .gray600
         
         let attrString = NSMutableAttributedString(string: $0.text!)
         let range = ($0.text! as NSString).range(of: UserDefaultManager.shared.nickname)
-        attrString.addAttribute(.foregroundColor, value: ColorStyle.mainOrange, range: range)
+        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 8.0
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
@@ -32,13 +32,13 @@ final class TopTableViewCell: UITableViewCell {
 
     //나의 임장노트
     var myNoteButton = UIButton().then {
-        $0.backgroundColor = ColorStyle.mainOrange
+        $0.backgroundColor = .main
         $0.layer.cornerRadius = 10
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var myNoteLabel = UILabel().then {
         $0.text = "나의 임장노트"
-        $0.textColor = .white
+        $0.textColor = .mainWhite
         $0.font = .pretendard(size: 20, weight: .extraBold)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -58,7 +58,7 @@ final class TopTableViewCell: UITableViewCell {
     }
     var newPageLabel = UILabel().then {
         $0.text = "새 페이지 펼치기"
-        $0.textColor = .white
+        $0.textColor = .mainWhite
         $0.font = .pretendard(size: 20, weight: .extraBold)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -81,7 +81,7 @@ final class TopTableViewCell: UITableViewCell {
         
         let attrString = NSMutableAttributedString(string: message)
         let range = (message as NSString).range(of: UserDefaultManager.shared.nickname)
-        attrString.addAttribute(.foregroundColor, value: ColorStyle.mainOrange, range: range)
+        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 8.0
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
@@ -100,7 +100,7 @@ final class TopTableViewCell: UITableViewCell {
         contentView.addSubview(newImjangButton)
         newImjangButton.addSubview(newPageImageView)
         newImjangButton.addSubview(newPageLabel)
-        newPageLabel.asColor(targetString: "새 페이지", color: ColorStyle.mainOrange)
+        newPageLabel.asColor(targetString: "새 페이지", color: .main)
     }
         
     private func autoLayout() {

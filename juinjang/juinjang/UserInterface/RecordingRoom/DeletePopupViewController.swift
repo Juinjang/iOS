@@ -11,7 +11,7 @@ import SnapKit
 
 final class DeletePopupViewController: BaseViewController {
     lazy var popupView = UIView().then { // 팝업창 뷰
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -28,7 +28,7 @@ final class DeletePopupViewController: BaseViewController {
     
     lazy var messageLabel = UILabel().then {
         $0.text = "\n녹음 파일을 정말 삭제할까요?"
-        $0.textColor = UIColor(named: "nomalText")
+        $0.textColor = .gray600
         $0.numberOfLines = 0
         $0.textAlignment = .center
     }
@@ -57,8 +57,8 @@ final class DeletePopupViewController: BaseViewController {
     }
     
     func designViews() {
-        designButton(cancelButton, title: "아니요", backgroundColor: .white)
-        designButton(confirmButton, title: "예", backgroundColor: .black, textColor: .white)
+        designButton(cancelButton, title: "아니요", backgroundColor: .mainWhite)
+        designButton(confirmButton, title: "예", backgroundColor: .black, textColor: .mainWhite)
         if let fileName {
             messageLabel.text = "\(fileName).mp3\n녹음 파일을 정말 삭제할까요?"
             messageLabel.font = .pretendard(size: 16, weight: .regular)
@@ -106,7 +106,7 @@ final class DeletePopupViewController: BaseViewController {
         dismiss(animated: false, completion: nil)
     }
     
-    func designButton(_ button: UIButton, title: String = "확인", backgroundColor: UIColor = .white, textColor: UIColor = .black) {
+    func designButton(_ button: UIButton, title: String = "확인", backgroundColor: UIColor = .mainWhite, textColor: UIColor = .black) {
         button.setTitle(title, for: .normal)
         button.setTitleColor(textColor, for: .normal)
         

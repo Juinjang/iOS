@@ -14,7 +14,7 @@ extension UIView {
         gradientLayer.frame = self.bounds
 
         // TODO: 색상 변경
-        gradientLayer.colors = [ColorStyle.textWhite.cgColor, ColorStyle.shadowGray.cgColor]
+        gradientLayer.colors = [UIColor.mainWhite.cgColor, UIColor.gray200.cgColor]
         gradientLayer.locations = [0.0, 1.0]
 
         // 그레디언트 방향 설정 (위에서 아래로)

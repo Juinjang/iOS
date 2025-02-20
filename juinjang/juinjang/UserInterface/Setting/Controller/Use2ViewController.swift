@@ -16,10 +16,10 @@ final class Use2ViewController : BaseViewController {
         $0.isScrollEnabled = true
         $0.indicatorStyle = .black
         $0.showsVerticalScrollIndicator = true
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10  // cornerRadius 추가
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(red: 0.892, green: 0.892, blue: 0.892, alpha: 1).cgColor
+        $0.layer.borderColor = UIColor.stroke.cgColor
         $0.clipsToBounds = true
     }
     
@@ -28,8 +28,8 @@ final class Use2ViewController : BaseViewController {
         var configuration = UIButton.Configuration.plain()
         configuration.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 0)
         configuration.title = "이용약관 버전 1.1.0 (시행일 2025.01.12)"
-        configuration.baseForegroundColor = UIColor(red: 0.292, green: 0.292, blue: 0.292, alpha: 1)
-        configuration.background.backgroundColor = .white
+        configuration.baseForegroundColor = .gray450
+        configuration.background.backgroundColor = .mainWhite
         
         // 폰트 설정
         var titleAttr = AttributedString.init("이용약관 버전 1.1.0 (시행일 2025.01.12)")
@@ -38,7 +38,7 @@ final class Use2ViewController : BaseViewController {
         $0.configuration = configuration
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(red: 0.892, green: 0.892, blue: 0.892, alpha: 1).cgColor
+        $0.layer.borderColor = UIColor.stroke.cgColor
         $0.contentHorizontalAlignment = .left
     }
     
@@ -49,10 +49,10 @@ final class Use2ViewController : BaseViewController {
     
     private let dropdownTableView = UITableView().then {
         $0.isHidden = true
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(red: 0.892, green: 0.892, blue: 0.892, alpha: 1).cgColor
+        $0.layer.borderColor = UIColor.stroke.cgColor
         $0.register(UITableViewCell.self, forCellReuseIdentifier: "VersionCell")
     }
     
@@ -146,7 +146,7 @@ final class Use2ViewController : BaseViewController {
         navigationItem.title = "주인장 개인정보 처리방침"
         
         let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = UIColor(named: "300")
+        closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -382,7 +382,7 @@ final class Use2ViewController : BaseViewController {
         scrollView.addSubview(contentLabel10)
         scrollView.addSubview(contentLabel11)
 
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         setConstraint()
     }
 }
@@ -396,7 +396,7 @@ extension Use2ViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "VersionCell", for: indexPath)
         cell.textLabel?.text = versions[indexPath.row]
         cell.textLabel?.font = UIFont(name: "Pretendard-Medium", size: 16)
-        cell.textLabel?.textColor = UIColor(red: 0.292, green: 0.292, blue: 0.292, alpha: 1)
+        cell.textLabel?.textColor = .gray450
         cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         cell.preservesSuperviewLayoutMargins = false
         return cell

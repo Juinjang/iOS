@@ -41,13 +41,13 @@ final class EnlargePhotoView: BaseView {
     override func configureView() {
         super.configureView()
         
-        photoCollectionView.backgroundColor = .white
+        photoCollectionView.backgroundColor = .mainWhite
         photoCollectionView.decelerationRate = .fast
         photoCollectionView.isPagingEnabled = false
         photoCollectionView.showsHorizontalScrollIndicator = false
         photoCollectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.identifier)
         
-        closeButton.design(image: ImageStyle.x, tintColor: .black ,backgroundColor: .white)
+        closeButton.design(image: ImageStyle.x, tintColor: .black ,backgroundColor: .mainWhite)
         
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
@@ -55,7 +55,7 @@ final class EnlargePhotoView: BaseView {
             photoStatusLabel.clipsToBounds = true
         }
         
-        photoStatusLabel.design(text: "/", textColor: .white, font: .pretendard(size: 16, weight: .regular))
+        photoStatusLabel.design(text: "/", textColor: .mainWhite, font: .pretendard(size: 16, weight: .regular))
         photoStatusLabel.backgroundColor = .black.withAlphaComponent(0.4)
     }
 }

@@ -10,17 +10,17 @@ import UIKit
 final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     func didAgreeToTerms() {
         isAgree = true
-        button1.backgroundColor = UIColor(red: 1, green: 0.948, blue: 0.91, alpha: 1)
-        button1.layer.borderColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1).cgColor
+        button1.backgroundColor = .main100
+        button1.layer.borderColor = UIColor.main.cgColor
         checkButton.image = UIImage(named: "check-after")
-        button2.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+        button2.backgroundColor = .gray500
     }
 
     private let containerView = UIView()
     
     private let titleLabel = UILabel().then {
         $0.text = "주인장 앱을 이용하려면\n업데이트 내용을 확인하고 동의해주세요"
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        $0.textColor = .gray600
         $0.font = .pretendard(size: 20, weight: .semiBold)
         $0.textAlignment = .left
         $0.numberOfLines = 0
@@ -28,7 +28,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.22
         let range = ($0.text! as NSString).range(of: "업데이트 내용을 확인하고 동의해주세요")
-        attrString.addAttribute(.foregroundColor, value: ColorStyle.mainOrange, range: range)
+        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
         $0.attributedText = attrString
     }
@@ -41,7 +41,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         paragraphStyle.lineHeightMultiple = 1.22
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
         $0.attributedText = attrString
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        $0.textColor = .gray600
         $0.textAlignment = .left
         $0.numberOfLines = 0
     }
@@ -49,16 +49,16 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     private let readLabel = UILabel().then {
         $0.text = "천천히 살펴보신 후 동의 부탁드려요."
         $0.font = .pretendard(size: 16, weight: .medium)
-        $0.textColor = UIColor(red: 0.57, green: 0.57, blue: 0.57, alpha: 1)
+        $0.textColor = .gray400
         $0.textAlignment = .left
         $0.numberOfLines = 0
     }
     
     private let button1 = UIButton().then {
-        $0.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(red: 0.817, green: 0.817, blue: 0.817, alpha: 1).cgColor
+        $0.layer.borderColor = UIColor.null.cgColor
     }
     
     private var isAgree = false
@@ -69,13 +69,13 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     
     private let termLabel = UILabel().then {
         $0.text = "(필수) 개인정보 수집 및 이용 동의"
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        $0.textColor = .gray450
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.numberOfLines = 0
         
         let attrString = NSMutableAttributedString(string: $0.text!)
         let range = ($0.text! as NSString).range(of: "(필수)")
-        attrString.addAttribute(.foregroundColor, value: ColorStyle.mainOrange, range: range)
+        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.22
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
@@ -89,13 +89,13 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     private let button2 = UIButton().then {
         $0.setTitle("주인장 이용하러 가기", for: .normal)
         $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
-        $0.backgroundColor = UIColor(red: 0.817, green: 0.817, blue: 0.817, alpha: 1)
+        $0.backgroundColor = .null
         $0.layer.cornerRadius = 10
     }
         
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        view.backgroundColor = .black.withAlphaComponent(0.5)
         setupContainerView()
         setupUI()
         setupActions()
@@ -103,7 +103,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
 
     private func setupContainerView() {
         // 컨테이너 뷰 설정
-        containerView.backgroundColor = .white
+        containerView.backgroundColor = .mainWhite
         containerView.layer.cornerRadius = 30
         containerView.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner] // 위쪽만 둥글게
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -201,16 +201,16 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     @objc private func agreeTapped() {
         if isAgree {
             // 동의 -> 비동의로 변경
-            button1.layer.borderColor = UIColor(red: 0.817, green: 0.817, blue: 0.817, alpha: 1).cgColor
-            button1.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1)
+            button1.layer.borderColor = UIColor.null.cgColor
+            button1.backgroundColor = .mainWhite
             checkButton.image = UIImage(named: "check-before")
-            button2.backgroundColor = UIColor(red: 0.817, green: 0.817, blue: 0.817, alpha: 1)
+            button2.backgroundColor = .null
         } else {
             // 비동의 색 -> 동의로 변경
-            button1.backgroundColor = UIColor(red: 1, green: 0.948, blue: 0.91, alpha: 1)
-            button1.layer.borderColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1).cgColor
+            button1.backgroundColor = .main100
+            button1.layer.borderColor = UIColor.main.cgColor
             checkButton.image = UIImage(named: "check-after")
-            button2.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+            button2.backgroundColor = .gray500
         }
         isAgree.toggle()
     }

@@ -14,14 +14,14 @@ final class ReportPopupViewController: BaseViewController {
     
     // 팝업 View
     lazy var popupView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
     }
     
     // 팝업 메시지 Label
     lazy var messageLabel = UILabel().then {
         $0.text = "리포트는 체크리스트 입력 후 볼 수 있어요.\n지금 입력을 시작해 볼까요?"
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
 //        $0.setLineSpacing(spacing: 3)
         $0.textAlignment = .center
@@ -31,9 +31,9 @@ final class ReportPopupViewController: BaseViewController {
     // 돌아가기 Button
     lazy var backButton = UIButton().then {
         $0.setTitle("돌아가기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textBlack"), for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "gray3")
+        $0.backgroundColor = .gray3
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -47,9 +47,9 @@ final class ReportPopupViewController: BaseViewController {
     // 체크리스트 입력 Button
     lazy var checklistButton = UIButton().then {
         $0.setTitle("체크리스트 입력", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)

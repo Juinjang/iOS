@@ -43,7 +43,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     var editButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.setTitle("수정", for: .normal)
-        $0.setTitleColor(ColorStyle.mainOrange, for: .normal)
+        $0.setTitleColor(.main, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 14)
     } //수정 버튼 눌렀을 때 갤러리 들어가게
     
@@ -51,16 +51,16 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "닉네임"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textGray
+        $0.textColor = .gray400
     }
     var nickname = UILabel().then {
         $0.text = UserDefaultManager.shared.nickname
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
     }
     var nicknameTextField = UITextField().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.returnKeyType = .done
         $0.placeholder = "8자 이내"
         $0.text = UserDefaultManager.shared.nickname
@@ -73,23 +73,23 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "닉네임은 8자 이내로 입력해 주세요."
         $0.font = UIFont(name: "Pretendard-Medium", size: 12)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.mainOrange
+        $0.textColor = .main
     }
     var nicknameSameWarnLabel = UILabel().then {
         $0.text = "동일한 닉네임이 존재해요"
         $0.font = UIFont(name: "Pretendard-Medium", size: 12)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.mainOrange
+        $0.textColor = .main
     }
     var saveButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.layer.cornerRadius = 10
         $0.setTitle("변경", for: .normal)
-        $0.backgroundColor = ColorStyle.darkGray
+        $0.backgroundColor = .gray450
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 14)
     }
     var line1 = UIView().then {
-        $0.backgroundColor = ColorStyle.strokeGray
+        $0.backgroundColor = .stroke
     }
     
     //MARK: - 로그인 정보
@@ -97,7 +97,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "로그인 정보"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textGray
+        $0.textColor = .gray400
     }
 //    var logImageView = UIImageView().then {
 //        $0.image = UIImage(named:"KAKAO")
@@ -113,10 +113,10 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "\(UserDefaultManager.shared.email)"
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
     }
     var line2 = UIView().then {
-        $0.backgroundColor = ColorStyle.gray0
+        $0.backgroundColor = .gray100
     }
     
     //MARK: - 이용약관, 자주 묻는 질문
@@ -131,7 +131,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "이용약관"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
     }
     var qnaButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -143,21 +143,21 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "자주 묻는 질문"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
     }
     var line3 = UIView().then {
-        $0.backgroundColor = ColorStyle.gray0
+        $0.backgroundColor = .gray100
     }
     
     //MARK: - 로그아웃, 계정삭제
     var logoutButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.setTitle("로그아웃", for: .normal)
-        $0.setTitleColor(ColorStyle.mainOrange, for: .normal)
+        $0.setTitleColor(.main, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
     }
     var line4 = UIView().then {
-        $0.backgroundColor = ColorStyle.gray0
+        $0.backgroundColor = .gray100
     }
     var backgroundView = UIView().then{
         $0.backgroundColor = .black.withAlphaComponent(0.6)
@@ -169,7 +169,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = "계정 삭제하기"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = ColorStyle.textGray
+        $0.textColor = .gray400
     }
     
     weak var updateNicknameDelegate: updateNicknameDelegate?
@@ -284,7 +284,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         case "변경":
             nicknameTextField.text = nickname.text
             saveButton.setTitle("저장", for: .normal)
-            saveButton.backgroundColor = ColorStyle.mainOrange
+            saveButton.backgroundColor = .main
             view.addSubview(nicknameTextField)
             nicknameTextField.delegate = self
             view.addSubview(line1)
@@ -307,7 +307,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         default:    // 저장
             if nicknameTextField.text == UserDefaultManager.shared.nickname {
                 self.saveButton.setTitle("변경", for: .normal)
-                self.saveButton.backgroundColor = UIColor(named: "300")
+                self.saveButton.backgroundColor = .gray450
                 self.nicknameTextField.removeFromSuperview()
             } else {
                 let text = nicknameTextField.text ?? ""
@@ -330,11 +330,11 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             nicknameWarnImageView.removeFromSuperview()
             if nicknameTextField.text?.count == 0 {
                 saveButton.setTitle("취소", for: .normal)
-                saveButton.backgroundColor = UIColor(named: "300")
+                saveButton.backgroundColor = .gray450
             }
             else {
                 saveButton.setTitle("저장", for: .normal)
-                saveButton.backgroundColor = ColorStyle.mainOrange
+                saveButton.backgroundColor = .main
             }
         }
         
@@ -372,7 +372,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                     }
                 case "COMMON200":
                     saveButton.setTitle("변경", for: .normal)
-                    saveButton.backgroundColor = UIColor(named: "300")
+                    saveButton.backgroundColor = .gray450
                     nicknameTextField.removeFromSuperview()
                     line1.removeFromSuperview()
                     nicknameWarnLabel.removeFromSuperview()
@@ -398,7 +398,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         navigationItem.title = "설정"
         
         let backButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-right"), style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = ColorStyle.darkGray
+        backButtonItem.tintColor = .gray450
         backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
 
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -538,7 +538,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         view.addSubview(accountDeleteButton)
         accountDeleteButton.addSubview(accountDeleteLabel)
         
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         //setUserInfo()
         addTarget()
         setConstraint()

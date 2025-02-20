@@ -41,29 +41,29 @@ final class WelcomeViewController: BaseViewController {
     lazy var greetingLabel = UILabel().then {
         $0.text = "반가워요, 땡땡님"
         $0.textAlignment = .left
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
-        $0.asColor(targetString: "땡땡", color: UIColor(named: "mainOrange"))
+        $0.asColor(targetString: "땡땡", color: .main)
     }
     
     lazy var guideLabel1 = UILabel().then {
         $0.text = "주인장과 함께"
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 20)
     }
     
     lazy var guideLabel2 = UILabel().then {
         $0.text = "똑똑한 임장 노트를"
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 20)
     }
     
     lazy var guideLabel3 = UILabel().then {
         $0.text = "만들어봐요!"
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 20)
     }
 
@@ -75,14 +75,14 @@ final class WelcomeViewController: BaseViewController {
     lazy var nickNameLabel = UILabel().then {
         $0.text = "땡땡"
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "omyu pretty", size: 14)
     }
     
     lazy var nextButton = UIButton().then {
         $0.setTitle("시작하기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         
@@ -90,7 +90,7 @@ final class WelcomeViewController: BaseViewController {
     }
     
     override func viewDidLoad() {
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         self.navigationItem.hidesBackButton = true
         super.viewDidLoad()
         fadeIn()
@@ -195,7 +195,7 @@ final class WelcomeViewController: BaseViewController {
         if let nickname = userInfo?.nickname {
             greetingLabel.text = "반가워요, \(nickname)님"
             nickNameLabel.text = nickname
-            greetingLabel.asColor(targetString: nickname, color: UIColor(named: "mainOrange"))
+            greetingLabel.asColor(targetString: nickname, color: .main)
             print("사용자가 설정한 닉네임: \(nickname)")
         }
     }

@@ -11,7 +11,7 @@ import SnapKit
 
 final class AccountDeleteViewController : DimmedViewController {
     var accountDeleteView = UIView().then{
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
     }
     var logoImageView = UIImageView().then {
@@ -22,7 +22,7 @@ final class AccountDeleteViewController : DimmedViewController {
         $0.numberOfLines = 0
         $0.font = UIFont(name: "Pretendard-Bold", size: 20)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "600")
+        $0.textColor = .gray600
         
         let attrString = NSMutableAttributedString(string: $0.text!)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -35,7 +35,7 @@ final class AccountDeleteViewController : DimmedViewController {
         $0.numberOfLines = 0
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         
         let attrString = NSMutableAttributedString(string: $0.text!)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -58,16 +58,16 @@ final class AccountDeleteViewController : DimmedViewController {
     var noButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.setTitle("취소하고 돌아갈래요", for: .normal)
-        $0.backgroundColor = UIColor(named: "600")
-        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = .gray600
+        $0.setTitleColor(.mainWhite, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.layer.cornerRadius = 10
     }
     var yesButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor(named: "juinjang")
+        $0.backgroundColor = .main
         $0.setTitle("네,계정을 삭제할게요", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.layer.cornerRadius = 10
     }
@@ -97,7 +97,7 @@ final class AccountDeleteViewController : DimmedViewController {
                 text3.append(NSAttributedString(attachment: text1))
                 text3.append(NSAttributedString(string: text2))
                 $0.attributedText = text3
-                $0.textColor = UIColor(named: "500")
+                $0.textColor = .gray500
                 $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
                 $0.translatesAutoresizingMaskIntoConstraints = false
             }

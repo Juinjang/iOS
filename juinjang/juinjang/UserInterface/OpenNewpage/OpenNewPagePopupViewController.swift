@@ -21,14 +21,14 @@ final class OpenNewPagePopupViewController: BaseViewController {
     
     // 팝업 View
     lazy var popupView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
     }
     
     // 팝업 메시지 Label
     lazy var messageLabel = UILabel().then {
 //        $0.text = "메인화면으로 돌아갈까요?\n입력한 정보는 저장되지 않습니다."
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.numberOfLines = 0
         $0.textAlignment = .center
@@ -37,9 +37,9 @@ final class OpenNewPagePopupViewController: BaseViewController {
     // 아니요 Button
     lazy var cancelButton = UIButton().then {
         $0.setTitle("아니요", for: .normal)
-        $0.setTitleColor(UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1), for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
         
-        $0.backgroundColor = UIColor(red: 0.925, green: 0.925, blue: 0.925, alpha: 1)
+        $0.backgroundColor = .gray3
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -53,9 +53,9 @@ final class OpenNewPagePopupViewController: BaseViewController {
     // 돌아가기 Button
     lazy var goBackButton = UIButton().then {
         $0.setTitle("돌아가기", for: .normal)
-        $0.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)

@@ -15,7 +15,7 @@ final class Use1ViewController : BaseViewController {
         $0.isScrollEnabled = true
         $0.indicatorStyle = .black
         $0.showsVerticalScrollIndicator = true
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     
     private let contentLabel1 = UILabel().then {
@@ -134,7 +134,7 @@ final class Use1ViewController : BaseViewController {
         navigationItem.title = "주인장 이용약관"
         
         let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = UIColor(named: "300")
+        closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -274,7 +274,7 @@ final class Use1ViewController : BaseViewController {
         contentLabel15.asFont(targetString: "제 13조(재판권 및 준거법)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         contentLabel16.asFont(targetString: "제 14조(등록매물의 저작권)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         contentLabel17.asFont(targetString: "제 15조(기타)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         setConstraint()
     }
 }

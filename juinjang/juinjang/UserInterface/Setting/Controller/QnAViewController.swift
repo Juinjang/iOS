@@ -14,12 +14,12 @@ final class QnAViewController : BaseViewController {
         $0.text = "자주 묻는 질문이란?"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
     }
 
     var describeView = UIView().then {
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     var describeLabel = UILabel().then {
         $0.text = "주인장을 이용하며 생길 수 있는 궁금증을 조금이나마 해소해 드리기 위한 자주 묻는 질문 모음입니다. \n직접 문의 기능은 준비 중이니 양해 부탁드립니다."
@@ -31,7 +31,7 @@ final class QnAViewController : BaseViewController {
         $0.attributedText = attrString
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
     }
     
     //MARK: - 질문들
@@ -41,19 +41,19 @@ final class QnAViewController : BaseViewController {
     var questionLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
     }
     var answerLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.numberOfLines = 0
     }
     var arrowImageView = UIImageView().then {
         $0.image = UIImage(named:"arrow")
     }
     var line = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     
     let tableView = UITableView().then {
@@ -69,7 +69,7 @@ final class QnAViewController : BaseViewController {
         navigationItem.title = "자주 묻는 질문"
         
         let closeButtonItem = UIBarButtonItem(image: UIImage(named:"X"), style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = UIColor(named: "300")
+        closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -111,7 +111,7 @@ final class QnAViewController : BaseViewController {
         tableView.dataSource = self
         tableView.frame = view.bounds
         
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         setConstraint()
     }
 }

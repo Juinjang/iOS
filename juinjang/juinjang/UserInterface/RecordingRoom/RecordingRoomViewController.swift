@@ -24,7 +24,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     // 스크롤뷰
     let scrollView = UIScrollView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.showsVerticalScrollIndicator = false
         $0.isScrollEnabled = false
         $0.bounces = true
@@ -55,13 +55,13 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     let notePadLabel = UILabel()
     lazy var memoTextView = UITextView().then {
-        $0.backgroundColor = ColorStyle.gray0
+        $0.backgroundColor = .gray100
         $0.font = .pretendard(size: 16, weight: .semiBold)
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 10
         $0.textContainerInset = .init(top: 20, left: 16, bottom: 20, right: 16)
         $0.text = memoTextViewPlaceholder
-        $0.textColor = ColorStyle.gray1
+        $0.textColor = .gray300
     }
     
     let memoTextViewPlaceholder = "500자까지 메모를 남길 수 있어요."
@@ -86,7 +86,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         addSubView()
         setConstraints()
         designViews()
@@ -220,14 +220,14 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     func setMemo(memo: String?) {
         guard let memo = memo else {
-            memoTextView.textColor = ColorStyle.gray1
+            memoTextView.textColor = .gray300
             return
         }
         memoTextView.text = memo
         print("memo======\(memo)")
-        memoTextView.textColor = memo.isEmpty ? ColorStyle.gray1 : ColorStyle.textBlack
+        memoTextView.textColor = memo.isEmpty ? .gray300 : .gray500
         if memo == memoTextViewPlaceholder {
-            memoTextView.textColor = ColorStyle.gray1
+            memoTextView.textColor = .gray300
         }
     }
     
@@ -356,7 +356,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
         designLabel(recordingFileLabel,
                     text: "녹음 파일",
                     font: .pretendard(size: 20, weight: .bold),
-                    textColor: ColorStyle.textBlack)
+                    textColor: .gray500)
         
         designButton(addRecordingButton,
                      image: UIImage(named: "addOrange"))
@@ -369,9 +369,9 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
         
         designButton(showTotalRecordingButton, title: "전체보기")
         
-        designLabel(emptyMessageLabel, text: "아직 녹음 파일이 없어요", font: .pretendard(size: 16, weight: .medium), textColor: ColorStyle.gray1)
+        designLabel(emptyMessageLabel, text: "아직 녹음 파일이 없어요", font: .pretendard(size: 16, weight: .medium), textColor: .gray300)
         
-        designLabel(notePadLabel, text: "메모장", font: .pretendard(size: 20, weight: .bold), textColor: ColorStyle.textBlack)
+        designLabel(notePadLabel, text: "메모장", font: .pretendard(size: 20, weight: .bold), textColor: .gray500)
         
     }
     
@@ -480,7 +480,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     func designButton(_ button: UIButton, title: String?=nil, image: UIImage?=nil) {
         if let title {
             button.setTitle(title, for: .normal)
-            button.setTitleColor(ColorStyle.textBlack, for: .normal)
+            button.setTitleColor(.gray500, for: .normal)
             button.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
         }
         
@@ -549,7 +549,7 @@ extension RecordingRoomViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         if textView.text == memoTextViewPlaceholder {
             textView.text = nil
-            textView.textColor = ColorStyle.textBlack
+            textView.textColor = .gray500
         }
     }
     
@@ -557,7 +557,7 @@ extension RecordingRoomViewController: UITextViewDelegate {
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             textView.text = memoTextViewPlaceholder
-            textView.textColor = ColorStyle.gray1
+            textView.textColor = .gray300
             
             callMemoRequest()
         } else {
