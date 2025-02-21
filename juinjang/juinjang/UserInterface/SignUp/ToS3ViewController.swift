@@ -30,6 +30,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel2 = UILabel().then {
@@ -37,6 +38,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel3 = UILabel().then {
@@ -44,6 +46,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel4 = UILabel().then {
@@ -51,6 +54,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel5 = UILabel().then {
@@ -58,6 +62,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel6 = UILabel().then {
@@ -65,6 +70,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel7 = UILabel().then {
@@ -72,6 +78,7 @@ final class ToS3ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     lazy var agreeButton = UIButton().then {

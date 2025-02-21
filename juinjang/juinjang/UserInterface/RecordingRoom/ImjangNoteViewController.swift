@@ -413,8 +413,8 @@ final class ImjangNoteViewController: BaseViewController,
         // UIBarButtonItem 생성 및 이미지 설정
         let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
         let editButtonItem = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(editView))
-        backButtonItem.tintColor = .gray400
-        editButtonItem.tintColor = .gray400
+        backButtonItem.tintColor = .gray450
+        editButtonItem.tintColor = .gray450
         
         // 네비게이션 아이템에 백 버튼 아이템 설정
         self.navigationItem.leftBarButtonItem = backButtonItem

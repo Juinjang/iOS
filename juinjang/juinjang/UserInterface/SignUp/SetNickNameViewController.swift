@@ -49,7 +49,7 @@ final class SetNickNameViewController: BaseViewController {
         $0.attributedPlaceholder = NSAttributedString(
             string: "8자 이내",
             attributes: [
-                .foregroundColor: UIColor.gray100,
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Regular", size: 20) ?? UIFont.systemFont(ofSize: 20)
             ]
         )

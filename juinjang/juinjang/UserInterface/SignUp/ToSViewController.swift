@@ -30,7 +30,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     lazy var guideDetailLabel = UILabel().then {
         $0.text = "원활한 서비스 이용을 위해 약관 동의가 필요해요."
         $0.textAlignment = .center
-        $0.textColor =  .gray400
+        $0.textColor =  .gray500
         $0.font = .pretendard(size: 16, weight: .medium)
     }
     
