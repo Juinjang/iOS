@@ -25,7 +25,7 @@ final class UpdateAlertView: UIView {
     
     private let titleLabel = UILabel().then {
         $0.text = "우리 업데이트 하러갈까요?"
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.font = .pretendard(size: 20, weight: .semiBold)
         $0.textAlignment = .center
     }
@@ -37,7 +37,7 @@ final class UpdateAlertView: UIView {
         paragraphStyle.lineHeightMultiple = 1.22
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
         $0.attributedText = attrString
-        $0.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        $0.textColor = .gray600
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.textAlignment = .center
         $0.numberOfLines = 0
@@ -47,14 +47,14 @@ final class UpdateAlertView: UIView {
         $0.setTitle("업데이트하러 가기", for: .normal)
         $0.titleLabel?.font = .pretendard(size: 15, weight: .semiBold)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
-        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = .gray500
+        $0.setTitleColor(.mainWhite, for: .normal)
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = UIColor.white
+        self.backgroundColor = .mainWhite
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
         

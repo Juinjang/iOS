@@ -33,7 +33,7 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
         }
 
         // 배경색 초기화
-        backgroundColor = .white
+        backgroundColor = .mainWhite
         questionImage.image = UIImage(named: "question-image")
     }
     
@@ -44,7 +44,7 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
     
     lazy var contentLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .regular)
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
     }
     
     // 달력
@@ -140,13 +140,13 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
         calendar.appearance.headerMinimumDissolvedAlpha = 0.0 // 헤더 좌, 우측 흐릿한 글씨 삭제
         calendar.appearance.headerDateFormat = "yyyy.MM" // 헤더 표시 형식
         calendar.appearance.headerTitleColor = .black // 헤더 색
-        calendar.calendarWeekdayView.weekdayLabels.first?.textColor = UIColor(named: "mainOrange")
+        calendar.calendarWeekdayView.weekdayLabels.first?.textColor = .main
         
         // 날짜 부분
-        calendar.backgroundColor = .white // 배경색
+        calendar.backgroundColor = .mainWhite // 배경색
         calendar.appearance.weekdayTextColor = .black // 요일 글씨 색
         calendar.appearance.selectionColor = .clear // 선택되었을 때 배경색
-        calendar.appearance.titleSelectionColor = UIColor(named: "mainOrange") // 선택되었을 때 텍스트 색
+        calendar.appearance.titleSelectionColor = .main // 선택되었을 때 텍스트 색
         calendar.appearance.titleWeekendColor = .black // 주말 날짜 색
         calendar.appearance.titleDefaultColor = .black // 기본 날짜 색
         
@@ -208,8 +208,8 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
     // 수정 모드
     func editModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = .white
+        contentLabel.textColor = .gray500
+        backgroundColor = .mainWhite
         
         selectedDate = nil
     }
@@ -217,8 +217,8 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
     // 수정 모드일 때 저장된 값이 있는 경우
     func savedEditModeConfigure(with answer: String, at indexPath: IndexPath) {
         questionImage.image = UIImage(named: "question-selected-image")
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = UIColor(named: "lightOrange")
+        contentLabel.textColor = .gray500
+        backgroundColor = .main150
         
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyyMMdd" // 저장된 날짜 문자열의 포맷에 맞게 설정
@@ -241,13 +241,13 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
         if let selectedCell = self.calendar.cell(for: date, at: .current) {
             selectedCell.layer.cornerRadius = 9.97
             selectedCell.layer.borderWidth = 1.5
-            selectedCell.layer.borderColor = UIColor(named: "mainOrange")?.cgColor
+            selectedCell.layer.borderColor = UIColor.main.cgColor
         } else {
             // .current에서 찾지 못한 경우 .notFound로 시도
             if let selectedCell = self.calendar.cell(for: date, at: .notFound) {
                 selectedCell.layer.cornerRadius = 9.97
                 selectedCell.layer.borderWidth = 1.5
-                selectedCell.layer.borderColor = UIColor(named: "mainOrange")?.cgColor
+                selectedCell.layer.borderColor = UIColor.main.cgColor
             } else {
                 print("셀을 찾을 수 없습니다.")
             }
@@ -283,7 +283,7 @@ extension ExpandedCalendarTableViewCell: FSCalendarDelegate, FSCalendarDataSourc
     // 날짜를 선택했을 때
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         self.monthPosition = monthPosition
-        backgroundColor = UIColor(named: "lightOrange")
+        backgroundColor = .main150
         questionImage.image = UIImage(named: "question-selected-image")
         
         // 날짜 변환
@@ -298,7 +298,7 @@ extension ExpandedCalendarTableViewCell: FSCalendarDelegate, FSCalendarDataSourc
             if let selectedCell = calendar.cell(for: date, at: monthPosition) {
                 DispatchQueue.main.async {
                     selectedCell.layer.borderWidth = 0.0
-                    self.backgroundColor = .white
+                    self.backgroundColor = .mainWhite
                     self.questionImage.image = UIImage(named: "question-image")
                 }
             }
@@ -343,7 +343,7 @@ extension ExpandedCalendarTableViewCell: FSCalendarDelegate, FSCalendarDataSourc
                 selectedCell.layer.borderWidth = 1.5
 //                selectedCell.layer.fs_width = 49
 //                selectedCell.layer.fs_height = 49
-                selectedCell.layer.borderColor = UIColor(named: "mainOrange")?.cgColor
+                selectedCell.layer.borderColor = UIColor.main.cgColor
             }
             handleDateSelection(dateFormatter.string(from: date))
             selectedDate = date

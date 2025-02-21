@@ -42,12 +42,12 @@ final class DeleteImjangTableHeaderView: UITableViewHeaderFooterView {
     }
     
     private func configureView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         selectedCountLabel.design(text: "0개 선택됨",
-                                  textColor: ColorStyle.textGray,
+                                  textColor: .gray400,
                                   font: .pretendard(size: 14, weight: .medium))
         
-        removeAllCheckButton.design(image: ImageStyle.off, backgroundColor: ColorStyle.textWhite)
+        removeAllCheckButton.design(image: ImageStyle.off, backgroundColor: .mainWhite)
     }
     
     required init?(coder: NSCoder) {

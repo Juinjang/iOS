@@ -14,30 +14,30 @@ final class PlayViewController: BaseViewController, UITextFieldDelegate, AVAudio
     var titleTextField = UITextField().then {
         $0.text = "녹음파일_001"
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "lightGray")
+        $0.textColor = .null
         $0.font = UIFont(name: "Pretendard-Bold", size: 24)
     }
     
     var recordStartTimeLabel = UILabel().then {
 //        $0.text = "\(recordTime)" // - TODO: 녹음 파일 추가할 때의 시간 반영
-        $0.textColor = UIColor(named: "gray1")
+        $0.textColor = .gray300
         $0.font = UIFont(name: "Pretendard-Regular", size: 16)
     }
     
     lazy var elapsedTimeLabel = UILabel().then {
-        $0.textColor = UIColor(named: "gray1")
+        $0.textColor = .gray300
         $0.font = UIFont(name: "Pretendard-Regular", size: 13)
         $0.text = "0:41"
     }
     
     var recordingSlider = UISlider().then {
         $0.setThumbImage(UIImage(named: "slider-thumb"), for: .normal)
-        $0.tintColor = UIColor(named: "mainOrange")
+        $0.tintColor = .main
         $0.isUserInteractionEnabled = true
     }
     
     lazy var remainingTimeLabel = UILabel().then {
-        $0.textColor = UIColor(named: "gray1")
+        $0.textColor = .gray300
         $0.font = UIFont(name: "Pretendard-Regular", size: 13)
         $0.text = "4:10"
     }
@@ -72,7 +72,7 @@ final class PlayViewController: BaseViewController, UITextFieldDelegate, AVAudio
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "textBlack")
+        view.backgroundColor = .gray500
         addSubViews()
         setupLayout()
         titleTextField.delegate = self

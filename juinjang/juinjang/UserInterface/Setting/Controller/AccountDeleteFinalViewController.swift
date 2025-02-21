@@ -18,7 +18,7 @@ final class AccountDeleteFinalViewController: BaseViewController {
     
     
     var accountDeleteFinalView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
     }
     
@@ -31,7 +31,7 @@ final class AccountDeleteFinalViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.font = UIFont(name: "Pretendard-Bold", size: 20)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "600")
+        $0.textColor = .gray600
         
         let attrString = NSMutableAttributedString(string: $0.text!)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -44,7 +44,7 @@ final class AccountDeleteFinalViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         
         let attrString = NSMutableAttributedString(string: $0.text!)
         let paragraphStyle = NSMutableParagraphStyle()
@@ -63,16 +63,16 @@ final class AccountDeleteFinalViewController: BaseViewController {
     var noButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.setTitle("취소하고 돌아갈래요", for: .normal)
-        $0.backgroundColor = UIColor(named: "600")
-        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = .gray600
+        $0.setTitleColor(.mainWhite, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.layer.cornerRadius = 10
     }
     var yesButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.backgroundColor = UIColor(named: "juinjang")
+        $0.backgroundColor = .main
         $0.setTitle("계정 삭제하기", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.layer.cornerRadius = 10
     }
@@ -115,10 +115,10 @@ final class AccountDeleteFinalViewController: BaseViewController {
     private func btnSelected(_ sender: UIButton) {
         sender.isSelected.toggle()
         if sender.isSelected {
-            sender.backgroundColor = UIColor(named: "main200")
+            sender.backgroundColor = .main200
             sender.layer.borderWidth = 1.5
-            sender.layer.borderColor = UIColor(red: 1, green: 0.664, blue: 0.475, alpha: 1).cgColor
-            sender.setTitleColor(UIColor(named: "juinjang"), for: .normal)
+            sender.layer.borderColor = UIColor.mainStroke.cgColor
+            sender.setTitleColor(.main, for: .normal)
             
             // 버튼의 텍스트를 selectedTexts 배열에 추가
             if let title = sender.title(for: .normal) {
@@ -127,10 +127,10 @@ final class AccountDeleteFinalViewController: BaseViewController {
             
             print(selectedTexts)
         } else {
-            sender.backgroundColor = UIColor(named: "100")
+            sender.backgroundColor = .gray100
             sender.layer.borderWidth = 0
             sender.layer.borderColor = .none
-            sender.setTitleColor(UIColor(named: "300"), for: .normal)
+            sender.setTitleColor(.gray450, for: .normal)
             
             // 버튼의 텍스트를 selectedTexts 배열에서 제거
             if let title = sender.title(for: .normal), let index = selectedTexts.firstIndex(of: title) {
@@ -218,12 +218,12 @@ final class AccountDeleteFinalViewController: BaseViewController {
         
         for i in 0...5 {
             let selectedbutton = UIButton().then {
-                $0.backgroundColor = UIColor(named: "100")
+                $0.backgroundColor = .gray100
                 $0.layer.cornerRadius = 10
                 //$0.isUserInteractionEnabled = true
                 $0.setTitle(buttonList[i], for: .normal)
                 $0.titleEdgeInsets = UIEdgeInsets(top: 0,left: 16,bottom: 0,right: 0)
-                $0.setTitleColor(UIColor(named: "300"), for: .normal)
+                $0.setTitleColor(.gray450, for: .normal)
                 $0.contentHorizontalAlignment = .left
                 $0.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 16)
                 $0.addTarget(self, action: #selector(btnSelected), for: .touchUpInside)

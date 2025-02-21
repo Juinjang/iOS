@@ -34,20 +34,20 @@ final class ExpandableTableViewCell: UITableViewCell {
     private let questionLabel = UILabel().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.setContentHuggingPriority(.init(rawValue: 200), for: .horizontal)
     }
 
     private let chevronImageView = UIImageView().then {
         $0.image = UIImage(named: "expand")?.withRenderingMode(.alwaysTemplate)
         $0.contentMode = .scaleAspectFit
-        $0.tintColor = UIColor(named: "300")
+        $0.tintColor = .gray450
     }
 
     private let expandableView = UIView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.isHidden = true
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
 
     private let answerLabel = UILabel().then {
@@ -55,7 +55,7 @@ final class ExpandableTableViewCell: UITableViewCell {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.numberOfLines = 0
         $0.textAlignment = .justified
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
     }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -99,7 +99,7 @@ final class ExpandableTableViewCell: UITableViewCell {
     func set(_ model: Sections) {
             iconImageView.image = UIImage(named: "question")
             questionLabel.text = model.question
-            questionLabel.asColor(targetString: model.highlight, color: UIColor(named: "juinjang"))
+        questionLabel.asColor(targetString: model.highlight, color: .main)
             answerLabel.text = model.answer
             let attrString = NSMutableAttributedString(string: answerLabel.text!)
             let paragraphStyle = NSMutableParagraphStyle()

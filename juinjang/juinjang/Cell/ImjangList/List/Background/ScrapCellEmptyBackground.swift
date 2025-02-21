@@ -13,7 +13,7 @@ final class ScrapCellEmptyBackground: UICollectionReusableView {
     private let messageLabel: UILabel = {
         let label = UILabel()
         
-        let attributedString1 = NSMutableAttributedString(string: "  버튼을 누르면 상단에 고정할 수 있어요", attributes: [.font: UIFont.pretendard(size: 16, weight: .medium)])  // lightGray
+        let attributedString1 = NSMutableAttributedString(string: "  버튼을 누르면 상단에 고정할 수 있어요", attributes: [.font: UIFont.pretendard(size: 16, weight: .medium)])
         
         let imageAttachment1 = NSTextAttachment()
         imageAttachment1.image = ImageStyle.bookmark
@@ -22,7 +22,7 @@ final class ScrapCellEmptyBackground: UICollectionReusableView {
         attributedString1.insert(NSAttributedString(attachment: imageAttachment1), at: 0)
         
         label.attributedText = attributedString1
-        label.textColor = ColorStyle.textGray
+        label.textColor = .gray400
         label.textAlignment = .center
         
         return label

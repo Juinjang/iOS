@@ -10,16 +10,16 @@ import UIKit
 final class ToS2ViewController: BaseViewController {
     
     let scrollView = UIScrollView().then {
-        $0.backgroundColor = UIColor(named: "gray0")
+        $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(named: "gray4")?.cgColor
+        $0.layer.borderColor = UIColor.stroke.cgColor
     }
     
     let contentView = UIView()
     
     lazy var contentLabel = UILabel().then {
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.text = "개인정보수집 및 이용동의"
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 16, weight: .semiBold)
@@ -30,6 +30,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel3 = UILabel().then {
@@ -37,6 +38,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel4 = UILabel().then {
@@ -44,6 +46,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel5 = UILabel().then {
@@ -51,6 +54,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let imageView = UIImageView().then {
@@ -65,6 +69,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel7 = UILabel().then {
@@ -72,6 +77,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel8 = UILabel().then {
@@ -79,6 +85,7 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel9 = UILabel().then {
@@ -86,12 +93,13 @@ final class ToS2ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     lazy var agreeButton = UIButton().then {
         $0.setTitle("동의하고 화면 닫기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         
@@ -100,7 +108,7 @@ final class ToS2ViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         setNavigationBar()
         addSubViews()
         setFont()

@@ -22,20 +22,20 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
         $0.text = "주인장 서비스의\n이용 약관에 동의해 주세요"
         $0.textAlignment = .left
         $0.numberOfLines = 2
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = .pretendard(size: 24, weight: .bold)
-        $0.asColor(targetString: "이용 약관", color: UIColor(named: "mainOrange"))
+        $0.asColor(targetString: "이용 약관", color: .main)
     }
     
     lazy var guideDetailLabel = UILabel().then {
         $0.text = "원활한 서비스 이용을 위해 약관 동의가 필요해요."
         $0.textAlignment = .center
-        $0.textColor =  ColorStyle.textGray
+        $0.textColor =  .gray500
         $0.font = .pretendard(size: 16, weight: .medium)
     }
     
     lazy var agreeToAllTermsView = UIView().then {
-        $0.backgroundColor = UIColor(named: "lightBackgroundOrange")
+        $0.backgroundColor = .main100
         $0.layer.cornerRadius = 10
     }
     
@@ -49,7 +49,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     
     lazy var allAgreeLabel = UILabel().then {
         $0.text = "약관 모두 동의하기"
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
         $0.font = .pretendard(size: 16, weight: .semiBold)
         $0.isUserInteractionEnabled = true // 터치 이벤트 활성화
     }
@@ -69,8 +69,8 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     
     lazy var nextButton = UIButton().then {
         $0.setTitle("다음으로", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
-        $0.backgroundColor = UIColor(named: "lightGray")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .null
         $0.layer.cornerRadius = 8
         $0.isEnabled = false
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
@@ -79,7 +79,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         itemtableView.delegate = self
         itemtableView.dataSource = self
         setNavigationBar()
@@ -190,11 +190,11 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     private func updateCheckButtonImages() {
         if isChecked {
             checkButton.setImage(UIImage(named: "check-on"), for: .normal)
-            nextButton.backgroundColor =  ColorStyle.textBlack
+            nextButton.backgroundColor =  .gray500
             nextButton.isEnabled = true
         } else {
             checkButton.setImage(UIImage(named: "check-off"), for: .normal)
-            nextButton.backgroundColor =  ColorStyle.lightGray
+            nextButton.backgroundColor =  .null
             nextButton.isEnabled = false
         }
     }
@@ -238,7 +238,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     private func areNotAllTermsChecked() {
         // cell 버튼 개별 동작 시 전체 동의 버튼, 다음으로 버튼 개별 처리
         checkButton.setImage(UIImage(named: "check-off"), for: .normal)
-        nextButton.backgroundColor = ColorStyle.lightGray
+        nextButton.backgroundColor = .null
         nextButton.isEnabled = false
     }
     
@@ -259,10 +259,10 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
         }
 
         if isFirstTermChecked && isSecondTermChecked {
-            nextButton.backgroundColor = ColorStyle.textBlack
+            nextButton.backgroundColor = .gray500
             nextButton.isEnabled = true
         } else {
-            nextButton.backgroundColor = ColorStyle.lightGray
+            nextButton.backgroundColor = .null
             nextButton.isEnabled = false
         }
     }

@@ -120,7 +120,7 @@ final class BottomCollectionViewCell: UICollectionViewCell {
     
     private func setScoreStyle(empty: Bool = true) {
         starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
-        rateLabel.textColor = empty ? ColorStyle.lightGray : ColorStyle.mainOrange
+        rateLabel.textColor = empty ? .null : .main
     }
     
     private func setImageUI(image: String?) {
@@ -140,15 +140,15 @@ final class BottomCollectionViewCell: UICollectionViewCell {
         contentView.layer.cornerRadius = 10
         contentView.clipsToBounds = true
         contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = ColorStyle.gray4.cgColor
-        contentView.backgroundColor = .white
+        contentView.layer.borderColor = UIColor.stroke.cgColor
+        contentView.backgroundColor = .mainWhite
 
         recentImjangImageView.design(cornerRadius: 10)
-        recentImjangImageView.backgroundColor = ColorStyle.gray0
+        recentImjangImageView.backgroundColor = .gray100
         nameLabel.design(font: .pretendard(size: 15, weight: .semiBold), numberOfLines: 2)
-        priceLabel.design(textColor: ColorStyle.darkGray, font: .pretendard(size: 14, weight: .medium))
+        priceLabel.design(textColor: .gray450, font: .pretendard(size: 14, weight: .medium))
         starIcon.design(image: ImageStyle.starEmpty, contentMode: .scaleAspectFit)
-        rateLabel.design(text: "0.0", textColor: ColorStyle.lightGray, font: .pretendard(size: 14, weight: .bold))
+        rateLabel.design(text: "0.0", textColor: .null, font: .pretendard(size: 14, weight: .bold))
         scoreStackView.design(distribution: .fill, spacing: 3)
     }
     

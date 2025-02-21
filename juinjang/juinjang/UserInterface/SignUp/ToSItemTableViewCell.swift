@@ -23,7 +23,7 @@ final class ToSItemTableViewCell: UITableViewCell {
     }
     
     lazy var itemLabel = UILabel().then {
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.isUserInteractionEnabled = true // 터치 이벤트 활성화
     }
@@ -55,7 +55,7 @@ final class ToSItemTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        self.backgroundColor = .white
+        self.backgroundColor = .mainWhite
         // Configure the view for the selected state
     }
     
@@ -147,9 +147,9 @@ final class ToSItemTableViewCell: UITableViewCell {
         let attributedString = NSMutableAttributedString(string: cleanedContent)
 
         if let range = cleanedContent.range(of: "(필수)") {
-            attributedString.addAttribute(.foregroundColor, value: UIColor(named: "mainOrange")!, range: NSRange(range, in: cleanedContent))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.main, range: NSRange(range, in: cleanedContent))
         } else if let range = cleanedContent.range(of: "(선택)") {
-            attributedString.addAttribute(.foregroundColor, value: UIColor(named: "textGray")!, range: NSRange(range, in: cleanedContent))
+            attributedString.addAttribute(.foregroundColor, value: UIColor.gray400, range: NSRange(range, in: cleanedContent))
         }
 
         itemLabel.attributedText = attributedString

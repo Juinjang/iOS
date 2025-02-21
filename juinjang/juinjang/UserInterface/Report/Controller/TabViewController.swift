@@ -18,11 +18,11 @@ final class TabViewController: TabmanViewController {
     var imjangId: Int = 0
     
     let tabView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     let lineView = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     
     let graphVC = GraphViewController()
@@ -42,13 +42,13 @@ final class TabViewController: TabmanViewController {
         bar.layout.contentMode = .fit
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 24.0, bottom: 0.0, right: 24.0)
         bar.buttons.customize { (button) in
-            button.tintColor = UIColor(named: "400")
+            button.tintColor = .gray300
             button.font = UIFont(name: "Pretendard-Medium", size: 16) ?? .systemFont(ofSize: 16)
             button.selectedFont = UIFont(name: "Pretendard-SemiBold", size: 16)
-            button.selectedTintColor = UIColor(named: "500")
+            button.selectedTintColor = .gray500
         }
         bar.indicator.weight = .custom(value: 1)     //하단바 두께
-        bar.indicator.tintColor =  UIColor(named: "500")   //하단바 색상
+        bar.indicator.tintColor = .gray500   //하단바 색상
         bar.indicator.overscrollBehavior = .compress
 
         addBar(bar, dataSource: self, at: .custom(view: tabView, layout: nil))

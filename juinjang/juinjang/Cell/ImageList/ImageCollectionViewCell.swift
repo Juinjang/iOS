@@ -41,7 +41,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         }
     }
     private func configureView() {
-        imageView.backgroundColor = ColorStyle.emptyGray
+        imageView.backgroundColor = .stroke2
         imageView.contentMode = .scaleAspectFill
     }
     

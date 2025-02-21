@@ -35,7 +35,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     private func configureLabel(_ label: UILabel, text: String) {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 66, height: 24)
-        label.textColor = UIColor(named: "normalText")
+        label.textColor = .gray600
         label.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         
         label.adjustsFontSizeToFitWidth = true
@@ -45,7 +45,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     private func secondConfigureLabel(_ label: UILabel, text: String) {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 66, height: 24)
-        label.textColor = UIColor(named: "textBlack")
+        label.textColor = .gray500
         label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         
         label.adjustsFontSizeToFitWidth = true
@@ -75,7 +75,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         attributedString.addAttribute(NSAttributedString.Key.font, value: scaledFont, range: NSRange(location: 0, length: attributedString.length))
         
         $0.attributedText = attributedString
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.translatesAutoresizingMaskIntoConstraints = false
 
         let paragraphStyle = NSMutableParagraphStyle()
@@ -85,10 +85,10 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var addressTextField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(named: "gray0")?.cgColor
+        $0.layer.backgroundColor = UIColor.gray100.cgColor
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1.5
-        $0.layer.borderColor = UIColor(named: "gray2")?.cgColor
+        $0.layer.borderColor = UIColor.stroke2.cgColor
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
@@ -96,9 +96,9 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     lazy var searchAddressButton = UIButton().then {
         $0.setTitle("주소 검색하기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(red: 0.358, green: 0.363, blue: 0.371, alpha: 1)
+        $0.backgroundColor = .gray430
         $0.layer.cornerRadius = 10
         $0.addTarget(self, action: #selector(searchAddressButtonTapped(_:)), for: .touchUpInside)
         
@@ -113,15 +113,15 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     lazy var addressDetailTextField = UITextField().then {
         let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
             let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: customFont
             ]
             $0.attributedPlaceholder = NSAttributedString(string: "상세 주소", attributes: attributes)
-            $0.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
+            $0.layer.backgroundColor = UIColor.mainWhite.cgColor
             $0.layer.cornerRadius = 10
             $0.layer.borderWidth = 1.5
-            $0.layer.borderColor = UIColor(named: "gray2")?.cgColor
-            $0.textColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+            $0.layer.borderColor = UIColor.stroke2.cgColor
+            $0.textColor = .gray500
             $0.font = customFont
             let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
             $0.leftView = paddingView
@@ -131,15 +131,15 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     lazy var houseNicknameTextField = UITextField().then {
         let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
             let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: customFont
             ]
             $0.attributedPlaceholder = NSAttributedString(string: "12자 이내", attributes: attributes)
-            $0.layer.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.mainWhite.cgColor
             $0.layer.cornerRadius = 10
             $0.layer.borderWidth = 1.5
-            $0.layer.borderColor = UIColor(named: "gray2")?.cgColor
-            $0.textColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+            $0.layer.borderColor = UIColor.stroke2.cgColor
+        $0.textColor = .gray500
             $0.font = customFont
             let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
             $0.leftView = paddingView
@@ -171,19 +171,19 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var priceView = UIView().then {
-        $0.layer.backgroundColor = UIColor(red: 0.971, green: 0.971, blue: 0.971, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray100.cgColor
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     lazy var priceView2 = UIView().then {
-        $0.layer.backgroundColor = UIColor(red: 0.971, green: 0.971, blue: 0.971, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray100.cgColor
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     private func configurePriceLabel(_ label: UILabel, text: String) {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 55, height: 22)
-        label.textColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+        label.textColor = .gray500
         label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -217,18 +217,18 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     
     lazy var threeDigitPriceField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(named: "gray2")?.cgColor
+        $0.layer.backgroundColor = UIColor.stroke2.cgColor
         $0.layer.cornerRadius = 15
         $0.textAlignment = .center
         
         $0.attributedPlaceholder = NSAttributedString(
             string: "000",
             attributes: [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
             ]
         )
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.keyboardType = .numberPad
         if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
             $0.font = customFont
@@ -242,18 +242,18 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var fourDigitPriceField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(named: "gray2")?.cgColor
+        $0.layer.backgroundColor = UIColor.stroke2.cgColor
         $0.layer.cornerRadius = 15
         $0.textAlignment = .center
         
         $0.attributedPlaceholder = NSAttributedString(
             string: "0000",
             attributes: [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
             ]
         )
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.keyboardType = .numberPad
         if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
             $0.font = customFont
@@ -267,18 +267,18 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var fourDigitMonthlyRentField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(named: "gray2")?.cgColor
+        $0.layer.backgroundColor = UIColor.stroke2.cgColor
         $0.layer.cornerRadius = 15
         $0.textAlignment = .center
         
         $0.attributedPlaceholder = NSAttributedString(
             string: "0000",
             attributes: [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
             ]
         )
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.keyboardType = .numberPad
         if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
             $0.font = customFont
@@ -293,9 +293,9 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     lazy var saveButton = UIButton().then {
         $0.setTitle("저장하기", for: .normal)
-        $0.setTitleColor(UIColor(red: 1, green: 1, blue: 1, alpha: 1), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -387,7 +387,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     override func viewDidLoad() {
         getImjang()
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         setDelegate()
         setNavigationBar()
         addressTextField.isUserInteractionEnabled = false // 사용자 입력 방지
@@ -867,10 +867,10 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
         if allTextFieldsFilled {
             saveButton.isEnabled = true
-            saveButton.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+            saveButton.backgroundColor = .gray500
         } else {
             saveButton.isEnabled = false
-            saveButton.backgroundColor = UIColor(red: 0.79, green: 0.79, blue: 0.79, alpha: 1)
+            saveButton.backgroundColor = .gray300
         }
     }
 }

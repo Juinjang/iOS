@@ -10,16 +10,16 @@ import UIKit
 final class ToS1ViewController: BaseViewController {
     
     let scrollView = UIScrollView().then {
-        $0.backgroundColor = UIColor(named: "gray0")
+        $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = UIColor(named: "gray4")?.cgColor
+        $0.layer.borderColor = UIColor.stroke.cgColor
     }
     
     let contentView = UIView()
     
     lazy var contentLabel = UILabel().then {
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.text = "주인장 이용약관"
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 16, weight: .semiBold)
@@ -30,6 +30,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel2 = UILabel().then {
@@ -37,6 +38,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel3 = UILabel().then {
@@ -44,6 +46,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel4 = UILabel().then {
@@ -51,6 +54,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel5 = UILabel().then {
@@ -58,6 +62,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel6 = UILabel().then {
@@ -65,6 +70,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel7 = UILabel().then {
@@ -72,6 +78,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel8 = UILabel().then {
@@ -79,6 +86,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel9 = UILabel().then {
@@ -86,6 +94,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel10 = UILabel().then {
@@ -93,6 +102,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel11 = UILabel().then {
@@ -100,6 +110,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel12 = UILabel().then {
@@ -107,6 +118,7 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel13 = UILabel().then {
@@ -114,12 +126,14 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     private let contentLabel14 = UILabel().then {
         $0.text = "제 13조(재판권 및 준거법)\n1. 주인장과 이용자 간에 발생한 분쟁에 관한 소송은 민사소송법상의 관할 법원에 제소합니다.\n2. 주인장과 이용자 간에 제기된 소송에는 대한민국 법을 준거법으로 합니다."
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     private let contentLabel15 = UILabel().then {
@@ -127,18 +141,20 @@ final class ToS1ViewController: BaseViewController {
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     private let contentLabel16 = UILabel().then {
         $0.text = "제 15조(기타)\n1. 이 약관은 2024년 1월 26일에 개정되었습니다.\n2. 이 약관에도 불구하고, 주인장과 이용자가 이 약관의 내용과 다르게 합의한 사항이 있는 경우에는 해당 내용을 우선으로 합니다.\n3. 주인장이 필요한 경우 약관의 하위 규정을 정할 수 있으며, 이 약관과 하위 규정이 상충하는 경우에는 이 약관의 내용이 우선 적용됩니다.\n4. 이 약관에서 정하지 아니한 사항과 이 약관의 해석에 관하여는 관련법 또는 관례에 따릅니다."
         $0.numberOfLines = 0
         $0.textAlignment = .justified
         $0.font = .pretendard(size: 14, weight: .regular)
+        $0.textColor = .gray500
     }
     
     lazy var agreeButton = UIButton().then {
         $0.setTitle("동의하고 화면 닫기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         
@@ -147,7 +163,7 @@ final class ToS1ViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         setNavigationBar()
         addSubViews()
         setFont()

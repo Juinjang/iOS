@@ -72,7 +72,7 @@ final class ImjangListView: UIView {
     }
     
     private func configureView() {
-        backgroundColor = .white
+        backgroundColor = .mainWhite
         emptyBackgroundView.isHidden = true     // 일단 숨겨놓기
         
         // 비었을 때 로고 이미지뷰
@@ -80,7 +80,7 @@ final class ImjangListView: UIView {
                          contentMode: .scaleAspectFit)
         // 비었을 때 추가 권유 메시지 레이블
         emptyMessageLabel.design(text: "아직 등록된 집이 없어요\n지금 바로 부동산을 추가해 볼까요?",
-                                 textColor: ColorStyle.textGray,
+                                 textColor: .gray400,
                                  font: .pretendard(size: 16, weight: .semiBold),
                                  textAlignment: .center,
                                  numberOfLines: 0)
@@ -91,7 +91,7 @@ final class ImjangListView: UIView {
         // 새 페이지 펼치기 버튼
         newPageButton.design(title: "새 페이지 펼치기",
                              font: .pretendard(size: 16, weight: .semiBold),
-                             backgroundColor: ColorStyle.textBlack,
+                             backgroundColor: .gray500,
                              cornerRadius: 10)
         
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]

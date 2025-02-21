@@ -41,7 +41,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var compareLabel1 = UILabel().then {
         $0.text = "판교푸르지오월드마크"
         $0.font = UIFont(name: "Pretendard-Bold", size: 14)
-        $0.textColor = UIColor(named: "juinjang")
+        $0.textColor = .main
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var vsImageView = UIImageView().then {
@@ -50,7 +50,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var compareLabel2 = UILabel().then {
         $0.text = "비교건물명"
         $0.font = UIFont(name: "Pretendard-Bold", size: 14)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -73,7 +73,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var chartCompareLabel1 = UILabel().then {
         $0.text = "판교푸르지오월드마크"
         $0.font = UIFont(name: "Pretendard-Medium", size: 12)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var chartCompareImageView2 = UIImageView().then {
@@ -82,31 +82,31 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var chartCompareLabel2 = UILabel().then {
         $0.text = "비교건물명"
         $0.font = UIFont(name: "Pretendard-Medium", size: 12)
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     var insideLabel1 = UILabel().then {
         $0.text = "실내"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var insideLabel2 = UILabel().then {
         $0.text = "실내"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     var insideRateLabel1 = UILabel().then {
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.textAlignment = .left
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     lazy var insideRateLabel2 = UILabel().then {
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -114,13 +114,13 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var publicSpaceLabel1 = UILabel().then {
         $0.text = "공용 공간"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var publicSpaceLabel2 = UILabel().then {
         $0.text = "공용 공간"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var publicSpaceRateLabel1 = UILabel().then {
@@ -131,13 +131,13 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         text3.append(NSAttributedString(attachment: text1))
         text3.append(NSAttributedString(string: text2))
         $0.attributedText = text3
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     lazy var publicSpaceRateLabel2 = UILabel().then {
         $0.text = "4.5"
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -145,7 +145,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var locationConditionLabel1 = UILabel().then {
         $0.text = "입지 여건"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var locationConditionRateLabel1 = UILabel().then {
@@ -156,18 +156,18 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         text3.append(NSAttributedString(attachment: text1))
         text3.append(NSAttributedString(string: text2))
         $0.attributedText = text3
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var locationConditionLabel2 = UILabel().then {
         $0.text = "입지 여건"
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var locationConditionRateLabel2 = UILabel().then {
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.font = UIFont(name: "Pretendard-Medium", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -175,7 +175,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var totalLabel1 = UILabel().then {
         $0.text = "총점"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var totalRateLabel1 = UILabel().then {
@@ -186,18 +186,18 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         text3.append(NSAttributedString(attachment: text1))
         text3.append(NSAttributedString(string: text2))
         $0.attributedText = text3
-        $0.textColor = UIColor(named: "juinjang")
+        $0.textColor = .main
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var totalLabel2 = UILabel().then {
         $0.text = "총점"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        $0.textColor = UIColor(named: "300")
+        $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var totalRateLabel2 = UILabel().then {
-        $0.textColor = UIColor(named: "juinjang")
+        $0.textColor = .main
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -212,11 +212,11 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         
         let xAxis = $0.xAxis
         xAxis.labelFont = UIFont(name: "Pretendard-SemiBold`", size: 14) ?? .systemFont(ofSize: 14)
-        xAxis.labelTextColor = UIColor(red: 0.292, green: 0.292, blue: 0.292, alpha: 1)
+        xAxis.labelTextColor = .gray450
         xAxis.xOffset = 0
         xAxis.yOffset = 0
         xAxis.valueFormatter = XAxisFormatter()
-        xAxis.axisLineColor = UIColor(named: "juinjang")!
+        xAxis.axisLineColor = .main
         
         let yAxis = $0.yAxis
         yAxis.labelCount = 5
@@ -406,7 +406,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         )
         
         compareDataSet2.fillAlpha = CGFloat(0.7)
-        compareDataSet2.fillColor = .white
+        compareDataSet2.fillColor = .mainWhite
         setCompareData()
     }
     
@@ -492,12 +492,12 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         
         if (entries.filter { $0 == 0 }.count == 2) {
             compareDataSet2.lineWidth = 1
-            compareDataSet2.setColor(.white)
+            compareDataSet2.setColor(.mainWhite)
         } else {
             compareDataSet2.lineWidth = 0 // 기본 lineWidth 값을 설정
         }
         
-        let dataColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 0.3)
+        let dataColor = UIColor.main.withAlphaComponent(0.3)
         
         dataSet1.fillColor = dataColor
         dataSet2.fillColor = dataColor
@@ -505,7 +505,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         dataSet4.fillColor = dataColor
         dataSet5.fillColor = dataColor
         compareDataSet1.fillAlpha = CGFloat(0.55)
-        compareDataSet1.fillColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        compareDataSet1.fillColor = .main
         
         
         dataSet1.drawFilledEnabled = true
@@ -636,7 +636,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(named: "reportBG")
+        view.backgroundColor = .bg
         view.addSubview(backgroundImageView)
         view.addSubview(compareLabel1)
         view.addSubview(vsImageView)

@@ -19,13 +19,13 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     
     lazy var moveInDateLabel = UILabel().then {
         $0.font = .pretendard(size: 14, weight: .semiBold)
-        $0.textColor = UIColor(named: "gray5")
+        $0.textColor = .gray500
         $0.text = "입주 가능 날짜"
     }
     
     lazy var moveInDateContentLabel = UILabel().then {
         $0.font = .pretendard(size: 14, weight: .medium)
-        $0.textColor = UIColor(named: "textGray")
+        $0.textColor = .gray400
         $0.text = "입력 안함"
     }
     
@@ -41,20 +41,20 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     
     lazy var balanceDueLabel = UILabel().then {
         $0.font = .pretendard(size: 14, weight: .semiBold)
-        $0.textColor = UIColor(named: "gray5")
+        $0.textColor = .gray500
         $0.text = "잔금 날짜"
     }
     
     lazy var balanceDueContentLabel = UILabel().then {
         $0.font = .pretendard(size: 14, weight: .medium)
-        $0.textColor = UIColor(named: "textGray")
+        $0.textColor = .gray400
         $0.text = "입력 안함"
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
-        self.backgroundColor = UIColor(named: "gray0")
+        self.backgroundColor = .gray100
         
         [moveInDateImage,
          moveInDateLabel,
@@ -125,17 +125,17 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     
     // 보기 모드
     func viewModeConfigure(at indexPath: IndexPath) {
-        moveInDateLabel.textColor = UIColor(named: "gray5")
-        moveInDateContentLabel.textColor = UIColor(named: "textGray")
+        moveInDateLabel.textColor = .gray500
+        moveInDateContentLabel.textColor = .gray400
         moveInDateImage.image = UIImage(named: "calendar")
         moveInDateContentLabel.text = "입력 안함"
         
-        balanceDueLabel.textColor = UIColor(named: "gray5")
-        balanceDueContentLabel.textColor = UIColor(named: "textGray")
+        balanceDueLabel.textColor = .gray500
+        balanceDueContentLabel.textColor = .gray400
         balanceDueImage.image = UIImage(named: "wallet")
         balanceDueContentLabel.text = "입력 안함"
         
-        backgroundColor = UIColor(named: "gray0")
+        backgroundColor = .gray100
         separationLine.image = UIImage(named: "enabled-separation-line")
         separationLine.snp.updateConstraints {
             $0.trailing.equalTo(balanceDueImage.snp.leading).offset(-21)
@@ -151,10 +151,10 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
                 dateFormatter.dateFormat = "yyyy.MM.dd"
                 moveInDateContentLabel.text = dateFormatter.string(from: date)
             }
-            moveInDateLabel.textColor = UIColor(named: "mainOrange")
-            moveInDateContentLabel.textColor = UIColor(named: "300")
+            moveInDateLabel.textColor = .main
+            moveInDateContentLabel.textColor = .gray450
             moveInDateImage.image = UIImage(named: "deadline-item")
-            backgroundColor = UIColor(named: "lightBackgroundOrange")
+            backgroundColor = .main100
             separationLine.image = UIImage(named: "separation-line")
             separationLine.snp.updateConstraints {
                 $0.trailing.equalTo(balanceDueImage.snp.leading).offset(-10)
@@ -166,10 +166,10 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
                 dateFormatter.dateFormat = "yyyy.MM.dd"
                 balanceDueContentLabel.text = dateFormatter.string(from: date)
             }
-            balanceDueLabel.textColor = UIColor(named: "mainOrange")
-            balanceDueContentLabel.textColor = UIColor(named: "300")
+            balanceDueLabel.textColor = .main
+            balanceDueContentLabel.textColor = .gray450
             balanceDueImage.image = UIImage(named: "wallet-item")
-            backgroundColor = UIColor(named: "lightBackgroundOrange")
+            backgroundColor = .main100
             // 잔금 기한 날짜 상세 Label
             balanceDueContentLabel.snp.updateConstraints {
                 $0.trailing.equalToSuperview().offset(-24)

@@ -56,7 +56,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
             let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
             let priceString2 = priceList[1].formatToKoreanCurrencyWithZero()
             priceLabel.text = "\(priceString1) • 월 \(priceString2)"
-            priceLabel.asColor(targetString: "•", color: ColorStyle.mainStrokeOrange)
+            priceLabel.asColor(targetString: "•", color: UIColor.mainStroke)
         default:
             priceLabel.text = "편집을 통해 가격을 설정해주세요."
         }
@@ -103,7 +103,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
     
     private func setScoreStyle(empty: Bool = true) {
         starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
-        scoreLabel.textColor = empty ? ColorStyle.lightGray : ColorStyle.mainOrange
+        scoreLabel.textColor = empty ? .null : .main
     }
     
     private func setConstraints() {
@@ -164,7 +164,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
         contentView.clipsToBounds = true
         contentView.layer.cornerRadius = 10
         contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
+        contentView.layer.borderColor = UIColor.stroke.cgColor
         DispatchQueue.main.async {
             self.roomThumbnailImageView.layer.cornerRadius = 5
             self.roomThumbnailImageView.clipsToBounds = true
@@ -172,7 +172,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
     }
     
     private func designView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         roomThumbnailImageView.contentMode = .scaleAspectFill
         
         roomNameStackView.axis = .horizontal
@@ -191,8 +191,8 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
         priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
         starIcon.design(image: ImageStyle.star, contentMode: .scaleAspectFit)
-        scoreLabel.design(text:"", textColor: ColorStyle.mainOrange, font: .pretendard(size: 14, weight: .semiBold))
-        addressLabel.design(text: "", textColor: ColorStyle.textGray, font: .pretendard(size: 14, weight: .medium))
+        scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
+        addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         
         checkImageView.design(image: ImageStyle.off, contentMode: .scaleAspectFit)
     }

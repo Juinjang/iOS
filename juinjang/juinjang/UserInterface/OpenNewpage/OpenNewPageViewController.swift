@@ -47,7 +47,7 @@ final class OpenNewPageViewController: BaseViewController {
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건
     
     let scrollView = UIScrollView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     let contentView = UIView()
@@ -92,7 +92,7 @@ final class OpenNewPageViewController: BaseViewController {
     func configureLabel(_ label: UILabel, text: String) {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 66, height: 24)
-        label.textColor = UIColor(red: 0.133, green: 0.133, blue: 0.133, alpha: 1)
+        label.textColor = .gray600
         label.font = UIFont(name: "Pretendard-SemiBold", size: 18)
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -163,19 +163,19 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     lazy var priceView = UIView().then {
-        $0.layer.backgroundColor = UIColor(red: 0.971, green: 0.971, blue: 0.971, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray100.cgColor
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     lazy var priceView2 = UIView().then {
-        $0.layer.backgroundColor = UIColor(red: 0.971, green: 0.971, blue: 0.971, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray100.cgColor
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func configurePriceLabel(_ label: UILabel, text: String) {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 55, height: 22)
-        label.textColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+        label.textColor = .gray500
         label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -210,17 +210,17 @@ final class OpenNewPageViewController: BaseViewController {
     
     
     lazy var threeDigitPriceField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray200.cgColor
         $0.layer.cornerRadius = 15
         
         $0.attributedPlaceholder = NSAttributedString(
             string: "000",
             attributes: [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
             ]
         )
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.keyboardType = .numberPad
         if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
             $0.font = customFont
@@ -234,16 +234,16 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     lazy var fourDigitPriceField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray200.cgColor
         $0.layer.cornerRadius = 15
         $0.attributedPlaceholder = NSAttributedString(
             string: "0000",
             attributes: [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
             ]
         )
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.keyboardType = .numberPad
         if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
             $0.font = customFont
@@ -257,16 +257,16 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     lazy var fourDigitMonthlyRentField = UITextField().then {
-        $0.layer.backgroundColor = UIColor(red: 0.933, green: 0.933, blue: 0.933, alpha: 1).cgColor
+        $0.layer.backgroundColor = UIColor.gray200.cgColor
         $0.layer.cornerRadius = 15
         $0.attributedPlaceholder = NSAttributedString(
             string: "0000",
             attributes: [
-                .foregroundColor: UIColor(red: 0.788, green: 0.788, blue: 0.788, alpha: 1),
+                .foregroundColor: UIColor.gray300,
                 .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
             ]
         )
-        $0.textColor = UIColor(red: 1, green: 0.386, blue: 0.158, alpha: 1)
+        $0.textColor = .main
         $0.keyboardType = .numberPad
         if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
             $0.font = customFont
@@ -280,14 +280,14 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     lazy var nextButtonContainerView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     lazy var nextButton = UIButton().then {
         $0.setTitle("다음으로", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "lightGray")
+        $0.backgroundColor = .null
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         
@@ -300,7 +300,7 @@ final class OpenNewPageViewController: BaseViewController {
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         self.navigationItem.title = "새 페이지 펼치기"
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
@@ -1057,10 +1057,10 @@ final class OpenNewPageViewController: BaseViewController {
                 // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
                 if allCategoriesSelected && allTextFieldsFilled {
                     nextButton.isEnabled = true
-                    nextButton.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+                    nextButton.backgroundColor = .gray500
                 } else {
                     nextButton.isEnabled = false
-                    nextButton.backgroundColor = UIColor(red: 0.82, green: 0.82, blue: 0.82, alpha: 1)
+                    nextButton.backgroundColor = .null
                 }
             } else if moveInDirectlyButton.isSelected {
                 if saleButton.isSelected || jeonseButton.isSelected {
@@ -1086,10 +1086,10 @@ final class OpenNewPageViewController: BaseViewController {
                     // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
                     if allCategoriesSelected && allTextFieldsFilled {
                         nextButton.isEnabled = true
-                        nextButton.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+                        nextButton.backgroundColor = .gray500
                     } else {
                         nextButton.isEnabled = false
-                        nextButton.backgroundColor = UIColor(red: 0.82, green: 0.82, blue: 0.82, alpha: 1)
+                        nextButton.backgroundColor = .null
                     }
                 } else if monthlyRentButton.isSelected {
                     // 매물 유형 버튼과 이사 유형 버튼이 선택되었는지 확인
@@ -1117,10 +1117,10 @@ final class OpenNewPageViewController: BaseViewController {
                     // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
                     if allCategoriesSelected && allTextFieldsFilled {
                         nextButton.isEnabled = true
-                        nextButton.backgroundColor = UIColor(red: 0.212, green: 0.212, blue: 0.212, alpha: 1)
+                        nextButton.backgroundColor = .gray500
                     } else {
                         nextButton.isEnabled = false
-                        nextButton.backgroundColor = UIColor(red: 0.82, green: 0.82, blue: 0.82, alpha: 1)
+                        nextButton.backgroundColor = .null
                     }
                 }
             }

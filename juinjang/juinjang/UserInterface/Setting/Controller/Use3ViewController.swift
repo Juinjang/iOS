@@ -18,7 +18,7 @@ final class Use3ViewController : BaseViewController {
         $0.text = "약관에 동의하시면 주인장 관련 정보 및 이벤트 혜택 정보를 알림으로 받으실 수 있습니다. 정보를 받지 않기를 원하신다면, 동의 철회 또는 회원 탈퇴로 가능합니다."
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
         $0.numberOfLines = 0
         $0.adjustsFontSizeToFitWidth = true
         $0.textAlignment = .left
@@ -37,14 +37,14 @@ final class Use3ViewController : BaseViewController {
         $0.text = "이용약관"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
     }
     
     var line1 = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     var line2 = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     
     func designNavigationBar() {
@@ -52,7 +52,7 @@ final class Use3ViewController : BaseViewController {
         navigationItem.title = "마케팅 동의 및 이벤트 수신"
         
         let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapBackButton))
-        closeButtonItem.tintColor = UIColor(named: "300")
+        closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -114,7 +114,7 @@ final class Use3ViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         view.addSubview(textView)
         textView.addSubview(textLabel)

@@ -14,13 +14,13 @@ final class DeleteImjangViewController: BaseViewController {
     let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width*0.6, height: 24)).then {
         $0.text = "삭제할 페이지를 선택해주세요"
         $0.font = .pretendard(size: 16, weight: .semiBold)
-        $0.textColor = ColorStyle.textGray
+        $0.textColor = .gray400
         $0.textAlignment = .center
     }
     
     let deleteImjangTableView = UITableView()
     let deleteButtonBackgroundView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     let deleteButton = UIButton()
     
@@ -173,16 +173,16 @@ final class DeleteImjangViewController: BaseViewController {
     }
     
     private func configureView() {
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         deleteButton.design(title: "삭제하기", 
                             font: .pretendard(size: 16, weight: .semiBold),
-                            backgroundColor: ColorStyle.null,
+                            backgroundColor: .null,
                             cornerRadius: 10)
     }
     
     private func setDeleteButtonDesign() {
-        deleteButton.backgroundColor = selectedIndexes.count > 0 ? ColorStyle.mainOrange : ColorStyle.null
+        deleteButton.backgroundColor = selectedIndexes.count > 0 ? .main : .null
         deleteButton.isEnabled = selectedIndexes.count > 0 ? true : false
     }
     
@@ -217,7 +217,7 @@ extension DeleteImjangViewController: UITableViewDelegate, UITableViewDataSource
         }
         
         headerView.selectedCountLabel.text = "\(selectedIndexes.count)개 선택됨"   // 개수 변경 필요
-        headerView.selectedCountLabel.textColor = selectedIndexes.count > 0 ? ColorStyle.mainOrange : ColorStyle.textGray
+        headerView.selectedCountLabel.textColor = selectedIndexes.count > 0 ? .main : .gray400
         
         headerView.removeAllCheckButton.setImage(selectedIndexes.count == imjangList.count && imjangList.count > 0 ? ImageStyle.on : ImageStyle.off, for: .normal)
         headerView.removeAllCheckButton.addTarget(self, action: #selector(removeAllCheckButtonClicked), for: .touchUpInside)

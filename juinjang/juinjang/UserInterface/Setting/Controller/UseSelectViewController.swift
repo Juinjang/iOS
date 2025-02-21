@@ -43,29 +43,29 @@ final class UseSelectViewController : BaseViewController {
         $0.text = "주인장 이용약관"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
     }
     var use2Label = UILabel().then {
         $0.text = "주인장 개인정보 처리방침"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
     }
     var use3Label = UILabel().then {
         $0.text = "마케팅 동의 및 이벤트 수신"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = UIColor(named: "500")
+        $0.textColor = .gray500
     }
     
     var line1 = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     var line2 = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     var line3 = UIView().then {
-        $0.backgroundColor = UIColor(named: "100")
+        $0.backgroundColor = .gray100
     }
     
     //함수
@@ -74,7 +74,7 @@ final class UseSelectViewController : BaseViewController {
         navigationItem.title = "이용 및 약관"
         
         let closeButtonItem = UIBarButtonItem(image: UIImage(named:"X"), style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = UIColor(named: "300")
+        closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -175,7 +175,7 @@ final class UseSelectViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         view.addSubview(use1Button)
         view.addSubview(use2Button)

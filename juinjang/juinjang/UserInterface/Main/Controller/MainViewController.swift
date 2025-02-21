@@ -50,7 +50,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         tableView.separatorStyle = .none
         tableView.rowHeight = 710
         tableView.backgroundColor = .clear
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         view.addSubview(tableView)
        
@@ -149,7 +149,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
 //        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         
         let settingButtonItem = UIBarButtonItem(image: UIImage(named:"setting"), style: .plain, target: self, action: #selector(setttingBtnTap))
-        settingButtonItem.tintColor = ColorStyle.darkGray
+        settingButtonItem.tintColor = .gray450
         settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
         // 네비게이션 아이템에 백 버튼 아이템 설정
         self.navigationItem.leftBarButtonItem = settingButtonItem

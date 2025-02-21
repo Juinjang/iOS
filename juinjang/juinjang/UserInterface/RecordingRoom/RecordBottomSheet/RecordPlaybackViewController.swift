@@ -13,7 +13,7 @@ final class RecordPlaybackViewController: BaseViewController {
     weak var bottomSheetViewController: BottomSheetViewController?
     
     lazy var bottomSheetView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
@@ -52,7 +52,7 @@ final class RecordPlaybackViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
     
-        bottomSheetView.backgroundColor = UIColor(named: "textBlack")
+        bottomSheetView.backgroundColor = .gray500
         addSubViews()
         setupLayout()
     }

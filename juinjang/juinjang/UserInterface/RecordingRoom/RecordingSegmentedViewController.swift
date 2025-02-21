@@ -15,8 +15,8 @@ import AmplitudeSwift
 final class RecordingSegmentedViewController: TabmanViewController, MoveWarningMessageDelegate, CheckListDelegate {
     
     let tabView = UIView().then {
-        $0.backgroundColor = .white
-        $0.layer.addBorder([.top, .bottom], color: UIColor(named: "gray0")!, width: 1.0)
+        $0.backgroundColor = .mainWhite
+        $0.layer.addBorder([.top, .bottom], color: .gray100, width: 1.0)
     }
     let border = UIView()
     
@@ -41,9 +41,9 @@ final class RecordingSegmentedViewController: TabmanViewController, MoveWarningM
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         addSubView()
-        addBottomBorder(with: ColorStyle.gray0, andWidth: 1)
+        addBottomBorder(with: .gray100, andWidth: 1)
         setConstraints()
         addViewControllers()
         setDelegate()
@@ -92,13 +92,13 @@ final class RecordingSegmentedViewController: TabmanViewController, MoveWarningM
         bar.layout.transitionStyle = .snap
         bar.layout.contentInset = UIEdgeInsets(top: 0.0, left: 20.0, bottom: 0.0, right: 20.0)
         bar.buttons.customize { (button) in
-            button.tintColor = UIColor(named: "gray1")
+            button.tintColor = .gray300
             button.font = .pretendard(size: 16, weight: .regular)
             button.selectedFont = .pretendard(size: 16, weight: .bold)
-            button.selectedTintColor = UIColor(named: "textBlack")
+            button.selectedTintColor = .gray500
         }
         bar.indicator.weight = .custom(value: 1)
-        bar.indicator.tintColor =  UIColor(named: "textBlack")
+        bar.indicator.tintColor =  .gray500
         bar.indicator.overscrollBehavior = .compress
 //        bar.layout.interButtonSpacing = 35 // 버튼 사이 간격
         bar.layout.contentMode = .fit

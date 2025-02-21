@@ -14,17 +14,17 @@ final class RecordingFileViewCell: UITableViewCell {
     
     let recordingFileNameLabel = UILabel().then {
         $0.font = .pretendard(size: 18, weight: .semiBold)
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
     }
     
     let recordedDateLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .medium)
-        $0.textColor = ColorStyle.gray1
+        $0.textColor = .gray300
     }
     
     var recordedTimeLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .medium)
-        $0.textColor = ColorStyle.textBlack
+        $0.textColor = .gray500
         $0.textAlignment = .right
     }
     

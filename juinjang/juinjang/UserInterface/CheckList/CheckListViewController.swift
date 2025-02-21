@@ -48,7 +48,7 @@ final class CheckListViewController: BaseViewController {
     override func viewDidLoad() {
         addCheckListModel()
         super.viewDidLoad()
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         setTableView()
         addSubViews()
         setupLayout()

@@ -20,7 +20,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     
     lazy var contentLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .regular)
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
     }
     
     var scoreButtonStackView = UIStackView()
@@ -120,7 +120,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
 
         if sender.isSelected {
             sender.setImage(UIImage(named: "checked-button"), for: .normal)
-            backgroundColor = UIColor(named: "lightOrange")
+            backgroundColor = .main150
             questionImage.image = UIImage(named: "question-selected-image")
             
             for button in buttons {
@@ -131,7 +131,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
             }
         } else {
             sender.setImage(UIImage(named: "answer\(sender.tag)"), for: .normal)
-            backgroundColor = .white
+            backgroundColor = .mainWhite
             questionImage.image = UIImage(named: "question-image")
         }
         
@@ -159,7 +159,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
         setupStackView()
         
         // 배경색 초기화
-        backgroundColor = .white
+        backgroundColor = .mainWhite
         questionImage.image = UIImage(named: "question-image")
     }
     
@@ -186,8 +186,8 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     // 보기 모드
     func viewModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
-        contentLabel.textColor = UIColor(named: "lightGray")
-        backgroundColor = UIColor(named: "gray0")
+        contentLabel.textColor = .null
+        backgroundColor = .gray100
         
         // 보기 모드 설정
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
@@ -199,8 +199,8 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     // 수정 모드
     func editModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = .white
+        contentLabel.textColor = .gray500
+        backgroundColor = .mainWhite
         
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
             button.isSelected = false
@@ -211,8 +211,8 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     // 보기 모드일 때 저장된 값이 있는 경우
     func savedViewModeConfigure(with score: String, at indexPath: IndexPath) {
         questionImage.image = UIImage(named: "question-selected-image")
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = .white
+        contentLabel.textColor = .gray500
+        backgroundColor = .mainWhite
         
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
             if String(button.tag) == score {
@@ -226,8 +226,8 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     // 수정 모드일 때 저장된 값이 있는 경우
     func savedEditModeConfigure(with score: String, at indexPath: IndexPath) {
         questionImage.image = UIImage(named: "question-selected-image")
-        contentLabel.textColor = UIColor(named: "500")
-        backgroundColor = UIColor(named: "lightOrange")
+        contentLabel.textColor = .gray500
+        backgroundColor = .main150
         
         let buttons = [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5]
         

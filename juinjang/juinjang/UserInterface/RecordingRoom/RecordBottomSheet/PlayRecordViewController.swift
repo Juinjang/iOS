@@ -11,7 +11,7 @@ import SnapKit
 final class PlayRecordViewController: BaseViewController, UITextFieldDelegate{
 
     lazy var bottomSheetView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
@@ -47,7 +47,7 @@ final class PlayRecordViewController: BaseViewController, UITextFieldDelegate{
         super.viewDidLoad()
     
         bottomViewController.titleTextField.delegate = self
-        bottomSheetView.backgroundColor = UIColor(named: "textBlack")
+        bottomSheetView.backgroundColor = .gray500
         addSubViews()
         setupLayout()
         print("bottomSheetTotalHeight: \(bottomSheetTotalHeight)")

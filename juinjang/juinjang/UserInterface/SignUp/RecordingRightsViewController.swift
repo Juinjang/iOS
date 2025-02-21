@@ -14,14 +14,14 @@ final class RecordingRightsViewController: BaseViewController {
         $0.text = "주인장 앱에서\n필요한 권한을 알려드려요"
         $0.textAlignment = .left
         $0.numberOfLines = 2
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = .pretendard(size: 24, weight: .bold)
-        $0.asColor(targetString: "권한", color: UIColor(named: "mainOrange"))
+        $0.asColor(targetString: "권한", color: .main)
     }
     
     lazy var guideDetailLabel = UILabel().then {
         $0.text = "원활한 서비스 이용을 위해 동의가 필요해요."
-        $0.textColor = UIColor(named: "textGray")
+        $0.textColor = .gray400
         $0.font = .pretendard(size: 16, weight: .medium)
     }
     
@@ -32,21 +32,21 @@ final class RecordingRightsViewController: BaseViewController {
     
     lazy var recordingLabel = UILabel().then {
         $0.text = "주인장 오디오 녹음 (필수)"
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
         $0.font = .pretendard(size: 16, weight: .semiBold)
-        $0.asColor(targetString: "(필수)", color: UIColor(named: "mainOrange"))
+        $0.asColor(targetString: "(필수)", color: .main)
     }
     
     lazy var recordingDetailLabel = UILabel().then {
         $0.text = "녹음 및 음성인식 서비스 제공"
-        $0.textColor = UIColor(named: "textBlack")
+        $0.textColor = .gray500
         $0.font = .pretendard(size: 14, weight: .medium)
     }
     
     lazy var confirmButton = UIButton().then {
         $0.setTitle("확인", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         
@@ -55,7 +55,7 @@ final class RecordingRightsViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .mainWhite
         setNavigationBar()
         addSubViews()
         setupLayout()

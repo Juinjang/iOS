@@ -13,7 +13,7 @@ import AmplitudeSwift
 final class STTLoadingViewController: BaseViewController {
     
     lazy var bottomSheetView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 30
         $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         $0.clipsToBounds = true
@@ -29,7 +29,7 @@ final class STTLoadingViewController: BaseViewController {
     lazy var sttConversionLabel = UILabel().then {
         $0.text = "speech to text 변환 중..."
         $0.textAlignment = .center
-        $0.textColor = UIColor(named: "textWhite")
+        $0.textColor = .mainWhite
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
     }
     
@@ -57,7 +57,7 @@ final class STTLoadingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bottomSheetView.backgroundColor = UIColor(named: "textBlack")
+        bottomSheetView.backgroundColor = .gray500
         addSubViews()
         setupLayout()
         startSTT()

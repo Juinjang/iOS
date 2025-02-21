@@ -18,14 +18,14 @@ final class CheckListPopUpViewController: BaseViewController {
 
     // 팝업 View
     lazy var popupView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 10
     }
     
     // 팝업 메시지 Label
     lazy var messageLabel = UILabel().then {
         $0.text = "기록룸으로 이동할까요?\n저장하지 않은 수정사항은 사라집니다."
-        $0.textColor = UIColor(named: "normalText")
+        $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
 //        $0.setLineSpacing(spacing: 3)
         $0.textAlignment = .center
@@ -35,9 +35,9 @@ final class CheckListPopUpViewController: BaseViewController {
     // 아니요 Button
     lazy var cancelButton = UIButton().then {
         $0.setTitle("아니요", for: .normal)
-        $0.setTitleColor(UIColor(named: "textBlack"), for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "gray3")
+        $0.backgroundColor = .gray3
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -51,9 +51,9 @@ final class CheckListPopUpViewController: BaseViewController {
     // 이동하기 Button
     lazy var moveButton = UIButton().then {
         $0.setTitle("이동하기", for: .normal)
-        $0.setTitleColor(UIColor(named: "textWhite"), for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
-        $0.backgroundColor = UIColor(named: "textBlack")
+        $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
         
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)

@@ -14,7 +14,7 @@ final class BottomSheetViewController: BaseViewController {
     weak var currentViewController: UIViewController?
     
     let dimmedView = UIView().then {
-        $0.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+        $0.backgroundColor = .black
     }
     
     var imjangId: Int

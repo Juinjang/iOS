@@ -50,7 +50,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
         }
     }
     private func configureView() {
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .mainWhite
         
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false

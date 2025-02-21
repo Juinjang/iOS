@@ -19,7 +19,7 @@ final class SelectMaemullViewController : BaseViewController {
     var scoreStates: [UIButton: Bool] = [:]
     
     var contentView = UIView().then {
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     lazy var filterselectBtn: UIButton = {
@@ -27,10 +27,10 @@ final class SelectMaemullViewController : BaseViewController {
         var container = AttributeContainer()
         container.font = .pretendard(size: 14, weight: .semiBold)
         configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
-        configuration.baseBackgroundColor = ColorStyle.textWhite
-        configuration.baseForegroundColor = ColorStyle.darkGray
+        configuration.baseBackgroundColor = .mainWhite
+        configuration.baseForegroundColor = .gray450
         configuration.image = ImageStyle.arrowDown
-        configuration.image?.withTintColor(ColorStyle.darkGray)
+        configuration.image?.withTintColor(.gray450)
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 6
         let button = UIButton(configuration: configuration, primaryAction: nil)
@@ -48,21 +48,21 @@ final class SelectMaemullViewController : BaseViewController {
         $0.estimatedRowHeight = UITableView.automaticDimension
         $0.separatorStyle = .none
         $0.showsVerticalScrollIndicator = false
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
         $0.contentInset = UIEdgeInsets.init(top: 5, left: 0, bottom: 0, right: 0)
         $0.register(ReportImjangListTableViewCell.self, forCellReuseIdentifier: ReportImjangListTableViewCell.identifier)
     }
     
     var btnBackGroundView = UIView().then{
-        $0.backgroundColor = .white
+        $0.backgroundColor = .mainWhite
     }
     
     var applyBtn = UIButton().then{
-        $0.backgroundColor = UIColor(named: "null")
+        $0.backgroundColor = .null
         $0.layer.cornerRadius = 10
         $0.setTitle("적용하기", for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.setTitleColor(UIColor.white, for: .normal)
+        $0.setTitleColor(.mainWhite, for: .normal)
         
     }
     
@@ -165,11 +165,11 @@ final class SelectMaemullViewController : BaseViewController {
         
         // UIBarButtonItem 생성 및 이미지 설정
         let backButtonItem = UIBarButtonItem(image: UIImage(named: "arrow-left"), style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = UIColor(named: "300")
+        backButtonItem.tintColor = .gray450
         backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
         
         let searchButtonItem = UIBarButtonItem(image: UIImage(named:"search"), style: .plain, target: self, action: #selector(searchBtnTap))
-        searchButtonItem.tintColor = UIColor(named: "300")
+        searchButtonItem.tintColor = .gray450
         searchButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         
         // 네비게이션 아이템에 백 버튼 아이템 설정
@@ -185,7 +185,7 @@ final class SelectMaemullViewController : BaseViewController {
         searchVC.delegate = self.delegate as? SendSearchCompareImjangData
         navigationController?.pushViewController(searchVC, animated: true)
         tableView.reloadData()
-        applyBtn.backgroundColor = UIColor(named: "null")
+        applyBtn.backgroundColor = .null
     }
     @objc func applyBtnTap(_ sender: UIButton) {
         let moveTo = scoreStates[sender] ?? false
@@ -212,7 +212,7 @@ final class SelectMaemullViewController : BaseViewController {
         callRequest(setScrap: true, excludingId: imjangId)
         tableView.delegate = self
         tableView.dataSource = self
-        view.backgroundColor = .white
+        view.backgroundColor = .mainWhite
         
         view.addSubview(contentView)
         contentView.addSubview(filterselectBtn)
@@ -234,7 +234,7 @@ extension SelectMaemullViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: ReportImjangListTableViewCell.identifier, for: indexPath) as! ReportImjangListTableViewCell
         cell.selectionStyle = .none
-        cell.contentView.backgroundColor = .white
+        cell.contentView.backgroundColor = .mainWhite
         cell.configureCell(imjangNote: imjangList[indexPath.row])
         return cell
     }
@@ -248,9 +248,9 @@ extension SelectMaemullViewController: UITableViewDelegate, UITableViewDataSourc
         comparedName = cell.roomNameLabel.text ?? "error"
         if cell.isSelect == false {
             cell.isSelect = true
-            cell.contentView.backgroundColor = UIColor(named: "main100")
-            cell.contentView.layer.borderColor = ColorStyle.mainOrange.cgColor
-            applyBtn.backgroundColor = UIColor(named: "500")
+            cell.contentView.backgroundColor = .main100
+            cell.contentView.layer.borderColor = UIColor.main.cgColor
+            applyBtn.backgroundColor = .gray500
             if let score = cell.scoreLabel.text {
                 let moveTo = (score != "0.0")
                 scoreStates[applyBtn] = moveTo
@@ -259,9 +259,9 @@ extension SelectMaemullViewController: UITableViewDelegate, UITableViewDataSourc
         }
         else {
             cell.isSelect = false
-            cell.contentView.backgroundColor = .white
-            cell.contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
-            applyBtn.backgroundColor = UIColor(named: "null")
+            cell.contentView.backgroundColor = .mainWhite
+            cell.contentView.layer.borderColor = UIColor.stroke.cgColor
+            applyBtn.backgroundColor = .null
             applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
         }
     }
@@ -269,10 +269,10 @@ extension SelectMaemullViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         let cell = tableView.cellForRow(at: indexPath) as! ReportImjangListTableViewCell
         cell.isSelect = false
-        cell.contentView.backgroundColor = .white
-        cell.contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
+        cell.contentView.backgroundColor = .mainWhite
+        cell.contentView.layer.borderColor = UIColor.stroke.cgColor
         
-        applyBtn.backgroundColor = UIColor(named: "null")
+        applyBtn.backgroundColor = .null
         applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
     }
     

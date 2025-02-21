@@ -180,7 +180,7 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         contentView.clipsToBounds = true
         contentView.layer.cornerRadius = 10
         contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = ColorStyle.strokeGray.cgColor
+        contentView.layer.borderColor = UIColor.stroke.cgColor
 //        roomThumbnailImageView.design(contentMode: .scaleAspectFill, cornerRadius: 5)
         DispatchQueue.main.async {
             self.roomThumbnailImageView.layer.cornerRadius = 5
@@ -205,7 +205,7 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
         starIcon.design(image: ImageStyle.star, contentMode: .scaleAspectFit)
-        scoreLabel.design(text:"0.0", textColor: ColorStyle.mainOrange, font: .pretendard(size: 14, weight: .semiBold))
-        addressLabel.design(text: "", textColor: ColorStyle.textGray, font: .pretendard(size: 14, weight: .medium))
+        scoreLabel.design(text:"0.0", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
+        addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
     }
 }

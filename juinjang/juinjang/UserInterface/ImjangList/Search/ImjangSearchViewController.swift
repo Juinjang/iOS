@@ -28,7 +28,7 @@ final class ImjangSearchViewController: BaseViewController {
         tableView.separatorStyle = .none
         tableView.showsVerticalScrollIndicator = false
         tableView.isScrollEnabled = false
-        tableView.backgroundColor = ColorStyle.textWhite
+        tableView.backgroundColor = .mainWhite
         tableView.sectionHeaderTopPadding = 12
         tableView.register(SearchKeywordHeaderView.self, forHeaderFooterViewReuseIdentifier: SearchKeywordHeaderView.identifier)
         tableView.register(RecentSearchKeywordTableViewCell.self, forCellReuseIdentifier: RecentSearchKeywordTableViewCell.identifier)
@@ -109,8 +109,8 @@ final class ImjangSearchViewController: BaseViewController {
     }
     
     private func designView() {
-        view.backgroundColor = ColorStyle.textWhite
-        imjangSearchTableView.backgroundColor = .white
+        view.backgroundColor = .mainWhite
+        imjangSearchTableView.backgroundColor = .mainWhite
     }
     
     private func setupConstraints() {
