@@ -180,7 +180,6 @@
 		619269DA2B6773FE00D4DD3E /* DeleteImjangViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269D62B6773FE00D4DD3E /* DeleteImjangViewController.swift */; };
 		619269E02B67742B00D4DD3E /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269DF2B67742B00D4DD3E /* Filter.swift */; };
 		619269E32B67743A00D4DD3E /* ReuseableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */; };
-		619269E82B67745900D4DD3E /* ImageStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E52B67745900D4DD3E /* ImageStyle.swift */; };
 		619269E92B67745900D4DD3E /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E62B67745900D4DD3E /* UserDefaultManager.swift */; };
 		619269F22B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269EC2B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift */; };
 		619269F32B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269ED2B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift */; };
@@ -380,7 +379,6 @@
 		619269D62B6773FE00D4DD3E /* DeleteImjangViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteImjangViewController.swift; sourceTree = "<group>"; };
 		619269DF2B67742B00D4DD3E /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReuseableProtocol.swift; sourceTree = "<group>"; };
-		619269E52B67745900D4DD3E /* ImageStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStyle.swift; sourceTree = "<group>"; };
 		619269E62B67745900D4DD3E /* UserDefaultManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		619269EC2B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteImjangNoteTableViewCell.swift; sourceTree = "<group>"; };
 		619269ED2B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentSearchKeywordTableViewCell.swift; sourceTree = "<group>"; };
@@ -607,6 +605,7 @@
 				616408ED2B407E4400EC3B5E /* Resources */,
 				61D925062B4866D9002A16B4 /* Model */,
 				6108CFDD2B761A8A00EF302F /* Network */,
+				BEAD6BE42D69BE6A002F6D03 /* Storage */,
 				BEFC82282D68CFFF0051F073 /* Repository */,
 				61DEFEDB2BFA2F990069A820 /* Manager */,
 				0A3D5D5D2B4D376C00574686 /* UserInterface */,
@@ -978,14 +977,6 @@
 			path = Protocol;
 			sourceTree = "<group>";
 		};
-		619269E42B67745900D4DD3E /* Constants */ = {
-			isa = PBXGroup;
-			children = (
-				619269E52B67745900D4DD3E /* ImageStyle.swift */,
-			);
-			path = Constants;
-			sourceTree = "<group>";
-		};
 		619269EB2B67747F00D4DD3E /* ImjangList */ = {
 			isa = PBXGroup;
 			children = (
@@ -1094,6 +1085,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BEAD6BE42D69BE6A002F6D03 /* Storage */ = {
+			isa = PBXGroup;
+			children = (
+				619269E62B67745900D4DD3E /* UserDefaultManager.swift */,
+			);
+			path = Storage;
+			sourceTree = "<group>";
+		};
 		BEFC82262D68CC760051F073 /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
@@ -1117,31 +1116,13 @@
 		BEFC82282D68CFFF0051F073 /* Repository */ = {
 			isa = PBXGroup;
 			children = (
-				BEFC822A2D68D0630051F073 /* Local */,
-				BEFC82292D68D05C0051F073 /* Remote */,
 			);
 			path = Repository;
-			sourceTree = "<group>";
-		};
-		BEFC82292D68D05C0051F073 /* Remote */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Remote;
-			sourceTree = "<group>";
-		};
-		BEFC822A2D68D0630051F073 /* Local */ = {
-			isa = PBXGroup;
-			children = (
-				619269E62B67745900D4DD3E /* UserDefaultManager.swift */,
-			);
-			path = Local;
 			sourceTree = "<group>";
 		};
 		BEFC822B2D68D8290051F073 /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				619269E42B67745900D4DD3E /* Constants */,
 				616408EA2B407A2100EC3B5E /* Extension */,
 				619269E12B67743A00D4DD3E /* Protocol */,
 				619269DE2B67742B00D4DD3E /* Enum */,
@@ -1402,7 +1383,6 @@
 				619269DA2B6773FE00D4DD3E /* DeleteImjangViewController.swift in Sources */,
 				0AE9C19D2C4C285E00DE7739 /* GuideViewController.swift in Sources */,
 				616F1E4B2C00EAD40049461F /* NotificationName+Extension.swift in Sources */,
-				619269E82B67745900D4DD3E /* ImageStyle.swift in Sources */,
 				0A0FE7572B6C0031001866C8 /* ReportPopupViewController.swift in Sources */,
 				61B0C9A72B6A143A00BE86D2 /* ButtonTappedDelegate.swift in Sources */,
 				619269F22B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift in Sources */,
