@@ -608,11 +608,10 @@
 				BEAD6BE42D69BE6A002F6D03 /* Storage */,
 				BEFC82282D68CFFF0051F073 /* Repository */,
 				61DEFEDB2BFA2F990069A820 /* Manager */,
-				0A3D5D5D2B4D376C00574686 /* UserInterface */,
 				BEFC822C2D68D8570051F073 /* Components */,
 				BEFC822B2D68D8290051F073 /* Common */,
-				0A9E0A462B3DCAB90094595A /* AppDelegate.swift */,
-				0A9E0A482B3DCAB90094595A /* SceneDelegate.swift */,
+				0A3D5D5D2B4D376C00574686 /* UserInterface */,
+				BEAD6BE52D6A03FD002F6D03 /* Application */,
 				0A9E0AA82B3DD4D20094595A /* .gitignore */,
 			);
 			path = juinjang;
@@ -1091,6 +1090,15 @@
 				619269E62B67745900D4DD3E /* UserDefaultManager.swift */,
 			);
 			path = Storage;
+			sourceTree = "<group>";
+		};
+		BEAD6BE52D6A03FD002F6D03 /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				0A9E0A462B3DCAB90094595A /* AppDelegate.swift */,
+				0A9E0A482B3DCAB90094595A /* SceneDelegate.swift */,
+			);
+			path = Application;
 			sourceTree = "<group>";
 		};
 		BEFC82262D68CC760051F073 /* Firebase */ = {
