@@ -31,7 +31,7 @@ final class RecordBottomViewController: BaseViewController, UITextFieldDelegate,
     }
     
     var recordingSlider = UISlider().then {
-        $0.setThumbImage(UIImage(named: "slider-thumb"), for: .normal)
+        $0.setThumbImage(UIImage.Recording.sliderThumb, for: .normal)
         $0.tintColor = .main
         $0.addTarget(self, action: #selector(dragedSlider), for: .valueChanged)
         $0.isUserInteractionEnabled = true
@@ -44,21 +44,21 @@ final class RecordBottomViewController: BaseViewController, UITextFieldDelegate,
     }
     
     lazy var rewindButton = UIButton().then {
-        $0.setImage(UIImage(named: "rewind"), for: .normal)
+        $0.setImage(UIImage.Recording.rewind, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(rewindButtonTapped), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false
     }
     
     lazy var playButton = UIButton().then {
-        $0.setImage(UIImage(named: "record-button"), for: .normal)
+        $0.setImage(UIImage.Recording.record, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(startRecordPressed(_:)), for: .touchUpInside)
     }
     
     lazy var fastForwardButton = UIButton().then {
-        $0.setImage(UIImage(named: "fast-forward"), for: .normal)
+        $0.setImage(UIImage.Recording.fastForward, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(fastForwardButtonTapped), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false
@@ -124,7 +124,7 @@ final class RecordBottomViewController: BaseViewController, UITextFieldDelegate,
             recordingSlider.value = 0
             elapsedTimeLabel.text = String.formatSeconds(0)
             playerManager.setCurrentTime(time: 0)
-            playButton.setImage(UIImage(named: "record-button"), for: .normal)
+            playButton.setImage(UIImage.Recording.record, for: .normal)
             playButton.isSelected.toggle()
             progressTimer?.invalidate()
             progressTimer = nil
@@ -174,12 +174,12 @@ final class RecordBottomViewController: BaseViewController, UITextFieldDelegate,
         if playButton.isSelected {
             playerManager.startPlaying()
             progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updatePlayTime), userInfo: nil, repeats: true)
-            playButton.setImage(UIImage(named: "being-recorded-button"), for: .normal)
+            playButton.setImage(UIImage.Recording.beingRecorded, for: .normal)
         } else {
             playerManager.pausePlaying()
             progressTimer?.invalidate()
             progressTimer = nil
-            playButton.setImage(UIImage(named: "record-button"), for: .normal)
+            playButton.setImage(UIImage.Recording.record, for: .normal)
         }
     }
     

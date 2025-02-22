@@ -10,16 +10,16 @@ import UIKit
 final class ImjangImageListView: BaseView {
     // 네비게이션바
     let backButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
-        button.setImage(ImageStyle.arrowLeft, for: .normal)
+        button.setImage(UIImage.arrowLeft, for: .normal)
     }
     
     let deleteImageButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
-        button.setImage(ImageStyle.trash, for: .normal)
+        button.setImage(UIImage.trash, for: .normal)
         button.tintColor = .gray450
     }
     
     let addImageButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
-        button.setImage(ImageStyle.add, for: .normal)
+        button.setImage(UIImage.ImjangNote.add, for: .normal)
         button.tintColor = .gray450
     }
     
@@ -70,7 +70,7 @@ final class ImjangImageListView: BaseView {
         super.configureView()
         
         noImageStackView.design(axis: .vertical, spacing: 16)
-        galleryImageView.design(image: ImageStyle.gallery, contentMode: .scaleAspectFit)
+        galleryImageView.design(image: UIImage.Main.gallery, contentMode: .scaleAspectFit)
         noImageMessageLabel.design(text: "아직 등록된 사진이 없어요\n사진을 추가해 볼까요?",
                                    textColor: .gray400,
                                    font: .pretendard(size: 16, weight: .medium),

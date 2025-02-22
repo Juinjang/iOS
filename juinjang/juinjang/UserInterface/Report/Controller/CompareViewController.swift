@@ -35,7 +35,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     var publicRate2 : Float = 0.0
     
     var backgroundImageView = UIImageView().then {
-        $0.image = UIImage(named:"PaperTexture")
+        $0.image = UIImage.Report.paperTexture
     }
     
     var compareLabel1 = UILabel().then {
@@ -45,7 +45,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var vsImageView = UIImageView().then {
-        $0.image = UIImage(named: "VS")
+        $0.image = UIImage.Report.VS
     }
     var compareLabel2 = UILabel().then {
         $0.text = "비교건물명"
@@ -55,20 +55,20 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     
     var compareView1 = UIImageView().then {
-        $0.image = UIImage(named: "compareView1")
+        $0.image = UIImage.Report.compareView1
     }
     
     var compareView2 = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "compare-empty"), for: .normal)
+        $0.setBackgroundImage(UIImage.Report.compareEmpty, for: .normal)
         $0.layer.cornerRadius = 10
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     var closeButton = UIButton().then {
-        $0.setImage(UIImage(named: "xButton"), for: .normal)
+        $0.setImage(UIImage.Report.xButton, for: .normal)
     }
     var chartCompareImageView1 = UIImageView().then {
-        $0.image = UIImage(named: "chartCompare1")
+        $0.image = UIImage.Report.chartCompare1
     }
     var chartCompareLabel1 = UILabel().then {
         $0.text = "판교푸르지오월드마크"
@@ -77,7 +77,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var chartCompareImageView2 = UIImageView().then {
-        $0.image = UIImage(named: "chartCompare2")
+        $0.image = UIImage.Report.chartCompare2
     }
     var chartCompareLabel2 = UILabel().then {
         $0.text = "비교건물명"
@@ -125,7 +125,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     var publicSpaceRateLabel1 = UILabel().then {
         let text1 = NSTextAttachment()
-        text1.image = UIImage(named: "grayStar")
+        text1.image = UIImage.Report.grayStar
         let text2 = " " + "4.5"
         let text3 = NSMutableAttributedString(string: "")
         text3.append(NSAttributedString(attachment: text1))
@@ -150,7 +150,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     var locationConditionRateLabel1 = UILabel().then {
         let text1 = NSTextAttachment()
-        text1.image = UIImage(named: "grayStar")
+        text1.image = UIImage.Report.grayStar
         let text2 = " " + "4.5"
         let text3 = NSMutableAttributedString(string: "")
         text3.append(NSAttributedString(attachment: text1))
@@ -180,7 +180,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     var totalRateLabel1 = UILabel().then {
         let text1 = NSTextAttachment()
-        text1.image = UIImage(named: "star")
+        text1.image = UIImage.star
         let text2 = " " + "4.5"
         let text3 = NSMutableAttributedString(string: "")
         text3.append(NSAttributedString(attachment: text1))
@@ -241,7 +241,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     func isCompare() {
         print("이즈컴페어 : \(isCompared)")
         if isCompared == true {
-            compareView2.setBackgroundImage(UIImage(named: "compareView2"), for: .normal)
+            compareView2.setBackgroundImage(UIImage.Report.compareView2, for: .normal)
             closeButton.isHidden = false
             compareLabel2.isHidden = false
             chartCompareLabel1.isHidden = false
@@ -412,9 +412,9 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     
     func updateRate(rate: String, label: UILabel){
         let text1 = NSTextAttachment()
-        text1.image = UIImage(named: "grayStar")
+        text1.image = UIImage.Report.grayStar
         if label == totalRateLabel1 || label == totalRateLabel2 {
-            text1.image = UIImage(named: "star")
+            text1.image = UIImage.star
         }
         let text2 = " " + rate
         let text3 = NSMutableAttributedString(string: "")
@@ -545,7 +545,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     @objc private func closeBtnTap() {
         isCompared = false
-        compareView2.setBackgroundImage(UIImage(named: "compare-empty"), for: .normal)
+        compareView2.setBackgroundImage(UIImage.Report.compareEmpty, for: .normal)
         insideLabel2.isHidden = true
         insideRateLabel2.isHidden = true
         publicSpaceLabel2.isHidden = true

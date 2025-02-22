@@ -26,7 +26,7 @@ final class RecordingRightsViewController: BaseViewController {
     }
     
     lazy var microphoneImageView = UIImageView().then {
-        $0.image = UIImage(named: "microphone")
+        $0.image = UIImage.SignUp.microphone
         $0.contentMode = .scaleAspectFill
     }
     
@@ -64,7 +64,7 @@ final class RecordingRightsViewController: BaseViewController {
     func setNavigationBar() {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage(named: "arrow-left")
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButton
     }

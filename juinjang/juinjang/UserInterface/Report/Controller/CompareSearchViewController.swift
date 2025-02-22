@@ -31,7 +31,7 @@ final class CompareSearchViewController: BaseViewController {
     }()
     
     let logoImageView = UIImageView().then {
-        $0.image = UIImage(named: "nomaemull")
+        $0.image = UIImage.Main.nomaemull
     }
     
     let mentLabel = UILabel().then {
@@ -63,7 +63,7 @@ final class CompareSearchViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
 
         // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
         backButtonItem.tintColor = .gray450
         backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
     

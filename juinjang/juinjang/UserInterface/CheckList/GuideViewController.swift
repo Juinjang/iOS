@@ -12,7 +12,7 @@ import SnapKit
 final class GuideViewController: UIViewController {
     
     private let imageView =  UIImageView().then {
-        $0.image = UIImage(named: "guide-checklist")
+        $0.image = UIImage.CheckList.guideChecklist
         $0.contentMode = .scaleToFill
     }
     
@@ -23,7 +23,7 @@ final class GuideViewController: UIViewController {
         
         if UIScreen.main.bounds.height <= 667 { // 아이폰 SE(3rd generation) 기준으로 스크린이 작으면
             // 비율에 맞춘 이미지 사용
-            imageView.image = UIImage(named: "guide-checklist-se")
+            imageView.image = UIImage.CheckList.guideChecklistSe
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap))

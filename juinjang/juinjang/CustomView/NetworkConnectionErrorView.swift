@@ -56,7 +56,7 @@ final class NetworkConnectionErrorView: UIView {
     
     private func configureView() {
         self.backgroundColor = .mainWhite.withAlphaComponent(0.98)
-        imageView.image = ImageStyle.cloudOff
+        imageView.image = UIImage.cloudOff
         imageView.contentMode = .scaleAspectFit
         
         titleLabel.design(text: "앗! 오프라인 상태인 것 같아요", textColor: .gray500, font: .pretendard(size: 18, weight: .semiBold), textAlignment: .center)

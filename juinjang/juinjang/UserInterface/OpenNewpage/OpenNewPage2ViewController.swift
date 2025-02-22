@@ -62,41 +62,41 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건
     var transactionModel = TransactionModel()
     
-    func makeImageView(_ imageView: UIImageView, imageName: String) {
-        imageView.image = UIImage(named: imageName)
+    func makeImageView(_ imageView: UIImageView, type: OpenNewPageImageType) {
+        imageView.image = type.image
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
     }
     
     lazy var backgroundImageView = UIImageView().then {
-        let backgroundImage = UIImage(named: "creation-background")
+        let backgroundImage = UIImage.OpenNewPage.creationBackground
         $0.image = backgroundImage
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.contentMode = .scaleToFill
     }
     
     lazy var investorImageView = UIImageView().then {
-        makeImageView($0, imageName: "investor")
+        makeImageView($0, type: .investor)
     }
     
     lazy var movingUserImageView = UIImageView().then {
-        makeImageView($0, imageName: "user-moving-in-directly")
+        makeImageView($0, type: .userMovingInDirectly)
     }
     
     lazy var apartmentImageView = UIImageView().then {
-        makeImageView($0, imageName: "apartment-image")
+        makeImageView($0, type: .apartment)
     }
     
     lazy var villaImageView = UIImageView().then {
-        makeImageView($0, imageName: "villa-image")
+        makeImageView($0, type: .villa)
     }
     
     lazy var officetelImageView = UIImageView().then {
-        makeImageView($0, imageName: "officetel-image")
+        makeImageView($0, type: .officetel)
     }
     
     lazy var houseImageView = UIImageView().then {
-        makeImageView($0, imageName: "house-image")
+        makeImageView($0, type: .house)
     }
     
     func configureLabel(_ label: UILabel, text: String) {
@@ -248,7 +248,7 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         
         self.navigationItem.title = "새 페이지 펼치기"
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage(named: "arrow-left")
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backToPageTapped))
         navigationItem.leftBarButtonItem = backButton
         

@@ -12,7 +12,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         isAgree = true
         button1.backgroundColor = .main100
         button1.layer.borderColor = UIColor.main.cgColor
-        checkButton.image = UIImage(named: "check-after")
+        checkButton.image = UIImage.checkAfter
         button2.backgroundColor = .gray500
     }
 
@@ -64,7 +64,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     private var isAgree = false
     
     private let checkButton = UIImageView().then {
-        $0.image = UIImage(named: "check-before")
+        $0.image = UIImage.checkBefore
     }
     
     private let termLabel = UILabel().then {
@@ -83,7 +83,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     }
     
     private let termsButton = UIButton().then {
-        $0.setImage(UIImage(named: "term"), for: .normal)
+        $0.setImage(UIImage.term, for: .normal)
     }
     
     private let button2 = UIButton().then {
@@ -203,13 +203,13 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
             // 동의 -> 비동의로 변경
             button1.layer.borderColor = UIColor.null.cgColor
             button1.backgroundColor = .mainWhite
-            checkButton.image = UIImage(named: "check-before")
+            checkButton.image = UIImage.checkBefore
             button2.backgroundColor = .null
         } else {
             // 비동의 색 -> 동의로 변경
             button1.backgroundColor = .main100
             button1.layer.borderColor = UIColor.main.cgColor
-            checkButton.image = UIImage(named: "check-after")
+            checkButton.image = UIImage.checkAfter
             button2.backgroundColor = .gray500
         }
         isAgree.toggle()

@@ -58,7 +58,7 @@ final class ToS2ViewController: BaseViewController {
     }
     
     private let imageView = UIImageView().then {
-        $0.image = UIImage(named: "policyImage")
+        $0.image = UIImage.SignUp.policy
         $0.contentMode = .scaleAspectFit
        // $0.clipsToBounds = true
     }
@@ -128,7 +128,7 @@ final class ToS2ViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.title = "개인정보 수집 및 이용 동의"
         self.navigationItem.hidesBackButton = true
-        let cancelButtonImage = UIImage(named: "cancel-black")
+        let cancelButtonImage = UIImage.Recording.cancelBlack
         let cancelButton = UIBarButtonItem(image: cancelButtonImage, style: .plain,target: self, action: #selector(cancelButtonTapped))
         navigationItem.leftBarButtonItem = cancelButton
     }

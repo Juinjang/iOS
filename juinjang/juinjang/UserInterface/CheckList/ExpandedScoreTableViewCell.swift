@@ -15,7 +15,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "question-image")
+        $0.image = UIImage.CheckList.questionDot
     }
     
     lazy var contentLabel = UILabel().then {
@@ -26,35 +26,35 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
     var scoreButtonStackView = UIStackView()
     
     lazy var answerButton1 = UIButton().then {
-        $0.setImage(UIImage(named: "answer1"), for: .normal)
+        $0.setImage(UIImage.CheckList.answer1, for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         $0.tag = 1
     }
     
     lazy var answerButton2 = UIButton().then {
-        $0.setImage(UIImage(named: "answer2"), for: .normal)
+        $0.setImage(UIImage.CheckList.answer2, for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         $0.tag = 2
     }
     
     lazy var answerButton3 = UIButton().then {
-        $0.setImage(UIImage(named: "answer3"), for: .normal)
+        $0.setImage(UIImage.CheckList.answer3, for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         $0.tag = 3
     }
     
     lazy var answerButton4 = UIButton().then {
-        $0.setImage(UIImage(named: "answer4"), for: .normal)
+        $0.setImage(UIImage.CheckList.answer4, for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         $0.tag = 4
     }
     
     lazy var answerButton5 = UIButton().then {
-        $0.setImage(UIImage(named: "answer5"), for: .normal)
+        $0.setImage(UIImage.CheckList.answer5, for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.addTarget(self, action: #selector(buttonPressed(_:)), for: .touchUpInside)
         $0.tag = 5
@@ -114,25 +114,29 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
         for button in buttons {
             if button != sender {
                 button.isSelected = false
-                button.setImage(UIImage(named: "answer\(button.tag)"), for: .normal)
+                DispatchQueue.main.async {
+                    button.setImage(UIImage(named: "CheckList/answer\(button.tag)"), for: .normal)
+                }
             }
         }
 
         if sender.isSelected {
-            sender.setImage(UIImage(named: "checked-button"), for: .normal)
+            sender.setImage(UIImage.CheckList.checkedButton, for: .normal)
             backgroundColor = .main150
-            questionImage.image = UIImage(named: "question-selected-image")
+            questionImage.image = UIImage.CheckList.questionSelected
             
             for button in buttons {
                 if button != sender {
                     button.isSelected = false
-                    button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
+                    DispatchQueue.main.async {
+                        button.setImage(UIImage.CheckList.checklistCompletedButton, for: .normal)
+                    }
                 }
             }
         } else {
-            sender.setImage(UIImage(named: "answer\(sender.tag)"), for: .normal)
+            sender.setImage(UIImage(named: "CheckList/answer\(sender.tag)"), for: .normal)
             backgroundColor = .mainWhite
-            questionImage.image = UIImage(named: "question-image")
+            questionImage.image = UIImage.CheckList.questionDot
         }
         
         // 선택된 버튼의 정보를 저장
@@ -160,7 +164,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
         
         // 배경색 초기화
         backgroundColor = .mainWhite
-        questionImage.image = UIImage(named: "question-image")
+        questionImage.image = UIImage.CheckList.questionDot
     }
     
     private func setupStackView() {
@@ -192,7 +196,7 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
         // 보기 모드 설정
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
             button.isEnabled = false
-            button.setImage(UIImage(named: "saved-button2"), for: .normal)
+            button.setImage(UIImage.CheckList.savedButton2, for: .normal)
         }
     }
       
@@ -204,28 +208,31 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
         
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
             button.isSelected = false
-            button.setImage(UIImage(named: "answer\(button.tag)"), for: .normal)
+            DispatchQueue.main.async {
+                button.setImage(UIImage(named: "CheckList/answer\(button.tag)"), for: .normal)
+            }
+            
         }
     }
     
     // 보기 모드일 때 저장된 값이 있는 경우
     func savedViewModeConfigure(with score: String, at indexPath: IndexPath) {
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
         
         for button in [answerButton1, answerButton2, answerButton3, answerButton4, answerButton5] {
             if String(button.tag) == score {
-                button.setImage(UIImage(named: "checked-button"), for: .normal)
+                button.setImage(UIImage.CheckList.checkedButton, for: .normal)
             } else {
-                button.setImage(UIImage(named: "saved-button"), for: .normal)
+                button.setImage(UIImage.CheckList.savedButton, for: .normal)
             }
         }
     }
     
     // 수정 모드일 때 저장된 값이 있는 경우
     func savedEditModeConfigure(with score: String, at indexPath: IndexPath) {
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .main150
         
@@ -235,10 +242,10 @@ final class ExpandedScoreTableViewCell: UITableViewCell {
             for button in buttons {
                 if String(button.tag) == score {
                     button.isSelected = true
-                    button.setImage(UIImage(named: "checked-button"), for: .normal)
+                    button.setImage(UIImage.CheckList.checkedButton, for: .normal)
                 } else {
                     button.isSelected = false
-                    button.setImage(UIImage(named: "checklist-completed-button"), for: .normal)
+                    button.setImage(UIImage.CheckList.checklistCompletedButton, for: .normal)
                 }
             }
         }

@@ -12,13 +12,13 @@ final class UpdateAlertView: UIView {
     var closeButtonTappedAction: (() -> Void)?
     
     private let backgroundImage = UIImageView().then {
-        $0.image = UIImage(named: "updateBackground")
+        $0.image = UIImage.updateBackground
         $0.contentMode = .scaleAspectFit
         $0.translatesAutoresizingMaskIntoConstraints = false  // 오토 레이아웃을 사용할 경우 필요
     }
     
     private let peopleImage = UIImageView().then {
-        $0.image = UIImage(named: "user-moving-in-directly")
+        $0.image = UIImage.OpenNewPage.userMovingInDirectly
         $0.contentMode = .scaleAspectFit
         $0.translatesAutoresizingMaskIntoConstraints = false  // 오토 레이아웃을 사용할 경우 필요
     }

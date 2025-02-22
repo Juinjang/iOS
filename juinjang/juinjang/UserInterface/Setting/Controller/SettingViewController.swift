@@ -34,7 +34,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     
     //MARK: - 프로필 사진, 닉네임
     var profileImageView = UIImageView().then {
-        $0.image = UIImage(named:"profileImage")
+        $0.image = UIImage.Setting.profile
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 33
@@ -67,7 +67,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
     }
     var nicknameWarnImageView = UIImageView().then {
-        $0.image = UIImage(named:"warn")
+        $0.image = UIImage.Setting.warn
     }
     var nicknameWarnLabel = UILabel().then {
         $0.text = "닉네임은 8자 이내로 입력해 주세요."
@@ -99,22 +99,22 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray400
     }
-//    var logImageView = UIImageView().then {
-//        $0.image = UIImage(named:"KAKAO")
-//    }
+
     var logImageView = UIImageView().then {
         if UserDefaultManager.shared.isKakaoLogin {
-            $0.image = UIImage(named: "KAKAO")
+            $0.image = UIImage.Setting.KAKAO
         } else {
-            $0.image = UIImage(named: "apple-logo")
+            $0.image = UIImage.SignUp.appleLogo
         }
     }
+    
     var logInfoMailLabel = UILabel().then {
         $0.text = "\(UserDefaultManager.shared.email)"
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray500
     }
+    
     var line2 = UIView().then {
         $0.backgroundColor = .gray100
     }
@@ -125,7 +125,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     var useImageView = UIImageView().then {
-        $0.image = UIImage(named:"document-text")
+        $0.image = UIImage.Setting.documentText
     }
     var useLabel = UILabel().then {
         $0.text = "이용약관"
@@ -137,7 +137,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var qnaImageView = UIImageView().then {
-        $0.image = UIImage(named:"Q&A")
+        $0.image = UIImage.Setting.qnA
     }
     var qnaLabel = UILabel().then {
         $0.text = "자주 묻는 질문"
@@ -397,7 +397,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "설정"
         
-        let backButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-right"), style: .plain, target: self, action: #selector(backBtnTap))
+        let backButtonItem = UIBarButtonItem(image: UIImage.Setting.arrowRight, style: .plain, target: self, action: #selector(backBtnTap))
         backButtonItem.tintColor = .gray450
         backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
 

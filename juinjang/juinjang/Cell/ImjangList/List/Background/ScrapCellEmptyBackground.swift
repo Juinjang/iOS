@@ -16,7 +16,7 @@ final class ScrapCellEmptyBackground: UICollectionReusableView {
         let attributedString1 = NSMutableAttributedString(string: "  버튼을 누르면 상단에 고정할 수 있어요", attributes: [.font: UIFont.pretendard(size: 16, weight: .medium)])
         
         let imageAttachment1 = NSTextAttachment()
-        imageAttachment1.image = ImageStyle.bookmark
+        imageAttachment1.image = UIImage.ImjangList.bookmark
         imageAttachment1.bounds = CGRect(x: 0, y: -3, width: 16, height: 18.4)
         
         attributedString1.insert(NSAttributedString(attachment: imageAttachment1), at: 0)

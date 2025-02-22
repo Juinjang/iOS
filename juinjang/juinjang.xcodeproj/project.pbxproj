@@ -180,7 +180,6 @@
 		619269DA2B6773FE00D4DD3E /* DeleteImjangViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269D62B6773FE00D4DD3E /* DeleteImjangViewController.swift */; };
 		619269E02B67742B00D4DD3E /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269DF2B67742B00D4DD3E /* Filter.swift */; };
 		619269E32B67743A00D4DD3E /* ReuseableProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */; };
-		619269E82B67745900D4DD3E /* ImageStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E52B67745900D4DD3E /* ImageStyle.swift */; };
 		619269E92B67745900D4DD3E /* UserDefaultManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269E62B67745900D4DD3E /* UserDefaultManager.swift */; };
 		619269F22B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269EC2B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift */; };
 		619269F32B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 619269ED2B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift */; };
@@ -231,6 +230,7 @@
 		B54406AD2D62C8710080ECC1 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = B54406AC2D62C8710080ECC1 /* ReactorKit */; };
 		B54406AF2D62CE040080ECC1 /* SplashViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54406AE2D62CE040080ECC1 /* SplashViewReactor.swift */; };
 		B54406B32D6423840080ECC1 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B54406B22D6423840080ECC1 /* RxCocoa */; };
+		B5C0C8972D69CA740017C2C3 /* OpenNewPageImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -378,7 +378,6 @@
 		619269D62B6773FE00D4DD3E /* DeleteImjangViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteImjangViewController.swift; sourceTree = "<group>"; };
 		619269DF2B67742B00D4DD3E /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		619269E22B67743A00D4DD3E /* ReuseableProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReuseableProtocol.swift; sourceTree = "<group>"; };
-		619269E52B67745900D4DD3E /* ImageStyle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageStyle.swift; sourceTree = "<group>"; };
 		619269E62B67745900D4DD3E /* UserDefaultManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDefaultManager.swift; sourceTree = "<group>"; };
 		619269EC2B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeleteImjangNoteTableViewCell.swift; sourceTree = "<group>"; };
 		619269ED2B67747F00D4DD3E /* RecentSearchKeywordTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecentSearchKeywordTableViewCell.swift; sourceTree = "<group>"; };
@@ -427,6 +426,7 @@
 		61F33DFF2D59E8E800CAF49E /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		61FC596C2BFE324500D6F369 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
 		B54406AE2D62CE040080ECC1 /* SplashViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewReactor.swift; sourceTree = "<group>"; };
+		B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenNewPageImageType.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -983,6 +983,7 @@
 		619269DE2B67742B00D4DD3E /* Enum */ = {
 			isa = PBXGroup;
 			children = (
+				B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */,
 				618C0B752D4CAB5C00FA29E3 /* AmpliEventName.swift */,
 				61DEFEDE2BFB39980069A820 /* Error */,
 				619269DF2B67742B00D4DD3E /* Filter.swift */,
@@ -1004,7 +1005,6 @@
 		619269E42B67745900D4DD3E /* Constants */ = {
 			isa = PBXGroup;
 			children = (
-				619269E52B67745900D4DD3E /* ImageStyle.swift */,
 				619269E62B67745900D4DD3E /* UserDefaultManager.swift */,
 			);
 			path = Constants;
@@ -1342,7 +1342,6 @@
 				619269DA2B6773FE00D4DD3E /* DeleteImjangViewController.swift in Sources */,
 				0AE9C19D2C4C285E00DE7739 /* GuideViewController.swift in Sources */,
 				616F1E4B2C00EAD40049461F /* NotificationName+Extension.swift in Sources */,
-				619269E82B67745900D4DD3E /* ImageStyle.swift in Sources */,
 				0A0FE7572B6C0031001866C8 /* ReportPopupViewController.swift in Sources */,
 				61B0C9A72B6A143A00BE86D2 /* ButtonTappedDelegate.swift in Sources */,
 				619269F22B67747F00D4DD3E /* DeleteImjangNoteTableViewCell.swift in Sources */,
@@ -1437,6 +1436,7 @@
 				61DEFEDD2BFA2FB40069A820 /* AudioRecorderManager.swift in Sources */,
 				0A4EBE362B5EA27B00909B7A /* ExpandedScoreTableViewCell.swift in Sources */,
 				0A95D72F2B682013000A9C06 /* ToSViewController.swift in Sources */,
+				B5C0C8972D69CA740017C2C3 /* OpenNewPageImageType.swift in Sources */,
 				61FC596D2BFE324500D6F369 /* AudioPlayerManager.swift in Sources */,
 				61B0C9D72B6C16BD00BE86D2 /* ImageCollectionViewCell.swift in Sources */,
 				0A9E0A472B3DCAB90094595A /* AppDelegate.swift in Sources */,

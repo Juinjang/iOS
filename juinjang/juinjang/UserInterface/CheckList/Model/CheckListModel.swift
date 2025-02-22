@@ -183,20 +183,20 @@ var items: [CheckListItem] = [
 
 var options1: [Option] = [
     Option(option: "선택안함", image: nil),
-    Option(option: "1호선", image: UIImage(named: "line1")?.pngData()),                  // 1호선
-    Option(option: "2호선", image: UIImage(named: "line2")?.pngData()),                  // 2호선
-    Option(option: "3호선", image: UIImage(named: "line3")?.pngData()),                  // 3호선
-    Option(option: "4호선", image: UIImage(named: "line4")?.pngData()),                  // 4호선
-    Option(option: "5호선", image: UIImage(named: "line5")?.pngData()),                  // 5호선
-    Option(option: "6호선", image: UIImage(named: "line6")?.pngData()),                  // 6호선
-    Option(option: "7호선", image: UIImage(named: "line7")?.pngData()),                  // 7호선
-    Option(option: "8호선", image: UIImage(named: "line8")?.pngData()),                  // 8호선
-    Option(option: "9호선", image: UIImage(named: "line9")?.pngData()),                  // 9호선
-    Option(option: "수인분당", image: UIImage(named: "SuinBundangLine")?.pngData()),      // 수인분당선
-    Option(option: "경의중앙", image: UIImage(named: "GyeonguiJungangLine")?.pngData()),  // 경의중앙선
-    Option(option: "신분당", image: UIImage(named: "ShinbundangLine")?.pngData()),       // 신분당선
-    Option(option: "공항철도", image: UIImage(named: "AirportRailroadLine")?.pngData()),  // 공항철도선
-    Option(option: "경춘선", image: UIImage(named: "GyeongchunLine")?.pngData()),        // 경춘선
+    Option(option: "1호선", image: UIImage.CheckList.line1.pngData()),                  // 1호선
+    Option(option: "2호선", image: UIImage.CheckList.line2.pngData()),                  // 2호선
+    Option(option: "3호선", image: UIImage.CheckList.line3.pngData()),                  // 3호선
+    Option(option: "4호선", image: UIImage.CheckList.line4.pngData()),                  // 4호선
+    Option(option: "5호선", image: UIImage.CheckList.line5.pngData()),                  // 5호선
+    Option(option: "6호선", image: UIImage.CheckList.line6.pngData()),                  // 6호선
+    Option(option: "7호선", image: UIImage.CheckList.line7.pngData()),                  // 7호선
+    Option(option: "8호선", image: UIImage.CheckList.line8.pngData()),                  // 8호선
+    Option(option: "9호선", image: UIImage.CheckList.line9.pngData()),                  // 9호선
+    Option(option: "수인분당", image: UIImage.CheckList.suinBundangLine.pngData()),      // 수인분당선
+    Option(option: "경의중앙", image: UIImage.CheckList.gyeonguiJungangLine.pngData()),  // 경의중앙선
+    Option(option: "신분당", image: UIImage.CheckList.shinbundangLine.pngData()),       // 신분당선
+    Option(option: "공항철도", image: UIImage.CheckList.airportRailroadLine.pngData()),  // 공항철도선
+    Option(option: "경춘선", image: UIImage.CheckList.gyeongchunLine.pngData()),        // 경춘선
 ]
 
 var options2: [Option] = [

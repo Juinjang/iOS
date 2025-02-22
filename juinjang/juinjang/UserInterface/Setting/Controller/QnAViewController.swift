@@ -36,7 +36,7 @@ final class QnAViewController : BaseViewController {
     
     //MARK: - 질문들
     var questionImageView = UIImageView().then {
-        $0.image = UIImage(named:"question")
+        $0.image = UIImage.Setting.questionLogo
     }
     var questionLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -50,7 +50,7 @@ final class QnAViewController : BaseViewController {
         $0.numberOfLines = 0
     }
     var arrowImageView = UIImageView().then {
-        $0.image = UIImage(named:"arrow")
+        $0.image = UIImage.Setting.arrow
     }
     var line = UIView().then {
         $0.backgroundColor = .gray100
@@ -68,7 +68,7 @@ final class QnAViewController : BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "자주 묻는 질문"
         
-        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"X"), style: .plain, target: self, action: #selector(tapCloseButton))
+        let closeButtonItem = UIBarButtonItem(image: UIImage.X, style: .plain, target: self, action: #selector(tapCloseButton))
         closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 

@@ -76,7 +76,7 @@ final class ImjangListView: UIView {
         emptyBackgroundView.isHidden = true     // 일단 숨겨놓기
         
         // 비었을 때 로고 이미지뷰
-        emptyLogoImageView.design(image: UIImage(named: "nomaemull")!,
+        emptyLogoImageView.design(image: UIImage.Main.nomaemull,
                          contentMode: .scaleAspectFit)
         // 비었을 때 추가 권유 메시지 레이블
         emptyMessageLabel.design(text: "아직 등록된 집이 없어요\n지금 바로 부동산을 추가해 볼까요?",

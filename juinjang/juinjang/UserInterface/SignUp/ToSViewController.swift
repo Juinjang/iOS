@@ -43,7 +43,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
         $0.addTarget(self, action: #selector(checkButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
 
-        $0.setImage(UIImage(named: "check-off"), for: .normal)
+        $0.setImage(UIImage.SignUp.checkOff, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
     }
     
@@ -104,7 +104,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     private func setNavigationBar() {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = ImageStyle.arrowLeft
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButton
     }
@@ -189,11 +189,11 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     
     private func updateCheckButtonImages() {
         if isChecked {
-            checkButton.setImage(UIImage(named: "check-on"), for: .normal)
+            checkButton.setImage(UIImage.SignUp.checkOn, for: .normal)
             nextButton.backgroundColor =  .gray500
             nextButton.isEnabled = true
         } else {
-            checkButton.setImage(UIImage(named: "check-off"), for: .normal)
+            checkButton.setImage(UIImage.SignUp.checkOff, for: .normal)
             nextButton.backgroundColor =  .null
             nextButton.isEnabled = false
         }
@@ -209,7 +209,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
            let indexPath = indexPathForTag(tag),
            let tosCell = itemtableView.cellForRow(at: indexPath) as? ToSItemTableViewCell {
             tosCell.checkButton.isSelected.toggle()
-            tosCell.checkButton.setImage(UIImage(named: "record-check-on"), for: .normal)
+            tosCell.checkButton.setImage(UIImage.Recording.checkOn, for: .normal)
         }
     }
 
@@ -237,7 +237,7 @@ final class ToSViewController: BaseViewController, PopUpDelegate {
     
     private func areNotAllTermsChecked() {
         // cell 버튼 개별 동작 시 전체 동의 버튼, 다음으로 버튼 개별 처리
-        checkButton.setImage(UIImage(named: "check-off"), for: .normal)
+        checkButton.setImage(UIImage.SignUp.checkOff, for: .normal)
         nextButton.backgroundColor = .null
         nextButton.isEnabled = false
     }

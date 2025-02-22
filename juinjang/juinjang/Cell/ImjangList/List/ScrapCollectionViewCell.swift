@@ -22,7 +22,7 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
         $0.backgroundColor = .stroke2
     }
     let emptyImage = UIImageView().then {
-        $0.image = ImageStyle.gallery
+        $0.image = UIImage.Main.gallery
         $0.contentMode = .scaleAspectFit
     }
     
@@ -92,7 +92,7 @@ extension ScrapCollectionViewCell {
         }
         setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
         roomAddressLabel.text = imjangNote.address
-        let bookmarkImage = imjangNote.isScraped ? ImageStyle.bookmarkSelected : ImageStyle.bookmark
+        let bookmarkImage = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(bookmarkImage, for: .normal)
         
         let images = imjangNote.images
@@ -262,7 +262,7 @@ extension ScrapCollectionViewCell {
     }
     
     private func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
         scoreLabel.textColor = empty ? .null : .main
     }
     
@@ -358,12 +358,12 @@ extension ScrapCollectionViewCell {
         layer.masksToBounds = false
         
         roomNameLabel.design(text: "", font: .pretendard(size: 18, weight: .bold))
-        roomIcon.design(image: ImageStyle.house, contentMode: .scaleAspectFit)
+        roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         
-        starIcon.design(image: ImageStyle.starEmpty, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.starEmpty, contentMode: .scaleAspectFit)
         scoreLabel.design(textColor: .null, font: .pretendard(size: 16, weight: .semiBold))
         roomPriceLabel.design(text: "", font: .pretendard(size: 16, weight: .semiBold))
         roomAddressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
-        bookMarkButton.design(image: ImageStyle.bookmark, backgroundColor: .mainWhite)
+        bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .mainWhite)
     }
 }

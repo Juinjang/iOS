@@ -15,7 +15,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "question-image")
+        $0.image = UIImage.CheckList.questionDot
     }
     
     lazy var contentLabel = UILabel().then {
@@ -66,7 +66,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
         
         // 배경색 초기화
         backgroundColor = .mainWhite
-        questionImage.image = UIImage(named: "question-image")
+        questionImage.image = UIImage.CheckList.questionDot
     }
     
     private func setupLayout() {
@@ -95,7 +95,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     }
     
     func savedConfigure(with imjangId: Int, with answer: String, at indexPath: IndexPath) {
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
         
@@ -125,7 +125,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     
     // 보기 모드일 때 저장된 값이 있는 경우
     func savedViewModeConfigure(with answer: String, at indexPath: IndexPath) {
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
         
@@ -137,7 +137,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     
     // 수정 모드일 때 저장된 값이 있는 경우
     func savedEditModeConfigure(with answer: String, at indexPath: IndexPath) {
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .main150
         
@@ -176,7 +176,7 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
         
         textField.becomeFirstResponder()
         backgroundColor = .main150
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         updateTextFieldWidthConstraint(for: textField, constant: 342, shouldRemoveLeadingConstraint: false)
     
         return true
@@ -186,7 +186,7 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
         if let text = textField.text, !text.isEmpty {
             // 텍스트 필드가 비어 있지 않은 경우
             backgroundColor = .main150
-            questionImage.image = UIImage(named: "question-selected-image")
+            questionImage.image = UIImage.CheckList.questionSelected
             textField.backgroundColor = .mainWhite
             inputAnswer = textField.text ?? ""
             
@@ -202,7 +202,7 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
         } else {
             // 비어있는 경우 기존 너비로
             backgroundColor = .mainWhite
-            questionImage.image = UIImage(named: "question-image")
+            questionImage.image = UIImage.CheckList.questionDot
             textField.backgroundColor = .main100
             updateTextFieldWidthConstraint(for: textField, constant: 342, shouldRemoveLeadingConstraint: false)
             handleTextSelection(inputAnswer ?? "")

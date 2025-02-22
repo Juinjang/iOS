@@ -13,7 +13,7 @@ final class RecordTopViewController: BaseViewController {
     weak var bottomSheetViewController: BottomSheetViewController?
     
     lazy var cancelButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "cancel-white"), for: .normal)
+        $0.setBackgroundImage(UIImage.Recording.cancelWhite, for: .normal)
         $0.layer.masksToBounds = true
         $0.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
@@ -39,14 +39,14 @@ final class RecordTopViewController: BaseViewController {
     }
     
     lazy var copyButton = UIButton().then {
-        $0.setImage(UIImage(named: "record-copy"), for: .normal)
+        $0.setImage(UIImage.Recording.copy, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(copyButtonTapped(_:)), for: .touchUpInside)
     }
     
     lazy var editButton = UIButton().then {
-        $0.setImage(UIImage(named: "record-edit"), for: .normal)
+        $0.setImage(UIImage.Recording.edit, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(editButtonTapped(_:)), for: .touchUpInside)
@@ -113,11 +113,11 @@ final class RecordTopViewController: BaseViewController {
         sender.isSelected.toggle()
         
         if sender.isSelected {
-            editButton.setImage(UIImage(named: "record-edit-activate"), for: .normal)
+            editButton.setImage(UIImage.Recording.editActivate, for: .normal)
             recordTextView.isEditable = true
         } else {
             editRecordScript()
-            editButton.setImage(UIImage(named: "record-edit"), for: .normal)
+            editButton.setImage(UIImage.Recording.edit, for: .normal)
             recordTextView.isEditable = false
         }
     }

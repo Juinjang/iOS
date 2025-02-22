@@ -62,12 +62,12 @@ extension ImjangNoteCollectionViewCell {
         
         addressLabel.text = imjangNote.address
         
-        let image = imjangNote.isScraped ? ImageStyle.bookmarkSelected : ImageStyle.bookmark
+        let image = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(image, for: .normal)
         
         let images = imjangNote.images
         if images.isEmpty {
-            let image = ImageStyle.emptyImage
+            let image = UIImage.ImjangList.empty
             DispatchQueue.main.async {
                 self.roomThumbnailImageView.image = image
             }
@@ -122,7 +122,7 @@ extension ImjangNoteCollectionViewCell {
     }
     
     func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
         scoreLabel.textColor = empty ? .null : .main
     }
 }
@@ -212,14 +212,14 @@ extension ImjangNoteCollectionViewCell {
         starStackView.distribution = .fill
 
         
-        roomIcon.design(image: ImageStyle.house, contentMode: .scaleAspectFit)
+        roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         roomNameLabel.design(text:"", font: .pretendard(size: 16, weight: .bold))
         priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
-        starIcon.design(image: ImageStyle.star, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.star, contentMode: .scaleAspectFit)
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
         addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         
-        bookMarkButton.design(image: ImageStyle.bookmark, backgroundColor: .clear)
+        bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .clear)
     }
 }

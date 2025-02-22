@@ -20,7 +20,7 @@ final class DeleteImjangTableHeaderView: UITableViewHeaderFooterView {
     
     @objc func setEmpty() {
         removeAllCheckButton.isSelected = false
-        removeAllCheckButton.setImage(ImageStyle.off, for: .normal)
+        removeAllCheckButton.setImage(UIImage.ImjangList.off, for: .normal)
     }
     
     private func configureHierarchy() {
@@ -47,7 +47,7 @@ final class DeleteImjangTableHeaderView: UITableViewHeaderFooterView {
                                   textColor: .gray400,
                                   font: .pretendard(size: 14, weight: .medium))
         
-        removeAllCheckButton.design(image: ImageStyle.off, backgroundColor: .mainWhite)
+        removeAllCheckButton.design(image: UIImage.ImjangList.off, backgroundColor: .mainWhite)
     }
     
     required init?(coder: NSCoder) {

@@ -10,13 +10,13 @@ import KakaoSDKUser
 class LoginViewController: UIViewController {
     
     let logoImageView = UIImageView().then {
-        $0.image = UIImage(named: "Logo")
+        $0.image = UIImage.Logo
     }
     let lableLogoImageView = UIImageView().then {
-        $0.image = UIImage(named: "labelLogo")
+        $0.image = UIImage.labelLogo
     }
     let kakaoButton = UIButton().then {
-        $0.setImage(UIImage(named: "kakaoLogo"), for: .normal)
+        $0.setImage(UIImage.kakaoLogo, for: .normal)
     }
     var loginLabel = UILabel().then {
         $0.text = "소셜 계정을 통해\n로그인 또는 회원가입을 진행해 주세요."

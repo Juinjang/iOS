@@ -23,7 +23,7 @@ final class AccountDeleteFinalViewController: BaseViewController {
     }
     
     var logoImageView = UIImageView().then {
-        $0.image = UIImage(named:"deleteLogo")
+        $0.image = UIImage.Setting.deleteLogo
     }
     
     var bigMent = UILabel().then {

@@ -21,7 +21,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
     
     var isClicked = false {
         didSet {
-            checkImageView.image = isClicked ? ImageStyle.on : ImageStyle.off
+            checkImageView.image = isClicked ? UIImage.ImjangList.on : UIImage.ImjangList.off
         }
     }
     
@@ -66,7 +66,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
         guard let imjangNote else { return }
         let images = imjangNote.images
         if images.isEmpty {
-            roomThumbnailImageView.image = ImageStyle.emptyImage
+            roomThumbnailImageView.image = UIImage.ImjangList.empty
         } else {
             if let url = URL(string: images[0]) {
                 roomThumbnailImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
@@ -102,7 +102,7 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
     }
     
     private func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
         scoreLabel.textColor = empty ? .null : .main
     }
     
@@ -186,15 +186,15 @@ final class DeleteImjangNoteTableViewCell: UITableViewCell {
         starStackView.distribution = .fill
 
         
-        roomIcon.design(image: ImageStyle.house, contentMode: .scaleAspectFit)
+        roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         roomNameLabel.design(text:"", font: .pretendard(size: 16, weight: .bold))
         priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
-        starIcon.design(image: ImageStyle.star, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.star, contentMode: .scaleAspectFit)
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
         addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         
-        checkImageView.design(image: ImageStyle.off, contentMode: .scaleAspectFit)
+        checkImageView.design(image: UIImage.ImjangList.off, contentMode: .scaleAspectFit)
     }
     
     required init?(coder: NSCoder) {

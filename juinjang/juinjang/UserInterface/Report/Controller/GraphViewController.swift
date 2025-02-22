@@ -12,7 +12,7 @@ import Charts
 final class GraphViewController : BaseViewController {
     
     var backgroundImageView = UIImageView().then {
-        $0.image = UIImage(named:"PaperTexture")
+        $0.image = UIImage.Report.paperTexture
     }
     
     var label1 = UILabel().then {
@@ -23,11 +23,11 @@ final class GraphViewController : BaseViewController {
     }
     
     var noteImageView = UIImageView().then {
-        $0.image = UIImage(named:"noteline")
+        $0.image = UIImage.Report.noteline
     }
     
     var indoorImageView = UIImageView().then {
-        $0.image = UIImage(named: "house")
+        $0.image = UIImage.ImjangNote.house
     }
     var indoorLabel = UILabel().then {
         $0.text = "상당히 쾌적한 실내"
@@ -43,7 +43,7 @@ final class GraphViewController : BaseViewController {
     }
     
     var publicImageView = UIImageView().then {
-        $0.image = UIImage(named: "building")
+        $0.image = UIImage.Report.building
     }
     var publicLabel = UILabel().then {
         $0.text = "훌륭한 공용공간"
@@ -59,8 +59,9 @@ final class GraphViewController : BaseViewController {
     }
     
     var locationimageView = UIImageView().then {
-        $0.image = UIImage(named: "location")
+        $0.image = UIImage.ImjangNote.location
     }
+    
     var locationLabel = UILabel().then {
         $0.text = "좋은 편인 입지 여건"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
@@ -116,7 +117,7 @@ final class GraphViewController : BaseViewController {
     
     func updateRate(rate: String, label: UILabel){
         let text1 = NSTextAttachment()
-        text1.image = UIImage(named: "grayStar")
+        text1.image = UIImage.Report.grayStar
         let text2 = " " + rate
         let text3 = NSMutableAttributedString(string: "")
         text3.append(NSAttributedString(attachment: text1))

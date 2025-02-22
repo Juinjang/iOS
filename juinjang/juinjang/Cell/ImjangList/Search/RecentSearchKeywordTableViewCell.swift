@@ -35,9 +35,9 @@ final class RecentSearchKeywordTableViewCell: UITableViewCell {
     
     private func configureView() {
         contentView.backgroundColor = .mainWhite
-        clockIcon.design(image: ImageStyle.clock, contentMode: .scaleAspectFit)
+        clockIcon.design(image: UIImage.ImjangList.clock, contentMode: .scaleAspectFit)
         searchKeywordLabel.design(text: "", font: .pretendard(size: 16, weight: .medium))
-        deleteButton.design(image: ImageStyle.x, backgroundColor: .mainWhite)
+        deleteButton.design(image: UIImage.X, backgroundColor: .mainWhite)
     }
     
     private func setupConstraints() {

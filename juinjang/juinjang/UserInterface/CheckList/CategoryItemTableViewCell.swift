@@ -14,7 +14,7 @@ final class CategoryItemTableViewCell: UITableViewCell {
     
     let categoryImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "deadline-item")
+        $0.image = UIImage.CheckList.deadlineItem
     }
     
     let categoryLabel = UILabel().then {
@@ -23,7 +23,7 @@ final class CategoryItemTableViewCell: UITableViewCell {
     }
     
     let expandButton = UIButton().then {
-        $0.setImage(UIImage(named: "expand-items"), for: .normal)
+        $0.setImage(UIImage.CheckList.expandItems, for: .normal)
     }
     
     let expandedItemLabel = UILabel().then {
@@ -97,10 +97,10 @@ enum CategoryItem: String, CaseIterable {
     
     var image: UIImage {
         switch self {
-        case .deadline: return UIImage(named: "deadline-item")!
-        case .locationConditions: return UIImage(named: "location-conditions-item")!
-        case .commonSpace: return UIImage(named: "public-space-item")!
-        case .indoor: return UIImage(named: "indoor-item")!
+        case .deadline: return UIImage.CheckList.deadlineItem
+        case .locationConditions: return UIImage.CheckList.locationConditionsItem
+        case .commonSpace: return UIImage.CheckList.publicSpaceItem
+        case .indoor: return UIImage.CheckList.indoorItem
         }
     }
 }

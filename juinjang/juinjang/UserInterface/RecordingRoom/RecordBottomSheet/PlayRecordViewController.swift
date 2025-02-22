@@ -24,7 +24,7 @@ final class PlayRecordViewController: BaseViewController, UITextFieldDelegate{
     }
     
     lazy var cancelButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "cancel-white"), for: .normal)
+        $0.setBackgroundImage(UIImage.Recording.cancelWhite, for: .normal)
         $0.layer.masksToBounds = true
         $0.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)

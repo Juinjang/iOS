@@ -16,7 +16,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
 // MARK: - 변수, 상수 설정
     //설정 버튼, 메인 로고, 스피커 버튼
     private var mainLogoImageView = UIImageView().then {
-        $0.image = UIImage(named:"mainLogo")
+        $0.image = UIImage.Main.logo
     }
     
     //테이블 뷰
@@ -141,14 +141,14 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         navigationItem.titleView = mainLogoImageView
         
         // 이미지 로드
-//        let speaker = UIImage(named:"speaker")
+//        let speaker = UIImage.speaker
 //
 //        // UIBarButtonItem 생성 및 이미지 설정
 //        let speakerButtonItem = UIBarButtonItem(image: speaker, style: .plain, target: self, action: nil)
 //        speakerButtonItem.tintColor = ColorStyle.darkGray
 //        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         
-        let settingButtonItem = UIBarButtonItem(image: UIImage(named:"setting"), style: .plain, target: self, action: #selector(setttingBtnTap))
+        let settingButtonItem = UIBarButtonItem(image: UIImage.Main.setting, style: .plain, target: self, action: #selector(setttingBtnTap))
         settingButtonItem.tintColor = .gray450
         settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
         // 네비게이션 아이템에 백 버튼 아이템 설정

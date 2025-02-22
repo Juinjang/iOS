@@ -31,7 +31,7 @@ final class PlayViewController: BaseViewController, UITextFieldDelegate, AVAudio
     }
     
     var recordingSlider = UISlider().then {
-        $0.setThumbImage(UIImage(named: "slider-thumb"), for: .normal)
+        $0.setThumbImage(UIImage.Recording.sliderThumb, for: .normal)
         $0.tintColor = .main
         $0.isUserInteractionEnabled = true
     }
@@ -43,20 +43,20 @@ final class PlayViewController: BaseViewController, UITextFieldDelegate, AVAudio
     }
     
     lazy var rewindButton = UIButton().then {
-        $0.setImage(UIImage(named: "rewind"), for: .normal)
+        $0.setImage(UIImage.Recording.rewind, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
     }
     
     lazy var recordButton = UIButton().then {
-        $0.setImage(UIImage(named: "record-button"), for: .normal)
+        $0.setImage(UIImage.Recording.record, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(startRecordPressed(_:)), for: .touchUpInside)
     }
     
     lazy var fastForwardButton = UIButton().then {
-        $0.setImage(UIImage(named: "fast-forward"), for: .normal)
+        $0.setImage(UIImage.Recording.fastForward, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
     }
@@ -116,7 +116,7 @@ final class PlayViewController: BaseViewController, UITextFieldDelegate, AVAudio
         //pvProgressPlay.progress = Float(audioPlayer.currentTime/audioPlayer.duration)
         recordingSlider.value = Float(audioPlayer.currentTime / audioPlayer.duration)
         if recordingSlider.value == 0 {
-            recordButton.setImage(UIImage(named: "record-button"), for: .normal)
+            recordButton.setImage(UIImage.Recording.record, for: .normal)
         }
     }
     
@@ -213,10 +213,10 @@ final class PlayViewController: BaseViewController, UITextFieldDelegate, AVAudio
         if recordButton.isSelected {
             audioPlayer.play()
             progressTimer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(updatePlayTime1), userInfo: nil, repeats: true)
-            recordButton.setImage(UIImage(named: "being-recorded-button"), for: .normal)
+            recordButton.setImage(UIImage.Recording.beingRecorded, for: .normal)
         } else {
             audioPlayer.pause()
-            recordButton.setImage(UIImage(named: "record-button"), for: .normal)
+            recordButton.setImage(UIImage.Recording.record, for: .normal)
         }
         recordButton.isSelected.toggle()
     }

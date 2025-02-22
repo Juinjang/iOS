@@ -129,7 +129,7 @@ final class CheckListViewController: BaseViewController {
                     if let suinbundangOption = checkListItem.options.filter("option == %@", "수인분당").first {
                         let currentImage = suinbundangOption.image
                         
-                        if let suinbundangImage = UIImage(named: "SuinBundangLine")?.pngData() {
+                        if let suinbundangImage = UIImage.CheckList.suinBundangLine.pngData() {
                             if currentImage != suinbundangImage {
                                 try realm.write {
                                     suinbundangOption.image = suinbundangImage
@@ -328,7 +328,7 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell: CategoryItemTableViewCell = tableView.dequeueReusableCell(withIdentifier: CategoryItemTableViewCell.identifier, for: indexPath) as! CategoryItemTableViewCell
                 let items = self.checkListCategories[indexPath.section - 1]
                 cell.configure(category: items)
-                let arrowImage = items.isExpanded ? UIImage(named: "contraction-items") : UIImage(named: "expand-items")
+                let arrowImage = items.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandItems
                 cell.expandButton.setImage(arrowImage, for: .normal)
                 
                 return cell
@@ -575,7 +575,7 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
     
                     cell.configure(category: category)
                 
-                    let arrowImage = category.isExpanded ? UIImage(named: "contraction-items") : UIImage(named: "expand-items")
+                    let arrowImage = category.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandItems
                     cell.expandButton.setImage(arrowImage, for: .normal)
                     
                     return cell
