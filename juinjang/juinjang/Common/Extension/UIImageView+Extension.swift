@@ -8,7 +8,9 @@
 import UIKit
 
 extension UIImageView {
-    func design(image: UIImage?=nil, contentMode: UIView.ContentMode = .scaleAspectFill, cornerRadius: CGFloat?=nil) {
+    func design(image: UIImage?=nil,
+                contentMode: UIView.ContentMode = .scaleAspectFill,
+                cornerRadius: CGFloat?=nil) {
         self.image = image
         self.contentMode = contentMode
         if let cornerRadius {
