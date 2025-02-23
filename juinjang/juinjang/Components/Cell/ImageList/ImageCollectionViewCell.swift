@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 final class ImageCollectionViewCell: UICollectionViewCell {
     let imageView = UIImageView()
