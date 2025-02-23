@@ -85,24 +85,12 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
         setRate(totalAverage: imjangNote.totalAverage)
         print("총점은 : \(imjangNote.totalAverage)")
-//        if let score = imjangNote.totalAverage {
-//            DispatchQueue.main.async {
-//                self.starIcon.image = ImageStyle.star
-//            }
-//            scoreLabel.text = String(format: "%.1f", score)
-//        } else {
-//            DispatchQueue.main.async {
-//                self.starIcon.image = ImageStyle.starEmpty
-//            }
-//            scoreLabel.text = "0.0"
-//            scoreLabel.textColor = ColorStyle.null
-//        }
         
         addressLabel.text = imjangNote.address
         
         let images = imjangNote.images
         if images.isEmpty {
-            let image = ImageStyle.emptyImage
+            let image = UIImage.ImjangList.empty
             DispatchQueue.main.async {
                 self.roomThumbnailImageView.image = image
             }
@@ -121,10 +109,10 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         if let totalAverage = totalAverage, let average = Double(totalAverage) {
             // 소수점 두 자리까지 포맷팅
             let formattedAverage = String(format: "%.2f", average)
-            starIcon.image = ImageStyle.star
+            starIcon.image = UIImage.star
             scoreLabel.text = formattedAverage
         } else {
-            starIcon.image = ImageStyle.starEmpty
+            starIcon.image = UIImage.starEmpty
             scoreLabel.text = "0.0"
         }
     }
@@ -200,11 +188,11 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         starStackView.distribution = .fill
 
         roomThumbnailImageView.contentMode = .scaleAspectFill
-        roomIcon.design(image: ImageStyle.house, contentMode: .scaleAspectFit)
+        roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         roomNameLabel.design(text:"", font: .pretendard(size: 16, weight: .bold))
         priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
-        starIcon.design(image: ImageStyle.star, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.star, contentMode: .scaleAspectFit)
         scoreLabel.design(text:"0.0", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
         addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
     }

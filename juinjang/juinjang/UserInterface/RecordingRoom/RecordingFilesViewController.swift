@@ -15,7 +15,7 @@ final class RecordingFilesViewController: BaseViewController {
     
     // empty view
     private let emptyRecordImageView = UIImageView().then {
-        $0.image = ImageStyle.emptyRecordImage
+        $0.image = UIImage.Recording.emptyRecord
         $0.contentMode = .scaleAspectFit
         $0.alpha = 0
     }
@@ -149,12 +149,12 @@ final class RecordingFilesViewController: BaseViewController {
         navigationItem.setHidesBackButton(true, animated: true)
 
         // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft,
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft,
                                              style: .plain,
                                              target: self,
                                              action: #selector(back))
         
-        let addButtonItem = UIBarButtonItem(image: ImageStyle.addOrange,
+        let addButtonItem = UIBarButtonItem(image: UIImage.addOrange,
                                             style: .plain,
                                             target: self,
                                             action: #selector(startRecording))

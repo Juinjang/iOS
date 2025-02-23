@@ -18,7 +18,7 @@ final class ImjangSearchViewController: BaseViewController {
         searchBar.searchTextField.borderStyle = .roundedRect
         searchBar.searchTextField.clipsToBounds = true
         searchBar.searchTextField.layer.cornerRadius = 15
-//        searchBar.setImage(ImageStyle.search, for: .clear, state: .normal)
+//        searchBar.setImage(UIImage.search, for: .clear, state: .normal)
         return searchBar
     }()
     
@@ -96,7 +96,7 @@ final class ImjangSearchViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
 
         // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
         let searchTextFieldItem = UIBarButtonItem(customView: searchBar)
     
         // 네비게이션 아이템에 백 버튼 아이템 설정

@@ -32,7 +32,7 @@ final class ImjangNoteViewController: BaseViewController,
         $0.layer.cornerRadius = 5
     }
     let noImageIcon = UIImageView().then {
-        $0.image = ImageStyle.galleryAdd
+        $0.image = UIImage.ImjangNote.galleryAdd
         $0.contentMode = .scaleAspectFit
     }
     
@@ -97,11 +97,11 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     let upButton = UIButton().then {
-        $0.setImage(ImageStyle.floating, for: .normal)
+        $0.setImage(UIImage.ImjangNote.floating, for: .normal)
     }
     
     let editButton = UIButton().then {
-        $0.setImage(UIImage(named: "edit-button"), for: .normal)
+        $0.setImage(UIImage.CheckList.editButton, for: .normal)
         $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
         $0.layer.shadowOffset = CGSize(width: 0, height: 4)
         $0.layer.shadowOpacity = 1
@@ -350,7 +350,7 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     func updateButtonState(isSelected: Bool) {
-        editButton.setImage(UIImage(named: "completed-button"), for: .normal)
+        editButton.setImage(UIImage.CheckList.completedButton, for: .normal)
         editButton.isSelected = isSelected
     }
         
@@ -411,7 +411,7 @@ final class ImjangNoteViewController: BaseViewController,
         self.navigationController?.navigationBar.tintColor = .black
         
         // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
         let editButtonItem = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(editView))
         backButtonItem.tintColor = .gray450
         editButtonItem.tintColor = .gray450
@@ -503,14 +503,14 @@ final class ImjangNoteViewController: BaseViewController,
     // 뷰들 디자인
     private func designViews() {
 //        upButton.alpha = 0
-        designImageView(maximizeImageView, image: UIImage(named: "maximize"), contentMode: .scaleAspectFit)
+        designImageView(maximizeImageView, image: UIImage.ImjangNote.maximize, contentMode: .scaleAspectFit)
         
         // 방 이미지뷰 설정
         setRoomImages()
         
         // 집 아이콘 이미지뷰
         designImageView(houseImageView,
-                        image: ImageStyle.house,
+                        image: UIImage.ImjangNote.house,
                         contentMode: .scaleAspectFit)
         
         // 방 이름 레이블
@@ -537,7 +537,7 @@ final class ImjangNoteViewController: BaseViewController,
                     font: UIFont.pretendard(size: 16, weight: .medium),
                     textColor: .gray400, numberOfLines: 2)
         designImageView(roomLocationIcon,
-                        image: UIImage(named: "location"),
+                        image: UIImage.ImjangNote.location,
                         contentMode: .scaleAspectFit)
         
         setStackView(addressStackView,
@@ -556,7 +556,7 @@ final class ImjangNoteViewController: BaseViewController,
         
         // 리포트 이미지뷰
         designImageView(reportImageView,
-                        image: UIImage(named: "report"),
+                        image: UIImage.ImjangNote.report,
                         contentMode: .scaleAspectFit)
         
         // 리포트 보기 스택뷰
@@ -1035,10 +1035,10 @@ final class ImjangNoteViewController: BaseViewController,
         sender.isSelected.toggle()
         isEditMode.toggle()
         if sender.isSelected {
-            editButton.setImage(UIImage(named: "completed-button"), for: .normal)
+            editButton.setImage(UIImage.CheckList.completedButton, for: .normal)
             NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: true)
         } else {
-                editButton.setImage(UIImage(named: "edit-button"), for: .normal)
+            editButton.setImage(UIImage.CheckList.editButton, for: .normal)
                 NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
                 
                 saveAnswer { [weak self] detailDto, reportDto in
@@ -1054,7 +1054,7 @@ final class ImjangNoteViewController: BaseViewController,
                         }
                     } else {
                         print("체크리스트 값이 입력되지 않았습니다.")
-                        editButton.setImage(UIImage(named: "edit-button"), for: .normal)
+                        editButton.setImage(UIImage.CheckList.editButton, for: .normal)
                         NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
                     }
                 

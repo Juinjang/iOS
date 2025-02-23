@@ -32,7 +32,7 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     let emptyImage: UIImageView = {
         let emptyImage = UIImageView()
-        emptyImage.image = UIImage(named: "nomaemull")
+        emptyImage.image = UIImage.Main.nomaemull
         return emptyImage
     }()
     
@@ -145,7 +145,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
 
         // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
         let searchTextFieldItem = UIBarButtonItem(customView: searchBar)
     
         // 네비게이션 아이템에 백 버튼 아이템 설정

@@ -43,17 +43,17 @@ final class TopTableViewCell: UITableViewCell {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var myNoteImageView = UIImageView().then {
-        $0.image = UIImage(named:"threeLogo")
+        $0.image = UIImage.Main.threeLogo
     }
     
    //새 페이지 펼치기
     var newImjangButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "newPage"), for: .normal)
+        $0.setBackgroundImage(UIImage.Main.newPage, for: .normal)
         $0.layer.cornerRadius = 10
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
     var newPageImageView = UIImageView().then {
-        $0.image = UIImage(named:"newPageLable")
+        $0.image = UIImage.Main.newPage
         $0.contentMode = .scaleAspectFit
     }
     var newPageLabel = UILabel().then {

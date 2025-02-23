@@ -34,12 +34,12 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
 
         // 배경색 초기화
         backgroundColor = .mainWhite
-        questionImage.image = UIImage(named: "question-image")
+        questionImage.image = UIImage.CheckList.questionDot
     }
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "question-image")
+        $0.image = UIImage.CheckList.questionDot
     }
     
     lazy var contentLabel = UILabel().then {
@@ -57,13 +57,13 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
     
     lazy var moveToPreviousButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
-        $0.setImage(UIImage(named: "move-to-previous-button"), for: .normal)
+        $0.setImage(UIImage.CheckList.moveToPreviousButton, for: .normal)
         $0.addTarget(self, action: #selector(moveToPrev(_:)), for: .touchUpInside)
     }
     
     lazy var moveToNextButton = UIButton().then {
         $0.contentMode = .scaleAspectFit
-        $0.setImage(UIImage(named: "move-to-next-button"), for: .normal)
+        $0.setImage(UIImage.CheckList.moveToNextButton, for: .normal)
         $0.addTarget(self, action: #selector(moveToNext(_:)), for: .touchUpInside)
     }
     
@@ -216,7 +216,7 @@ final class ExpandedCalendarTableViewCell: UITableViewCell {
     
     // 수정 모드일 때 저장된 값이 있는 경우
     func savedEditModeConfigure(with answer: String, at indexPath: IndexPath) {
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .main150
         
@@ -284,7 +284,7 @@ extension ExpandedCalendarTableViewCell: FSCalendarDelegate, FSCalendarDataSourc
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         self.monthPosition = monthPosition
         backgroundColor = .main150
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         
         // 날짜 변환
         let date = convertDate(date: date)
@@ -299,7 +299,7 @@ extension ExpandedCalendarTableViewCell: FSCalendarDelegate, FSCalendarDataSourc
                 DispatchQueue.main.async {
                     selectedCell.layer.borderWidth = 0.0
                     self.backgroundColor = .mainWhite
-                    self.questionImage.image = UIImage(named: "question-image")
+                    self.questionImage.image = UIImage.CheckList.questionDot
                 }
             }
             

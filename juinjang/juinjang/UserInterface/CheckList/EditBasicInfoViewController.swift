@@ -327,7 +327,7 @@ final class EditBasicInfoViewController: BaseViewController {
     private func setNavigationBar() {
         self.navigationItem.title = "정보 수정하기"
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage(named: "arrow-left")
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backToPageTapped))
         navigationItem.leftBarButtonItem = backButton
     }

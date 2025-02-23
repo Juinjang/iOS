@@ -19,23 +19,23 @@ import AuthenticationServices
 final class SignUpViewController: BaseViewController {
 
     lazy var juinjangLogoImage = UIImageView().then {
-        $0.image = UIImage(named: "juinjang-logo-image")
+        $0.image = UIImage.SignUp.juinjangLogoGraphic
         $0.contentMode = .scaleAspectFill
     }
     
     lazy var juinjangLogo = UIImageView().then {
-        $0.image = UIImage(named: "juinjang-logo")
+        $0.image = UIImage.SignUp.juinjangLogo
         $0.contentMode = .scaleAspectFill
     }
     
     lazy var kakaoLoginButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "kakao-logo"), for: .normal)
+        $0.setBackgroundImage(UIImage.SignUp.kakaoLogo, for: .normal)
         $0.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(loginButtonTapped(_:)), for: .touchUpInside)
     }
     
     lazy var appleLoginButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "apple-logo"), for: .normal)
+        $0.setBackgroundImage(UIImage.SignUp.appleLogo, for: .normal)
         $0.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(appleButtonTapped(_:)), for: .touchUpInside)
     }
@@ -144,7 +144,7 @@ final class SignUpViewController: BaseViewController {
                         }
                     }
                 } else {
-                    UserDefaultManager.shared.profileImage = UIImage(named: "profileImage")
+                    UserDefaultManager.shared.profileImage = UIImage.Setting.profile
                 }
                 // 메인 화면으로 이동
                 self.changeHome()

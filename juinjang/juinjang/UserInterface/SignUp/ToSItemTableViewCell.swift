@@ -18,7 +18,7 @@ final class ToSItemTableViewCell: UITableViewCell {
         $0.addTarget(self, action: #selector(checkButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
 
-        $0.setImage(UIImage(named: "check-off"), for: .normal)
+        $0.setImage(UIImage.SignUp.checkOff, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
     }
     
@@ -32,7 +32,7 @@ final class ToSItemTableViewCell: UITableViewCell {
         $0.addTarget(self, action: #selector(openContentButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
 
-        $0.setImage(UIImage(named: "document"), for: .normal)
+        $0.setImage(UIImage.SignUp.document, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
     }
 
@@ -93,10 +93,10 @@ final class ToSItemTableViewCell: UITableViewCell {
         sender.isSelected = !sender.isSelected
         if sender.isSelected {
             print("선택")
-            sender.setImage(UIImage(named: "record-check-on"), for: .normal)
+            sender.setImage(UIImage.SignUp.checkOn, for: .normal)
         } else {
             print("선택 해제")
-            sender.setImage(UIImage(named: "record-check-off"), for: .normal)
+            sender.setImage(UIImage.SignUp.checkOff, for: .normal)
             NotificationCenter.default.post(name: NSNotification.Name("CheckButtonUnchecked"), object: nil)
         }
         NotificationCenter.default.post(name: NSNotification.Name("CheckButtonChecked"), object: nil)
@@ -154,8 +154,8 @@ final class ToSItemTableViewCell: UITableViewCell {
 
         itemLabel.attributedText = attributedString
         checkButton.isSelected = isChecked
-        let imageName = isChecked ? "check-on" : "check-off"
-        checkButton.setImage(UIImage(named: imageName), for: .normal)
+        let image: UIImage = isChecked ? UIImage.SignUp.checkOn : UIImage.SignUp.checkOff
+        checkButton.setImage(image, for: .normal)
         openContentButton.tag = toSItem.tag
     }
 }

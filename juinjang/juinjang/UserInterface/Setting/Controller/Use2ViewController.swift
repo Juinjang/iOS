@@ -43,7 +43,7 @@ final class Use2ViewController : BaseViewController {
     }
     
     private let dropdownImageView = UIImageView().then {
-        $0.image = UIImage(named: "dropdown")
+        $0.image = UIImage.Setting.dropdown
         $0.contentMode = .scaleAspectFit
     }
     
@@ -60,15 +60,15 @@ final class Use2ViewController : BaseViewController {
     private var isDropdownVisible = false
     
     private let imageView = UIImageView().then {
-        $0.image = UIImage(named: "useImage")
+        $0.image = UIImage.Setting.useImage1
         $0.contentMode = .scaleAspectFit
     }
     private let imageView2 = UIImageView().then {
-        $0.image = UIImage(named: "useImage2")
+        $0.image = UIImage.Setting.useImage2
         $0.contentMode = .scaleAspectFit
     }
     private let imageView3 = UIImageView().then {
-        $0.image = UIImage(named: "useImage3")
+        $0.image = UIImage.Setting.useImage3
         $0.contentMode = .scaleAspectFit
     }
     
@@ -145,7 +145,7 @@ final class Use2ViewController : BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "주인장 개인정보 처리방침"
         
-        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapCloseButton))
+        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapCloseButton))
         closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
@@ -197,9 +197,9 @@ final class Use2ViewController : BaseViewController {
             
             imageView.isHidden = false
             imageView3.isHidden = false
-            imageView.image = UIImage(named: "useImage")
-            imageView2.image = UIImage(named: "useImage2")
-            imageView3.image = UIImage(named: "useImage3")
+            imageView.image = UIImage.Setting.useImage1
+            imageView2.image = UIImage.Setting.useImage2
+            imageView3.image = UIImage.Setting.useImage3
             
             // 이미지뷰 관련 constraint 활성화
             imageView.snp.updateConstraints {
@@ -235,7 +235,7 @@ final class Use2ViewController : BaseViewController {
             contentLabel11.isHidden = true
             // 이미지뷰들 숨기기
             imageView.isHidden = true
-            imageView2.image = UIImage(named: "useImage4")
+            imageView2.image = UIImage.Setting.useImage4
             imageView3.isHidden = true
             
             // 이미지뷰 높이를 0으로 설정하여 공간 제거

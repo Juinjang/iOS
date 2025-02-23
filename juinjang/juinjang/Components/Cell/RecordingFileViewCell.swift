@@ -29,7 +29,7 @@ final class RecordingFileViewCell: UITableViewCell {
     }
     
     var playButton = UIButton().then {
-        $0.setImage(ImageStyle.play, for: .normal)
+        $0.setImage(UIImage.ImjangNote.play, for: .normal)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

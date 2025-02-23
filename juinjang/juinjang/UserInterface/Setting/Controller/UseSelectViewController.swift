@@ -11,22 +11,22 @@ import SnapKit
 final class UseSelectViewController : BaseViewController {
     //요소
     var use1ImageView = UIImageView().then {
-        $0.image = UIImage(named:"document-text")
+        $0.image = UIImage.Setting.documentText
     }
     var arrow1ImageView = UIImageView().then {
-        $0.image = UIImage(named:"arrow-right")
+        $0.image = UIImage.Setting.arrowRight
     }
     var use2ImageView = UIImageView().then {
-        $0.image = UIImage(named:"document-text")
+        $0.image = UIImage.Setting.documentText
     }
     var arrow2ImageView = UIImageView().then {
-        $0.image = UIImage(named:"arrow-right")
+        $0.image = UIImage.Setting.arrowRight
     }
     var use3ImageView = UIImageView().then {
-        $0.image = UIImage(named:"document-text")
+        $0.image = UIImage.Setting.documentText
     }
     var arrow3ImageView = UIImageView().then {
-        $0.image = UIImage(named:"arrow-right")
+        $0.image = UIImage.Setting.arrowRight
     }
     
     var use1Button = UIButton().then {
@@ -73,7 +73,7 @@ final class UseSelectViewController : BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "이용 및 약관"
         
-        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"X"), style: .plain, target: self, action: #selector(tapCloseButton))
+        let closeButtonItem = UIBarButtonItem(image: UIImage.X, style: .plain, target: self, action: #selector(tapCloseButton))
         closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 

@@ -139,7 +139,7 @@ final class DeleteImjangViewController: BaseViewController {
         self.navigationItem.titleView = titleLabel
         self.navigationController?.navigationBar.tintColor = .black
 
-        let backButtonItem = UIBarButtonItem(image: ImageStyle.arrowLeft, style: .plain, target: self, action: #selector(popView))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
       
         self.navigationItem.leftBarButtonItem = backButtonItem
     }
@@ -189,16 +189,16 @@ final class DeleteImjangViewController: BaseViewController {
     @objc private func removeAllCheckButtonClicked(sender: UIButton) {
         if imjangList.isEmpty {
             sender.isSelected = false
-            sender.setImage(ImageStyle.off, for: .normal)
+            sender.setImage(UIImage.ImjangList.off, for: .normal)
             return
         }
         sender.isSelected.toggle()
         if sender.isSelected == true {
-            sender.setImage(ImageStyle.on, for: .normal)
+            sender.setImage(UIImage.ImjangList.on, for: .normal)
             self.selectedIndexes = Set(0...imjangList.count - 1)
             deleteImjangTableView.reloadData()
         } else {
-            sender.setImage(ImageStyle.off, for: .normal)
+            sender.setImage(UIImage.ImjangList.off, for: .normal)
             self.selectedIndexes.removeAll()
             deleteImjangTableView.reloadData()
         }
@@ -219,7 +219,7 @@ extension DeleteImjangViewController: UITableViewDelegate, UITableViewDataSource
         headerView.selectedCountLabel.text = "\(selectedIndexes.count)개 선택됨"   // 개수 변경 필요
         headerView.selectedCountLabel.textColor = selectedIndexes.count > 0 ? .main : .gray400
         
-        headerView.removeAllCheckButton.setImage(selectedIndexes.count == imjangList.count && imjangList.count > 0 ? ImageStyle.on : ImageStyle.off, for: .normal)
+        headerView.removeAllCheckButton.setImage(selectedIndexes.count == imjangList.count && imjangList.count > 0 ? UIImage.ImjangList.on : UIImage.ImjangList.off, for: .normal)
         headerView.removeAllCheckButton.addTarget(self, action: #selector(removeAllCheckButtonClicked), for: .touchUpInside)
         
         return headerView

@@ -15,7 +15,7 @@ final class AccountDeleteViewController : DimmedViewController {
         $0.layer.cornerRadius = 30
     }
     var logoImageView = UIImageView().then {
-        $0.image = UIImage(named:"deleteLogo")
+        $0.image = UIImage.Setting.deleteLogo
     }
     var qLabel = UILabel().then {
         $0.text = "\(UserDefaultManager.shared.nickname)님, \n정말 계정을 삭제하시겠어요?"
@@ -49,10 +49,10 @@ final class AccountDeleteViewController : DimmedViewController {
     let list3 = ["내 매물 맞춤형 체크리스트 이용하기"]
     
     let dotLine1 = UIImageView().then {
-        $0.image = UIImage(named: "dotLine")
+        $0.image = UIImage.Setting.dotline
     }
     let dotLine2 = UIImageView().then {
-        $0.image = UIImage(named: "dotLine")
+        $0.image = UIImage.Setting.dotline
     }
 
     var noButton = UIButton().then {
@@ -91,7 +91,7 @@ final class AccountDeleteViewController : DimmedViewController {
         for i in 0...(num-1) {
             let label = UILabel().then {
                 let text1 = NSTextAttachment()
-                text1.image = UIImage(named: "check")
+                text1.image = UIImage.Setting.check
                 let text2 = "    " + listName[i]
                 let text3 = NSMutableAttributedString(string: "")
                 text3.append(NSAttributedString(attachment: text1))

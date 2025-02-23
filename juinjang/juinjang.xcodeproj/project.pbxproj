@@ -229,6 +229,7 @@
 		B54406AD2D62C8710080ECC1 /* ReactorKit in Frameworks */ = {isa = PBXBuildFile; productRef = B54406AC2D62C8710080ECC1 /* ReactorKit */; };
 		B54406AF2D62CE040080ECC1 /* SplashViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54406AE2D62CE040080ECC1 /* SplashViewReactor.swift */; };
 		B54406B32D6423840080ECC1 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B54406B22D6423840080ECC1 /* RxCocoa */; };
+		B5C0C8972D69CA740017C2C3 /* OpenNewPageImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */; };
 		BEFC82342D69943A0051F073 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFC82332D69943A0051F073 /* APIKey.swift */; };
 		BEFC82382D6994560051F073 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BEFC82362D6994560051F073 /* Debug.xcconfig */; };
 		BEFC82392D6994560051F073 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BEFC82372D6994560051F073 /* Release.xcconfig */; };
@@ -424,6 +425,7 @@
 		61EE5D632CEABD7900166641 /* ScrapCellEmptyBackground.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrapCellEmptyBackground.swift; sourceTree = "<group>"; };
 		61FC596C2BFE324500D6F369 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
 		B54406AE2D62CE040080ECC1 /* SplashViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewReactor.swift; sourceTree = "<group>"; };
+		B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenNewPageImageType.swift; sourceTree = "<group>"; };
 		BEFC82332D69943A0051F073 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		BEFC82362D6994560051F073 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		BEFC82372D6994560051F073 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -958,6 +960,7 @@
 		619269DE2B67742B00D4DD3E /* Enum */ = {
 			isa = PBXGroup;
 			children = (
+				B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */,
 				618C0B752D4CAB5C00FA29E3 /* AmpliEventName.swift */,
 				61DEFEDE2BFB39980069A820 /* Error */,
 				619269DF2B67742B00D4DD3E /* Filter.swift */,
@@ -974,6 +977,14 @@
 				61B0C9A62B6A143A00BE86D2 /* ButtonTappedDelegate.swift */,
 			);
 			path = Protocol;
+			sourceTree = "<group>";
+		};
+		619269E42B67745900D4DD3E /* Constants */ = {
+			isa = PBXGroup;
+			children = (
+				619269E62B67745900D4DD3E /* UserDefaultManager.swift */,
+			);
+			path = Constants;
 			sourceTree = "<group>";
 		};
 		619269EB2B67747F00D4DD3E /* ImjangList */ = {
@@ -1485,6 +1496,7 @@
 				61DEFEDD2BFA2FB40069A820 /* AudioRecorderManager.swift in Sources */,
 				0A4EBE362B5EA27B00909B7A /* ExpandedScoreTableViewCell.swift in Sources */,
 				0A95D72F2B682013000A9C06 /* ToSViewController.swift in Sources */,
+				B5C0C8972D69CA740017C2C3 /* OpenNewPageImageType.swift in Sources */,
 				61FC596D2BFE324500D6F369 /* AudioPlayerManager.swift in Sources */,
 				61B0C9D72B6C16BD00BE86D2 /* ImageCollectionViewCell.swift in Sources */,
 				0A9E0A472B3DCAB90094595A /* AppDelegate.swift in Sources */,

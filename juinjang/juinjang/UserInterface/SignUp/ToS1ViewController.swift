@@ -191,7 +191,7 @@ final class ToS1ViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.title = "주인장 이용약관"
         self.navigationItem.hidesBackButton = true
-        let cancelButtonImage = UIImage(named: "cancel-black")
+        let cancelButtonImage = UIImage.Recording.cancelBlack
         let cancelButton = UIBarButtonItem(image: cancelButtonImage, style: .plain,target: self, action: #selector(cancelButtonTapped))
         navigationItem.leftBarButtonItem = cancelButton
     }

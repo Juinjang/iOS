@@ -25,10 +25,10 @@ final class Use3ViewController : BaseViewController {
     }
     
     var useImageView = UIImageView().then {
-        $0.image = UIImage(named:"document-text")
+        $0.image = UIImage.Setting.documentText
     }
     var arrowImageView = UIImageView().then {
-        $0.image = UIImage(named:"arrow-right")
+        $0.image = UIImage.Setting.arrowRight
     }
     var useButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -51,7 +51,7 @@ final class Use3ViewController : BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "마케팅 동의 및 이벤트 수신"
         
-        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapBackButton))
+        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapBackButton))
         closeButtonItem.tintColor = .gray450
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 

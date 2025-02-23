@@ -112,7 +112,7 @@ final class ToS3ViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.title = "마케팅 활용동의"
         self.navigationItem.hidesBackButton = true
-        let cancelButtonImage = UIImage(named: "cancel-black")
+        let cancelButtonImage = UIImage.Recording.cancelBlack
         let cancelButton = UIBarButtonItem(image: cancelButtonImage, style: .plain,target: self, action: #selector(cancelButtonTapped))
         navigationItem.leftBarButtonItem = cancelButton
     }

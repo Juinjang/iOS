@@ -134,7 +134,7 @@ class Use3_1ViewController : UIViewController {
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "주인장 이용약관"
         
-        let closeButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(tapCloseButton))
+        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapCloseButton))
         closeButtonItem.tintColor = UIColor(named: "300")
         closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 

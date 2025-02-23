@@ -105,8 +105,8 @@ final class ReportViewController : BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         navigationItem.title = "주인장 리포트"
         
-        //let shareButtonItem = UIBarButtonItem(image: UIImage(named: "share"), style: .plain, target: self, action: #selector(shareBtnTap))
-        let backButtonItem = UIBarButtonItem(image: UIImage(named:"arrow-left"), style: .plain, target: self, action: #selector(backBtnTap))
+        //let shareButtonItem = UIBarButtonItem(image: UIImage.share, style: .plain, target: self, action: #selector(shareBtnTap))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(backBtnTap))
         backButtonItem.tintColor = .gray450
         //backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
         
@@ -123,7 +123,7 @@ final class ReportViewController : BaseViewController {
     func setData(detailDto: DetailDto) {
         imjangLabel.text = detailDto.nickname
         let star = NSTextAttachment()
-        star.image = UIImage(named: "bigStar")
+        star.image = UIImage.Report.bigStar
         let attrString = NSMutableAttributedString(string: "\(String(format: "%.2f", totalRate))점입니다")
         let range = ("\(String(format: "%.2f", totalRate))점입니다" as NSString).range(of: "\(String(format: "%.2f", totalRate))점")
         attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)

@@ -29,7 +29,7 @@ final class SelectMaemullViewController : BaseViewController {
         configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
         configuration.baseBackgroundColor = .mainWhite
         configuration.baseForegroundColor = .gray450
-        configuration.image = ImageStyle.arrowDown
+        configuration.image = UIImage.ImjangList.arrowDown
         configuration.image?.withTintColor(.gray450)
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 6
@@ -164,11 +164,11 @@ final class SelectMaemullViewController : BaseViewController {
         navigationItem.title = "비교할 매물 고르기"
         
         // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage(named: "arrow-left"), style: .plain, target: self, action: #selector(backBtnTap))
+        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(backBtnTap))
         backButtonItem.tintColor = .gray450
         backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
         
-        let searchButtonItem = UIBarButtonItem(image: UIImage(named:"search"), style: .plain, target: self, action: #selector(searchBtnTap))
+        let searchButtonItem = UIBarButtonItem(image: UIImage.ImjangList.search, style: .plain, target: self, action: #selector(searchBtnTap))
         searchButtonItem.tintColor = .gray450
         searchButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
         

@@ -32,7 +32,7 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     }
     
     lazy var cancelButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "cancel-white"), for: .normal)
+        $0.setBackgroundImage(UIImage.Recording.cancelWhite, for: .normal)
         $0.layer.masksToBounds = true
         $0.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
@@ -54,7 +54,7 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     
     // -TODO: 음성과 직접 연결 필요
 //    lazy var recordWaveForm = UIImageView().then {
-//        $0.image = UIImage(named: "record-bar")
+//        $0.image = UIImage.recordBar
 //        $0.contentMode = .scaleAspectFill
 //    }
     var waveFormView = WaveformLiveView()
@@ -67,13 +67,13 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
     }
     
     lazy var trashButton = UIButton().then {
-        $0.setImage(UIImage(named: "record-trash"), for: .normal)
+        $0.setImage(UIImage.Recording.trash, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
     }
     
     lazy var recordButton = UIButton().then {
-        $0.setImage(UIImage(named: "being-recorded-button"), for: .normal)
+        $0.setImage(UIImage.Recording.beingRecorded, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
         $0.adjustsImageWhenHighlighted = false
         $0.addTarget(self, action: #selector(btnRecord(_:)), for: .touchUpInside)
@@ -154,12 +154,12 @@ final class RecordViewController: BaseViewController, AVAudioRecorderDelegate {
             AudioRecorderManager.shared.pauseRecording()
             progressTimer?.invalidate()
             progressTimer = nil
-            recordButton.setImage(UIImage(named: "record-button"), for: .normal)
+            recordButton.setImage(UIImage.Recording.record, for: .normal)
         } else {
             print("recordButtonTapped: 녹음 시작")
             AudioRecorderManager.shared.startRecording()
             progressTimer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(updateRecordTime), userInfo: nil, repeats: true)
-            recordButton.setImage(UIImage(named: "being-recorded-button"), for: .normal)
+            recordButton.setImage(UIImage.Recording.beingRecorded, for: .normal)
         }
         
     }

@@ -39,7 +39,7 @@ final class ExpandableTableViewCell: UITableViewCell {
     }
 
     private let chevronImageView = UIImageView().then {
-        $0.image = UIImage(named: "expand")?.withRenderingMode(.alwaysTemplate)
+        $0.image = UIImage.Setting.expandDown.withRenderingMode(.alwaysTemplate)
         $0.contentMode = .scaleAspectFit
         $0.tintColor = .gray450
     }
@@ -96,8 +96,9 @@ final class ExpandableTableViewCell: UITableViewCell {
             answerLabel.trailingAnchor.constraint(equalTo: expandableView.trailingAnchor, constant: -23)
         ])
     }
+    
     func set(_ model: Sections) {
-            iconImageView.image = UIImage(named: "question")
+        iconImageView.image = UIImage.Setting.questionLogo
             questionLabel.text = model.question
         questionLabel.asColor(targetString: model.highlight, color: .main)
             answerLabel.text = model.answer
@@ -107,6 +108,6 @@ final class ExpandableTableViewCell: UITableViewCell {
             attrString.addAttribute(NSAttributedString.Key.paragraphStyle, value: paragraphStyle, range: NSMakeRange(0, attrString.length))
             answerLabel.attributedText = attrString
             expandableView.isHidden = !model.isOpened
-            chevronImageView.image = (model.isOpened ? UIImage(named: "expandUp") : UIImage(named: "expandDown"))?.withRenderingMode(.alwaysTemplate)
+        chevronImageView.image = (model.isOpened ? UIImage.Setting.expandUp : UIImage.Setting.expandDown).withRenderingMode(.alwaysTemplate)
         }
 }

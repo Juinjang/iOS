@@ -20,7 +20,7 @@ final class ImjangListHeader: UICollectionReusableView {
         configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
         configuration.baseBackgroundColor = .mainWhite
         configuration.baseForegroundColor = .gray450
-        configuration.image = ImageStyle.arrowDown
+        configuration.image = UIImage.ImjangList.arrowDown
         configuration.image?.withTintColor(.gray450)
         configuration.imagePlacement = .trailing
         configuration.imagePadding = 6
@@ -106,6 +106,6 @@ extension ImjangListHeader {
     
     private func configureView() {
         backgroundColor = .mainWhite
-        deleteButton.design(image: ImageStyle.trash, backgroundColor: .clear)
+        deleteButton.design(image: UIImage.trash, backgroundColor: .clear)
     }
 }

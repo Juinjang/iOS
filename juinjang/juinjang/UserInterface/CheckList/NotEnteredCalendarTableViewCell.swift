@@ -14,7 +14,7 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     
     lazy var moveInDateImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "calendar")
+        $0.image = UIImage.CheckList.calendar
     }
     
     lazy var moveInDateLabel = UILabel().then {
@@ -31,12 +31,12 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     
     lazy var separationLine = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "enabled-separation-line")
+        $0.image = UIImage.CheckList.enabledSeparationLine
     }
     
     lazy var balanceDueImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "wallet")
+        $0.image = UIImage.CheckList.wallet
     }
     
     lazy var balanceDueLabel = UILabel().then {
@@ -127,16 +127,16 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     func viewModeConfigure(at indexPath: IndexPath) {
         moveInDateLabel.textColor = .gray500
         moveInDateContentLabel.textColor = .gray400
-        moveInDateImage.image = UIImage(named: "calendar")
+        moveInDateImage.image = UIImage.CheckList.calendar
         moveInDateContentLabel.text = "입력 안함"
         
         balanceDueLabel.textColor = .gray500
         balanceDueContentLabel.textColor = .gray400
-        balanceDueImage.image = UIImage(named: "wallet")
+        balanceDueImage.image = UIImage.CheckList.wallet
         balanceDueContentLabel.text = "입력 안함"
         
         backgroundColor = .gray100
-        separationLine.image = UIImage(named: "enabled-separation-line")
+        separationLine.image = UIImage.CheckList.enabledSeparationLine
         separationLine.snp.updateConstraints {
             $0.trailing.equalTo(balanceDueImage.snp.leading).offset(-21)
         }
@@ -153,9 +153,9 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
             }
             moveInDateLabel.textColor = .main
             moveInDateContentLabel.textColor = .gray450
-            moveInDateImage.image = UIImage(named: "deadline-item")
+            moveInDateImage.image = UIImage.CheckList.deadlineItem
             backgroundColor = .main100
-            separationLine.image = UIImage(named: "separation-line")
+            separationLine.image = UIImage.CheckList.separationLine
             separationLine.snp.updateConstraints {
                 $0.trailing.equalTo(balanceDueImage.snp.leading).offset(-10)
             }
@@ -168,13 +168,13 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
             }
             balanceDueLabel.textColor = .main
             balanceDueContentLabel.textColor = .gray450
-            balanceDueImage.image = UIImage(named: "wallet-item")
+            balanceDueImage.image = UIImage.CheckList.walletItem
             backgroundColor = .main100
             // 잔금 기한 날짜 상세 Label
             balanceDueContentLabel.snp.updateConstraints {
                 $0.trailing.equalToSuperview().offset(-24)
             }
-            separationLine.image = UIImage(named: "separation-line")
+            separationLine.image = UIImage.CheckList.separationLine
             separationLine.snp.updateConstraints {
                 $0.trailing.equalTo(balanceDueImage.snp.leading).offset(-10)
             }

@@ -15,7 +15,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
     
     lazy var questionImage = UIImageView().then {
         $0.contentMode = .scaleAspectFit
-        $0.image = UIImage(named: "question-image")
+        $0.image = UIImage.CheckList.questionDot
     }
     
     lazy var contentLabel = UILabel().then {
@@ -33,7 +33,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         $0.setTitleColor(.gray450, for: .normal)
         $0.contentHorizontalAlignment = .left
         
-        let buttonImage = UIImage(named: "item-arrow-down")
+        let buttonImage = UIImage.CheckList.itemArrowDown
         $0.setImage(buttonImage, for: .normal)
         $0.contentMode = .scaleAspectFit
         $0.semanticContentAttribute = .forceRightToLeft
@@ -107,7 +107,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         itemPickerView.selectRow(0, inComponent: 0, animated: true)
         
         // 기본 셀 내용 초기화
-        let buttonImage = UIImage(named: "item-arrow-down")
+        let buttonImage = UIImage.CheckList.itemArrowDown
         itemButton.setTitle("선택안함", for: .normal)
         itemButton.setImage(buttonImage, for: .normal)
         itemButton.layer.backgroundColor = UIColor.gray200.cgColor
@@ -122,7 +122,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
 
         // 배경색 초기화
         backgroundColor = .mainWhite
-        questionImage.image = UIImage(named: "question-image")
+        questionImage.image = UIImage.CheckList.questionDot
     
         // 버튼 위치 초기화
         itemButton.snp.updateConstraints {
@@ -272,7 +272,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         // answer와 일치하는 옵션의 인덱스를 찾기
         if let selectedIndex = options.firstIndex(where: { $0.option == answer }) {
             itemPickerView.selectRow(selectedIndex, inComponent: 0, animated: true)
-            questionImage.image = UIImage(named: "question-selected-image")
+            questionImage.image = UIImage.CheckList.questionSelected
             contentLabel.textColor = .gray500
             backgroundColor = .mainWhite
             
@@ -298,7 +298,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
             if let selectedIndex = options.firstIndex(where: { $0.option == "기타" }) {
                 if !answer.isEmpty && answer != nil {
                     itemPickerView.selectRow(selectedIndex, inComponent: 0, animated: true)
-                    questionImage.image = UIImage(named: "question-selected-image")
+                    questionImage.image = UIImage.CheckList.questionSelected
                     contentLabel.textColor = .gray500
                     backgroundColor = .mainWhite
                     
@@ -383,7 +383,7 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
         
         setSavedInset()
         itemButton.setTitleColor(.gray450, for: .normal)
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .main150
         
@@ -442,7 +442,7 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
         // 기본값 설정
         if row == 0 {
             backgroundColor = .mainWhite
-            questionImage.image = UIImage(named: "question-image")
+            questionImage.image = UIImage.CheckList.questionDot
             itemButton.layer.backgroundColor = UIColor.gray200.cgColor
             setBasicInset()
             handleOptionSelection(options[row].option)
@@ -456,7 +456,7 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
                 // 기타 선택했을 때 선택지 중에 있는지 확인
                 if let existingOption = options.first(where: { $0.option == etcTextField.text }) {
                     // UI 설정
-                    questionImage.image = UIImage(named: "question-selected-image")
+                    questionImage.image = UIImage.CheckList.questionSelected
                     backgroundColor = .main150
 
                     // 값 전달
@@ -464,11 +464,11 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
                 } else {
                     // 선택지 중에 없는 경우 사용자 입력값으로 처리
                     if let etcText = etcTextField.text, !etcText.isEmpty {
-                        questionImage.image = UIImage(named: "question-selected-image")
+                        questionImage.image = UIImage.CheckList.questionSelected
                         backgroundColor = .main150
                         handleOptionSelection(etcText)
                     } else {
-                        questionImage.image = UIImage(named: "question-image")
+                        questionImage.image = UIImage.CheckList.questionDot
                         backgroundColor = .mainWhite
                         etcTextField.removeConstraints(etcTextField.constraints)
                         etcTextField.removeFromSuperview()
@@ -476,7 +476,7 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
                     }
                 }
             } else {
-                questionImage.image = UIImage(named: "question-selected-image")
+                questionImage.image = UIImage.CheckList.questionSelected
                 backgroundColor = .main150
                 handleOptionSelection(options[row].option)
             }
@@ -583,7 +583,7 @@ extension ExpandedDropdownTableViewCell: UIPickerViewDelegate, UIPickerViewDataS
     
     // pickerView에서 기본 여백 설정
     private func setBasicInset() {
-        let buttonImage = UIImage(named: "item-arrow-down")
+        let buttonImage = UIImage.CheckList.itemArrowDown
         selectedButton.setImage(buttonImage, for: .normal)
         selectedButton.contentMode = .scaleAspectFit
         selectedButton.semanticContentAttribute = .forceRightToLeft
@@ -613,7 +613,7 @@ extension ExpandedDropdownTableViewCell: UITextFieldDelegate {
         
         textField.becomeFirstResponder()
         backgroundColor = .main150
-        questionImage.image = UIImage(named: "question-selected-image")
+        questionImage.image = UIImage.CheckList.questionSelected
         textField.backgroundColor = .main100
         updateTextFieldWidthConstraint(for: textField, constant: 218, shouldRemoveLeadingConstraint: false)
     
@@ -624,7 +624,7 @@ extension ExpandedDropdownTableViewCell: UITextFieldDelegate {
         if let text = textField.text, !text.isEmpty {
             // 텍스트 필드가 비어 있지 않은 경우
             backgroundColor = .main150
-            questionImage.image = UIImage(named: "question-selected-image")
+            questionImage.image = UIImage.CheckList.questionSelected
             textField.backgroundColor = .mainWhite
             
             // 입력된 텍스트에 따라 동적으로 너비 조절
@@ -637,7 +637,7 @@ extension ExpandedDropdownTableViewCell: UITextFieldDelegate {
         } else {
             // 비어있는 경우 기존 너비로
             backgroundColor = .mainWhite
-            questionImage.image = UIImage(named: "question-image")
+            questionImage.image = UIImage.CheckList.questionDot
             textField.backgroundColor = .main100
             etcTextField.snp.updateConstraints {
                 $0.width.equalTo(218)

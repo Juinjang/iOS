@@ -18,7 +18,7 @@ final class NewTermsViewController : BaseViewController {
     weak var delegate: TermPopupDelegate?
     
     private let closeButton = UIButton().then {
-        $0.setImage(UIImage(named: "X"), for: .normal)
+        $0.setImage(UIImage.X, for: .normal)
     }
     
     private let titleLabel = UILabel().then {
@@ -75,7 +75,7 @@ final class NewTermsViewController : BaseViewController {
     }
     
     private let imageView2 = UIImageView().then {
-        $0.image = UIImage(named: "useImage2")
+        $0.image = UIImage.Setting.useImage2
         $0.contentMode = .scaleAspectFit
     }
     

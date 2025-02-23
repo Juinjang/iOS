@@ -30,7 +30,7 @@ final class SetNickNameViewController: BaseViewController {
     }
 
     lazy var imjangNoteImage = UIImageView().then {
-        $0.image = UIImage(named: "imjang-note")
+        $0.image = UIImage.SignUp.imjangNote
         $0.contentMode = .scaleAspectFill
     }
     
@@ -83,7 +83,7 @@ final class SetNickNameViewController: BaseViewController {
         self.navigationItem.title = "닉네임 정하기"
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = ImageStyle.arrowLeft
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButton
     }

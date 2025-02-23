@@ -52,41 +52,41 @@ final class OpenNewPageViewController: BaseViewController {
     
     let contentView = UIView()
     
-    func makeImageView(_ imageView: UIImageView, imageName: String) {
-        imageView.image = UIImage(named: imageName)
+    func makeImageView(_ imageView: UIImageView, type: OpenNewPageImageType) {
+        imageView.image = type.image
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
     }
     
     lazy var backgroundImageView = UIImageView().then {
-        let backgroundImage = UIImage(named: "creation-background")
+        let backgroundImage = UIImage.OpenNewPage.creationBackground
         $0.image = backgroundImage
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.contentMode = .scaleToFill
     }
     
     lazy var investorImageView = UIImageView().then {
-        makeImageView($0, imageName: "investor")
+        makeImageView($0, type: .investor)
     }
     
     lazy var movingUserImageView = UIImageView().then {
-        makeImageView($0, imageName: "user-moving-in-directly")
+        makeImageView($0, type: .userMovingInDirectly)
     }
     
     lazy var apartmentImageView = UIImageView().then {
-        makeImageView($0, imageName: "apartment-image")
+        makeImageView($0, type: .apartment)
     }
     
     lazy var villaImageView = UIImageView().then {
-        makeImageView($0, imageName: "villa-image")
+        makeImageView($0, type: .villa)
     }
     
     lazy var officetelImageView = UIImageView().then {
-        makeImageView($0, imageName: "officetel-image")
+        makeImageView($0, type: .officetel)
     }
     
     lazy var houseImageView = UIImageView().then {
-        makeImageView($0, imageName: "house-image")
+        makeImageView($0, type: .house)
     }
     
     func configureLabel(_ label: UILabel, text: String) {
@@ -127,39 +127,39 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     lazy var realestateInvestmentButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "realestate-investment-button"), selectedImage: UIImage(named: "realestate-investment-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.realestateInvestmentButton, selectedImage: UIImage.OpenNewPage.realestateInvestmentSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var moveInDirectlyButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "move-in-directly-button"), selectedImage: UIImage(named: "move-in-directly-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.moveInDirectlyButton, selectedImage: UIImage.OpenNewPage.moveInDirectlySelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var apartmentButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "apartment-button"), selectedImage: UIImage(named: "apartment-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.apartmentButton, selectedImage: UIImage.OpenNewPage.apartmentSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var villaButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "villa-button"), selectedImage: UIImage(named: "villa-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.villaButton, selectedImage: UIImage.OpenNewPage.villaSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var officetelButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "officetel-button"), selectedImage: UIImage(named: "officetel-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.officetelButton, selectedImage: UIImage.OpenNewPage.officetelSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var houseButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "house-button"), selectedImage: UIImage(named: "house-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.houseButton, selectedImage: UIImage.OpenNewPage.houseSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var saleButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "sale-button"), selectedImage: UIImage(named: "sale-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.saleButton, selectedImage: UIImage.OpenNewPage.saleSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var jeonseButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "jeonse-button"), selectedImage: UIImage(named: "jeonse-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.jeonseButton, selectedImage: UIImage.OpenNewPage.jeonseSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var monthlyRentButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "monthlyrent-button"), selectedImage: UIImage(named: "monthlyrent-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.monthlyrentButton, selectedImage: UIImage.OpenNewPage.monthlyrentSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var priceView = UIView().then {
@@ -304,7 +304,7 @@ final class OpenNewPageViewController: BaseViewController {
         self.navigationItem.title = "새 페이지 펼치기"
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage(named: "arrow-left")
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButton
         if UIScreen.main.bounds.height <= 667 { // 아이폰 SE(3rd generation) 기준으로 스크린이 작으면

@@ -47,7 +47,7 @@ final class EnlargePhotoView: BaseView {
         photoCollectionView.showsHorizontalScrollIndicator = false
         photoCollectionView.register(PhotoCollectionViewCell.self, forCellWithReuseIdentifier: PhotoCollectionViewCell.identifier)
         
-        closeButton.design(image: ImageStyle.x, tintColor: .black ,backgroundColor: .mainWhite)
+        closeButton.design(image: UIImage.X, tintColor: .black ,backgroundColor: .mainWhite)
         
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }

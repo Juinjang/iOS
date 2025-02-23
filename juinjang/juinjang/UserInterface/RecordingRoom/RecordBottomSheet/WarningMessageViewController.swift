@@ -32,7 +32,7 @@ final class WarningMessageViewController: BaseViewController {
     }
     
     lazy var cancelButton = UIButton().then {
-        $0.setBackgroundImage(UIImage(named: "cancel-black"), for: .normal)
+        $0.setBackgroundImage(UIImage.Recording.cancelBlack, for: .normal)
         $0.layer.masksToBounds = true
         $0.contentMode = .scaleAspectFill
         $0.addTarget(self, action: #selector(cancelButtonTapped(_:)), for: .touchUpInside)
@@ -48,7 +48,7 @@ final class WarningMessageViewController: BaseViewController {
     }
     
     lazy var warningMessageImage = UIImageView().then {
-        $0.image = UIImage(named: "record-check-image")
+        $0.image = UIImage.Recording.check
         $0.contentMode = .scaleAspectFill
     }
     
@@ -59,7 +59,7 @@ final class WarningMessageViewController: BaseViewController {
         $0.addTarget(self, action: #selector(checkButtonPressed(_:)), for: .touchUpInside)
         $0.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
 
-        $0.setImage(UIImage(named: "record-check-off"), for: .normal)
+        $0.setImage(UIImage.Recording.checkOff, for: .normal)
         $0.imageView?.contentMode = .scaleAspectFill
 
         $0.semanticContentAttribute = .forceLeftToRight
@@ -169,12 +169,12 @@ final class WarningMessageViewController: BaseViewController {
         
         if checkButton.isSelected {
             print("선택")
-            checkButton.setImage(UIImage(named: "record-check-on"), for: .normal)
+            checkButton.setImage(UIImage.Recording.checkOn, for: .normal)
             recordStartButton.setTitle("확인했어요", for: .normal)
             delegate?.checkMessage()
         } else {
             print("선택 해제")
-            checkButton.setImage(UIImage(named: "record-check-off"), for: .normal)
+            checkButton.setImage(UIImage.Recording.checkOff, for: .normal)
             recordStartButton.setTitle("녹음 시작!", for: .normal)
         }
     }

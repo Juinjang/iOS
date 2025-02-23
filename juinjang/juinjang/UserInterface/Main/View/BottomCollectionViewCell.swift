@@ -119,19 +119,19 @@ final class BottomCollectionViewCell: UICollectionViewCell {
     }
     
     private func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? ImageStyle.starEmpty : ImageStyle.star
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
         rateLabel.textColor = empty ? .null : .main
     }
     
     private func setImageUI(image: String?) {
         guard let imageURL = image else {
-            recentImjangImageView.image = ImageStyle.emptyImage
+            recentImjangImageView.image = UIImage.ImjangList.empty
             return
         }
         if let url = URL(string: imageURL) {
             recentImjangImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
         } else {
-            recentImjangImageView.image = ImageStyle.gallery
+            recentImjangImageView.image = UIImage.Main.gallery
         }
     }
     
@@ -147,7 +147,7 @@ final class BottomCollectionViewCell: UICollectionViewCell {
         recentImjangImageView.backgroundColor = .gray100
         nameLabel.design(font: .pretendard(size: 15, weight: .semiBold), numberOfLines: 2)
         priceLabel.design(textColor: .gray450, font: .pretendard(size: 14, weight: .medium))
-        starIcon.design(image: ImageStyle.starEmpty, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.starEmpty, contentMode: .scaleAspectFit)
         rateLabel.design(text: "0.0", textColor: .null, font: .pretendard(size: 14, weight: .bold))
         scoreStackView.design(distribution: .fill, spacing: 3)
     }

@@ -34,7 +34,7 @@ final class WelcomeViewController: BaseViewController {
     var isRequesting = false
     
     lazy var backgroundImage = UIImageView().then {
-        $0.image = UIImage(named: "welcome-background")
+        $0.image = UIImage.SignUp.welcomeBackground
         $0.contentMode = .scaleAspectFill
     }
     
@@ -68,7 +68,7 @@ final class WelcomeViewController: BaseViewController {
     }
 
     lazy var imjangNoteImage = UIImageView().then {
-        $0.image = UIImage(named: "welcome-imjang-note")
+        $0.image = UIImage.SignUp.welcomeImjangNote
         $0.contentMode = .scaleAspectFill
     }
     
@@ -121,7 +121,7 @@ final class WelcomeViewController: BaseViewController {
     func setNavigationBar() {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage(named: "arrow-left")
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
         navigationItem.leftBarButtonItem = backButton
     }

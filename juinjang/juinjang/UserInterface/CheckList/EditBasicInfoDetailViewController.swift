@@ -159,15 +159,15 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var saleButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "sale-button"), selectedImage: UIImage(named: "sale-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.saleButton, selectedImage: UIImage.OpenNewPage.saleSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var jeonseButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "jeonse-button"), selectedImage: UIImage(named: "jeonse-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.jeonseButton, selectedImage: UIImage.OpenNewPage.jeonseSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var monthlyRentButton = UIButton().then {
-        configureButton($0, normalImage: UIImage(named: "monthlyrent-button"), selectedImage: UIImage(named: "monthlyrent-selected-button"), action: #selector(buttonPressed))
+        configureButton($0, normalImage: UIImage.OpenNewPage.monthlyrentButton, selectedImage: UIImage.OpenNewPage.monthlyrentSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var priceView = UIView().then {
@@ -397,7 +397,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     private func setNavigationBar() {
         self.navigationItem.title = "정보 수정하기"
         self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage(named: "arrow-left")
+        let backButtonImage = UIImage.arrowLeft
         let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backToPageTapped))
         navigationItem.leftBarButtonItem = backButton
     }
