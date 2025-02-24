@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import UIKit
+import RxSwift
 
 
 final class JuinjangAPIManager {
@@ -32,6 +33,26 @@ final class JuinjangAPIManager {
         }
     }
     
+    func fetchData<T: Decodable>(api: TargetType) -> Single<T> {
+        return Single.create { observer in
+            AF.request(api.path,
+                       method: api.method,
+                       parameters: api.parameters,
+                       headers: HTTPHeaders(api.header),
+                       interceptor: AuthInterceptor())
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let data):
+                    observer(.success(data))
+                case .failure(let failure):
+                    print(failure)
+                    observer(.failure(NetworkError.failedRequest))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
     func postData<T: Decodable>(type: T.Type, api: JuinjangAPI, parameter: [String:Any], completionHandler: @escaping (T?, NetworkError?) -> Void) {
         
         AF.request(api.endpoint,
@@ -49,6 +70,28 @@ final class JuinjangAPIManager {
                 print(failure)
                 completionHandler(nil, .failedRequest)
             }
+        }
+    }
+    
+    func postData<T: Decodable>(api: TargetType, parameter: [String:Any]) -> Single<T> {
+        return Single.create { observer in
+            AF.request(api.path,
+                       method: api.method,
+                       parameters: parameter,
+                       encoding: JSONEncoding.default,
+                       headers: HTTPHeaders(api.header),
+                       interceptor: AuthInterceptor())
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let data):
+                    print(data)
+                    observer(.success(data))
+                case .failure(let failure):
+                    print(failure)
+                    observer(.failure(NetworkError.failedRequest))
+                }
+            }
+            return Disposables.create()
         }
     }
     
