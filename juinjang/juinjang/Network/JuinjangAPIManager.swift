@@ -9,25 +9,6 @@ import Foundation
 import Alamofire
 import UIKit
 
-enum NetworkError: Error, LocalizedError {
-    case failedRequest
-    case noData
-    case invalidResponse
-    case invalidData
-    
-    var errorDescription: String? {
-        switch self {
-        case .failedRequest:
-            return "요청에 실패하였습니다. 다시 시도해주세요"
-        case .noData:
-            return "응답 데이터가 없습니다."
-        case .invalidResponse:
-            return "유효하지 않은 응답입니다."
-        case .invalidData:
-            return "유효하지 않은 데이터입니다."
-        }
-    }
-}
 
 final class JuinjangAPIManager {
     static let shared = JuinjangAPIManager()
