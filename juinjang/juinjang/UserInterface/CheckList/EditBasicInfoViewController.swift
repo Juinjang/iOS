@@ -258,24 +258,15 @@ final class EditBasicInfoViewController: BaseViewController {
     private func getImjang() {
         guard let imjangId = imjangId else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if error == nil {
-                guard let result = detailDto else { return }
-                if let detailDto = result.result {
-                    print(detailDto)
-                    self.setData(detailDto: detailDto)
-                }
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            guard let result = detailDto else { return }
+            if let detailDto = result.result {
+                print(detailDto)
+                self.setData(detailDto: detailDto)
             }
         }
     }
@@ -551,44 +542,36 @@ final class EditBasicInfoViewController: BaseViewController {
     @objc private func nextButtonTapped(_ sender: UIButton) {
 
         modifyImjang { [weak self] error in
-            guard let self else { return }
-            if error == nil {
-                guard let imjangId, let version = versionInfo?.version else { return }
-                let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
-                
-                let threeDisitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
-                let fourDisitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-                var priceList = [String(threeDisitPrice * 100000000 + fourDisitPrice * 10000)]
-                
-                let now = Date()
-                let formatter = DateFormatter()
-                formatter.dateFormat = "yy.MM.dd"
-                let updatedAt = formatter.string(from: now)
-                
-                delegate?.sendData(
-                    imjangId: imjangId,
-                    priceList: priceList,
-                    address: addressTextField.text ?? "",
-                    addressDetail: addressDetailTextField.text ?? "",
-                    nickname: houseNicknameTextField.text ?? "",
-                    updatedAt: updatedAt
-                )
-                
-                self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-                self.navigationController?.popViewController(animated: true)
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let self else { return }
+            
+            guard let imjangId, let version = versionInfo?.version else { return }
+            let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
+            
+            let threeDisitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
+            let fourDisitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
+            var priceList = [String(threeDisitPrice * 100000000 + fourDisitPrice * 10000)]
+            
+            let now = Date()
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yy.MM.dd"
+            let updatedAt = formatter.string(from: now)
+            
+            delegate?.sendData(
+                imjangId: imjangId,
+                priceList: priceList,
+                address: addressTextField.text ?? "",
+                addressDetail: addressDetailTextField.text ?? "",
+                nickname: houseNicknameTextField.text ?? "",
+                updatedAt: updatedAt
+            )
+            
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+            self.navigationController?.popViewController(animated: true)
         }
     }
     

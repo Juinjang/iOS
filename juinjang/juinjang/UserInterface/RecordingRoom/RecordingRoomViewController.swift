@@ -173,26 +173,17 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     // 녹음 3개까지, 메모 조회
     func callFetchRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecordMemoDto>.self, api: .fetchRecordingRoom(imjangId: imjangId)) { [weak self] recordMemoDto, error in
-            guard let self else { return }
-            if error == nil {
-                guard let recordMemoDto = recordMemoDto else { return }
-                guard let result = recordMemoDto.result else { return }
-                self.setMemo(memo: result.memo)
-                fileItems = result.recordDto
-                loadRecordings()
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let self else { return }
+            guard let recordMemoDto = recordMemoDto else { return }
+            guard let result = recordMemoDto.result else { return }
+            self.setMemo(memo: result.memo)
+            fileItems = result.recordDto
+            loadRecordings()
         }
     }
     func loadRecordings() {
@@ -240,24 +231,15 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
         ]
         print(UserDefaultManager.shared.accessToken)
         JuinjangAPIManager.shared.postData(type: BaseResponse<MemoDto>.self, api: .memo(imjangId: imjangId), parameter: parameter) { response, error in
-            if error == nil {
-                // 메모장 기재 이벤트
-                amplitude.track(event: BaseEvent(eventType: AmpliEventName.button_clicked.rawValue, eventProperties: [
-                    AmpliEventProp.record_memo.rawValue: "true"
-                ]))
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            // 메모장 기재 이벤트
+            amplitude.track(event: BaseEvent(eventType: AmpliEventName.button_clicked.rawValue, eventProperties: [
+                AmpliEventProp.record_memo.rawValue: "true"
+            ]))
         }
     }
     

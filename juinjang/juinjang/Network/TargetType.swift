@@ -19,7 +19,7 @@ protocol TargetType: URLRequestConvertible {
 
 extension TargetType {
     func asURLRequest() throws -> URLRequest {
-        guard let url = createURL() else { throw NetworkError.invalidData }
+        guard let url = createURL() else { throw NetworkError.invalidUrl }
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         

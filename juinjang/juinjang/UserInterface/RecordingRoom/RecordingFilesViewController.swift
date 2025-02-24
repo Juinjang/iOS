@@ -118,23 +118,14 @@ final class RecordingFilesViewController: BaseViewController {
     private func fetchRecordFiles() {
         showSkeletonView()
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<[RecordResponse]?>.self, api: .fetchRecordFiles(imjangId: imjangId)) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                guard let response, let result = response.result, let fileList = result else { return }
-                fileItems = fileList
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response, let result = response.result, let fileList = result else { return }
+            guard let self else { return }
+            fileItems = fileList
         }
     }
     
@@ -274,22 +265,13 @@ final class RecordingFilesViewController: BaseViewController {
     private func deleteRecordFile(recordId: Int) {
         showSkeletonView()
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<String>.self, api: .deleteRecordFile(recordId: recordId)) { response, error in
-            if error == nil {
-                guard let response, let result = response.result else { return }
-                print(#function, response)
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response, let result = response.result else { return }
+            print(#function, response)
         }
     }
 }

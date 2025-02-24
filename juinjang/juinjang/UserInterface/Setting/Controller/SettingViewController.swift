@@ -222,29 +222,20 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     func logout() {
         print(#function)
         JuinjangAPIManager.shared.postData(type: BaseResponseStringOptionalResult.self, api: .logout, parameter: [:]) { [weak self] response, error in
+            if let error = error {
+                print(error.localizedDescription)
+                self?.showAlert(title: "로그아웃 에러", message: "로그아웃에 실패하였습니다.\n 다시 시도해주세요.", actionHandler: nil)
+                return
+            }
+            
             guard let self else { return }
-            if error == nil {
-                guard let response = response else { return }
-                if response.isSuccess {   // 로그아웃 성공
-                    print("로그아웃 성공")
-                    UserDefaultManager.shared.removeUserInfo()
-                    changeLoginVC()
-                } else {
-                    showAlert(title: "로그아웃 에러", message: "로그아웃에 실패하였습니다.\n 다시 시도해주세요.", actionHandler: nil)
-                }
+            guard let response = response else { return }
+            if response.isSuccess {   // 로그아웃 성공
+                print("로그아웃 성공")
+                UserDefaultManager.shared.removeUserInfo()
+                changeLoginVC()
             } else {
-                guard let error else { return }
                 showAlert(title: "로그아웃 에러", message: "로그아웃에 실패하였습니다.\n 다시 시도해주세요.", actionHandler: nil)
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
             }
         }
     }

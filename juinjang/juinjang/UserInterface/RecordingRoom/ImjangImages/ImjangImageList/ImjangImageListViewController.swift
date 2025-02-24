@@ -52,23 +52,14 @@ final class ImjangImageListViewController: BaseViewController {
     func callFetchImageRequest() {
         guard let imjangId = imjangId else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<ImagesListDto>.self, api: .fetchImage(imjangId: imjangId)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let imagesListDto = response.result else { return }
-                self.imageList = imagesListDto.images
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            guard let imagesListDto = response.result else { return }
+            self.imageList = imagesListDto.images
         }
     }
     
@@ -194,24 +185,14 @@ final class ImjangImageListViewController: BaseViewController {
         ]
         
         JuinjangAPIManager.shared.postData(type: BaseResponseString.self, api: .deleteImage, parameter: parameter) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                guard let response = response else { return }
-                self.selectedIndexs.removeAll()
-//                self.callFetchImageRequest()  // 삭제 완료시 전체 이미지 조회
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            guard let self else { return }
+            self.selectedIndexs.removeAll()
         }
     }
     

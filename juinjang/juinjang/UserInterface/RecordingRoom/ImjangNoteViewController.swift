@@ -184,23 +184,14 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func callRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if error == nil {
-                guard let result = detailDto else { return }
-                if let detailDto = result.result {
-                    self.setData(detailDto: detailDto)
-                }
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            guard let result = detailDto else { return }
+            if let detailDto = result.result {
+                self.setData(detailDto: detailDto)
             }
         }
     }

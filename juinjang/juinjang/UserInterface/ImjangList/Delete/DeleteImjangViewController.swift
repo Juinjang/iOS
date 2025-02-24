@@ -75,50 +75,31 @@ final class DeleteImjangViewController: BaseViewController {
         ]
         print(JuinjangAPI.deleteImjangs(imjangIds: imjangIds).header)
         JuinjangAPIManager.shared.postData(type: BaseResponseString.self, api: .deleteImjangs(imjangIds: imjangIds), parameter: parameter) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                print(response)
-                self.selectedIndexes.removeAll()
-                self.view.makeToast("선택된 임장이 삭제되었습니다.", duration: 1.0)
-                self.callRequest()
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            print(response)
+            self.selectedIndexes.removeAll()
+            self.view.makeToast("선택된 임장이 삭제되었습니다.", duration: 1.0)
+            self.callRequest()
         }
     }
     
     private func callRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: Filter.update.sortValue)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-//                print(result)
-                self.imjangList = result.limjangList
-                print(self.imjangList.count)
-                self.deleteImjangTableView.reloadData()
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            guard let result = response.result else { return }
+            self.imjangList = result.limjangList
+            print(self.imjangList.count)
+            self.deleteImjangTableView.reloadData()
         }
     }
     

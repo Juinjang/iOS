@@ -76,61 +76,40 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
     @objc private func callMainImjangRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self, api: .mainImjang) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-                print(response)
-                self.mainImjangList = result.recentUpdatedList
-                self.tableView.reloadData()
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            guard let result = response.result else { return }
+            print(response)
+            self.mainImjangList = result.recentUpdatedList
+            self.tableView.reloadData()
         }
     }
     
     private func callVersionRequest(imjangId: Int, completion: @escaping (Int?) -> Void) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if error == nil {
-                guard let result = detailDto else {
-                    completion(nil)
-                    return
-                }
-                if let detailDto = result.result {
-                    let checkListVersion = detailDto.checkListVersion
-                    if checkListVersion == "LIMJANG" {
-                        completion(0)
-                    } else if checkListVersion == "NON_LIMJANG" {
-                        completion(1)
-                    } else {
-                        completion(nil)
-                    }
-                }
-            } else {
-                guard let error else {
-                    completion(nil)
-                    return
-                }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
                 completion(nil)
+                return
+            }
+            
+            guard let result = detailDto else {
+                completion(nil)
+                return
+            }
+            if let detailDto = result.result {
+                let checkListVersion = detailDto.checkListVersion
+                if checkListVersion == "LIMJANG" {
+                    completion(0)
+                } else if checkListVersion == "NON_LIMJANG" {
+                    completion(1)
+                } else {
+                    completion(nil)
+                }
             }
         }
     }

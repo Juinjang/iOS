@@ -16,8 +16,10 @@ import KakaoSDKUser
 
 import AuthenticationServices
 
-final class SignUpViewController: BaseViewController {
+import RxSwift
 
+final class SignUpViewController: BaseViewController {
+    var disposeBag: DisposeBag = DisposeBag()
     lazy var juinjangLogoImage = UIImageView().then {
         $0.image = UIImage.SignUp.juinjangLogoGraphic
         $0.contentMode = .scaleAspectFill
@@ -123,44 +125,35 @@ final class SignUpViewController: BaseViewController {
     }
     func getUserNickname() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<UserInfoResult>.self, api: .profile) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-                
-                let nickname = result.nickname
-                UserDefaultManager.shared.nickname = nickname ?? ""
-                print("닉네임은 \(UserDefaultManager.shared.nickname)입니다.")
-                
-                if let profileImage = result.image, let imageUrl = URL(string: profileImage) {
-                    
-                    self.loadImage(from: imageUrl) { image in
-                        if let image = image {
-                            // 이미지 로드 성공
-                            print("이미지 로드 성공")
-                            UserDefaultManager.shared.profileImage = image
-                        } else {
-                            // 이미지 로드 실패
-                            print("imageLoad Fail")
-                        }
-                    }
-                } else {
-                    UserDefaultManager.shared.profileImage = UIImage.Setting.profile
-                }
-                // 메인 화면으로 이동
-                self.changeHome()
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            guard let result = response.result else { return }
+            
+            let nickname = result.nickname
+            UserDefaultManager.shared.nickname = nickname ?? ""
+            print("닉네임은 \(UserDefaultManager.shared.nickname)입니다.")
+            
+            if let profileImage = result.image, let imageUrl = URL(string: profileImage) {
+                
+                self.loadImage(from: imageUrl) { image in
+                    if let image = image {
+                        // 이미지 로드 성공
+                        print("이미지 로드 성공")
+                        UserDefaultManager.shared.profileImage = image
+                    } else {
+                        // 이미지 로드 실패
+                        print("imageLoad Fail")
+                    }
+                }
+            } else {
+                UserDefaultManager.shared.profileImage = UIImage.Setting.profile
+            }
+            // 메인 화면으로 이동
+            self.changeHome()
         }
     }
     private func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
@@ -250,55 +243,69 @@ extension SignUpViewController{
             self.image = try container.decodeIfPresent(String.self, forKey: .image)
         }
     }        
- 
+    
     // 카카오 로그인
     private func requestKakaoLogin(email: String, nickname: String?, kakaoTargetId: Int64) {
         print(#function)
-        let api = JuinjangAPI.kakaoLogin(kakaoTargetId: kakaoTargetId)
+        let api = SignUpRouter.kakaoLogin(kakaoTargetId: kakaoTargetId)
+//        let api = JuinjangAPI.kakaoLogin(kakaoTargetId: kakaoTargetId)
 //        let requestBody = RequestBody(email: email, nickname: nickname)
         let parameter: [String: Any] = [
             "email": email,
             "nickname": nickname
         ]
-        
-        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self, api: api, parameter: parameter) { [weak self] response, error in
-
-            guard let self else { return }
-            if error == nil {
-                guard let response else {
-                    print("Kakao Login Response Is Empty")
-                    return
-                }
+        JuinjangAPIManager.shared.postData(api: api, parameter: parameter)
+            .subscribe(with: self) { (owner, response: BaseResponse<LoginResponse>) in
+                guard let result = response.result else { return }
                 UserDefaultManager.shared.isKakaoLogin = true
-                print(response.code, response.result)
-                guard let result = response.result else {
-                    switch response.code {
-                    case "MEMBER4001":
-                        print("회원가입")
-                        let nextVC = ToSViewController()
-                        navigationController?.pushViewController(nextVC, animated: true)
-                    case "MEMBER4003":
-                        print("이미 애플로그인 했다미")
-                        showAlert(message: "이미 Apple로 회원가입한 회원입니다")
-                    case "MEMBER4011":
-                        showAlert(message: "이미 KAKAO로 가입한 회원입니다")
-                    default:
-                        break
-                        print("통과요우")
-                    }
-                    return
-                }
-                
                 UserDefaultManager.shared.accessToken = result.accessToken
                 UserDefaultManager.shared.refreshToken = result.refreshToken
                 UserDefaultManager.shared.email = result.email
                 UserDefaultManager.shared.agreeVersion = result.agreeVersion
-                getUserNickname()
-             
-            } else {
-                showAlert(message: "Kakao Login Request Error")
+                owner.getUserNickname()
+            } onFailure: { owner, error in
+                owner.showAlert(message: "Kakao Login Request Error")
             }
-        }
+            .disposed(by: disposeBag)
+
+//        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self, api: api, parameter: parameter) { [weak self] response, error in
+//
+//            guard let self else { return }
+//            if error == nil {
+//                guard let response else {
+//                    print("Kakao Login Response Is Empty")
+//                    return
+//                }
+//                UserDefaultManager.shared.isKakaoLogin = true
+//                print(response.code, response.result)
+//                guard let result = response.result else {
+//                    switch response.code {
+//                    case "MEMBER4001":
+//                        print("회원가입")
+//                        let nextVC = ToSViewController()
+//                        navigationController?.pushViewController(nextVC, animated: true)
+//                    case "MEMBER4003":
+//                        print("이미 애플로그인 했다미")
+//                        showAlert(message: "이미 Apple로 회원가입한 회원입니다")
+//                    case "MEMBER4011":
+//                        showAlert(message: "이미 KAKAO로 가입한 회원입니다")
+//                    default:
+//                        break
+//                        print("통과요우")
+//                    }
+//                    return
+//                }
+//                
+//                UserDefaultManager.shared.accessToken = result.accessToken
+//                UserDefaultManager.shared.refreshToken = result.refreshToken
+//                UserDefaultManager.shared.email = result.email
+//                UserDefaultManager.shared.agreeVersion = result.agreeVersion
+//                getUserNickname()
+//             
+//            } else {
+//                showAlert(message: "Kakao Login Request Error")
+//            }
+//        }
     }
     private func showAlert(message: String) {
         let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
