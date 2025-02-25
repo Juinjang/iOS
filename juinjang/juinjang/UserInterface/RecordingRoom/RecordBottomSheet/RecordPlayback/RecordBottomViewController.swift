@@ -149,23 +149,14 @@ final class RecordBottomViewController: BaseViewController, UITextFieldDelegate,
     private func editRecordName(_ editedRecordName: String) {
         let parameter = ["recordName": editedRecordName]
         JuinjangAPIManager.shared.postData(type: BaseResponse<RecordResponse?>.self, api: .editRecordName(recordId: recordResponse.recordId, recordName: editedRecordName), parameter: parameter) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                print("post editRecordName")
-                NotificationCenter.default.post(name: .editRecordName, object: recordResponse)
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let self else { return }
+            print("post editRecordName")
+            NotificationCenter.default.post(name: .editRecordName, object: recordResponse)
         }
     }
     

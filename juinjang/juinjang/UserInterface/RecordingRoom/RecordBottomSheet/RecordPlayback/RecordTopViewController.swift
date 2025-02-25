@@ -135,22 +135,13 @@ final class RecordTopViewController: BaseViewController {
     private func editRecordScript(_ editedRecordScript: String) {
         let parameter = ["recordScript": editedRecordScript]
         JuinjangAPIManager.shared.postData(type: BaseResponse<RecordResponse?>.self, api: .editRecordContent(recordId: recordResponse.recordId, content: editedRecordScript), parameter: parameter) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                NotificationCenter.default.post(name: .editRecordScript, object: recordResponse)
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let self else { return }
+            NotificationCenter.default.post(name: .editRecordScript, object: recordResponse)
         }
     }
     

@@ -86,24 +86,15 @@ final class ImjangSearchResultViewController: BaseViewController {
         showSkeletonView()
         if searchKeyword.count > 0 {
             JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .searchImjang(keyword: searchKeyword)) { [weak self] response, error in
-                guard let self else { return }
-                if error == nil {
-                    guard let response, let result = response.result else { return }
-                    searchedImjangList = result.limjangList
-                    searchedTableView.reloadData()
-                } else {
-                    guard let error else { return }
-                    switch error {
-                    case .failedRequest:
-                        print("failedRequest")
-                    case .noData:
-                        print("noData")
-                    case .invalidResponse:
-                        print("invalidResponse")
-                    case .invalidData:
-                        print("invalidData")
-                    }
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
                 }
+                
+                guard let response, let result = response.result else { return }
+                guard let self else { return }
+                searchedImjangList = result.limjangList
+                searchedTableView.reloadData()
             }
         }
     }
@@ -227,37 +218,26 @@ extension ImjangSearchResultViewController: UITableViewDelegate, UITableViewData
     
     private func callVersionRequest(imjangId: Int, completion: @escaping (Int?) -> Void) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if error == nil {
-                guard let result = detailDto else {
-                    completion(nil)
-                    return
-                }
-                if let detailDto = result.result {
-                    let checkListVersion = detailDto.checkListVersion
-                    if checkListVersion == "LIMJANG" {
-                        completion(0)
-                    } else if checkListVersion == "NON_LIMJANG" {
-                        completion(1)
-                    } else {
-                        completion(nil)
-                    }
-                }
-            } else {
-                guard let error else {
-                    completion(nil)
-                    return
-                }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
                 completion(nil)
+                return
+            }
+            
+            guard let result = detailDto else {
+                completion(nil)
+                return
+            }
+            
+            if let detailDto = result.result {
+                let checkListVersion = detailDto.checkListVersion
+                if checkListVersion == "LIMJANG" {
+                    completion(0)
+                } else if checkListVersion == "NON_LIMJANG" {
+                    completion(1)
+                } else {
+                    completion(nil)
+                }
             }
         }
     }

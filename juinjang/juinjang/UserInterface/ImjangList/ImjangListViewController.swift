@@ -233,43 +233,24 @@ extension ImjangListViewController: DeleteImjangListDelegate {
 
     private func scrapRequest(imjangId: Int) {
         JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .scrap(imjangId: imjangId)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                print(response.message)
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
             }
+            
+            guard let response = response else { return }
+            print(response.message)
         }
     }
         
     private func cancelScrapRequest(imjangId: Int) {
         JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .cancelScrap(imjangId: imjangId)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                print(response.message)
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            print(response.message)
         }
     }
 

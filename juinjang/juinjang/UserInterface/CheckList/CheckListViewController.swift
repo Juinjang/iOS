@@ -186,51 +186,43 @@ final class CheckListViewController: BaseViewController {
     // -MARK: API 요청(체크리스트 조회)
     private func showCheckList(completion: @escaping () -> Void) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self, api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                guard let response = response else { return }
-                // 이미 추가된 questionId를 추적하기 위한 Set
-                var addedQuestionIds = Set<Int>()
-                
-                if let categoryItem = response.result {
-                    for item in categoryItem {
-                        // 이미 추가된 questionId인 경우
-                        if addedQuestionIds.contains(item.questionId) {
-                            continue
-                        }
-                        
-                        // CheckListAnswer 객체를 생성하여 배열에 추가
-                        let checkListAnswer = CheckListAnswer(imjangId: self.imjangId,
-                                                              questionId: item.questionId,
-                                                              answer: item.answer,
-                                                              isSelected: true)
-                        
-                        savedCheckListItems.append(checkListAnswer)
-                        checkListItems.append(checkListAnswer)
-                        
-                        // 추가된 questionId를 Set에 추가
-                        addedQuestionIds.insert(item.questionId)
-                    }
-                }
-                print("------저장된 체크리스트 조회------")
-                for checkListItem in checkListItems {
-                    print(checkListItem)
-                }
-                NotificationCenter.default.post(name: NSNotification.Name("CheckListItemsUpdated"), object: checkListItems)
+            if let error = error {
+                print(error.localizedDescription)
                 completion()
-            } else {
-                guard let error = error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
+                return
+            }
+            
+            guard let response = response else { return }
+            guard let self else { return }
+            // 이미 추가된 questionId를 추적하기 위한 Set
+            var addedQuestionIds = Set<Int>()
+            
+            if let categoryItem = response.result {
+                for item in categoryItem {
+                    // 이미 추가된 questionId인 경우
+                    if addedQuestionIds.contains(item.questionId) {
+                        continue
+                    }
+                    
+                    // CheckListAnswer 객체를 생성하여 배열에 추가
+                    let checkListAnswer = CheckListAnswer(imjangId: self.imjangId,
+                                                          questionId: item.questionId,
+                                                          answer: item.answer,
+                                                          isSelected: true)
+                    
+                    savedCheckListItems.append(checkListAnswer)
+                    checkListItems.append(checkListAnswer)
+                    
+                    // 추가된 questionId를 Set에 추가
+                    addedQuestionIds.insert(item.questionId)
                 }
             }
+            print("------저장된 체크리스트 조회------")
+            for checkListItem in checkListItems {
+                print(checkListItem)
+            }
+            NotificationCenter.default.post(name: NSNotification.Name("CheckListItemsUpdated"), object: checkListItems)
+            completion()
         }
     }
     

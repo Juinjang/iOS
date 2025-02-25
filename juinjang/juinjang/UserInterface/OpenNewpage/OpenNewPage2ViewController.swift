@@ -544,32 +544,23 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     
     @objc func nextButtonTapped(_ sender: UIButton) {
         createImjang { imjangId, error in
-            if error == nil {
-                guard let imjangId, let newImjang = self.newImjang else { return }
-                let version = self.determineVersion(purposeType: newImjang.purposeType, propertyType: newImjang.propertyType)
-                let ImjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
-                ImjangNoteVC.previousVCType = .createImjangVC
-                ImjangNoteVC.imjangId = imjangId
-                ImjangNoteVC.versionInfo = self.versionInfo
-                self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-                self.navigationController?.pushViewController(ImjangNoteVC, animated: true)
-                
-                amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
-                    AmpliEventProp.checklist_page.rawValue: "true"
-                ]))
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let imjangId, let newImjang = self.newImjang else { return }
+            let version = self.determineVersion(purposeType: newImjang.purposeType, propertyType: newImjang.propertyType)
+            let ImjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
+            ImjangNoteVC.previousVCType = .createImjangVC
+            ImjangNoteVC.imjangId = imjangId
+            ImjangNoteVC.versionInfo = self.versionInfo
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+            self.navigationController?.pushViewController(ImjangNoteVC, animated: true)
+            
+            amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
+                AmpliEventProp.checklist_page.rawValue: "true"
+            ]))
         }
     }
 }

@@ -310,24 +310,15 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     func getImjang() {
         guard let imjangId = imjangId else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if error == nil {
-                guard let result = detailDto else { return }
-                if let detailDto = result.result {
-                    print(detailDto)
-                    self.setData(detailDto: detailDto)
-                }
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            guard let result = detailDto else { return }
+            if let detailDto = result.result {
+                print(detailDto)
+                self.setData(detailDto: detailDto)
             }
         }
     }
@@ -785,63 +776,54 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     @objc private func nextButtonTapped(_ sender: UIButton) {
         modifyImjang { [weak self] error in
-            guard let self else { return }
-            if error == nil {
-                guard let imjangId, let version = versionInfo?.version else { return }
-                let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
-
-                let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
-                let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-                let fourDigitMonthlyRent = Int(fourDigitMonthlyRentField.text ?? "") ?? 0
-                var priceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)]
-                
-                let separatedPriceList: [String]
-                if fourDigitMonthlyRentField.text?.isEmpty == true {
-                    separatedPriceList = priceList
-                } else {
-                    separatedPriceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000), String(fourDigitMonthlyRent * 10000)]
-                }
-                
-                let now = Date()
-                let formatter = DateFormatter()
-                formatter.dateFormat = "yy.MM.dd"
-                let updatedAt = formatter.string(from: now)
-                
-                var priceType: Int = 0
-                
-                if saleButton.isSelected {
-                    priceType = 0 // 매매
-                } else if jeonseButton.isSelected {
-                    priceType = 1 // 전세
-                } else if monthlyRentButton.isSelected {
-                    priceType = 2 // 월세
-                }
-                
-                delegate?.sendDetailData(
-                    imjangId: imjangId,
-                    priceType: priceType ?? 0,
-                    priceList: separatedPriceList,
-                    address: addressTextField.text ?? "",
-                    addressDetail: addressDetailTextField.text ?? "",
-                    nickname: houseNicknameTextField.text ?? "",
-                    updatedAt: updatedAt
-                )
-                
-                self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
-                self.navigationController?.popViewController(animated: true)
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let self else { return }
+            guard let imjangId, let version = versionInfo?.version else { return }
+            let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
+
+            let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
+            let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
+            let fourDigitMonthlyRent = Int(fourDigitMonthlyRentField.text ?? "") ?? 0
+            var priceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)]
+            
+            let separatedPriceList: [String]
+            if fourDigitMonthlyRentField.text?.isEmpty == true {
+                separatedPriceList = priceList
+            } else {
+                separatedPriceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000), String(fourDigitMonthlyRent * 10000)]
+            }
+            
+            let now = Date()
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yy.MM.dd"
+            let updatedAt = formatter.string(from: now)
+            
+            var priceType: Int = 0
+            
+            if saleButton.isSelected {
+                priceType = 0 // 매매
+            } else if jeonseButton.isSelected {
+                priceType = 1 // 전세
+            } else if monthlyRentButton.isSelected {
+                priceType = 2 // 월세
+            }
+            
+            delegate?.sendDetailData(
+                imjangId: imjangId,
+                priceType: priceType ?? 0,
+                priceList: separatedPriceList,
+                address: addressTextField.text ?? "",
+                addressDetail: addressDetailTextField.text ?? "",
+                nickname: houseNicknameTextField.text ?? "",
+                updatedAt: updatedAt
+            )
+            
+            self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+            self.navigationController?.popViewController(animated: true)
         }
     }
     

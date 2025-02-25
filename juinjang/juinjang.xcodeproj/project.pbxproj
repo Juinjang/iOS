@@ -230,6 +230,8 @@
 		B54406AF2D62CE040080ECC1 /* SplashViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B54406AE2D62CE040080ECC1 /* SplashViewReactor.swift */; };
 		B54406B32D6423840080ECC1 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = B54406B22D6423840080ECC1 /* RxCocoa */; };
 		B5C0C8972D69CA740017C2C3 /* OpenNewPageImageType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */; };
+		B5C0C89F2D6C6CA90017C2C3 /* TargetType.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C0C89E2D6C6CA90017C2C3 /* TargetType.swift */; };
+		B5C0C8A12D6C87240017C2C3 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C0C8A02D6C87240017C2C3 /* NetworkError.swift */; };
 		BEFC82342D69943A0051F073 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFC82332D69943A0051F073 /* APIKey.swift */; };
 		BEFC82382D6994560051F073 /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BEFC82362D6994560051F073 /* Debug.xcconfig */; };
 		BEFC82392D6994560051F073 /* Release.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BEFC82372D6994560051F073 /* Release.xcconfig */; };
@@ -426,6 +428,8 @@
 		61FC596C2BFE324500D6F369 /* AudioPlayerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerManager.swift; sourceTree = "<group>"; };
 		B54406AE2D62CE040080ECC1 /* SplashViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewReactor.swift; sourceTree = "<group>"; };
 		B5C0C8962D69CA740017C2C3 /* OpenNewPageImageType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenNewPageImageType.swift; sourceTree = "<group>"; };
+		B5C0C89E2D6C6CA90017C2C3 /* TargetType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TargetType.swift; sourceTree = "<group>"; };
+		B5C0C8A02D6C87240017C2C3 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		BEFC82332D69943A0051F073 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		BEFC82362D6994560051F073 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		BEFC82372D6994560051F073 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
@@ -736,6 +740,7 @@
 		6108CFDD2B761A8A00EF302F /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				B5C0C89E2D6C6CA90017C2C3 /* TargetType.swift */,
 				BEFC82332D69943A0051F073 /* APIKey.swift */,
 				616F1E4E2C0724C50049461F /* Error */,
 				616D48162BFB423C0073029A /* Query */,
@@ -932,6 +937,7 @@
 		616F1E4E2C0724C50049461F /* Error */ = {
 			isa = PBXGroup;
 			children = (
+				B5C0C8A02D6C87240017C2C3 /* NetworkError.swift */,
 				616F1E4F2C0724CD0049461F /* APIError.swift */,
 			);
 			path = Error;
@@ -1416,6 +1422,7 @@
 				0A2DED1E2B551CEE00A96BAA /* RecordTopViewController.swift in Sources */,
 				0AB34CC32B4F11B000150A15 /* OpenNewPageViewController.swift in Sources */,
 				61864BE22B5FFA890073C175 /* UIImageView+Extension.swift in Sources */,
+				B5C0C89F2D6C6CA90017C2C3 /* TargetType.swift in Sources */,
 				611F145E2B471ECA00B983F1 /* CALayer+Extension.swift in Sources */,
 				0AF89DA32B74C5D500C9AD81 /* ContentWrappingTableView.swift in Sources */,
 				3458559D2B69479D00432C06 /* NoMaemullPopupViewController.swift in Sources */,
@@ -1491,6 +1498,7 @@
 				61AD50A92B58039B00314673 /* DeletePopupViewController.swift in Sources */,
 				345855902B689E3B00432C06 /* DimmedViewController.swift in Sources */,
 				6108CFE12B761B3A00EF302F /* BaseResponse.swift in Sources */,
+				B5C0C8A12D6C87240017C2C3 /* NetworkError.swift in Sources */,
 				0A3D5D632B4D707300574686 /* BottomSheetViewController.swift in Sources */,
 				0AA6E90F2B79292A000BDA1F /* VersionInfo.swift in Sources */,
 				61DEFEDD2BFA2FB40069A820 /* AudioRecorderManager.swift in Sources */,
@@ -1642,6 +1650,7 @@
 		};
 		0A9E0A582B3DCAB90094595A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BEFC82362D6994560051F073 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -1687,6 +1696,7 @@
 		};
 		0A9E0A592B3DCAB90094595A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BEFC82372D6994560051F073 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;

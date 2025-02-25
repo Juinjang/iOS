@@ -8,26 +8,8 @@
 import Foundation
 import Alamofire
 import UIKit
+import RxSwift
 
-enum NetworkError: Error, LocalizedError {
-    case failedRequest
-    case noData
-    case invalidResponse
-    case invalidData
-    
-    var errorDescription: String? {
-        switch self {
-        case .failedRequest:
-            return "요청에 실패하였습니다. 다시 시도해주세요"
-        case .noData:
-            return "응답 데이터가 없습니다."
-        case .invalidResponse:
-            return "유효하지 않은 응답입니다."
-        case .invalidData:
-            return "유효하지 않은 데이터입니다."
-        }
-    }
-}
 
 final class JuinjangAPIManager {
     static let shared = JuinjangAPIManager()
@@ -51,6 +33,26 @@ final class JuinjangAPIManager {
         }
     }
     
+    func fetchData<T: Decodable>(api: TargetType) -> Single<T> {
+        return Single.create { observer in
+            AF.request(api.path,
+                       method: api.method,
+                       parameters: api.parameters,
+                       headers: HTTPHeaders(api.header),
+                       interceptor: AuthInterceptor())
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let data):
+                    observer(.success(data))
+                case .failure(let failure):
+                    print(failure)
+                    observer(.failure(NetworkError.failedRequest))
+                }
+            }
+            return Disposables.create()
+        }
+    }
+    
     func postData<T: Decodable>(type: T.Type, api: JuinjangAPI, parameter: [String:Any], completionHandler: @escaping (T?, NetworkError?) -> Void) {
         
         AF.request(api.endpoint,
@@ -68,6 +70,28 @@ final class JuinjangAPIManager {
                 print(failure)
                 completionHandler(nil, .failedRequest)
             }
+        }
+    }
+    
+    func postData<T: Decodable>(api: TargetType, parameter: [String:Any]) -> Single<T> {
+        return Single.create { observer in
+            AF.request(api.path,
+                       method: api.method,
+                       parameters: parameter,
+                       encoding: JSONEncoding.default,
+                       headers: HTTPHeaders(api.header),
+                       interceptor: AuthInterceptor())
+            .responseDecodable(of: T.self) { response in
+                switch response.result {
+                case .success(let data):
+                    print(data)
+                    observer(.success(data))
+                case .failure(let failure):
+                    print(failure)
+                    observer(.failure(NetworkError.failedRequest))
+                }
+            }
+            return Disposables.create()
         }
     }
     

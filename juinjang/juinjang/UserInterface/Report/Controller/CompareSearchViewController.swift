@@ -115,33 +115,24 @@ final class CompareSearchViewController: BaseViewController {
     
     private func callRequest(sort: Filter = .update, setScrap: Bool = false, excludingId: Int? = nil) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: sort.sortValue)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-                
-                let filteredList = result.limjangList.filter { item in
-                    if let excludingId = excludingId {
-                        return item.limjangId != excludingId
-                    }
-                    return true
-                }
-                
-                self.imjangList = filteredList
-                self.setEmptyUI(isEmpty: self.imjangList.isEmpty)
-                self.searchedTableView.reloadData()
-            } else {
-                guard let error else { return }
-                switch error {
-                case .failedRequest:
-                    print("failedRequest")
-                case .noData:
-                    print("noData")
-                case .invalidResponse:
-                    print("invalidResponse")
-                case .invalidData:
-                    print("invalidData")
-                }
+            if let error = error {
+                print(error.localizedDescription)
+                return
             }
+            
+            guard let response = response else { return }
+            guard let result = response.result else { return }
+            
+            let filteredList = result.limjangList.filter { item in
+                if let excludingId = excludingId {
+                    return item.limjangId != excludingId
+                }
+                return true
+            }
+            
+            self.imjangList = filteredList
+            self.setEmptyUI(isEmpty: self.imjangList.isEmpty)
+            self.searchedTableView.reloadData()
         }
     }
     private func setEmptyUI(isEmpty: Bool) {
