@@ -1,8 +1,8 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let debugConfig = Path.relativeToRoot("Projects/App/XCConfig/Debug.xcconfig")
-let releaseConfig = Path.relativeToRoot("Projects/App/XCConfig/Release.xcconfig")
+let debugConfig = Path.relativeToRoot("Projects/XCConfig/App/Debug.xcconfig")
+let releaseConfig = Path.relativeToRoot("Projects/XCConfig/App/Release.xcconfig")
 
 let project = Project(
     name: "juinjang",

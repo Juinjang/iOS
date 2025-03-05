@@ -6,6 +6,6 @@ public extension Path {
     }
     
     enum config {
-        public static let sharedConfig = Path.relativeToRoot("Projects/App/XCConfig/Shared.xcconfig")
+        public static let sharedConfig = Path.relativeToRoot("Projects/XCConfig/Shared.xcconfig")
     }
 }
