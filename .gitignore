@@ -1,3 +1,6 @@
+# Privacy
+juinjang/Projects/App/XCConfig
+APIKey.swift
 
 # General
 .DS_Store
@@ -28,3 +31,4 @@ xcuserdata/
 **/*.xcworkspace
 *.xcarchive
 **/Derived/
+juinjang/Tuist/.build
