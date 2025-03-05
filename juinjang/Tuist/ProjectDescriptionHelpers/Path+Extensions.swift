@@ -3,6 +3,8 @@ import ProjectDescription
 public extension Path {
     enum plist {
         public static let googleServiceInfoDebug = Path.relativeToRoot("Projects/App/Resources/Firebase/PRD/GoogleService-Info.plist")
+        
+        public static let appInfo = Path.relativeToRoot("Projects/App/InfoPlists/Info.plist")
     }
     
     enum config {

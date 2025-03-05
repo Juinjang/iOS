@@ -8,7 +8,6 @@
 import UIKit
 import KakaoSDKCommon
 import KakaoSDKAuth
-//import FirebaseCore
 import Firebase
 import AmplitudeSwift
 
