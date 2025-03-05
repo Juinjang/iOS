@@ -11,6 +11,18 @@ let project = Project(
             name: "juinjang",
             product: .app,
             infoPlist: .extendingDefault(with: [
+                "UIApplicationSceneManifest": .dictionary([
+                    "UIApplicationSupportsMultipleScenes": .boolean(false),
+                    "UISceneConfigurations": .dictionary([
+                        "UIWindowSceneSessionRoleApplication": .array([
+                            .dictionary([
+                                "UISceneConfigurationName": .string("Default Configuration"),
+                                "UISceneDelegateClassName": .string("$(PRODUCT_MODULE_NAME).SceneDelegate")
+                            ])
+                        ])
+                    ])
+                ]),
+                
                 "UILaunchStoryboardName": .string("LaunchScreen"),
                 "ITSAppUsesNonExemptEncryption": .boolean(false),
                 "LSApplicationQueriesSchemes": .array(["kakaokompassauth", "kakaolink"]),
