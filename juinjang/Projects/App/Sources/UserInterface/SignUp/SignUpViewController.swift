@@ -247,65 +247,51 @@ extension SignUpViewController{
     // 카카오 로그인
     private func requestKakaoLogin(email: String, nickname: String?, kakaoTargetId: Int64) {
         print(#function)
-        let api = SignUpRouter.kakaoLogin(kakaoTargetId: kakaoTargetId)
-//        let api = JuinjangAPI.kakaoLogin(kakaoTargetId: kakaoTargetId)
+        let api = JuinjangAPI.kakaoLogin(kakaoTargetId: kakaoTargetId)
 //        let requestBody = RequestBody(email: email, nickname: nickname)
         let parameter: [String: Any] = [
             "email": email,
             "nickname": nickname
         ]
-        JuinjangAPIManager.shared.postData(api: api, parameter: parameter)
-            .subscribe(with: self) { (owner, response: BaseResponse<LoginResponse>) in
-                guard let result = response.result else { return }
+
+        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self, api: api, parameter: parameter) { [weak self] response, error in
+
+            guard let self else { return }
+            if error == nil {
+                guard let response else {
+                    print("Kakao Login Response Is Empty")
+                    return
+                }
                 UserDefaultManager.shared.isKakaoLogin = true
+                print(response.code, response.result)
+                guard let result = response.result else {
+                    switch response.code {
+                    case "MEMBER4001":
+                        print("회원가입")
+                        let nextVC = ToSViewController()
+                        navigationController?.pushViewController(nextVC, animated: true)
+                    case "MEMBER4003":
+                        print("이미 애플로그인 했다미")
+                        showAlert(message: "이미 Apple로 회원가입한 회원입니다")
+                    case "MEMBER4011":
+                        showAlert(message: "이미 KAKAO로 가입한 회원입니다")
+                    default:
+                        break
+                        print("통과요우")
+                    }
+                    return
+                }
+                
                 UserDefaultManager.shared.accessToken = result.accessToken
                 UserDefaultManager.shared.refreshToken = result.refreshToken
                 UserDefaultManager.shared.email = result.email
                 UserDefaultManager.shared.agreeVersion = result.agreeVersion
-                owner.getUserNickname()
-            } onFailure: { owner, error in
-                owner.showAlert(message: "Kakao Login Request Error")
+                getUserNickname()
+             
+            } else {
+                showAlert(message: "Kakao Login Request Error")
             }
-            .disposed(by: disposeBag)
-
-//        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self, api: api, parameter: parameter) { [weak self] response, error in
-//
-//            guard let self else { return }
-//            if error == nil {
-//                guard let response else {
-//                    print("Kakao Login Response Is Empty")
-//                    return
-//                }
-//                UserDefaultManager.shared.isKakaoLogin = true
-//                print(response.code, response.result)
-//                guard let result = response.result else {
-//                    switch response.code {
-//                    case "MEMBER4001":
-//                        print("회원가입")
-//                        let nextVC = ToSViewController()
-//                        navigationController?.pushViewController(nextVC, animated: true)
-//                    case "MEMBER4003":
-//                        print("이미 애플로그인 했다미")
-//                        showAlert(message: "이미 Apple로 회원가입한 회원입니다")
-//                    case "MEMBER4011":
-//                        showAlert(message: "이미 KAKAO로 가입한 회원입니다")
-//                    default:
-//                        break
-//                        print("통과요우")
-//                    }
-//                    return
-//                }
-//                
-//                UserDefaultManager.shared.accessToken = result.accessToken
-//                UserDefaultManager.shared.refreshToken = result.refreshToken
-//                UserDefaultManager.shared.email = result.email
-//                UserDefaultManager.shared.agreeVersion = result.agreeVersion
-//                getUserNickname()
-//             
-//            } else {
-//                showAlert(message: "Kakao Login Request Error")
-//            }
-//        }
+        }
     }
     private func showAlert(message: String) {
         let alertController = UIAlertController(title: nil, message: message, preferredStyle: .alert)
