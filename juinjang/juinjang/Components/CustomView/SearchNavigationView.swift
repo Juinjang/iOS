@@ -1,0 +1,107 @@
+//
+//  SearchNavigationView.swift
+//  juinjang
+//
+//  Created by KimDongWoo on 3/4/25.
+//
+
+import UIKit
+import Then
+import SnapKit
+import RxCocoa
+
+final class SearchNavigationView: DefaultNavigationView {
+    private let searchBar = UIView().then {
+        $0.backgroundColor = .gray200
+        $0.layer.cornerRadius = 20
+    }
+    
+    private let searchTextField = UITextField().then {
+        $0.font = .pretendard(size: 14, weight: .regular)
+        $0.returnKeyType = .search
+        $0.inputAccessoryView = UIView()
+        $0.spellCheckingType = .no
+    }
+    
+    private let searchToggleButton = ImageButton().then {
+        $0.image = .ImjangList.search
+        $0.tintColor = .gray400
+    }
+    
+    private var isSearchActive: Bool = false {
+        didSet {
+            if self.isSearchActive {
+                self.searchToggleButton.image = .x24
+            } else {
+                self.searchToggleButton.image = .ImjangList.search
+            }
+        }
+    }
+    
+    var searchPlaceHolder: String? {
+        didSet {
+            self.searchTextField.placeholder = self.searchPlaceHolder ?? ""
+        }
+    }
+    
+    override func setupView() {
+        super.setupView()
+        self.isTitleHidden = true
+        self.view.addSubview(searchBar.with(
+            searchTextField,
+            searchToggleButton
+        ))
+        self.bind()
+    }
+    
+    override func makeConstraints() {
+        super.makeConstraints()
+        
+        self.searchBar.snp.makeConstraints {
+            $0.left.equalTo(self.leftItemStackView.snp.right).offset(4)
+            $0.right.equalTo(self.view.snp.right).offset(-24)
+            $0.centerY.equalToSuperview()
+            $0.height.equalTo(40)
+        }
+        
+        self.searchTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalToSuperview().offset(16)
+            $0.right.equalTo(self.searchToggleButton.snp.left).offset(-16)
+        }
+        
+        self.searchToggleButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.right.equalToSuperview().offset(-16)
+            $0.height.width.equalTo(24)
+        }
+    }
+    
+    private func bind() {
+        self.searchTextField.rx.text
+            .orEmpty
+            .map { !$0.isEmpty }
+            .withUnretained(self)
+            .subscribe { (self, hasText) in
+                self.isSearchActive = hasText
+            }
+            .disposed(by: disposeBag)
+        
+        self.searchToggleButton.rx.tap
+            .withUnretained(self)
+            .subscribe { (self, _) in
+                if self.isSearchActive {
+                    self.searchTextField.text = ""
+                    self.isSearchActive = false
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        self.searchTextField.rx.controlEvent(.editingDidEndOnExit)
+            .withUnretained(self)
+            .subscribe { (self, _) in
+                self.itemActionRelay.accept(.searchSummit)
+            }
+            .disposed(by: disposeBag)
+    }
+}
