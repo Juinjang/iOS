@@ -40,7 +40,7 @@ enum NavigationButton {
         case .setting:
             return .settingButtonTap
         case .record:
-            return .recodeButtonTap
+            return .recordButtonTap
         }
     }
 }
@@ -50,7 +50,7 @@ enum NavigationAction {
     case searchButtonTap
     case searchSummit
     case settingButtonTap
-    case recodeButtonTap
+    case recordButtonTap
 }
 
 class DefaultNavigationView: UIView {
