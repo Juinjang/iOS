@@ -49,6 +49,30 @@ struct ListDto: Codable, Hashable {
         self.totalAverage = try container.decodeIfPresent(String.self, forKey: .totalAverage)
         self.address = try container.decode(String.self, forKey: .address)
     }
+    
+    init(
+        id: UUID = UUID(),
+        limjangId: Int = 123,
+        images: [String] = ["image1.jpg", "image2.jpg"],
+        purposeCode: Int = 1,
+        isScraped: Bool = false,
+        nickname: String = "채드",
+        priceType: Int = 2,
+        priceList: [String] = ["1000", "2000"],
+        totalAverage: String? = "1500",
+        address: String = "서울시 강남구"
+    ) {
+        self.id = id
+        self.limjangId = limjangId
+        self.images = images
+        self.purposeCode = purposeCode
+        self.isScraped = isScraped
+        self.nickname = nickname
+        self.priceType = priceType
+        self.priceList = priceList
+        self.totalAverage = totalAverage
+        self.address = address
+    }
 }
 
 struct LimjangDto: Codable {

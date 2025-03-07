@@ -170,7 +170,8 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     // 임장노트 나누기 화면으로 이동
     @objc private func showDivideImjangVC() {
         let shareImjangVC = ShareImjangNoteViewController()
-        shareImjangVC.reactor = ShareImjangNoteReactor()
+        let repository = MockShareImjangNoteRepository()
+        shareImjangVC.reactor = ShareImjangNoteReactor(repository: repository)
         self.navigationController?.pushViewController(shareImjangVC, animated: true)
     }
     
