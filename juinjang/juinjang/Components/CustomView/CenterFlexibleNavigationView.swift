@@ -16,13 +16,9 @@ final class CenterFlexibleNavigationView: DefaultNavigationView {
         }
     }
     
-    override func setupView() {
-        super.setupView()
+    override func configureView() {
+        super.configureView()
         self.isTitleHidden = true
-    }
-    
-    override func makeConstraints() {
-        super.makeConstraints()
     }
     
     private func updateCenterView() {

@@ -19,7 +19,7 @@ final class ImageButton: UIButton {
     
     var image: UIImage? {
         didSet {
-            self.customImageView.image = image
+            self.customImageView.image = image?.withRenderingMode(.alwaysTemplate)
         }
     }
     

@@ -44,18 +44,22 @@ final class SearchNavigationView: DefaultNavigationView {
         }
     }
     
-    override func setupView() {
-        super.setupView()
+    override func configureView() {
+        super.configureView()
         self.isTitleHidden = true
+        self.bind()
+    }
+    
+    override func configureHierarchy() {
+        super.configureHierarchy()
         self.view.addSubview(searchBar.with(
             searchTextField,
             searchToggleButton
         ))
-        self.bind()
     }
     
-    override func makeConstraints() {
-        super.makeConstraints()
+    override func configureLayout() {
+        super.configureLayout()
         
         self.searchBar.snp.makeConstraints {
             $0.left.equalTo(self.leftItemStackView.snp.right).offset(4)

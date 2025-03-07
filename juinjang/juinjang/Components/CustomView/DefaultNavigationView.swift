@@ -53,7 +53,7 @@ enum NavigationAction {
     case recordButtonTap
 }
 
-class DefaultNavigationView: UIView {
+class DefaultNavigationView: BaseView {
     var disposeBag = DisposeBag()
     let view = UIView()
     private let titleLabel: UILabel = UILabel().then {
@@ -106,22 +106,13 @@ class DefaultNavigationView: UIView {
     
     var itemActionRelay = PublishRelay<NavigationAction>()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        self.setupView()
-        self.makeConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     deinit {
         self.disposeBag = DisposeBag()
     }
     
-    func setupView() {
-        self.backgroundColor = .white
+    override func configureHierarchy() {
+        super.configureHierarchy()
+        
         self.addSubview(view.with(
             self.titleLabel,
             self.leftItemStackView,
@@ -129,7 +120,9 @@ class DefaultNavigationView: UIView {
         ))
     }
     
-    func makeConstraints() {
+    override func configureLayout() {
+        super.configureView()
+        
         self.view.snp.makeConstraints {
             $0.height.equalTo(44)
             $0.edges.equalToSuperview()
@@ -161,6 +154,7 @@ class DefaultNavigationView: UIView {
         items?.forEach { item in
             let button = ImageButton().then {
                 $0.image = item.image
+                $0.tintColor = .gray450
                 $0.snp.makeConstraints {
                     $0.width.height.equalTo(24)
                 }
