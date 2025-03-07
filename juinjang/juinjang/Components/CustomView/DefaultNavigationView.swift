@@ -27,7 +27,7 @@ enum NavigationButton {
         case .setting:
             return .Main.setting
         case .record:
-            return .SignUp.microphone
+            return .Main.record
         }
     }
     

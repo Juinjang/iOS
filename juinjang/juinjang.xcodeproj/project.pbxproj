@@ -234,8 +234,6 @@
 		B5C0C8A12D6C87240017C2C3 /* NetworkError.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5C0C8A02D6C87240017C2C3 /* NetworkError.swift */; };
 		BE12F3722D71FDD0002DE1AE /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE12F3712D71FDD0002DE1AE /* APIKey.swift */; };
 		BE12F3742D71FDDF002DE1AE /* Debug.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = BE12F3732D71FDDF002DE1AE /* Debug.xcconfig */; };
-		BE12F3772D71FE7B002DE1AE /* MyNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE12F3762D71FE78002DE1AE /* MyNoteViewController.swift */; };
-		BE12F3792D71FED5002DE1AE /* MyNoteViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE12F3782D71FECC002DE1AE /* MyNoteViewReactor.swift */; };
 		BE8835CE2D75E0760097EEF7 /* DefaultNavigationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8835CD2D75E0690097EEF7 /* DefaultNavigationView.swift */; };
 		BE8835D42D7713850097EEF7 /* ImageButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8835D32D7713820097EEF7 /* ImageButton.swift */; };
 		BE8835D62D7715540097EEF7 /* UIView+Addable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE8835D52D77154C0097EEF7 /* UIView+Addable.swift */; };
@@ -439,8 +437,6 @@
 		B5C0C8A02D6C87240017C2C3 /* NetworkError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkError.swift; sourceTree = "<group>"; };
 		BE12F3712D71FDD0002DE1AE /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		BE12F3732D71FDDF002DE1AE /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
-		BE12F3762D71FE78002DE1AE /* MyNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNoteViewController.swift; sourceTree = "<group>"; };
-		BE12F3782D71FECC002DE1AE /* MyNoteViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyNoteViewReactor.swift; sourceTree = "<group>"; };
 		BE8835CD2D75E0690097EEF7 /* DefaultNavigationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNavigationView.swift; sourceTree = "<group>"; };
 		BE8835D32D7713820097EEF7 /* ImageButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageButton.swift; sourceTree = "<group>"; };
 		BE8835D52D77154C0097EEF7 /* UIView+Addable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Addable.swift"; sourceTree = "<group>"; };
@@ -537,7 +533,6 @@
 		0A3D5D5D2B4D376C00574686 /* UserInterface */ = {
 			isa = PBXGroup;
 			children = (
-				BE12F3752D71FE5A002DE1AE /* MyNote */,
 				616F1E512C0729140049461F /* Base */,
 				616BCC182C75742600356BDA /* Onboarding */,
 				346CF6AC2B70B41F00C70C7A /* Splash */,
@@ -1113,31 +1108,6 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		BE12F3752D71FE5A002DE1AE /* MyNote */ = {
-			isa = PBXGroup;
-			children = (
-				BE12F37A2D72F7AC002DE1AE /* Reactor */,
-				BE12F37B2D72F7B4002DE1AE /* View */,
-			);
-			path = MyNote;
-			sourceTree = "<group>";
-		};
-		BE12F37A2D72F7AC002DE1AE /* Reactor */ = {
-			isa = PBXGroup;
-			children = (
-				BE12F3782D71FECC002DE1AE /* MyNoteViewReactor.swift */,
-			);
-			path = Reactor;
-			sourceTree = "<group>";
-		};
-		BE12F37B2D72F7B4002DE1AE /* View */ = {
-			isa = PBXGroup;
-			children = (
-				BE12F3762D71FE78002DE1AE /* MyNoteViewController.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
 		BEAD6BE42D69BE6A002F6D03 /* Storage */ = {
 			isa = PBXGroup;
 			children = (
@@ -1410,7 +1380,6 @@
 				619269D72B6773FE00D4DD3E /* ImjangSearchResultViewController.swift in Sources */,
 				345855742B689A7E00432C06 /* BottomCollectionViewCell.swift in Sources */,
 				614B0AC02CE9FA87008543C5 /* ImjangNoteTableViewCell.swift in Sources */,
-				BE12F3792D71FED5002DE1AE /* MyNoteViewReactor.swift in Sources */,
 				619269E92B67745900D4DD3E /* UserDefaultManager.swift in Sources */,
 				611BB8AB2C4812F100FFC28A /* NetworkMonitor.swift in Sources */,
 				612709492D1CF2F20087E5DB /* BaseView.swift in Sources */,
@@ -1464,7 +1433,6 @@
 				0A2DED1E2B551CEE00A96BAA /* RecordTopViewController.swift in Sources */,
 				0AB34CC32B4F11B000150A15 /* OpenNewPageViewController.swift in Sources */,
 				61864BE22B5FFA890073C175 /* UIImageView+Extension.swift in Sources */,
-				BE12F3772D71FE7B002DE1AE /* MyNoteViewController.swift in Sources */,
 				B5C0C89F2D6C6CA90017C2C3 /* TargetType.swift in Sources */,
 				611F145E2B471ECA00B983F1 /* CALayer+Extension.swift in Sources */,
 				0AF89DA32B74C5D500C9AD81 /* ContentWrappingTableView.swift in Sources */,
