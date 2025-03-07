@@ -167,6 +167,11 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         self.navigationController?.pushViewController(DeleteImjangVC, animated: true)
     }
     
+    // 임장노트 나누기 화면으로 이동
+    @objc private func showDivideImjangVC() {
+        
+    }
+    
     // 임장노트 화면으로 이동
     private func showImjangNoteVC(imjangId: Int?, version: Int?) {
         guard let imjangId = imjangId, let version = version else { return }
@@ -403,6 +408,8 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                     }
                     header.deleteButton.addTarget(self, action: #selector(showDeleteImjangVC), for: .touchUpInside)
                     header.sendFilterItemDelegate = self
+                    
+                    header.shareButton.addTarget(self, action: #selector(showDivideImjangVC), for: .touchUpInside)
                     
                     return header
                 }

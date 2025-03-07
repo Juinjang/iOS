@@ -28,7 +28,18 @@ final class ImjangListHeader: UICollectionReusableView {
         return button
     }()
     
-    let deleteButton = UIButton()
+    let shareButton: UIButton = {
+        let button: UIButton = .init()
+        button.design(image: UIImage.DivideImjangNote.share, backgroundColor: .clear)
+        return button
+    }()
+    
+    let deleteButton: UIButton = {
+        let button: UIButton = .init()
+        button.design(image: UIImage.trash, backgroundColor: .clear)
+        return button
+    }()
+    
     var menuChildren: [UIMenuElement] = []
     let filterList = Filter.allCases
     weak var sendFilterItemDelegate: SendFilterItemDelegate?
@@ -86,6 +97,7 @@ extension ImjangListHeader {
     private func configureHierarchy() {
         addSubview(filterBackgroundView)
         filterBackgroundView.addSubview(filterselectBtn)
+        filterBackgroundView.addSubview(shareButton)
         filterBackgroundView.addSubview(deleteButton)
     }
     private func configureLayout() {
@@ -97,6 +109,11 @@ extension ImjangListHeader {
             $0.centerY.equalTo(filterBackgroundView)
             $0.leading.equalToSuperview().offset(16)
         }
+        shareButton.snp.makeConstraints {
+            $0.centerY.equalTo(filterBackgroundView)
+            $0.trailing.equalTo(deleteButton.snp.leading).offset(-18)
+            $0.size.equalTo(22)
+        }
         deleteButton.snp.makeConstraints {
             $0.centerY.equalTo(filterBackgroundView)
             $0.trailing.equalToSuperview().inset(24)
@@ -106,6 +123,5 @@ extension ImjangListHeader {
     
     private func configureView() {
         backgroundColor = .mainWhite
-        deleteButton.design(image: UIImage.trash, backgroundColor: .clear)
     }
 }
