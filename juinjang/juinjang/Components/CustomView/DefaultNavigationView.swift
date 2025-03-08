@@ -106,10 +106,6 @@ class DefaultNavigationView: BaseView {
     
     var itemActionRelay = PublishRelay<NavigationAction>()
     
-    deinit {
-        self.disposeBag = DisposeBag()
-    }
-    
     override func configureHierarchy() {
         super.configureHierarchy()
         
