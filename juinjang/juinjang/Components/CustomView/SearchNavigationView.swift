@@ -52,7 +52,7 @@ final class SearchNavigationView: DefaultNavigationView {
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        self.view.addSubview(searchBar.with(
+        self.addSubview(searchBar.with(
             searchTextField,
             searchToggleButton
         ))
@@ -63,7 +63,7 @@ final class SearchNavigationView: DefaultNavigationView {
         
         self.searchBar.snp.makeConstraints {
             $0.left.equalTo(self.leftItemStackView.snp.right).offset(4)
-            $0.right.equalTo(self.view.snp.right).offset(-24)
+            $0.right.equalTo(self.snp.right).offset(-24)
             $0.centerY.equalToSuperview()
             $0.height.equalTo(40)
         }

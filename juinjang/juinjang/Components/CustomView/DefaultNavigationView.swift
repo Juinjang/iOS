@@ -55,7 +55,6 @@ enum NavigationAction {
 
 class DefaultNavigationView: BaseView {
     var disposeBag = DisposeBag()
-    let view = UIView()
     private let titleLabel: UILabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .semiBold)
         $0.textColor = .gray600
@@ -109,19 +108,18 @@ class DefaultNavigationView: BaseView {
     override func configureHierarchy() {
         super.configureHierarchy()
         
-        self.addSubview(view.with(
+        self.add([
             self.titleLabel,
             self.leftItemStackView,
             self.rightItemStackView
-        ))
+        ])
     }
     
     override func configureLayout() {
         super.configureView()
         
-        self.view.snp.makeConstraints {
+        self.snp.makeConstraints {
             $0.height.equalTo(44)
-            $0.edges.equalToSuperview()
         }
         
         self.titleLabel.snp.makeConstraints {

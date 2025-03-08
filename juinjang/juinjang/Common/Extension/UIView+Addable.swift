@@ -5,11 +5,10 @@
 //  Created by KimDongWoo on 3/4/25.
 //
 
-
 import UIKit
 
 public protocol Addable {
-    func addSubview(_ view: Self)
+    func addSubview(_ view: UIView)
 }
 
 public protocol AddWith {}
@@ -28,7 +27,7 @@ extension AddWith where Self: Addable {
     ///
     /// - Parameter subviews: The collection of views to be added. After being added, this views appear on top of any other subviews.
     
-    public func add(_ subviews: [Self]) {
+    public func add(_ subviews: [UIView]) {
         subviews.forEach {
             self.addSubview($0)
         }
@@ -41,7 +40,7 @@ extension AddWith where Self: Addable {
     ///
     /// - Parameter subviews: The collection of views to be added. After being added, this views appear on top of any other subviews.
     
-    public func add(_ subviews: Self...) {
+    public func add(_ subviews: UIView...) {
         self.add(subviews)
     }
     
@@ -58,17 +57,17 @@ extension AddWith where Self: Addable {
     /// - Parameter subviews: The collection of views to be added. After being added, this views appear on top of any other subviews.
     /// - Returns: Receiver, with new subviews.
     
-    public func with(_ subviews: Self...) -> Self {
+    public func with(_ subviews: UIView...) -> Self {
         self.add(subviews)
         return self
     }
     
-    public func with(_ subviews: [Self]) -> Self {
+    public func with(_ subviews: [UIView]) -> Self {
         self.add(subviews)
         return self
     }
     
-    public func with(_ subviews: [Self]...) -> Self {
+    public func with(_ subviews: [UIView]...) -> Self {
         return self.with(subviews.flatMap { $0 })
     }
     

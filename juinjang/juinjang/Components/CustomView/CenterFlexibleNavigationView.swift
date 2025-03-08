@@ -10,10 +10,15 @@ import SnapKit
 import Then
 
 final class CenterFlexibleNavigationView: DefaultNavigationView {
-    var centerView: UIView? {
-        didSet {
-            updateCenterView()
-        }
+    var centerView: UIView
+    
+    init(centerView: UIView) {
+        self.centerView = centerView
+        super.init(frame: .zero)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func configureView() {
@@ -21,19 +26,13 @@ final class CenterFlexibleNavigationView: DefaultNavigationView {
         self.isTitleHidden = true
     }
     
-    private func updateCenterView() {
-        guard let centerView = self.centerView else {
-            return
-        }
-        self.view.addSubview(centerView)
-        self.updateCenterViewConstraints()
+    override func configureHierarchy() {
+        super.configureHierarchy()
+        self.addSubview(centerView)
     }
     
-    private func updateCenterViewConstraints() {
-        guard let centerView = self.centerView else {
-            return
-        }
-        
+    override func configureLayout() {
+        super.configureLayout()
         centerView.snp.updateConstraints {
             $0.center.equalToSuperview()
         }
