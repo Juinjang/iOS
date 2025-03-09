@@ -116,7 +116,7 @@ class DefaultNavigationView: BaseView {
     }
     
     override func configureLayout() {
-        super.configureView()
+        super.configureLayout()
         
         self.snp.makeConstraints {
             $0.height.equalTo(44)
