@@ -21,7 +21,6 @@ final class OnboardingReactor: Reactor {
     enum Mutation {
         case setCurrentPage(Int)
         case setLoginButtonVisible(Bool)
-        case trackAmplitude(OnboardingType)
         case navigateToLogin
     }
     
@@ -38,20 +37,19 @@ final class OnboardingReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            amplitude.track(eventType: AmpliEventName.onboarding_start.rawValue)
+            trackAmplitude(with: .onboarding_start)
+            return .empty()
             
         case .pageChanged(let viewType):
-            return Observable.concat(
-                .just(.setCurrentPage(viewType.rawValue)),
-                .just(.trackAmplitude(viewType))
-            )
+            trackAmplitude(with: toMapAmpliEventType(with: viewType))
+            return .just(.setCurrentPage(viewType.rawValue))
             
         case .updateLoginButtonVisible(let visible):
             return .just(.setLoginButtonVisible(visible))
             
         case .loginButtonTapped:
             UserDefaultManager.shared.userStatus = true
-            amplitude.track(eventType: AmpliEventName.onboarding_complete.rawValue)
+            trackAmplitude(with: .onboarding_complete)
             return .just(.navigateToLogin)
         }
     }
@@ -64,9 +62,6 @@ final class OnboardingReactor: Reactor {
         case .setCurrentPage(let index):
             newState.currentPage = index
             
-        case .trackAmplitude(let viewType):
-            trackAmplitude(with: viewType)
-            
         case .setLoginButtonVisible(let visible):
             newState.isLoginButtonVisible = visible
             
@@ -77,16 +72,20 @@ final class OnboardingReactor: Reactor {
         return newState
     }
     
-    private func trackAmplitude(with viewType: OnboardingType) {
+    private func trackAmplitude(with name: AmpliEventName) {
+        amplitude.track(eventType: name.rawValue)
+    }
+    
+    private func toMapAmpliEventType(with viewType: OnboardingType) -> AmpliEventName {
         switch viewType {
         case .checklist:
-            amplitude.track(eventType: AmpliEventName.onboarding_step_1.rawValue)
-        
+            return .onboarding_step_1
+            
         case .recordImjang:
-            amplitude.track(eventType: AmpliEventName.onboarding_step_2.rawValue)
-        
+            return .onboarding_step_2
+            
         case .report:
-            amplitude.track(eventType: AmpliEventName.onboarding_step_3.rawValue)
+            return .onboarding_step_3
         }
     }
 }
