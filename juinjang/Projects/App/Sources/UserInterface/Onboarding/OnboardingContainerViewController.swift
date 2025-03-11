@@ -54,7 +54,7 @@ final class OnboardingContainerViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        amplitude.track(eventType: AmpliEventName.onboarding_start.rawValue)
+        
         setViewControllers()
         configureDataSource()
         configureHierarchy()

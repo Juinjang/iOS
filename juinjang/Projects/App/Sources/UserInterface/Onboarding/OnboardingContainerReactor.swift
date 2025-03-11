@@ -11,6 +11,7 @@ import ReactorKit
 final class OnboardingReactor: Reactor {
     // MARK: - Action
     enum Action {
+        case viewDidLoad
         case pageChanged(OnboardingType)
         case updateLoginButtonVisible(Bool)
         case loginButtonTapped
@@ -36,6 +37,9 @@ final class OnboardingReactor: Reactor {
     // Action을 받아서 Mutation을 반환하는 함수
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
+        case .viewDidLoad:
+            amplitude.track(eventType: AmpliEventName.onboarding_start.rawValue)
+            
         case .pageChanged(let viewType):
             return Observable.concat(
                 .just(.setCurrentPage(viewType.rawValue)),
