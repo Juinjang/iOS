@@ -10,7 +10,7 @@ import SnapKit
 import Then
 
 final class CenterFlexibleNavigationView: DefaultNavigationView {
-    var centerView: UIView
+    private let centerView: UIView
     
     init(centerView: UIView) {
         self.centerView = centerView

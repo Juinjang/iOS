@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import RxCocoa
+import RxSwift
 
 final class SearchNavigationView: DefaultNavigationView {
     private let searchBar = UIView().then {
@@ -23,21 +24,10 @@ final class SearchNavigationView: DefaultNavigationView {
         $0.spellCheckingType = .no
     }
     
-    private let searchToggleButton = ImageButton().then {
-        $0.image = .ImjangList.search
-        $0.tintColor = .gray400
-    }
+    private let searchToggleButton = UIButton()
     
-    private var isSearchActive: Bool = false {
-        didSet {
-            if self.isSearchActive {
-                self.searchToggleButton.image = .x24
-            } else {
-                self.searchToggleButton.image = .ImjangList.search
-            }
-        }
-    }
-    
+    private let isSearchActiveRelay = BehaviorRelay<Bool>(value: false)
+
     var searchPlaceHolder: String? {
         didSet {
             self.searchTextField.placeholder = self.searchPlaceHolder ?? ""
@@ -85,18 +75,15 @@ final class SearchNavigationView: DefaultNavigationView {
         self.searchTextField.rx.text
             .orEmpty
             .map { !$0.isEmpty }
-            .withUnretained(self)
-            .subscribe { (self, hasText) in
-                self.isSearchActive = hasText
-            }
+            .bind(to: isSearchActiveRelay)
             .disposed(by: disposeBag)
         
         self.searchToggleButton.rx.tap
             .withUnretained(self)
             .subscribe { (self, _) in
-                if self.isSearchActive {
+                if self.isSearchActiveRelay.value {
                     self.searchTextField.text = ""
-                    self.isSearchActive = false
+                    self.isSearchActiveRelay.accept(false)
                 }
             }
             .disposed(by: disposeBag)
@@ -107,5 +94,20 @@ final class SearchNavigationView: DefaultNavigationView {
                 self.itemActionRelay.accept(.searchSummit)
             }
             .disposed(by: disposeBag)
+        
+        self.isSearchActiveRelay
+            .bind(to: self.searchToggleButton.rx.isSearchActive)
+            .disposed(by: disposeBag)
+    }
+}
+
+
+fileprivate extension Reactive where Base: UIButton {
+    var isSearchActive: Binder<Bool> {
+        return Binder(self.base) { button, isActive in
+            let image: UIImage = isActive ? .x24 : .ImjangList.search
+            button.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)
+            button.tintColor = .gray400
+        }
     }
 }
