@@ -65,7 +65,7 @@ extension UIViewController {
         let sceneDelegate = windowScene.delegate as? SceneDelegate,
         let window = sceneDelegate.window else { return }
         
-        let mainViewController = OnboardingContainerViewController()
+        let mainViewController = OnboardingContainerViewController(reactor: OnboardingReactor())
         let nav = UINavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         UIView.transition(with: window, duration: 0.2, options: [.transitionCrossDissolve], animations: nil, completion: nil)

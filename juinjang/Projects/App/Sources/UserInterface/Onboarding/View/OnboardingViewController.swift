@@ -9,14 +9,18 @@ import UIKit
 import AVFoundation
 import Lottie
 import AmplitudeSwift
+import RxSwift
+import RxCocoa
 
 final class OnboardingViewController: UIViewController {
-//    private let stackView = UIStackView()
     private var titleLabel = UILabel()      // 온보딩 텍스트
     private lazy var animationView = LottieAnimationView(name: onboardingType.item1.jsonURLString)
     private var onboardingType: OnboardingType
     
-    weak var showLoginButtonDelegate: ShowLoginButtonDelegate?
+    private let showLoginButtonRelay: BehaviorRelay<Bool> = .init(value: false)
+    var isShowLoginButton: Driver<Bool> {
+        showLoginButtonRelay.asDriver()
+    }
     
     init(onboardingType: OnboardingType) {
         self.onboardingType = onboardingType
@@ -67,9 +71,7 @@ final class OnboardingViewController: UIViewController {
     }
     
     private func checkLastOnboarding() {
-        if onboardingType == .report {
-            showLoginButtonDelegate?.showLoginButton()
-        }
+        showLoginButtonRelay.accept(onboardingType == .report)
     }
     
     private func startItem2Animation() {
