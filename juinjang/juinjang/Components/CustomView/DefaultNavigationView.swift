@@ -146,8 +146,7 @@ class DefaultNavigationView: BaseView {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         items?.forEach { item in
-            let button = ImageButton().then {
-                $0.image = item.image
+            let button = ImageButton(normalImage: item.image).then {
                 $0.tintColor = .gray450
                 $0.snp.makeConstraints {
                     $0.width.height.equalTo(24)

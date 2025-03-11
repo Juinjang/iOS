@@ -17,26 +17,21 @@ final class ImageButton: UIButton {
     
     private var customImageView = UIImageView()
     
-    var image: UIImage? {
-        didSet {
-            self.customImageView.image = image?.withRenderingMode(.alwaysTemplate)
-        }
-    }
-    
     var selectedImage: UIImage?
+    
+    var image: UIImage
     
     override var isSelected: Bool {
         didSet {
-            if self.isSelected {
-                self.customImageView.image = self.selectedImage
-            } else {
-                self.customImageView.image = self.image
-            }
+            self.updateImage()
         }
     }
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(normalImage: UIImage,
+         selectedImage: UIImage? = nil) {
+        self.image = normalImage
+        self.selectedImage = selectedImage
+        super.init(frame: .zero)
         self.commonInit()
     }
     
@@ -45,11 +40,20 @@ final class ImageButton: UIButton {
     }
     
     private func commonInit() {
+        self.customImageView.image = self.image.withRenderingMode(.alwaysTemplate)
         self.clipsToBounds = true
         self.backgroundColor = .clear
         self.addSubview(customImageView)
         self.customImageView.snp.makeConstraints {
             $0.edges.equalToSuperview()
+        }
+    }
+    
+    private func updateImage() {
+        if self.isSelected {
+            self.customImageView.image = self.selectedImage?.withRenderingMode(.alwaysTemplate)
+        } else {
+            self.customImageView.image = self.image.withRenderingMode(.alwaysTemplate)
         }
     }
 }
