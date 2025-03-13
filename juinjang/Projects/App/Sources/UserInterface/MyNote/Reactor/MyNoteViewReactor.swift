@@ -9,17 +9,14 @@ import ReactorKit
 
 final class MyNoteViewReactor: Reactor {
     enum Action {
-        case categoryButtonDidTap(MyNoteCategoryState)
-        case searchButtonDidTap
+        case categoryButtonDidTap(Int)
     }
 
     enum Mutation {
-        case setNavigation(MyNoteNavigation)
-        case setCategoryState(MyNoteCategoryState)
+        case setCategoryState(Int)
     }
 
     struct State {
-        var navigation: MyNoteNavigation?
         var categoryState: MyNoteCategoryState = .share
     }
 
@@ -27,22 +24,17 @@ final class MyNoteViewReactor: Reactor {
 
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .categoryButtonDidTap(let state):
-            return .just(.setCategoryState(state))
-
-        case .searchButtonDidTap:
-            return .just(.setNavigation(.search))
+        case .categoryButtonDidTap(let index):
+            return .just(.setCategoryState(index))
         }
     }
 
-    func reduce(state: State, mutation: Mutation) -> State {
+    func reduce(state: State,
+                mutation: Mutation) -> State {
         var state = state
         switch mutation {
-        case .setNavigation(let newState):
-            state.navigation = newState
-
-        case .setCategoryState(let newState):
-            state.categoryState = newState
+        case .setCategoryState(let index):
+            state.categoryState = MyNoteCategoryState(rawValue: index) ?? .share
         }
         return state
     }
@@ -50,13 +42,9 @@ final class MyNoteViewReactor: Reactor {
 
 
 extension MyNoteViewReactor {
-    enum MyNoteNavigation {
-        case search
-    }
-    
-    enum MyNoteCategoryState {
-        case share
-        case own
-        case like
+    enum MyNoteCategoryState: Int {
+        case share = 0
+        case own = 1
+        case like = 2
     }
 }
