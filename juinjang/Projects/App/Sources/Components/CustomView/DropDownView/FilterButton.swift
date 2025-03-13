@@ -25,8 +25,8 @@ final class FilterButton: UIButton {
     private func configureView(filterType: LookAroundFilterType) {
         let title = filterType.rawValue
         setTitle(title, for: .normal)
-        titleLabel?.setAttribute(text: title, color: .gray, font: .pretendard(size: 14, weight: .medium))
-        setTitleColor(.gray, for: .normal)
+        titleLabel?.setAttribute(text: title, color: .gray300, font: .pretendard(size: 14, weight: .medium))
+        setTitleColor(.gray300, for: .normal)
         backgroundColor = .white
         contentEdgeInsets = UIEdgeInsets(top: 0, left: padding.left, bottom: 0, right: padding.right)
         contentHorizontalAlignment = .leading
@@ -37,11 +37,11 @@ final class FilterButton: UIButton {
     func updateColor(isSelected: Bool) {
         print(#function)
         if isSelected {
-            setTitleColor(.black, for: .normal)
-            titleLabel?.setAttribute(text: titleLabel?.text, color: .black, font: .pretendard(size: 14, weight: .semiBold))
+            setTitleColor(.gray450, for: .normal)
+            titleLabel?.setAttribute(text: titleLabel?.text, color: .gray450, font: .pretendard(size: 14, weight: .semiBold))
         } else {
-            setTitleColor(.gray, for: .normal)
-            titleLabel?.setAttribute(text: titleLabel?.text, color: .gray, font: .pretendard(size: 14, weight: .medium))
+            setTitleColor(.gray300, for: .normal)
+            titleLabel?.setAttribute(text: titleLabel?.text, color: .gray300, font: .pretendard(size: 14, weight: .medium))
         }
     }
     
