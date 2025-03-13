@@ -18,8 +18,9 @@ final class ShareImjangNoteReactor: Reactor {
     enum Action {
         case viewDidLoad
         case tapBanner
-        case tapExpandNewPage
-        case selectCell(ListDto)
+        case tapNavigateImjangNoteList
+        case selectCell(ListDto?)
+        case tapPrevious
         case tapNext
         case tapLoadMore
     }
@@ -29,7 +30,7 @@ final class ShareImjangNoteReactor: Reactor {
         case setItems([ListDto])
         case setSelectedItem(ListDto?)
         case setEmptyViewVisible(Bool)
-        case setLoadMoreEnabled(Bool)
+        case setNextButtonEnabled(Bool)
     }
     
     struct State {
@@ -37,7 +38,7 @@ final class ShareImjangNoteReactor: Reactor {
         var items: [ListDto] = []
         var selectedItem: ListDto?
         var isEmptyViewVisible: Bool = false
-        var isLoadMoreEnabled: Bool = false
+        var isEnabledNextButton: Bool = false
     }
     
     let initialState: State = State()
@@ -45,37 +46,40 @@ final class ShareImjangNoteReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return Observable.concat([
-                repository.fetchNotes()
-                    .map { .setItems($0) }
-                    .catchAndReturn(.setItems([])),
-                .just(.setEmptyViewVisible(currentState.items.isEmpty))
-            ])
-        case .tapBanner:
-            let navigation: Navigation
-            navigation = .checkList
-            return .just(.setNavigation(navigation))
+            return repository.fetchNotes()
+                .map {
+                    [Mutation.setItems($0),
+                     Mutation.setEmptyViewVisible(!$0.isEmpty)]
+                }
+                .catchAndReturn([.setItems([]), .setEmptyViewVisible(true)])
+                .flatMap { Observable.from($0) }
             
-        case .tapExpandNewPage:
-            let navigation: Navigation
-            navigation = .checkList
-            return .just(.setNavigation(navigation))
-        
+        case .tapBanner:
+            return .empty()
+            
+        case .tapNavigateImjangNoteList:
+            return .just(.setNavigation(.imjangNote))
+            
+        case .tapPrevious:
+            return .just(.setNavigation(.previous))
+            
         case .tapNext:
-            let navigation: Navigation
-            navigation = .next
-            return .just(.setNavigation(navigation))
+            return .just(.setNavigation(.next))
             
         case .selectCell(let listDto):
-            return .just(.setSelectedItem(listDto))
+            return Observable.concat(
+                .just(.setSelectedItem(listDto)),
+                .just(.setNextButtonEnabled(listDto != nil ? true : false))
+            )
         
         case .tapLoadMore:
-            return Observable.concat([
-                repository.fetchNotes(offset: currentState.items.count)
-                    .map { .setItems($0) }
-                    .catchAndReturn(.setItems([])),
-                .just(.setEmptyViewVisible(currentState.items.isEmpty))
-            ])
+            return repository.fetchNotes()
+                .map {
+                    [Mutation.setItems($0),
+                     Mutation.setEmptyViewVisible(!$0.isEmpty)]
+                }
+                .catchAndReturn([.setItems([]), .setEmptyViewVisible(true)])
+                .flatMap { Observable.from($0) }
         }
     }
     
@@ -92,8 +96,8 @@ final class ShareImjangNoteReactor: Reactor {
         case .setEmptyViewVisible(let isEmptyViewVisible):
             state.isEmptyViewVisible = isEmptyViewVisible
         
-        case .setLoadMoreEnabled(let isLoadMoreEnabled):
-            state.isLoadMoreEnabled = isLoadMoreEnabled
+        case .setNextButtonEnabled(let isEnabledNextButton):
+            state.isEnabledNextButton = isEnabledNextButton
         
         case .setSelectedItem(let item):
             state.selectedItem = item
@@ -106,7 +110,7 @@ final class ShareImjangNoteReactor: Reactor {
 extension ShareImjangNoteReactor {
     enum Navigation {
         case previous
-        case checkList
+        case imjangNote
         case next
     }
 }

@@ -39,6 +39,12 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Configure Cell
 extension ImjangNoteCollectionViewCell {
+    func configureCell(imjangNote: ListDto?, isSelected: Bool = false) {
+        configureCell(imjangNote: imjangNote)
+        contentView.layer.borderColor = isSelected ? UIColor.main.cgColor : UIColor.stroke.cgColor
+        contentView.backgroundColor = isSelected ? .bg2 : .mainWhite
+    }
+    
     func configureCell(imjangNote: ListDto?) {
         guard let imjangNote else { return }
         
@@ -187,19 +193,16 @@ extension ImjangNoteCollectionViewCell {
         }
         
     }
-    
-    override func draw(_ rect: CGRect) {
-        contentView.clipsToBounds = true
-        contentView.layer.cornerRadius = 10
-        contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = UIColor.stroke.cgColor
-        roomThumbnailImageView.layer.cornerRadius = 5
-        roomThumbnailImageView.clipsToBounds = true
-    }
-    
+
     private func configureView() {
         contentView.backgroundColor = .mainWhite
+        contentView.clipsToBounds = true
+        contentView.layer.cornerRadius = 10
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = UIColor.stroke.cgColor
         
+        roomThumbnailImageView.layer.cornerRadius = 5
+        roomThumbnailImageView.clipsToBounds = true
         roomThumbnailImageView.contentMode = .scaleAspectFill
         roomNameStackView.axis = .horizontal
         roomNameStackView.spacing = 4

@@ -21,10 +21,10 @@ extension [ListDto] {
         ListDto(nickname: "채드"),
         ListDto(nickname: "채드1"),
         ListDto(nickname: "채드2"),
-        ListDto(nickname: "채드3"),
-        ListDto(nickname: "채드4"),
-        ListDto(nickname: "채드5"),
-        ListDto(nickname: "채드6"),
-        ListDto(nickname: "채드7"),
+//        ListDto(nickname: "채드3"),
+//        ListDto(nickname: "채드4"),
+//        ListDto(nickname: "채드5"),
+//        ListDto(nickname: "채드6"),
+//        ListDto(nickname: "채드7"),
     ]
 }
