@@ -19,7 +19,7 @@ final class ShareImjangNoteReactor: Reactor {
         case viewDidLoad
         case tapBanner
         case tapNavigateImjangNoteList
-        case selectCell(ListDto?)
+        case selectCell(Int?)
         case tapPrevious
         case tapNext
         case tapLoadMore
@@ -28,7 +28,7 @@ final class ShareImjangNoteReactor: Reactor {
     enum Mutation {
         case setNavigation(Navigation)
         case setItems([ListDto])
-        case setSelectedItem(ListDto?)
+        case setSelectedIndex(Int?)
         case setEmptyViewVisible(Bool)
         case setNextButtonEnabled(Bool)
     }
@@ -36,7 +36,7 @@ final class ShareImjangNoteReactor: Reactor {
     struct State {
         var navigation: Navigation?
         var items: [ListDto] = []
-        var selectedItem: ListDto?
+        var selectedIndex: Int?
         var isEmptyViewVisible: Bool = false
         var isEnabledNextButton: Bool = false
     }
@@ -66,12 +66,19 @@ final class ShareImjangNoteReactor: Reactor {
         case .tapNext:
             return .just(.setNavigation(.next))
             
-        case .selectCell(let listDto):
+        case .selectCell(let index):
+            let selectedIndex: Int?
+            if currentState.selectedIndex == index {
+                selectedIndex = nil
+            } else {
+                selectedIndex = index
+            }
             return Observable.concat(
-                .just(.setSelectedItem(listDto)),
-                .just(.setNextButtonEnabled(listDto != nil ? true : false))
+                .just(.setSelectedIndex(selectedIndex)),
+                .just(.setNextButtonEnabled(selectedIndex != nil ? true : false))
             )
         
+        // FIXME: 서버 API 연동 후 페이지네이션 로직에 따라 변경
         case .tapLoadMore:
             return repository.fetchNotes()
                 .map {
@@ -84,26 +91,26 @@ final class ShareImjangNoteReactor: Reactor {
     }
     
     func reduce(state: State, mutation: Mutation) -> State {
-        var state = state
+        var newState = state
         
         switch mutation {
         case .setNavigation(let navigation):
-            state.navigation = navigation
+            newState.navigation = navigation
         
         case .setItems(let items):
-            state.items = items
+            newState.items = items
         
         case .setEmptyViewVisible(let isEmptyViewVisible):
-            state.isEmptyViewVisible = isEmptyViewVisible
+            newState.isEmptyViewVisible = isEmptyViewVisible
         
         case .setNextButtonEnabled(let isEnabledNextButton):
-            state.isEnabledNextButton = isEnabledNextButton
+            newState.isEnabledNextButton = isEnabledNextButton
         
-        case .setSelectedItem(let item):
-            state.selectedItem = item
+        case .setSelectedIndex(let index):
+            newState.selectedIndex = index
         }
         
-        return state
+        return newState
     }
 }
 
