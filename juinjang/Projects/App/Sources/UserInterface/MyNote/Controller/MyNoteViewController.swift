@@ -20,15 +20,36 @@ final class MyNoteViewController: UIViewController, View {
         $0.rightItem = [.search]
     }
     
-    private lazy var segmentedControl: UnderLineSegmentedView = {
+    private lazy var segmentedView: UnderLineSegmentedView = {
         return UnderLineSegmentedView(
             titles: [
                 "공유한 노트",
-                "소장한 노트",
+                "소장한",
                 "좋아한 노트"
             ],
             horizontalInset: 46.5
-        )
+        ).then {
+            $0.bind(to: self.pageContainerCollectionView)
+        }
+    }()
+    
+    private lazy var pageContainerCollectionView: UICollectionView = {
+        return UICollectionView(
+            frame: .zero,
+            collectionViewLayout: UICollectionViewFlowLayout().then {
+                $0.scrollDirection = .horizontal
+                $0.minimumLineSpacing = 0
+                $0.minimumInteritemSpacing = 0
+                $0.sectionInset = .zero
+                
+            }
+        ).then {
+            $0.isPagingEnabled = true
+            $0.showsHorizontalScrollIndicator = false
+            $0.delegate = self
+            $0.dataSource = self
+            $0.register(MyNotePageCell.self)
+        }
     }()
     
     override func viewDidLoad() {
@@ -59,7 +80,8 @@ final class MyNoteViewController: UIViewController, View {
         self.view.backgroundColor = .white
         self.view.add(
             self.navigationView,
-            self.segmentedControl
+            self.segmentedView,
+            self.pageContainerCollectionView
         )
     }
     
@@ -69,9 +91,14 @@ final class MyNoteViewController: UIViewController, View {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        self.segmentedControl.snp.makeConstraints {
+        self.segmentedView.snp.makeConstraints {
             $0.top.equalTo(self.navigationView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
+        }
+        
+        self.pageContainerCollectionView.snp.makeConstraints {
+            $0.top.equalTo(self.segmentedView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
@@ -91,13 +118,45 @@ final class MyNoteViewController: UIViewController, View {
             }
             .disposed(by: disposeBag)
         
-        self.segmentedControl
+        self.segmentedView
             .buttonTapRelay
             .withUnretained(self)
             .subscribe { (self, index) in
-                self.reactor?.action.onNext(.categoryButtonDidTap(index))
+                self.pageContainerCollectionView.scrollToItem(
+                    at: IndexPath(item: index, section: 0),
+                    at: .centeredHorizontally,
+                    animated: true
+                )
             }
             .disposed(by: disposeBag)
+    }
+}
+
+extension MyNoteViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
+        return MyNoteViewReactor.MyNoteCategoryState.allCases.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(MyNotePageCell.self, indexPath) else {
+            return UICollectionViewCell()
+        }
+        
+        // 필요하면 데이터 주입도 여기서!
+        // cell.configure(with: ...)
+        cell.contentView.backgroundColor = indexPath.item % 2 == 0 ? .systemBlue : .systemRed
+        return cell
+    }
+}
+
+extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return CGSize(width: collectionView.bounds.width,
+                      height: collectionView.bounds.height)
     }
 }
 

@@ -11,13 +11,9 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class UnderLineSegmentedView: BaseView {
-    private let disposeBag = DisposeBag()
+final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
     private let bottomLineView = UIView().then {
         $0.backgroundColor = .gray100
-    }
-    private let underLineView = UIView().then {
-        $0.backgroundColor = .gray500
     }
     
     private let stackView = UIStackView().then {
@@ -27,8 +23,15 @@ final class UnderLineSegmentedView: BaseView {
     }
     
     private var titles: [String]
-    private var buttons: [UIButton] = []
     private var horizontalInset: CGFloat
+    private var initialLayoutCount = 0
+    
+    let underLineView = UIView().then {
+        $0.backgroundColor = .gray500
+    }
+    var buttons: [UIButton] = []
+    var previousIndex: Int
+    var disposeBag = DisposeBag()
     
     var buttonTapRelay = PublishRelay<Int>()
     
@@ -37,6 +40,7 @@ final class UnderLineSegmentedView: BaseView {
          initialIndex: Int = 0) {
         self.titles = titles
         self.horizontalInset = horizontalInset
+        self.previousIndex = initialIndex
         super.init(frame: .zero)
         self.selectItem(at: initialIndex, animated: false)
     }
@@ -47,7 +51,6 @@ final class UnderLineSegmentedView: BaseView {
     
     override func configureView() {
         super.configureView()
-        
     }
     
     override func configureHierarchy() {
@@ -80,18 +83,32 @@ final class UnderLineSegmentedView: BaseView {
         }
         
         self.setupButtons()
-        self.setupInitialUnderlineConstraints()
     }
     
-    private func setupInitialUnderlineConstraints() {
-        guard let button = self.buttons.first,
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        initialLayoutCount += 1
+        
+        if initialLayoutCount == 2 {
+            setupInitialUnderlineFrame()
+        }
+    }
+    
+    private func setupInitialUnderlineFrame() {
+        guard let button = buttons.first,
               let titleLabel = button.titleLabel else { return }
 
-        self.underLineView.snp.makeConstraints {
-            $0.horizontalEdges.equalTo(titleLabel.snp.horizontalEdges)
-            $0.height.equalTo(1)
-            $0.bottom.equalToSuperview()
-        }
+        titleLabel.layoutIfNeeded()
+
+        let frame = titleLabel.convert(titleLabel.bounds, to: self)
+        let y = stackView.frame.maxY - 1
+
+        underLineView.frame = CGRect(
+            x: frame.minX,
+            y: y,
+            width: frame.width,
+            height: 1
+        )
     }
     
     private func setupButtons() {
@@ -105,6 +122,7 @@ final class UnderLineSegmentedView: BaseView {
                 $0.rx.tap
                     .withUnretained(self)
                     .do { (self, _) in
+                        self.isSegmentTapTriggered = true
                         self.selectItem(at: index)
                     }
                     .map { _ in index }
@@ -122,39 +140,42 @@ final class UnderLineSegmentedView: BaseView {
         }
     }
     
+    //
+    // MARK: Tap Item
+    //
     func selectItem(at index: Int,
                     animated: Bool = true) {
         guard index < buttons.count else { return }
         
         self.updateSelectedButtonState(index: index)
-        self.updateUnderlineConstraints(index: index)
-        self.applyLayoutUpdate(animated: animated)
+        self.updateUnderlineFrame(index: index, animated: animated)
     }
     
-    private func updateSelectedButtonState(index: Int) {
-        self.buttons.enumerated().forEach { idx, button in
-            button.isSelected = (idx == index)
-        }
-    }
-    
-    private func updateUnderlineConstraints(index: Int) {
-        let selectedButton = buttons[index]
-        guard let titleLabel = selectedButton.titleLabel else { return }
+    private func updateUnderlineFrame(index: Int,
+                                      animated: Bool) {
+        guard let selectedLabel = buttons[index].titleLabel else { return }
+
+        selectedLabel.layoutIfNeeded()
+
+        let frame = selectedLabel.convert(selectedLabel.bounds, to: self)
+        let centerX = frame.midX
+        let width = frame.width
         
-        self.underLineView.snp.remakeConstraints {
-            $0.horizontalEdges.equalTo(titleLabel.snp.horizontalEdges)
-            $0.height.equalTo(1)
-            $0.bottom.equalToSuperview()
+        applyLayoutUpdate(animated: animated) {
+            self.underLineView.bounds.size.width = width
+            self.underLineView.center.x = centerX
         }
     }
     
-    private func applyLayoutUpdate(animated: Bool) {
+    private func applyLayoutUpdate(animated: Bool,
+                                   _ updates: @escaping () -> Void) {
         if animated {
             UIView.animate(withDuration: 0.3) {
-                self.layoutIfNeeded()
+                updates()
             }
         } else {
-            self.layoutIfNeeded()
+            updates()
         }
     }
 }
+

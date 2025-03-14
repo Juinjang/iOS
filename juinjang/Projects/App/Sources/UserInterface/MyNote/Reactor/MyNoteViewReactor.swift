@@ -40,9 +40,8 @@ final class MyNoteViewReactor: Reactor {
     }
 }
 
-
 extension MyNoteViewReactor {
-    enum MyNoteCategoryState: Int {
+    enum MyNoteCategoryState: Int, CaseIterable {
         case share = 0
         case own = 1
         case like = 2
