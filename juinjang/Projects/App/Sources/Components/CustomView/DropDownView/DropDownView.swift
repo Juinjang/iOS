@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-final class DropDownView<T: LookAroundFilterType & RawRepresentable>: UIView where T.RawValue == String {
+final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView where T.RawValue == String {
     private lazy var filterTitleButton = FilterTitleButton(title: filterList[0].title)
     
     // 펼칠 목록(필터 메뉴)을 쌓아둘 스택뷰
@@ -27,15 +27,12 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: UIView whe
     
     private var disposeBag = DisposeBag()
     private var isExpanded = false  // 현재 펼쳐진 상태인지 여부
-    let filterActionRelay = PublishRelay<LookAroundFilterActionType>()
+    lazy var filterActionRelay = BehaviorRelay<LookAroundFilterActionType>(value: filterList[0].action)
     private var filterList: [T]
     
     init(filterList: [T]) {
         self.filterList = filterList
         super.init(frame: .zero)
-        configureHierarchy()
-        configureLayout()
-        configureView()
         setFilterView()
         bind()
     }
@@ -46,18 +43,19 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: UIView whe
     
     private func bind()  {
         filterTitleButton.rx.tap
-            .bind(with: self) { owner, _ in
+            .asDriver()
+            .drive(with: self) { owner, _ in
                 owner.dropDownFilterView()
             }
             .disposed(by: disposeBag)
     }
     
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         addSubview(filterTitleButton)
         addSubview(filterSelectStackView)
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
         filterTitleButton.snp.makeConstraints { make in
             make.leading.top.bottom.equalToSuperview()
             make.width.equalTo(0)
@@ -70,7 +68,7 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: UIView whe
         }
     }
     
-    private func configureView() {
+    override func configureView() {
     }
     
     override func layoutSubviews() {
@@ -92,7 +90,7 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: UIView whe
         return nil
     }
     
-    func calculateStackViewHeight() {
+    private func calculateStackViewHeight() {
         guard filterStackViewContentHeight == 0 else { return }
         var totalHeight: CGFloat = 0
         
@@ -168,23 +166,29 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: UIView whe
             // 마지막 버튼만 하단 모서리를 둥글게
             if index == filterList.count - 1 { button.roundCorners(cornerRadius: 10, corner: .bottom) }
             
-            button.rx.tap
-                .withUnretained(self)
-                .subscribe { owner, _ in
-                    owner.hideDropDown()
-                    owner.clearButtonSelectedColor()
-                    button.updateColor(isSelected: true)
-                    owner.filterTitleButton.updateTitle(title: filter.title)
-                    owner.filterActionRelay.accept(filter.action)
-                }
-                .disposed(by: disposeBag)
+            subscribeTapFilterButton(button, filter: filter)
+            
             filterSelectStackView.addArrangedSubview(button)
         }
     }
     
+    private func subscribeTapFilterButton(_ button: FilterButton, filter: LookAroundFilterType) {
+        button.rx.tap
+            .asDriver()
+            .drive(with: self) { owner, _ in
+                owner.hideDropDown()
+                owner.clearButtonSelectedColor()
+                button.updateColor(isSelected: true)
+                owner.filterTitleButton.updateTitle(title: filter.title)
+                owner.filterActionRelay.accept(filter.action)
+            }
+            .disposed(by: disposeBag)
+    }
+    
     private func clearButtonSelectedColor() {
-        filterSelectStackView.subviews.forEach { button in
-            let button = button as! FilterButton
+        filterSelectStackView.subviews.compactMap {
+            $0 as? FilterButton
+        }.forEach { button in
             button.updateColor(isSelected: false)
         }
     }
