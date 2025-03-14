@@ -35,7 +35,6 @@ final class FilterButton: UIButton {
     }
     
     func updateColor(isSelected: Bool) {
-        print(#function)
         if isSelected {
             setTitleColor(.gray450, for: .normal)
             titleLabel?.setAttribute(text: titleLabel?.text, color: .gray450, font: .pretendard(size: 14, weight: .semiBold))
