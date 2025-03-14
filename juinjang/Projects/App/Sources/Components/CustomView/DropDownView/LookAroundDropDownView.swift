@@ -9,7 +9,7 @@ import UIKit
 import RxRelay
 import RxSwift
 
-final class LookAroundDropDownView: UIView {
+final class LookAroundDropDownView: BaseView {
     private let sortDropDownView = DropDownView(filterList: SortFilter.allCases)
     private let transactionTypeDropDownView = DropDownView(filterList: TransactionTypeFilter.allCases)
     private let saleTypeDropDownView = DropDownView(filterList: SaleTypeFilter.allCases)
@@ -22,9 +22,6 @@ final class LookAroundDropDownView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        configureHierarchy()
-        configureLayout()
-        configureView()
         bind()
     }
     
@@ -52,12 +49,12 @@ final class LookAroundDropDownView: UIView {
             .disposed(by: disposeBag)
     }
     
-    private func configureHierarchy() {
+    override func configureHierarchy() {
         addSubview(sortDropDownView)
         addSubview(transactionTypeDropDownView)
         addSubview(saleTypeDropDownView)
     }
-    private func configureLayout() {
+    override func configureLayout() {
         sortDropDownView.snp.makeConstraints { make in
             make.leading.verticalEdges.equalToSuperview()
         }
@@ -73,9 +70,7 @@ final class LookAroundDropDownView: UIView {
             make.verticalEdges.equalToSuperview()
         }
     }
-    private func configureView() {
-        
-    }
+    override func configureView() { }
     
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         // 우선, 기본 hitTest 결과를 확인
