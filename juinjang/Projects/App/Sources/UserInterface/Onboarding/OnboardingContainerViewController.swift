@@ -43,7 +43,7 @@ final class OnboardingContainerViewController: UIViewController, View {
         return pageControl
     }()
     
-    init(reactor: OnboardingReactor) {
+    init(reactor: OnboardingContainerReactor) {
         super.init(nibName: nil, bundle: nil)
         self.reactor = reactor
     }
@@ -60,20 +60,21 @@ final class OnboardingContainerViewController: UIViewController, View {
         configureHierarchy()
         configureLayout()
         configureView()
+        reactor?.action.onNext(.viewDidLoad)
     }
     
-    func bind(reactor: OnboardingReactor) {
+    func bind(reactor: OnboardingContainerReactor) {
         pageViewController.rx.currentPageVC
             .withUnretained(self)
             .compactMap { owner, vc in owner.pageViewControllerList.firstIndex(of: vc)
             }
             .compactMap { OnboardingType(rawValue: $0) }
-            .map { OnboardingReactor.Action.pageChanged($0)}
+            .map { OnboardingContainerReactor.Action.pageChanged($0)}
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
             
         goLoginButton.rx.tap
-            .map { OnboardingReactor.Action.loginButtonTapped }
+            .map { OnboardingContainerReactor.Action.loginButtonTapped }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -112,7 +113,6 @@ final class OnboardingContainerViewController: UIViewController, View {
                 vc.isShowLoginButton
                     .filter { $0 }
                     .drive(with: self) { owner, isShow in
-                        print(#function, isShow)
                         owner.reactor?.action.onNext(.updateLoginButtonVisible(isShow))
                     }
                     .disposed(by: disposeBag)

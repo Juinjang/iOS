@@ -8,7 +8,7 @@
 import Foundation
 import ReactorKit
 
-final class OnboardingReactor: Reactor {
+final class OnboardingContainerReactor: Reactor {
     // MARK: - Action
     enum Action {
         case viewDidLoad

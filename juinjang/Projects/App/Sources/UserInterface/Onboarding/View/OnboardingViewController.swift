@@ -112,7 +112,12 @@ final class OnboardingViewController: UIViewController {
     }
     
     private func configureView() {
-        titleLabel.design(text: onboardingType.item1.title, font: .pretendard(size: 24, weight: .bold), numberOfLines: 0)
+        titleLabel.design(
+            text: onboardingType.item1.title,
+            textColor: .gray600,
+            font: .pretendard(size: 24, weight: .bold),
+            numberOfLines: 0
+        )
         titleLabel.setLineSpacing(spacing: 10)
         titleLabel.textAlignment = .center
         titleLabel.asColor(targetString: onboardingType.item1.keyword, color: .main)
