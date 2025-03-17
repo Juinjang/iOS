@@ -3,8 +3,8 @@ import SnapKit
 import Then
 import Lottie
 import Alamofire
-import FirebaseAnalytics
 import SkeletonView
+import Common
 
 protocol updateNicknameDelegate: AnyObject {
     func updateNickname()
@@ -33,10 +33,10 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         super.viewWillAppear(animated)
         
         // 화면 전환 이벤트 로깅
-        Analytics.logEvent(AnalyticsEventScreenView, parameters: [
-            AnalyticsParameterScreenName: "MainScreen", // 추적할 화면 이름
-            AnalyticsParameterScreenClass: "MainViewController" // 클래스 이름
-        ])
+        AnalyticsManager.log(event: MainViewEvent(
+                name: .enter_main_view,
+                parameters: ["MainScreen": "MainViewController"])
+        )
     }
     
     // MARK: - viewDidLoad()
