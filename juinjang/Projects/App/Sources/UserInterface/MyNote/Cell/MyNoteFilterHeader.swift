@@ -1,5 +1,5 @@
 //
-//  MyNoteCell.swift
+//  MyNoteFilterCell.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 3/14/25.
@@ -7,12 +7,12 @@
 
 import UIKit
 
-final class MyNoteCell: UICollectionViewCell {
+final class MyNoteFilterHeader: UICollectionReusableView {
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.backgroundColor = .yellow
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

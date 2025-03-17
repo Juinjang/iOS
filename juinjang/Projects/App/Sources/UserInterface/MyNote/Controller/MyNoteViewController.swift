@@ -10,6 +10,7 @@ import ReactorKit
 import RxCocoa
 import Then
 import SnapKit
+import RxDataSources
 
 final class MyNoteViewController: UIViewController, View {
     var disposeBag = DisposeBag()
@@ -22,11 +23,7 @@ final class MyNoteViewController: UIViewController, View {
     
     private lazy var segmentedView: UnderLineSegmentedView = {
         return UnderLineSegmentedView(
-            titles: [
-                "공유한 노트",
-                "소장한",
-                "좋아한 노트"
-            ],
+            titles: MyNoteCategoryType.allCases.map { $0.toText },
             horizontalInset: 46.5
         ).then {
             $0.bind(to: self.pageContainerCollectionView)
@@ -41,22 +38,31 @@ final class MyNoteViewController: UIViewController, View {
                 $0.minimumLineSpacing = 0
                 $0.minimumInteritemSpacing = 0
                 $0.sectionInset = .zero
-                
             }
         ).then {
             $0.isPagingEnabled = true
             $0.showsHorizontalScrollIndicator = false
-            $0.delegate = self
-            $0.dataSource = self
             $0.register(MyNotePageCell.self)
         }
     }()
+    
+    private lazy var pageDataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<Void, MyNotePageModel>>(
+        configureCell: { [weak self] _, collectionView, indexPath, item in
+            guard let self = self else { return UICollectionViewCell() }
+            guard let cell = collectionView.dequeueReusableCell(MyNotePageCell.self, indexPath) else {
+                return UICollectionViewCell()
+            }
+            
+            cell.bind(sections: item.sections, title: item.category.toText)
+            return cell
+        }
+    )
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
         makeConstraints()
-        bind()
+        reactor?.action.onNext(.viewDidLoad)
     }
     
     func bind(reactor: MyNoteViewReactor) {
@@ -73,6 +79,43 @@ final class MyNoteViewController: UIViewController, View {
                     print("좋아요 누른 노트 클릭")
                 }
             })
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { state -> [SectionModel<Void, MyNotePageModel>] in
+                return [SectionModel(model: (), items: state.pages)]
+            }
+            .bind(to: pageContainerCollectionView.rx.items(dataSource: pageDataSource))
+            .disposed(by: disposeBag)
+        
+        self.navigationView
+            .itemActionRelay
+            .withUnretained(self)
+            .subscribe { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
+                case .searchButtonTap:
+                    print("push MyNoteSearchViewController")
+                default:
+                    break
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        self.segmentedView
+            .buttonTapRelay
+            .withUnretained(self)
+            .subscribe { (self, index) in
+                self.pageContainerCollectionView.scrollToItem(
+                    at: IndexPath(item: index, section: 0),
+                    at: .centeredHorizontally,
+                    animated: true
+                )
+            }
+            .disposed(by: disposeBag)
+        
+        self.pageContainerCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
     }
     
@@ -101,54 +144,6 @@ final class MyNoteViewController: UIViewController, View {
             $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
-    
-    private func bind() {
-        self.navigationView
-            .itemActionRelay
-            .withUnretained(self)
-            .subscribe { (self, action) in
-                switch action {
-                case .popButtonTap:
-                    self.navigationController?.popViewController(animated: true)
-                case .searchButtonTap:
-                    print("push MyNoteSearchViewController")
-                default:
-                    break
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        self.segmentedView
-            .buttonTapRelay
-            .withUnretained(self)
-            .subscribe { (self, index) in
-                self.pageContainerCollectionView.scrollToItem(
-                    at: IndexPath(item: index, section: 0),
-                    at: .centeredHorizontally,
-                    animated: true
-                )
-            }
-            .disposed(by: disposeBag)
-    }
-}
-
-extension MyNoteViewController: UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView,
-                        numberOfItemsInSection section: Int) -> Int {
-        return MyNoteViewReactor.MyNoteCategoryState.allCases.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView,
-                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(MyNotePageCell.self, indexPath) else {
-            return UICollectionViewCell()
-        }
-        
-        // 필요하면 데이터 주입도 여기서!
-        // cell.configure(with: ...)
-        cell.contentView.backgroundColor = indexPath.item % 2 == 0 ? .systemBlue : .systemRed
-        return cell
-    }
 }
 
 extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
@@ -160,9 +155,11 @@ extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
     }
 }
 
-@available(iOS 17.0, *)
-#Preview {
-    return MyNoteViewController().then {
-        $0.reactor = MyNoteViewReactor()
-    }
-}
+//@available(iOS 17.0, *)
+//#Preview {
+//    MyNoteViewController().then {
+//        $0.reactor = MyNoteViewReactor(
+//            dependency: .init(myNoteRepository: MyNoteRepository())
+//        )
+//    }
+//}
