@@ -15,8 +15,8 @@ protocol LookAroundFilterActionType {
 }
 
 enum SortFilter: String, CaseIterable, LookAroundFilterType {
+    case popular = "인기순"
     case lateset = "최신순"
-    case purchase = "구매순"
     
     var title: String {
         return self.rawValue
@@ -24,8 +24,8 @@ enum SortFilter: String, CaseIterable, LookAroundFilterType {
     
     var action: LookAroundFilterActionType {
         switch self {
+        case .popular: SortAction.purchaseAction
         case .lateset: SortAction.latestAction
-        case .purchase: SortAction.purchaseAction
         }
     }
 }
