@@ -25,7 +25,7 @@ final class FilterButton: UIButton {
     private func configureView(filterType: LookAroundFilterType) {
         let title = filterType.rawValue
         setTitle(title, for: .normal)
-        titleLabel?.setAttribute(text: title, color: .gray300, font: .pretendard(size: 14, weight: .medium))
+        titleLabel?.setAttributeString(text: title, color: .gray300, font: .pretendard(size: 14, weight: .medium), lineHeight: 19)
         setTitleColor(.gray300, for: .normal)
         backgroundColor = .white
         contentEdgeInsets = UIEdgeInsets(top: 0, left: padding.left, bottom: 0, right: padding.right)
