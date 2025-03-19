@@ -72,4 +72,26 @@ extension UILabel {
         let attrString = NSAttributedString(string: resultText, attributes: attributes)
         self.attributedText = attrString
     }
+    
+    func setAttributeString(text: String?, color: UIColor = .gray500, font: UIFont? = .pretendard(size: 14, weight: .regular), lineHeight: CGFloat = 30, charSpacing: CGFloat = -0.02, alignment: NSTextAlignment = .left) {
+        guard let text, let font else { return }
+        
+        let resultText = text.isEmpty ? "" : text
+
+        let style = NSMutableParagraphStyle()
+        style.maximumLineHeight = lineHeight
+        style.minimumLineHeight = lineHeight
+        style.alignment = alignment
+
+        let attributes: [NSAttributedString.Key: Any] = [
+            .paragraphStyle: style,
+            .baselineOffset: (lineHeight - font.lineHeight) / 2,
+            .kern: charSpacing,
+            .font: font,
+            .foregroundColor: color,
+        ]
+
+        let attrString = NSAttributedString(string: resultText, attributes: attributes)
+        self.attributedText = attrString
+    }
 }
