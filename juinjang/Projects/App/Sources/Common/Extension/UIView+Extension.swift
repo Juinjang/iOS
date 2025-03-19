@@ -35,14 +35,12 @@ extension UIView {
 
 enum Corner {
     case top
-    case topLeft
     case bottom
     case all
     
     var cornerMasks: CACornerMask {
         switch self {
         case .top: [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-        case .topLeft: [.layerMinXMinYCorner]
         case .bottom: [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         case .all: [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
         }
