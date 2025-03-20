@@ -26,7 +26,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
     }
     
     private let starImageView = UIImageView().then {
-        $0.image = .ImjangList.starRounded
+        $0.image = .ImjangList.starRounded.withRenderingMode(.alwaysTemplate)
         $0.tintColor = .mainWhite
     }
     
@@ -288,7 +288,7 @@ extension LookAroundImjangCell {
     }
     
     private func setHits(_ hits: Int) {
-        let hitsText = hits > 999 ? "999+" : "\(hits)"
+        let hitsText = hits.convertHitsString()
         hitsLabel.setAttributeString(text: hitsText, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 16)
     }
     

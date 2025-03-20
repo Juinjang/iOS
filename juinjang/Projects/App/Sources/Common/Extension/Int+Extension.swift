@@ -13,4 +13,8 @@ extension Int {
 
         return Int(time)
     }
+    
+    func convertHitsString() -> String {
+        return self > 999 ? "999+" : "\(self)"
+    }
 }
