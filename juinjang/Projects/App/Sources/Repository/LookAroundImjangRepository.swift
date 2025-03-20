@@ -7,11 +7,11 @@
 
 import RxSwift
 
-protocol LookAroundImjangRepository {
+protocol LookAroundRepository {
     func fetchLookAroundImjang() -> Observable<LookAroundImjangResult>
 }
 
-final class MockLookAroundImjangRepository: LookAroundImjangRepository {
+final class MockLookAroundRepository: LookAroundRepository {
     func fetchLookAroundImjang() -> RxSwift.Observable<LookAroundImjangResult> {
         return .just(.mock)
     }
