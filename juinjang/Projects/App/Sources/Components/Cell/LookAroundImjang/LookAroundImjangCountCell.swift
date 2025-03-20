@@ -17,18 +17,15 @@ final class LookAroundImjangCountCell: BaseCollectionViewCell {
     
     private let titleLabel = UILabel().then {
         let title = "임장노트"
-        $0.text = title
         $0.setAttribute(text: title, color: .gray600, font: .pretendard(size: 18, weight: .bold))
     }
     
     private let countLabel = UILabel().then {
         let title = "33"
-        $0.text = title
         $0.setAttributeString(text: title, color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 24)
     }
     
     func configureCell(imjangCount: Int) {
-        countLabel.text = "\(imjangCount)"
         countLabel.setAttributeString(text: "\(imjangCount)", color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
      

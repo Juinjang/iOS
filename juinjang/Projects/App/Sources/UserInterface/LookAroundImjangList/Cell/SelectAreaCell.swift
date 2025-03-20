@@ -39,7 +39,6 @@ final class SelectAreaCell: BaseCollectionViewCell {
         }
         title = "지역을 선택해주세요"
         iconImageView.tintColor = .main200
-        messageLabel.text = title
         messageLabel.setAttributeString(text: title, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
     }
     
