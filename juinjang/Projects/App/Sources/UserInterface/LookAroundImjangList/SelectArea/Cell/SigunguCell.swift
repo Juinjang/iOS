@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class SigunguCell: SidoCell {
+class SigunguCell: SidoCell {
     private let checkImageView = UIImageView().then {
         $0.image = .ImjangList.on
         $0.isHidden = true

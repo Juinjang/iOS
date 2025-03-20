@@ -29,8 +29,9 @@ final class SelectAreaView: BaseView {
         $0.register(SigunguCell.self, forCellWithReuseIdentifier: SigunguCell.identifier)
     }
     
-    lazy var dongepmyeonCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
+    lazy var dongeupmyeonCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
         $0.backgroundColor = .mainWhite
+        $0.register(DongeupmyeonCell.self, forCellWithReuseIdentifier: DongeupmyeonCell.identifier)
     }
     
     let bottomButtonView = BottomButtonView()
@@ -40,7 +41,7 @@ final class SelectAreaView: BaseView {
     override func configureHierarchy() {
         addSubview(naviagtionView)
         addSubview(collectionViewStackView)
-        [sidoCollectionView, sigunguCollectionView, dongepmyeonCollectionView].forEach {
+        [sidoCollectionView, sigunguCollectionView, dongeupmyeonCollectionView].forEach {
             collectionViewStackView.addArrangedSubview($0)
         }
         addSubview(bottomButtonView)
@@ -69,7 +70,7 @@ final class SelectAreaView: BaseView {
         super.configureView()
         sidoCollectionView.backgroundColor = .mainWhite
         sigunguCollectionView.backgroundColor = .gray100
-        dongepmyeonCollectionView.backgroundColor = .gray200
+        dongeupmyeonCollectionView.backgroundColor = .gray200
     }
 }
 
