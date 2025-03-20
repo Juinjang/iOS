@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class SidoCell: BaseCollectionViewCell {
-    private let titleLabel = UILabel()
+class SidoCell: BaseCollectionViewCell {
+    let titleLabel = UILabel()
     
     func configureCell(title: String) {
-        titleLabel.setAttributeString(text: title, color: .mainWhite, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
+        titleLabel.setAttributeString(text: title, color: .gray400, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
     
     override func configureHierarchy() {
@@ -20,13 +20,9 @@ final class SidoCell: BaseCollectionViewCell {
     
     override func configureLayout() {
         titleLabel.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(16)
+            make.horizontalEdges.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
             make.verticalEdges.lessThanOrEqualToSuperview().inset(10)
         }
-    }
-    
-    override func configureView() {
-        super.configureView()
     }
 }

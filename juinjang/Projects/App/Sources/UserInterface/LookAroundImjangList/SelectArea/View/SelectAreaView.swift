@@ -26,6 +26,7 @@ final class SelectAreaView: BaseView {
     
     lazy var sigunguCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
         $0.backgroundColor = .mainWhite
+        $0.register(SigunguCell.self, forCellWithReuseIdentifier: SigunguCell.identifier)
     }
     
     lazy var dongepmyeonCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
