@@ -1,5 +1,5 @@
 //
-//  LookAroundImjangReactor.swift
+//  LookAroundReactor.swift
 //  juinjang
 //
 //  Created by 조유진 on 3/11/25.
@@ -9,12 +9,12 @@ import ReactorKit
 import UIKit
 import Differentiator
 
-final class LookAroundImjangReactor: Reactor {
-    private let repository: LookAroundImjangRepository
+final class LookAroundReactor: Reactor {
+    private let repository: LookAroundRepository
     private var disposeBag = DisposeBag()
     var initialState: State = State()
     
-    init(repository: LookAroundImjangRepository) {
+    init(repository: LookAroundRepository) {
         self.repository = repository
     }
     

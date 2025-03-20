@@ -1,5 +1,5 @@
 //
-//  LookAroundImjangViewController.swift
+//  LookAroundViewController.swift
 //  juinjang
 //
 //  Created by 조유진 on 2/27/25.
@@ -9,16 +9,16 @@ import UIKit
 import ReactorKit
 import RxDataSources
 
-final class LookAroundImjangViewController: BaseViewController, View {
+final class LookAroundViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
     
-    private let mainView = LookAroundImjangView()
+    private let mainView = LookAroundView()
     private lazy var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData> = {
         let dataSource = configureCollectionViewDataSource()
         return dataSource
     }()
     
-    init(reactor: LookAroundImjangReactor) {
+    init(reactor: LookAroundReactor) {
         super.init()
         self.reactor = reactor
     }
@@ -36,7 +36,7 @@ final class LookAroundImjangViewController: BaseViewController, View {
         view = mainView
     }
     
-    func bind(reactor: LookAroundImjangReactor) {
+    func bind(reactor: LookAroundReactor) {
         
         mainView.navigationView.itemActionRelay
             .bind(with: self, onNext: { owner, action in
@@ -66,7 +66,7 @@ final class LookAroundImjangViewController: BaseViewController, View {
     }
 }
 
-extension LookAroundImjangViewController {
+extension LookAroundViewController {
     private func configureCollectionViewDataSource() -> RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData> {
         return RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData>(configureCell: { dataSource, collectionView, indexPath, lookAroundImjangData in
             switch dataSource[indexPath] {

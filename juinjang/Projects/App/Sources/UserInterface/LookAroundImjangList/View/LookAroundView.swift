@@ -1,5 +1,5 @@
 //
-//  LookAroundImjangView.swift
+//  LookAroundView.swift
 //  juinjang
 //
 //  Created by 조유진 on 2/27/25.
@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LookAroundImjangView: BaseView {
+final class LookAroundView: BaseView {
     let navigationView = DefaultNavigationView().then {
         $0.title = "임장노트 둘러보기"
         $0.leftItem = [.pop]
@@ -30,7 +30,7 @@ final class LookAroundImjangView: BaseView {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(navigationView.snp.bottom)
             make.horizontalEdges.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide)
+            make.bottom.equalToSuperview()
         }
     }
     
@@ -53,7 +53,7 @@ enum LookAroundImjangSection: Int {
     case imjangList
 }
 
-extension LookAroundImjangView {
+extension LookAroundView {
     private func createCollectionViewLayout() -> UICollectionViewLayout {
         print(#function)
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
