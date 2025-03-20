@@ -12,9 +12,11 @@ final class SelectAreaView: BaseView {
         $0.title = "임장 지역 선택"
         $0.leftItem = [.pop]
     }
+    lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
     
     override func configureHierarchy() {
         addSubview(naviagtionView)
+        addSubview(collectionView)
     }
     
     override func configureLayout() {
@@ -23,11 +25,22 @@ final class SelectAreaView: BaseView {
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(44)
         }
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(naviagtionView.snp.bottom).offset(24)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(bottomButtonView.snp.top)
+        }
     }
     
     override func configureView() {
         super.configureView()
+        collectionView.backgroundColor = .mainWhite
     }
 }
+
+extension SelectAreaView {
+    private func createCollectionViewLayout() -> UICollectionViewLayout {
+        
+        return UICollectionViewLayout()
     }
 }
