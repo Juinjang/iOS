@@ -14,9 +14,13 @@ final class SelectAreaView: BaseView {
     }
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
     
+    let bottomButtonView = BottomButtonView()
+    
+    
     override func configureHierarchy() {
         addSubview(naviagtionView)
         addSubview(collectionView)
+        addSubview(bottomButtonView)
     }
     
     override func configureLayout() {
@@ -29,6 +33,10 @@ final class SelectAreaView: BaseView {
             make.top.equalTo(naviagtionView.snp.bottom).offset(24)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(bottomButtonView.snp.top)
+        }
+        bottomButtonView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
     
