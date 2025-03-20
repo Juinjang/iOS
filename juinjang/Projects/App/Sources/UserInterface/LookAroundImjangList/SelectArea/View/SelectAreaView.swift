@@ -19,10 +19,21 @@ final class SelectAreaView: BaseView {
         $0.spacing = 0
     }
     
-    lazy var sidoCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout())
-    lazy var sigunguCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout())
-    lazy var dongepmyeonCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout())
+    lazy var sidoCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
+        $0.backgroundColor = .mainWhite
+        $0.register(SidoCell.self, forCellWithReuseIdentifier: SidoCell.identifier)
+    }
+    
+    lazy var sigunguCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
+        $0.backgroundColor = .mainWhite
+    }
+    
+    lazy var dongepmyeonCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
+        $0.backgroundColor = .mainWhite
+    }
+    
     let bottomButtonView = BottomButtonView()
+    
     
     
     override func configureHierarchy() {
@@ -63,12 +74,10 @@ final class SelectAreaView: BaseView {
 
 extension SelectAreaView {
     private func createVerticalListLayout() -> UICollectionViewLayout {
-        // 1. 아이템: 전체 너비, 높이는 내용에 따라 자동 조절(estimated)
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                              heightDimension: .fractionalWidth(1.0 ))
+                                              heightDimension: .fractionalWidth(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        // 2. 그룹: 한 줄에 하나의 아이템
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                                heightDimension: .absolute(43))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
