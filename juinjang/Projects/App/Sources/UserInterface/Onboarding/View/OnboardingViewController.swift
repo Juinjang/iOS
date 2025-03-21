@@ -6,21 +6,26 @@
 //
 
 import UIKit
-import AVFoundation
 import Lottie
 import AmplitudeSwift
+import RxSwift
+import RxCocoa
 
 final class OnboardingViewController: UIViewController {
-//    private let stackView = UIStackView()
-    private var titleLabel = UILabel()      // 온보딩 텍스트
-    private lazy var animationView = LottieAnimationView(name: onboardingType.item1.jsonURLString)
-    private var onboardingType: OnboardingType
+    private let titleLabel = UILabel()      // 온보딩 텍스트
+    private let animationView: LottieAnimationView
+    private let animationView2: LottieAnimationView
+    private let onboardingType: OnboardingType
     
-    weak var showLoginButtonDelegate: ShowLoginButtonDelegate?
+    private let showLoginButtonRelay: BehaviorRelay<Bool> = .init(value: false)
+    var isShowLoginButton: Driver<Bool> {
+        showLoginButtonRelay.asDriver()
+    }
     
     init(onboardingType: OnboardingType) {
         self.onboardingType = onboardingType
-        print("OnboardingViewController Init")
+        animationView = LottieAnimationView(name: onboardingType.item1.jsonURLString)
+        animationView2 = LottieAnimationView(name: onboardingType.item2.jsonURLString)
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -28,6 +33,7 @@ final class OnboardingViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         configureHierarchy()
@@ -35,70 +41,50 @@ final class OnboardingViewController: UIViewController {
         configureView()
     }
     
-    // MARK: viewDidAppear
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        resetAlpha()
+        stopAllAnimation()
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         setTitle(onboardingType.item1.title, keyword: onboardingType.item1.keyword)
-        animationView = LottieAnimationView(name: onboardingType.item1.jsonURLString)
-        animationView.alpha = 0
-        setAnimationViewLayout(isItem2: false)
         
-        UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: { [weak self] in
-            guard let self else { return }
-            titleLabel.alpha = 1.0
-        }) { _ in   // 타이틀 애니메이션 끝났을 때
-            UIView.animate(withDuration: 0.3, delay: 0.0, options: .curveEaseInOut, animations: { [weak self] in
-                guard let self else { return }
-                animationView.alpha = 1.0
-            }) { [weak self] _ in   // 영상뷰 애니메이션 끝났을 때
-                guard let self else { return }
-                // 3D 영상 재생 시작
-                animationView.play { [weak self] (finish) in
-                    guard let self else { return }
-                    // 어플 예시 화면, 텍스트로 변경
-                    startItem2Animation()
-                    
-                    // 마지막 온보딩 화면인지 체크 후 로그인 버튼 보이기
-                    checkLastOnboarding()
-                }
+        let titleAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) {
+            self.titleLabel.alpha = 1.0
+        }
+        
+        defer { titleAnimator.startAnimation() }
+        
+        let animatorAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) {
+            self.animationView.alpha = 1.0
+        }
+        
+        titleAnimator.addCompletion { _ in
+            animatorAnimator.startAnimation()
+        }
+        
+        // 3D 영상 재생 시작
+        animatorAnimator.addCompletion { _ in
+            self.animationView.play { _ in
+                // 어플 예시 화면, 텍스트로 변경
+                self.startItem2Animation()
+                
+                // 마지막 온보딩 화면인지 체크 후 로그인 버튼 보이기
+                self.checkLastOnboarding()
             }
         }
     }
     
-    private func checkLastOnboarding() {
-        if onboardingType == .report {
-            showLoginButtonDelegate?.showLoginButton()
-        }
-    }
-    
-    private func startItem2Animation() {
-        UIView.animate(withDuration: 0.5, delay: 0.0, options: .allowUserInteraction, animations: { [weak self] in
-            guard let self else { return }
-            setUIHidden(true, hiddenAlpha: 0)
-        })
-        setTitle(onboardingType.item2.title, keyword: onboardingType.item2.keyword)
-        self.animationView = LottieAnimationView(name: onboardingType.item2.jsonURLString)
-        setAnimationViewLayout(isItem2: true)
-        
-        UIView.animate(withDuration: 0.4, delay: 0.0, options: .allowUserInteraction, animations: { [weak self] in
-            guard let self else { return }
-            setUIHidden(false)
-        }) { [weak self] _ in
-            guard let self else { return }
-            animationView.play()
-        }
-    
-    }
-    
-    // MARK: viewDidDisappear
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        setUIHidden(true)
+        stopAllAnimation()
     }
     
     private func configureHierarchy() {
-        [titleLabel, animationView].forEach {
+        [titleLabel, animationView, animationView2].forEach {
             view.addSubview($0)
         }
     }
@@ -116,45 +102,68 @@ final class OnboardingViewController: UIViewController {
             make.horizontalEdges.equalToSuperview().inset(64)
             make.height.equalTo(animationView.snp.width)
         }
-    }
-    
-    private func setAnimationViewLayout(isItem2: Bool) {
-        animationView.removeFromSuperview()
-        view.addSubview(animationView)
-        animationView.layer.shouldRasterize = true
-        animationView.layer.rasterizationScale = UIScreen.main.scale
         
-        if isItem2 {
-            animationView.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.top.equalTo(titleLabel.snp.bottom).offset(22)
-                make.horizontalEdges.equalToSuperview()
-                make.height.equalTo(animationView.snp.width)
-            }
-        } else {
-            animationView.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.top.equalTo(titleLabel.snp.bottom).offset(54)
-                make.horizontalEdges.equalToSuperview().inset(64)
-                make.height.equalTo(animationView.snp.width)
-            }
+        animationView2.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(titleLabel.snp.bottom).offset(22)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(animationView2.snp.width)
         }
-        animationView.layoutIfNeeded()
     }
     
     private func configureView() {
-        
-        titleLabel.design(text: onboardingType.item1.title, font: .pretendard(size: 24, weight: .bold), numberOfLines: 0)
+        titleLabel.design(
+            text: onboardingType.item1.title,
+            textColor: .gray600,
+            font: .pretendard(size: 24, weight: .bold),
+            numberOfLines: 0
+        )
         titleLabel.setLineSpacing(spacing: 10)
         titleLabel.textAlignment = .center
         titleLabel.asColor(targetString: onboardingType.item1.keyword, color: .main)
-        titleLabel.layer.shouldRasterize = true
-        titleLabel.layer.rasterizationScale = UIScreen.main.scale
+        
+        [titleLabel, animationView, animationView2].forEach {
+            $0.layer.shouldRasterize = true
+            $0.layer.rasterizationScale = UIScreen.main.scale
+        }
         
         animationView.backgroundColor = .systemGray6
         animationView.loopMode = .playOnce
+        animationView2.loopMode = .playOnce
         
-        setUIHidden(true)
+    }
+    
+}
+
+// MARK: Animation Methods
+extension OnboardingViewController {
+    private func startItem2Animation() {
+        let completeAnimation1 = UIViewPropertyAnimator(duration: 0.5, curve: .easeInOut) {
+            self.resetAlpha()
+            self.setTitle(self.onboardingType.item2.title, keyword: self.onboardingType.item2.keyword)
+        }
+
+        let animation2Animator = UIViewPropertyAnimator(duration: 0.4, curve: .easeInOut) {
+            self.animationView2.play()
+        }
+        
+        let viewAlphaAnimator = UIViewPropertyAnimator(duration: 0.3, curve: .easeInOut) {
+            self.setAnimationUI(at: .item2, isHidden: false)
+        }
+        
+        completeAnimation1.addCompletion { _ in
+            animation2Animator.startAnimation()
+        }
+        
+        animation2Animator.addCompletion { _ in
+            viewAlphaAnimator.startAnimation()
+        }
+        
+        completeAnimation1.startAnimation()
+    }
+    
+    private func checkLastOnboarding() {
+        showLoginButtonRelay.accept(onboardingType == .report)
     }
     
     private func setTitle(_ title: String, keyword: String) {
@@ -162,8 +171,45 @@ final class OnboardingViewController: UIViewController {
         titleLabel.asColor(targetString: keyword, color: .main)
     }
     
-    private func setUIHidden(_ isHidden: Bool, hiddenAlpha: Double = 0.2) {
-        titleLabel.alpha = isHidden ? hiddenAlpha : 1
-        animationView.alpha = isHidden ? 0 : 1
+    private func setAnimationUI(at type: AnimationType, isHidden: Bool, alpha: Double = 0.2) {
+        titleLabel.alpha = isHidden ? alpha : 1
+        setAnimation(at: type, isHidden: isHidden)
+    }
+    
+    private func setAnimation(at type: AnimationType, isHidden: Bool) {
+        switch type {
+        case .item1:
+            animationView.alpha = isHidden ? 0 : 1
+            animationView2.alpha = !isHidden ? 0 : 1
+        case .item2:
+            animationView2.alpha = isHidden ? 0 : 1
+            animationView.alpha = !isHidden ? 0 : 1
+        }
+    }
+    
+    private func resetAlpha() {
+        self.titleLabel.alpha = 0.0
+        self.animationView.alpha = 0.0
+        self.animationView2.alpha = 0.0
+    }
+    
+    private func stopAllAnimation() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            [animationView, animationView2].forEach {
+                $0.alpha = 0.0
+                if $0.isAnimationPlaying {
+                    $0.stop()
+                }
+            }
+        }
+        
+    }
+}
+
+private extension OnboardingViewController {
+    enum AnimationType {
+        case item1
+        case item2
     }
 }

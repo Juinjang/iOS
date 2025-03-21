@@ -11,7 +11,7 @@ import UIKit
 extension UILabel {
     
     func design(text: String = "",
-                textColor: UIColor = .gray,
+                textColor: UIColor = .gray500,
                 font: UIFont = .systemFont(ofSize: 14),
                 textAlignment: NSTextAlignment = .left,
                 numberOfLines: Int = 1) {
