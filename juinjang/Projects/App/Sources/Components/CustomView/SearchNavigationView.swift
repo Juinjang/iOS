@@ -17,7 +17,7 @@ final class SearchNavigationView: DefaultNavigationView {
         $0.layer.cornerRadius = 20
     }
     
-    private let searchTextField = UITextField().then {
+    let searchTextField = UITextField().then {
         $0.font = .pretendard(size: 14, weight: .regular)
         $0.returnKeyType = .search
         $0.inputAccessoryView = UIView()

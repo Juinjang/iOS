@@ -13,10 +13,15 @@ final class LookAroundSearchViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Do any additional setup after loading the view.
+        
     }
     
     override func loadView() {
         view = mainView
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        mainView.navigationView.searchTextField.becomeFirstResponder()
     }
 }
