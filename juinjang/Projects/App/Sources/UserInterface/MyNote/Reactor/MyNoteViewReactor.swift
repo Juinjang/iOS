@@ -16,7 +16,7 @@ final class MyNoteViewReactor: Reactor {
     enum Action {
         case viewDidLoad
         case categoryButtonDidTap(Int)
-        case loadMore(category: MyNoteCategoryType)
+        case pageCellEventOccurred(event: MyNotePageEventType)
     }
 
     enum Mutation {
@@ -67,8 +67,8 @@ final class MyNoteViewReactor: Reactor {
                 .just(.setCategoryState(index)),
                 fetchNotes(for: category)
             ])
-        case .loadMore(let category):
-            return fetchMoreNotes(for: category)
+        case .pageCellEventOccurred(event: let event):
+            return handlePageCellEvent(event)
         }
     }
 
@@ -150,5 +150,37 @@ final class MyNoteViewReactor: Reactor {
         let noteItems = notes.map { MyNoteSectionItem.note($0) }
         let notesSection = MyNoteSectionModel.myNotes(items: noteItems)
         return [notice, notesSection]
+    }
+    
+    private func handlePageCellEvent(_ event: MyNotePageEventType) -> Observable<Mutation> {
+        switch event {
+        case let .closeButtonTap(index):
+            let category = MyNoteCategoryType(rawValue: index) ?? .share
+            
+            guard let currentPage = currentState.pages.first(where: { $0.category == category }) else {
+                return .empty()
+            }
+            
+            let filteredSections = currentPage.sections.filter { section in
+                if case .notice = section {
+                    return false // notice는 삭제한다
+                }
+                return true
+            }
+            
+            return .just(.setSections(category: category, sections: filteredSections))
+            
+        case let .likeButtonTap(category):
+            return .empty()
+            
+        case let .myNoteCellTap(note):
+            return .empty()
+            
+        case let .filterItemTap(category):
+            return .empty()
+            
+        case let .reachBottom(category):
+            return .empty()
+        }
     }
 }

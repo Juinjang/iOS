@@ -14,6 +14,7 @@ protocol PageUnderLineUpdatable: AnyObject {
     var underLineView: UIView { get }
     var previousIndex: Int { get set }
     var disposeBag: DisposeBag { get set }
+    var scrollSelectedRelay: PublishRelay<Int> { get }
 
     func updateSelectedButtonState(index: Int)
     func bind(to scrollView: UIScrollView)
@@ -124,6 +125,7 @@ extension PageUnderLineUpdatable where Self: UIView {
         if nearestIndex != previousIndex {
             updateSelectedButtonState(index: nearestIndex)
             previousIndex = nearestIndex
+            scrollSelectedRelay.accept(nearestIndex)
         }
     }
 

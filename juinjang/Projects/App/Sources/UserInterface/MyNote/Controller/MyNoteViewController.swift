@@ -26,7 +26,7 @@ final class MyNoteViewController: UIViewController, View {
             titles: MyNoteCategoryType.allCases.map { $0.toText },
             horizontalInset: 46.5
         ).then {
-            $0.bind(to: self.pageContainerCollectionView)
+            $0.bind(to: pageContainerCollectionView)
         }
     }()
     
@@ -46,6 +46,8 @@ final class MyNoteViewController: UIViewController, View {
         }
     }()
     
+    private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
+    
     private lazy var pageDataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<Void, MyNotePageModel>>(
         configureCell: { [weak self] _, collectionView, indexPath, item in
             guard let self = self else { return UICollectionViewCell() }
@@ -53,7 +55,7 @@ final class MyNoteViewController: UIViewController, View {
                 return UICollectionViewCell()
             }
             
-            cell.bind(sections: item.sections, title: item.category.toText)
+            cell.bind(sections: item.sections, relay: pageCellEventRelay)
             return cell
         }
     )
@@ -67,28 +69,13 @@ final class MyNoteViewController: UIViewController, View {
     
     func bind(reactor: MyNoteViewReactor) {
         reactor.state
-            .compactMap { $0.categoryState }
-            .asDriver(onErrorDriveWith: .just(.share))
-            .drive(with: self, onNext: { owner, state in
-                switch state {
-                case .share:
-                    print("공유한 노트 클릭")
-                case .own:
-                    print("소장 노트 클릭")
-                case .like:
-                    print("좋아요 누른 노트 클릭")
-                }
-            })
-            .disposed(by: disposeBag)
-        
-        reactor.state
             .map { state -> [SectionModel<Void, MyNotePageModel>] in
                 return [SectionModel(model: (), items: state.pages)]
             }
             .bind(to: pageContainerCollectionView.rx.items(dataSource: pageDataSource))
             .disposed(by: disposeBag)
-        
-        self.navigationView
+                
+        navigationView
             .itemActionRelay
             .withUnretained(self)
             .subscribe { (self, action) in
@@ -103,8 +90,14 @@ final class MyNoteViewController: UIViewController, View {
             }
             .disposed(by: disposeBag)
         
-        self.segmentedView
-            .buttonTapRelay
+        segmentedView
+            .scrollSelectedRelay
+            .map { Reactor.Action.categoryButtonDidTap($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        segmentedView
+            .buttonTapSelectedRelay
             .withUnretained(self)
             .subscribe { (self, index) in
                 self.pageContainerCollectionView.scrollToItem(
@@ -112,35 +105,41 @@ final class MyNoteViewController: UIViewController, View {
                     at: .centeredHorizontally,
                     animated: true
                 )
+                self.reactor?.action.onNext(.categoryButtonDidTap(index))
             }
             .disposed(by: disposeBag)
         
-        self.pageContainerCollectionView.rx.setDelegate(self)
+        pageContainerCollectionView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+        pageCellEventRelay
+            .map { Reactor.Action.pageCellEventOccurred(event: $0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
     
     private func setupView() {
-        self.view.backgroundColor = .white
-        self.view.add(
-            self.navigationView,
-            self.segmentedView,
-            self.pageContainerCollectionView
+        view.backgroundColor = .white
+        view.add(
+            navigationView,
+            segmentedView,
+            pageContainerCollectionView
         )
     }
     
     private func makeConstraints() {
-        self.navigationView.snp.makeConstraints {
-            $0.top.equalTo(self.view.safeAreaLayoutGuide)
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
         }
         
-        self.segmentedView.snp.makeConstraints {
-            $0.top.equalTo(self.navigationView.snp.bottom)
+        segmentedView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
         }
         
-        self.pageContainerCollectionView.snp.makeConstraints {
-            $0.top.equalTo(self.segmentedView.snp.bottom)
+        pageContainerCollectionView.snp.makeConstraints {
+            $0.top.equalTo(segmentedView.snp.bottom)
             $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
@@ -154,12 +153,3 @@ extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
                       height: collectionView.bounds.height)
     }
 }
-
-//@available(iOS 17.0, *)
-//#Preview {
-//    MyNoteViewController().then {
-//        $0.reactor = MyNoteViewReactor(
-//            dependency: .init(myNoteRepository: MyNoteRepository())
-//        )
-//    }
-//}

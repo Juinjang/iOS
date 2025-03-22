@@ -32,9 +32,9 @@ final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
     var buttons: [UIButton] = []
     var previousIndex: Int
     var disposeBag = DisposeBag()
-    
-    var buttonTapRelay = PublishRelay<Int>()
-    
+    var scrollSelectedRelay = PublishRelay<Int>()
+    var buttonTapSelectedRelay = PublishRelay<Int>()
+
     init(titles: [String],
          horizontalInset: CGFloat = 39,
          initialIndex: Int = 0) {
@@ -126,7 +126,7 @@ final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
                         self.selectItem(at: index)
                     }
                     .map { _ in index }
-                    .bind(to: self.buttonTapRelay)
+                    .bind(to: self.buttonTapSelectedRelay)
                     .disposed(by: disposeBag)
             }
             

@@ -12,12 +12,20 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
+enum MyNotePageEventType {
+    case closeButtonTap(Int)
+    case likeButtonTap(Int)
+    case myNoteCellTap(Int)
+    case filterItemTap(Int)
+    case reachBottom(Int)
+}
+
 final class MyNotePageCell: UICollectionViewCell {
     
     private var disposeBag = DisposeBag()
     
     private let mainTitle: UILabel = {
-        UILabel().then {
+        return UILabel().then {
             $0.textColor = .black
             $0.font = .systemFont(ofSize: 16, weight: .bold)
         }
@@ -30,42 +38,25 @@ final class MyNotePageCell: UICollectionViewCell {
             $0.register(MyNoteNoticeCell.self)
             $0.register(MyNoteCell.self)
             $0.contentInset = .init(top: 8, left: 0, bottom: 0, right: 0)
+            $0.showsVerticalScrollIndicator = false
         }
     }()
-    
-    private lazy var dataSource = RxCollectionViewSectionedReloadDataSource<MyNoteSectionModel>(
-        configureCell: { _, collectionView, indexPath, item in
-            switch item {
-            case let .notice(category):
-                guard let cell = collectionView.dequeueReusableCell(MyNoteNoticeCell.self, indexPath) else {
-                    return UICollectionViewCell()
-                }
-                cell.bind(category: category)
-                return cell
-                
-            case let .note(note):
-                guard let cell = collectionView.dequeueReusableCell(MyNoteCell.self, indexPath) else {
-                    return UICollectionViewCell()
-                }
-                
-                return cell
-            }
-        }
-    )
-    
+            
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
         setupLayout()
     }
-    
+        
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
     private func setupUI() {
-        contentView.addSubview(innerCollectionView)
-        contentView.addSubview(mainTitle)
+        contentView.add([
+            innerCollectionView,
+            mainTitle
+        ])
     }
     
     private func setupLayout() {
@@ -78,14 +69,54 @@ final class MyNotePageCell: UICollectionViewCell {
         }
     }
     
-    func bind(sections: [MyNoteSectionModel], title: String) {
+    func bind(sections: [MyNoteSectionModel],
+              relay: PublishRelay<MyNotePageEventType>) {
         disposeBag = DisposeBag()
         
         Observable.just(sections)
-            .bind(to: innerCollectionView.rx.items(dataSource: dataSource))
+            .bind(
+                to: innerCollectionView.rx.items(
+                    dataSource: createDataSource(relay: relay)
+                )
+            )
             .disposed(by: disposeBag)
         
-        mainTitle.text = title
+        innerCollectionView.rx.didScroll
+            .withUnretained(self)
+            .subscribe { (self, _) in
+                let offsetY = self.innerCollectionView.contentOffset.y
+                let contentHeight = self.innerCollectionView.contentSize.height
+                let frameHeight = self.innerCollectionView.frame.size.height
+                
+                let distanceFromBottom = contentHeight - (offsetY + frameHeight)
+                
+                if distanceFromBottom <= 0 {
+                    print("✅ 마지막 셀 근처에 도달했다!")
+                    // 여기에 pageEventRelay 같은 거 전달해주면 됨!
+                    relay.accept(.reachBottom(0))
+                }
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func createDataSource(relay: PublishRelay<MyNotePageEventType>) -> RxCollectionViewSectionedReloadDataSource<MyNoteSectionModel> {
+        return .init(configureCell: { _, collectionView, indexPath, item in
+            switch item {
+            case let .notice(category):
+                guard let cell = collectionView.dequeueReusableCell(MyNoteNoticeCell.self, indexPath) else {
+                    return UICollectionViewCell()
+                }
+                cell.bind(category: category, relay: relay)
+                return cell
+                
+            case let .note(note):
+                guard let cell = collectionView.dequeueReusableCell(MyNoteCell.self, indexPath) else {
+                    return UICollectionViewCell()
+                }
+                cell.bind(note)
+                return cell
+            }
+        })
     }
     
     private func createCompositionalLayout() -> UICollectionViewLayout {
@@ -95,9 +126,11 @@ final class MyNotePageCell: UICollectionViewCell {
             
             switch sectionIndex {
             case 0:
-                itemHeight = 56 // 공지 셀 (MyNoteNoticeCell)
+                itemHeight = 56
+            case 1:
+                itemHeight = 136
             default:
-                itemHeight = 150 // 일반 노트 셀 (MyNoteCell)
+                itemHeight = 0
             }
             
             // 셀 크기: 전체 가로 너비, 높이 150
@@ -118,7 +151,7 @@ final class MyNotePageCell: UICollectionViewCell {
             // 섹션 생성
             let section = NSCollectionLayoutSection(group: group).then {
                 $0.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-                $0.interGroupSpacing = 10
+                $0.interGroupSpacing = 0
             }
             
             return section
