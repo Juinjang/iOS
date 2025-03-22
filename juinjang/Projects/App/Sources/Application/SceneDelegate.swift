@@ -6,8 +6,8 @@
 //
 
 import UIKit
-//import KakaoSDKAuth
-//import IQKeyboardManagerSwift
+import KakaoSDKAuth
+import IQKeyboardManagerSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -20,27 +20,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-//        let mainViewController = SplashViewController()
-//        mainViewController.reactor = SplashViewReactor()
+        let mainViewController = SplashViewController()
+        mainViewController.reactor = SplashViewReactor()
         
-        let myNoteViewController = MyNoteViewController()
-        myNoteViewController.reactor = MyNoteViewReactor(dependency: .init(myNoteRepository: MyNoteRepository()))
-        window?.rootViewController = myNoteViewController
+        window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
         
-//        IQKeyboardManager.shared.enable = true
+        IQKeyboardManager.shared.enable = true
         
         self.scene = scene
         startMonitoring(scene: scene)
     }
     
-//    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
-//        if let url = URLContexts.first?.url {
-//            if (AuthApi.isKakaoTalkLoginUrl(url)) {
-//                _ = AuthController.handleOpenUrl(url: url)
-//            }
-//        }
-//    }
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                _ = AuthController.handleOpenUrl(url: url)
+            }
+        }
+    }
     
     private func startMonitoring(scene: UIScene) {
         NetworkMonitor.shared.startMonitoring { [weak self] connectionStatus in

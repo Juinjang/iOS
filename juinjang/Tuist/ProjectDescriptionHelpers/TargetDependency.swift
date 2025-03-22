@@ -23,6 +23,7 @@ public enum SPM: String {
     case realmSwift = "RealmSwift"
     case rxSwift = "RxSwift"
     case rxCocoa = "RxCocoa"
+    case rxDataSources = "RxDataSources"
     case skeletonView = "SkeletonView"
     case snapKit = "SnapKit"
     case tabman = "Tabman"

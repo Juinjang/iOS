@@ -40,6 +40,7 @@ final class MyNoteViewController: UIViewController, View {
                 $0.sectionInset = .zero
             }
         ).then {
+            $0.bounces = false
             $0.isPagingEnabled = true
             $0.showsHorizontalScrollIndicator = false
             $0.register(MyNotePageCell.self)

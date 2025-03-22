@@ -91,7 +91,6 @@ final class MyNotePageCell: UICollectionViewCell {
                 let distanceFromBottom = contentHeight - (offsetY + frameHeight)
                 
                 if distanceFromBottom <= 0 {
-                    print("✅ 마지막 셀 근처에 도달했다!")
                     // 여기에 pageEventRelay 같은 거 전달해주면 됨!
                     relay.accept(.reachBottom(0))
                 }
