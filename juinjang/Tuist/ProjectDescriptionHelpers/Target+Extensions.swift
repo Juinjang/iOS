@@ -13,8 +13,8 @@ extension Target {
             "CFBundleLocalizations": ["ko", "en"],
             "CFBundleAllowMixedLocalizations": "YES"
         ]),
-        sources: SourceFilesList? = ["Sources/**"],
-        resources: ResourceFileElements? = ["Resources/**"],
+        sources: SourceFilesList? = nil,
+        resources: ResourceFileElements? = nil,
         copyFiles: [CopyFilesAction]? = nil,
         headers: Headers? = nil,
         entitlements: Entitlements? = nil,
@@ -30,7 +30,6 @@ extension Target {
         mergeable: Bool = false
     ) -> Target {
         let dependencies = dependencies.map { $0.asTargetDependency() }
-        let bundleId = "com.juinjangteam.\(name)"
         return .target(
             name: name,
             destinations: destinations,

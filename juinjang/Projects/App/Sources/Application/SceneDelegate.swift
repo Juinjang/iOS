@@ -7,7 +7,6 @@
 
 import UIKit
 import KakaoSDKAuth
-import IQKeyboardManagerSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -24,8 +23,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         mainViewController.reactor = SplashViewReactor()
         window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
-        
-        IQKeyboardManager.shared.enable = true
         
         self.scene = scene
         startMonitoring(scene: scene)
