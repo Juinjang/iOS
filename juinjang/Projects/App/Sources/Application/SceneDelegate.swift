@@ -22,8 +22,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let mainViewController = SplashViewController()
         mainViewController.reactor = SplashViewReactor()
-        
-        window?.rootViewController = mainViewController
+        let testVC = MyNoteViewController()
+        let reactor = MyNoteViewReactor(dependency: .init(myNoteRepository: MyNoteRepository()))
+        testVC.reactor = reactor
+        window?.rootViewController = testVC
         window?.makeKeyAndVisible()
         
         IQKeyboardManager.shared.enable = true

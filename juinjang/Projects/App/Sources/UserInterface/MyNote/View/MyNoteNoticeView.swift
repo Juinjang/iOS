@@ -1,5 +1,5 @@
 //
-//  MyNoteNoticeCell.swift
+//  MyNoteNoticeView.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 3/14/25.
@@ -12,7 +12,7 @@ import RxRelay
 import RxCocoa
 import RxSwift
 
-final class MyNoteNoticeCell: UICollectionViewCell {
+final class MyNoteNoticeView: BaseView {
     private let baseView = UIView().then {
         $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 4
@@ -29,23 +29,12 @@ final class MyNoteNoticeCell: UICollectionViewCell {
     private let closeButton = ImageButton(normalImage: .x24).then {
         $0.tintColor = .gray300
     }
+    
     private var disposeBag = DisposeBag()
     
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        configureView()
-        configureHierarchy()
-        configureLayout()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     func bind(category: MyNoteCategoryType,
-              relay: PublishRelay<MyNotePageEventType>) {
+              relay: PublishRelay<Void>) {
         self.closeButton.rx.tap
-            .map { MyNotePageEventType.closeButtonTap(category.rawValue) }
             .bind(to: relay)
             .disposed(by: disposeBag)
         
@@ -59,12 +48,9 @@ final class MyNoteNoticeCell: UICollectionViewCell {
         }
     }
     
-    private func configureView() {
-        contentView.backgroundColor = .white
-    }
-    
-    private func configureHierarchy() {
-        contentView.add([
+    override func configureHierarchy() {
+        super.configureHierarchy()
+        add([
             baseView.with(
                 iconImageView,
                 noticeLabel,
@@ -73,9 +59,11 @@ final class MyNoteNoticeCell: UICollectionViewCell {
         ])
     }
     
-    private func configureLayout() {
+    override func configureLayout() {
+        super.configureLayout()
+        
         baseView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(8)
+            $0.top.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview()
         }

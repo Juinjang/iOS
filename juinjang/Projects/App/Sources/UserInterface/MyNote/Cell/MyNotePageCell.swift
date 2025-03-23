@@ -12,8 +12,7 @@ import RxSwift
 import RxCocoa
 import RxDataSources
 
-enum MyNotePageEventType {
-    case closeButtonTap(Int)
+enum MyNotePageEventType: Equatable {
     case likeButtonTap(Int)
     case myNoteCellTap(Int)
     case filterItemTap(Int)
@@ -21,27 +20,18 @@ enum MyNotePageEventType {
 }
 
 final class MyNotePageCell: UICollectionViewCell {
-    
     private var disposeBag = DisposeBag()
-    
-    private let mainTitle: UILabel = {
-        return UILabel().then {
-            $0.textColor = .black
-            $0.font = .systemFont(ofSize: 16, weight: .bold)
-        }
-    }()
     
     private lazy var innerCollectionView: UICollectionView = {
         return UICollectionView(frame: .zero,
-                                collectionViewLayout: createCompositionalLayout()).then {
-            $0.backgroundColor = .clear
-            $0.register(MyNoteNoticeCell.self)
+                                collectionViewLayout: createCompositionalLayout(isExpanded: true)).then {
             $0.register(MyNoteCell.self)
-            $0.contentInset = .init(top: 8, left: 0, bottom: 0, right: 0)
             $0.showsVerticalScrollIndicator = false
         }
     }()
-            
+    
+    private let filterHeaderView = MyNoteFilterHeader()
+                
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -54,26 +44,29 @@ final class MyNotePageCell: UICollectionViewCell {
     
     private func setupUI() {
         contentView.add([
-            innerCollectionView,
-            mainTitle
+            filterHeaderView,
+            innerCollectionView
         ])
     }
     
     private func setupLayout() {
-        innerCollectionView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+        filterHeaderView.snp.makeConstraints {
+            $0.top.horizontalEdges.equalToSuperview()
         }
         
-        mainTitle.snp.makeConstraints {
-            $0.center.equalToSuperview()
+        innerCollectionView.snp.makeConstraints {
+            $0.top.equalTo(filterHeaderView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
-    func bind(sections: [MyNoteSectionModel],
+    func bind(page: MyNotePageModel,
               relay: PublishRelay<MyNotePageEventType>) {
         disposeBag = DisposeBag()
         
-        Observable.just(sections)
+        filterHeaderView.configure(category: page.category)
+        
+        Observable.just([page])
             .bind(
                 to: innerCollectionView.rx.items(
                     dataSource: createDataSource(relay: relay)
@@ -98,56 +91,34 @@ final class MyNotePageCell: UICollectionViewCell {
             .disposed(by: disposeBag)
     }
     
-    private func createDataSource(relay: PublishRelay<MyNotePageEventType>) -> RxCollectionViewSectionedReloadDataSource<MyNoteSectionModel> {
-        return .init(configureCell: { _, collectionView, indexPath, item in
-            switch item {
-            case let .notice(category):
-                guard let cell = collectionView.dequeueReusableCell(MyNoteNoticeCell.self, indexPath) else {
-                    return UICollectionViewCell()
+    private func createDataSource(relay: PublishRelay<MyNotePageEventType>) -> RxCollectionViewSectionedReloadDataSource<MyNotePageModel> {
+        return .init(
+            configureCell: { _, collectionView, indexPath, item in
+                return collectionView.dequeueReusableCell(
+                    MyNoteCell.self,
+                    for: indexPath
+                ).then {
+                    $0.bind(item)
                 }
-                cell.bind(category: category, relay: relay)
-                return cell
-                
-            case let .note(note):
-                guard let cell = collectionView.dequeueReusableCell(MyNoteCell.self, indexPath) else {
-                    return UICollectionViewCell()
-                }
-                cell.bind(note)
-                return cell
             }
-        })
+        )
     }
     
-    private func createCompositionalLayout() -> UICollectionViewLayout {
+    private func createCompositionalLayout(isExpanded: Bool) -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-            
-            let itemHeight: CGFloat
-            
-            switch sectionIndex {
-            case 0:
-                itemHeight = 56
-            case 1:
-                itemHeight = 136
-            default:
-                itemHeight = 0
-            }
-            
-            // 셀 크기: 전체 가로 너비, 높이 150
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(itemHeight)
+                heightDimension: .absolute(136)
             )
             
             let item = NSCollectionLayoutItem(layoutSize: itemSize)
             
-            // 그룹: 단일 아이템 그룹 (리스트 형태)
             let groupSize = itemSize
             let group = NSCollectionLayoutGroup.vertical(
                 layoutSize: groupSize,
                 subitems: [item]
             )
             
-            // 섹션 생성
             let section = NSCollectionLayoutSection(group: group).then {
                 $0.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
                 $0.interGroupSpacing = 0

@@ -7,11 +7,6 @@
 
 import ReactorKit
 
-struct MyNotePageModel {
-    let category: MyNoteCategoryType
-    let sections: [MyNoteSectionModel]
-}
-
 final class MyNoteViewReactor: Reactor {
     enum Action {
         case viewDidLoad
@@ -21,7 +16,7 @@ final class MyNoteViewReactor: Reactor {
 
     enum Mutation {
         case setCategoryState(Int)
-        case setSections(category: MyNoteCategoryType, sections: [MyNoteSectionModel])
+        case setPage(MyNotePageModel)
         case appendNotes(category: MyNoteCategoryType, notes: [MyNoteModel])
     }
 
@@ -31,9 +26,9 @@ final class MyNoteViewReactor: Reactor {
         var ownPageState = NotesPageState()
         var likePageState = NotesPageState()
         var pages: [MyNotePageModel] = [
-            MyNotePageModel(category: .share, sections: []),
-            MyNotePageModel(category: .own, sections: []),
-            MyNotePageModel(category: .like, sections: [])
+            MyNotePageModel(category: .share, items: []),
+            MyNotePageModel(category: .own, items: []),
+            MyNotePageModel(category: .like, items: [])
         ]
     }
     
@@ -80,10 +75,10 @@ final class MyNoteViewReactor: Reactor {
         case .setCategoryState(let index):
             state.categoryState = MyNoteCategoryType(rawValue: index) ?? .share
             
-        case let .setSections(category, sections):
+        case .setPage(let page):
             state.pages = state.pages.map {
-                guard $0.category != category else {
-                    return MyNotePageModel(category: category, sections: sections)
+                guard $0.category != page.category else {
+                    return page
                 }
                 return $0
             }
@@ -112,8 +107,7 @@ final class MyNoteViewReactor: Reactor {
             offset: offset,
             limit: pageState.limit
         ).map { notes in
-            let sections = self.makeSections(category: category, notes: notes)
-            return Mutation.setSections(category: category, sections: sections)
+            return Mutation.setPage(.init(category: category, items: notes))
         }
     }
     
@@ -145,31 +139,8 @@ final class MyNoteViewReactor: Reactor {
         }
     }
     
-    private func makeSections(category: MyNoteCategoryType, notes: [MyNoteModel]) -> [MyNoteSectionModel] {
-        let notice = MyNoteSectionModel.notice(items: [.notice(category)])
-        let noteItems = notes.map { MyNoteSectionItem.note($0) }
-        let notesSection = MyNoteSectionModel.myNotes(items: noteItems)
-        return [notice, notesSection]
-    }
-    
     private func handlePageCellEvent(_ event: MyNotePageEventType) -> Observable<Mutation> {
         switch event {
-        case let .closeButtonTap(index):
-            let category = MyNoteCategoryType(rawValue: index) ?? .share
-            
-            guard let currentPage = currentState.pages.first(where: { $0.category == category }) else {
-                return .empty()
-            }
-            
-            let filteredSections = currentPage.sections.filter { section in
-                if case .notice = section {
-                    return false // notice는 삭제한다
-                }
-                return true
-            }
-            
-            return .just(.setSections(category: category, sections: filteredSections))
-            
         case let .likeButtonTap(category):
             return .empty()
             
