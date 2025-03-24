@@ -15,20 +15,42 @@ import Then
 final class MyNoteFilterHeader: BaseView {
     private var disposeBag = DisposeBag()
     private let noticeView = MyNoteNoticeView()
-    private let filterView = LookAroundDropDownView()
-    private let closeButtonDidTap = PublishRelay<Void>()
+    private let filterView = MyNoteDropDownView()
     private var heightConstraint: Constraint?
-    
-    func configure(category: MyNoteCategoryType) {
-        disposeBag = DisposeBag()
-        noticeView.bind(category: category, relay: closeButtonDidTap)
+    private let closeButtonTapRelay = PublishRelay<Void>()
         
-        closeButtonDidTap
-            .asDriver(onErrorJustReturn: ())
-            .drive(with: self) { (self, _) in
-                self.updateLayoutWithAnimation(isExpanded: false)
+    func configure(pageModel: MyNotePageModel,
+                   relay: PublishRelay<MyNotePageEventType>) {
+        applyLayout(isExpanded: pageModel.isShowingNotice)
+        noticeView.configure(pageModel.category, relay: closeButtonTapRelay)
+        filterView.configure(pageModel.transactionType, pageModel.saleType)
+        
+        closeButtonTapRelay
+            .withUnretained(self)
+            .subscribe { (self, _) in
+                self.animateNoticeClose(category: pageModel.category, relay: relay)
             }
             .disposed(by: disposeBag)
+        
+        filterView.transactionTypeActionRelay
+            .withUnretained(self)
+            .subscribe { (self, action) in
+                relay.accept(.filterItemTap(pageModel.category.rawValue, action, nil))
+            }
+            .disposed(by: disposeBag)
+        
+        filterView.saleTypeActionRelay
+            .withUnretained(self)
+            .subscribe { (self, action) in
+                relay.accept(.filterItemTap(pageModel.category.rawValue, nil, action))
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func prepareForReuse() {
+        disposeBag = DisposeBag()
+        noticeView.alpha = 1.0
+        noticeView.isHidden = false
     }
     
     override func configureHierarchy() {
@@ -59,26 +81,32 @@ final class MyNoteFilterHeader: BaseView {
         }
     }
     
-    private func updateLayoutWithAnimation(isExpanded: Bool) {
+    private func animateNoticeClose(category: MyNoteCategoryType,
+                                    relay: PublishRelay<MyNotePageEventType>) {
         guard let superview = self.superview else { return }
         
-        UIView.animateKeyframes(withDuration: 0.5, delay: 0, options: [], animations: {
-            UIView.addKeyframe(withRelativeStartTime: 0.0,
-                               relativeDuration: 0.5) {
+        UIView.animateKeyframes(withDuration: 0.5, delay: 0, options: []) {
+            UIView.addKeyframe(withRelativeStartTime: 0.0, relativeDuration: 0.5) {
                 self.noticeView.alpha = 0.0
             }
-            
-            UIView.addKeyframe(withRelativeStartTime: 0.3,
-                               relativeDuration: 0.7) {
+            UIView.addKeyframe(withRelativeStartTime: 0.3, relativeDuration: 0.7) {
                 self.heightConstraint?.update(offset: 51)
                 self.updateConstraints(isExpanded: false)
                 superview.layoutIfNeeded()
             }
-        }, completion: { _ in
-            if !isExpanded {
-                self.noticeView.isHidden = true
-            }
-        })
+        } completion: { [weak self] _ in
+            guard let self = self else { return }
+            self.noticeView.isHidden = true
+            relay.accept(.noticeCloseButtonTap(category.rawValue))
+        }
+    }
+    
+    private func applyLayout(isExpanded: Bool) {
+        noticeView.isHidden = !isExpanded
+        heightConstraint?.update(offset: isExpanded ? 115 : 51)
+        updateConstraints(isExpanded: isExpanded)
+        
+        superview?.layoutIfNeeded()
     }
     
     private func updateConstraints(isExpanded: Bool) {
@@ -101,5 +129,18 @@ final class MyNoteFilterHeader: BaseView {
                 $0.height.equalTo(35)
             }
         }
+    }
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        if let hitView = super.hitTest(point, with: event) {
+            return hitView
+        }
+        
+        let convertedPoint = filterView.convert(point, from: self)
+        if let hitView = filterView.hitTest(convertedPoint, with: event) {
+            return hitView
+        }
+        
+        return nil
     }
 }

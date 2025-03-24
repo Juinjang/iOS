@@ -88,6 +88,19 @@ enum TransactionTypeAction: LookAroundFilterActionType {
     case monthlyRent
     case lease
     case sale
+    
+    var filter: TransactionTypeFilter {
+        switch self {
+        case .totalTransaction:
+            return .total
+        case .monthlyRent:
+            return .monthlyRent
+        case .lease:
+            return .lease
+        case .sale:
+            return .sale
+        }
+    }
 }
 
 enum SaleTypeAction: LookAroundFilterActionType {
@@ -96,4 +109,19 @@ enum SaleTypeAction: LookAroundFilterActionType {
     case apartment
     case detachedHouse
     case villa
+    
+    var filter: SaleTypeFilter {
+        switch self {
+        case .totalSale:
+            return .totalSale
+        case .officetel:
+            return .officetel
+        case .apartment:
+            return .apartment
+        case .detachedHouse:
+            return .detachedHouse
+        case .villa:
+            return .villa
+        }
+    }
 }

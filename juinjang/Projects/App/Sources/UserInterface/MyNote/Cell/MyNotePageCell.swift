@@ -13,10 +13,10 @@ import RxCocoa
 import RxDataSources
 
 enum MyNotePageEventType: Equatable {
+    case noticeCloseButtonTap(Int)
     case likeButtonTap(Int)
     case myNoteCellTap(Int)
-    case filterItemTap(Int)
-    case reachBottom(Int)
+    case filterItemTap(Int, TransactionTypeAction?, SaleTypeAction?)
 }
 
 final class MyNotePageCell: UICollectionViewCell {
@@ -42,11 +42,17 @@ final class MyNotePageCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        filterHeaderView.prepareForReuse()
+    }
+    
     private func setupUI() {
         contentView.add([
             filterHeaderView,
             innerCollectionView
         ])
+        contentView.bringSubviewToFront(filterHeaderView)
     }
     
     private func setupLayout() {
@@ -64,7 +70,8 @@ final class MyNotePageCell: UICollectionViewCell {
               relay: PublishRelay<MyNotePageEventType>) {
         disposeBag = DisposeBag()
         
-        filterHeaderView.configure(category: page.category)
+        filterHeaderView.configure(pageModel: page,
+                                   relay: relay)
         
         Observable.just([page])
             .bind(
@@ -72,22 +79,6 @@ final class MyNotePageCell: UICollectionViewCell {
                     dataSource: createDataSource(relay: relay)
                 )
             )
-            .disposed(by: disposeBag)
-        
-        innerCollectionView.rx.didScroll
-            .withUnretained(self)
-            .subscribe { (self, _) in
-                let offsetY = self.innerCollectionView.contentOffset.y
-                let contentHeight = self.innerCollectionView.contentSize.height
-                let frameHeight = self.innerCollectionView.frame.size.height
-                
-                let distanceFromBottom = contentHeight - (offsetY + frameHeight)
-                
-                if distanceFromBottom <= 0 {
-                    // 여기에 pageEventRelay 같은 거 전달해주면 됨!
-                    relay.accept(.reachBottom(0))
-                }
-            }
             .disposed(by: disposeBag)
     }
     

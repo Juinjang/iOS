@@ -32,20 +32,14 @@ final class MyNoteNoticeView: BaseView {
     
     private var disposeBag = DisposeBag()
     
-    func bind(category: MyNoteCategoryType,
-              relay: PublishRelay<Void>) {
-        self.closeButton.rx.tap
+    func configure(_ category: MyNoteCategoryType,
+                   relay: PublishRelay<Void>) {
+        disposeBag = DisposeBag()
+        applyLayoutFor(category)
+        
+        closeButton.rx.tap
             .bind(to: relay)
             .disposed(by: disposeBag)
-        
-        switch category {
-        case .share:
-            applyLayoutForShare()
-        case .own:
-            applyLayoutForOwn()
-        case .like:
-            applyLayoutForLike()
-        }
     }
     
     override func configureHierarchy() {
@@ -86,6 +80,17 @@ final class MyNoteNoticeView: BaseView {
         }
     }
     
+    private func applyLayoutFor(_ category: MyNoteCategoryType) {
+        switch category {
+        case .share:
+            applyLayoutForShare()
+        case .own:
+            applyLayoutForOwn()
+        case .like:
+            applyLayoutForLike()
+        }
+    }
+    
     private func applyLayoutForShare() {
         noticeLabel.text = "여기서는 내가 공유한 노트를 볼 수 있어요."
         iconImageView.image = nil
@@ -93,7 +98,7 @@ final class MyNoteNoticeView: BaseView {
         iconImageView.snp.remakeConstraints {
             $0.left.equalToSuperview().offset(12)
             $0.centerY.equalToSuperview()
-            $0.width.equalTo(0) // 숨기기 (높이는 필요 없음)
+            $0.width.equalTo(0)
             $0.height.equalTo(0)
         }
         

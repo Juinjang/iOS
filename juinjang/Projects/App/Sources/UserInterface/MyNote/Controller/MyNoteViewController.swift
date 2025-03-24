@@ -49,7 +49,7 @@ final class MyNoteViewController: UIViewController, View {
     
     private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
     
-    private lazy var pageDataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<Void, [MyNotePageModel]>>(
+    private lazy var pageDataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<Void, MyNotePageModel>>(
         configureCell: { [weak self] _, collectionView, indexPath, item in
             guard let self = self else { return UICollectionViewCell() }
             
@@ -58,7 +58,7 @@ final class MyNoteViewController: UIViewController, View {
                 for: indexPath
             ).then {
                 $0.bind(
-                    page: item[indexPath.item],
+                    page: item,
                     relay: self.pageCellEventRelay
                 )
             }
@@ -74,8 +74,8 @@ final class MyNoteViewController: UIViewController, View {
     
     func bind(reactor: MyNoteViewReactor) {
         reactor.state
-            .map { state -> [SectionModel<Void, [MyNotePageModel]>] in
-                return [SectionModel(model: (), items: [state.pages])]
+            .map { state -> [SectionModel<Void, MyNotePageModel>] in
+                return [SectionModel(model: (), items: state.pages)]
             }
             .bind(to: pageContainerCollectionView.rx.items(dataSource: pageDataSource))
             .disposed(by: disposeBag)

@@ -9,6 +9,9 @@ import RxDataSources
 
 struct MyNotePageModel {
     var category: MyNoteCategoryType
+    var isShowingNotice: Bool
+    var transactionType: TransactionTypeFilter
+    var saleType: SaleTypeFilter
     var items: [MyNoteModel]
 }
 

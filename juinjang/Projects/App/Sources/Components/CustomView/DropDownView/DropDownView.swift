@@ -24,7 +24,6 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView w
     }()
     
     private var filterStackViewContentHeight: CGFloat = 0
-    
     private var disposeBag = DisposeBag()
     private var isExpanded = false  // 현재 펼쳐진 상태인지 여부
     lazy var filterActionRelay = BehaviorRelay<LookAroundFilterActionType>(value: filterList[0].action)
@@ -39,6 +38,26 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView w
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - 외부에서 선택된 필터를 설정하는 메서드
+    func configureSelectedFilter(_ filter: T) {
+        // 타이틀 버튼 텍스트 변경
+        filterTitleButton.updateTitle(title: filter.title)
+
+        // 선택된 필터 인덱스 찾기
+        guard let selectedIndex = filterList.firstIndex(where: { $0 == filter }) else { return }
+
+        // 모든 버튼의 색상 초기화 후 선택된 버튼만 하이라이트
+        filterSelectStackView.arrangedSubviews
+            .compactMap { $0 as? FilterButton }
+            .enumerated()
+            .forEach { index, button in
+                button.updateColor(isSelected: index == selectedIndex)
+            }
+
+        // 현재 상태 동기화
+        filterActionRelay.accept(filter.action)
     }
     
     private func bind()  {
@@ -172,7 +191,8 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView w
         }
     }
     
-    private func subscribeTapFilterButton(_ button: FilterButton, filter: LookAroundFilterType) {
+    private func subscribeTapFilterButton(_ button: FilterButton,
+                                          filter: LookAroundFilterType) {
         button.rx.tap
             .asDriver()
             .drive(with: self) { owner, _ in
