@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 
 class SidoCell: BaseCollectionViewCell {
     let titleLabel = UILabel()
@@ -15,7 +16,7 @@ class SidoCell: BaseCollectionViewCell {
     }
     
     override func configureHierarchy() {
-        addSubview(titleLabel)
+        add(titleLabel)
     }
     
     override func configureLayout() {

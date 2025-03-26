@@ -39,12 +39,10 @@ final class SelectAreaView: BaseView {
     
     
     override func configureHierarchy() {
-        addSubview(naviagtionView)
-        addSubview(collectionViewStackView)
+        add(naviagtionView, collectionViewStackView, bottomButtonView)
         [sidoCollectionView, sigunguCollectionView, dongeupmyeonCollectionView].forEach {
             collectionViewStackView.addArrangedSubview($0)
         }
-        addSubview(bottomButtonView)
     }
     
     override func configureLayout() {
