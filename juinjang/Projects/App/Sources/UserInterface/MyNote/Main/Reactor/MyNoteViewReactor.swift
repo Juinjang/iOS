@@ -17,12 +17,12 @@ final class MyNoteViewReactor: Reactor {
     enum Mutation {
         case setCategoryState(Int)
         case setPage(MyNotePageModel)
-        case appendNotes(category: MyNoteCategoryType,
-                         notes: [MyNoteModel])
-        case hideNotice(index: Int)
-        case updateFilter(category: MyNoteCategoryType,
-                          transactionType: TransactionTypeAction?,
+        case appendNotes(notes: [MyNoteModel])
+        case hideNotice
+        case updateFilter(transactionType: TransactionTypeAction?,
                           saleType: SaleTypeAction?)
+        case showAlreadyLikedNotice
+        case setLikeTrue(id: Int)
     }
 
     struct State {
@@ -53,6 +53,7 @@ final class MyNoteViewReactor: Reactor {
                 items: []
             )
         ]
+        var showAlreadyLikedNotice: Bool = false
     }
     
     struct Dependency {
@@ -82,7 +83,7 @@ final class MyNoteViewReactor: Reactor {
             let category = MyNoteCategoryType(rawValue: index) ?? .share
             
             if !self.currentState.pages[category.rawValue].items.isEmpty {
-                return .empty()
+                return .just(.setCategoryState(index))
             }
             
             return .concat([
@@ -101,6 +102,7 @@ final class MyNoteViewReactor: Reactor {
         
         switch mutation {
         case .setCategoryState(let index):
+            
             state.categoryState = MyNoteCategoryType(rawValue: index) ?? .share
             
         case .setPage(let page):
@@ -111,8 +113,8 @@ final class MyNoteViewReactor: Reactor {
                 return $0
             }
             
-        case let .appendNotes(category, notes):
-            switch category {
+        case let .appendNotes(notes):
+            switch currentState.categoryState {
             case .share:
                 state.sharePageState.notes.append(contentsOf: notes)
             case .own:
@@ -121,19 +123,18 @@ final class MyNoteViewReactor: Reactor {
                 state.likePageState.notes.append(contentsOf: notes)
             }
             
-        case .hideNotice(let index):
-            guard state.pages.indices.contains(index) else { return state }
+        case .hideNotice:
+            guard state.pages.indices.contains(currentState.categoryState.rawValue) else { return state }
             
-            var page = state.pages[index]
+            var page = state.pages[currentState.categoryState.rawValue]
             page.isShowingNotice = false
             
-            state.pages[index] = page
+            state.pages[currentState.categoryState.rawValue] = page
             
-        case .updateFilter(category: let category,
-                           transactionType: let transactionType,
+        case .updateFilter(transactionType: let transactionType,
                            saleType: let saleType):
             state.pages = state.pages.map { page in
-                guard page.category == category else { return page }
+                guard page.category == currentState.categoryState else { return page }
                 
                 var updatedPage = page
                 
@@ -143,6 +144,22 @@ final class MyNoteViewReactor: Reactor {
                 
                 if let transactionType = transactionType {
                     updatedPage.transactionType = transactionType.filter
+                }
+                
+                return updatedPage
+            }
+        case .showAlreadyLikedNotice:
+            state.showAlreadyLikedNotice = true
+        case .setLikeTrue(id: let id):
+            state.pages = state.pages.map { page in
+                guard page.category.rawValue == currentState.categoryState.rawValue else { return page }
+                
+                var updatedPage = page
+                updatedPage.items = page.items.map { item in
+                    guard item.sharedNoteId == id else { return item }
+                    var updated = item
+                    updated.isLike = true
+                    return updated
                 }
                 
                 return updatedPage
@@ -167,7 +184,7 @@ final class MyNoteViewReactor: Reactor {
                       isShowingNotice: true,
                       transactionType: .total,
                       saleType: .totalSale,
-                      items: notes)
+                      items: notes.map { .init(model: $0) })
             )
         }
     }
@@ -185,28 +202,43 @@ final class MyNoteViewReactor: Reactor {
     
     private func handlePageCellEvent(_ event: MyNotePageEventType) -> Observable<Mutation> {
         switch event {
-        case .likeButtonTap(let category):
-            // 추가 예정
-            return .empty()
-            
-        case .myNoteCellTap(let note):
-            // 추가 예정
-            return .empty()
-            
-        case .filterItemTap(let index,
-                            let transactionTypeAction,
+        case .filterItemTap(let transactionTypeAction,
                             let saleTypeAction):
             // Reload with Filter Items 추가 예정
             return .just(
                 .updateFilter(
-                    category: MyNoteCategoryType(rawValue: index) ?? .share,
                     transactionType: transactionTypeAction,
                     saleType: saleTypeAction
                 )
             )
             
-        case .noticeCloseButtonTap(let index):
-            return .just(.hideNotice(index: index))
+        case .noticeCloseButtonTap:
+            return .just(.hideNotice)
+            
+        case .cellEvent(let event):
+            return handleMyNoteCellEvent(event)
+        default:
+            return .empty()
+        }
+    }
+    
+    private func handleMyNoteCellEvent(_ event: MyNoteCellEventType) -> Observable<Mutation> {
+        switch event {
+        case .likeButtonTap(let id):
+            
+            let category = currentState.categoryState
+            let currentPage = currentState.pages[category.rawValue]
+            
+            if let item = currentPage.items.first(where: { $0.sharedNoteId == id }) {
+                if item.isLike {
+                    return .just(.showAlreadyLikedNotice)
+                } else {
+                    return .just(.setLikeTrue(id: id))
+                }
+            }
+            
+            return .empty()
+        default: return .empty()
         }
     }
 }

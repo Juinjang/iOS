@@ -88,7 +88,7 @@ final class MyNoteViewController: BaseViewController, View {
             }
             .bind(to: pageContainerCollectionView.rx.items(dataSource: pageDataSource))
             .disposed(by: disposeBag)
-                
+        
         navigationView
             .itemActionRelay
             .withUnretained(self)
@@ -98,8 +98,7 @@ final class MyNoteViewController: BaseViewController, View {
                     self.navigationController?.popViewController(animated: true)
                 case .searchButtonTap:
                     print("push MyNoteSearchViewController")
-                default:
-                    break
+                default: break
                 }
             }
             .disposed(by: disposeBag)
@@ -126,9 +125,27 @@ final class MyNoteViewController: BaseViewController, View {
         pageContainerCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
         
+        
+        // MARK: - PageCellEvent
         pageCellEventRelay
+            .filter { !$0.isCellTap }
+            .filter { $0 != MyNotePageEventType.shareButtonTap }
             .map { Reactor.Action.pageCellEventOccurred(event: $0) }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        pageCellEventRelay
+            .compactMap { $0.cellTapId }
+            .subscribe(with: self) { (self, id) in
+                print("cell Selected \(id)")
+            }
+            .disposed(by: disposeBag)
+        
+        pageCellEventRelay
+            .filter { $0 == .shareButtonTap }
+            .subscribe(with: self) { (self, _) in
+                print("노트 공유하러 가기 클릭")
+            }
             .disposed(by: disposeBag)
     }
     

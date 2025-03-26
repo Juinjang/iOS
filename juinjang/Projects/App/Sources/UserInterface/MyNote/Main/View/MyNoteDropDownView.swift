@@ -65,9 +65,7 @@ final class MyNoteDropDownView: BaseView {
             make.verticalEdges.equalToSuperview()
         }
     }
-    
-    override func configureView() { }
-    
+        
     override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if let hitView = super.hitTest(point, with: event) {
             return hitView

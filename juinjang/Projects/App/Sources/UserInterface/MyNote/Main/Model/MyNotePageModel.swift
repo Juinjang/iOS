@@ -12,11 +12,17 @@ struct MyNotePageModel {
     var isShowingNotice: Bool
     var transactionType: TransactionTypeFilter
     var saleType: SaleTypeFilter
-    var items: [MyNoteModel]
+    var items: [MyNoteCellModel]
 }
 
-extension MyNotePageModel: SectionModelType {
-    typealias Item = MyNoteModel
+
+extension MyNotePageModel: AnimatableSectionModelType {
+    typealias Item = MyNoteCellModel
+    typealias Identity = String
+
+    var identity: String {
+        return "\(category.rawValue)"
+    }
 
     init(original: MyNotePageModel, items: [Item]) {
         self = original

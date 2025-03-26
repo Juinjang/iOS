@@ -11,7 +11,7 @@ struct MyNoteMetaInfoModel {
     let createDate: String
     let viewCount: String
     
-    init(_ model: MyNoteModel) {
+    init(_ model: MyNoteCellModel) {
         self.imageUrl = model.imageUrl
         self.nickname = model.onwerNickname
         self.createDate = model.monthAge.monthAgoString

@@ -35,14 +35,14 @@ final class MyNoteFilterHeader: BaseView {
         filterView.transactionTypeActionRelay
             .withUnretained(self)
             .subscribe { (self, action) in
-                relay.accept(.filterItemTap(pageModel.category.rawValue, action, nil))
+                relay.accept(.filterItemTap(action, nil))
             }
             .disposed(by: disposeBag)
         
         filterView.saleTypeActionRelay
             .withUnretained(self)
             .subscribe { (self, action) in
-                relay.accept(.filterItemTap(pageModel.category.rawValue, nil, action))
+                relay.accept(.filterItemTap(nil, action))
             }
             .disposed(by: disposeBag)
     }
@@ -97,7 +97,7 @@ final class MyNoteFilterHeader: BaseView {
         } completion: { [weak self] _ in
             guard let self = self else { return }
             self.noticeView.isHidden = true
-            relay.accept(.noticeCloseButtonTap(category.rawValue))
+            relay.accept(.noticeCloseButtonTap)
         }
     }
     

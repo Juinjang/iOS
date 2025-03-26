@@ -12,6 +12,11 @@ import RxSwift
 import RxCocoa
 import Kingfisher
 
+enum MyNoteCellEventType: Equatable {
+    case likeButtonTap(id: Int)
+    case cellTap(id: Int)
+}
+
 final class MyNoteCell: UICollectionViewCell {
     private let thumbnailImageView = UIImageView().then {
         $0.layer.cornerRadius = 6
@@ -68,6 +73,10 @@ final class MyNoteCell: UICollectionViewCell {
         $0.backgroundColor = .stroke
     }
     
+    private let cellTapButton = UIButton().then {
+        $0.backgroundColor = .clear
+    }
+        
     private var disposeBag = DisposeBag()
     
     override init(frame: CGRect) {
@@ -95,7 +104,13 @@ final class MyNoteCell: UICollectionViewCell {
         disposeBag = DisposeBag()
     }
     
-    func bind(_ model: MyNoteModel) {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        contentView.bringSubviewToFront(likeButton)
+    }
+    
+    func bind(_ model: MyNoteCellModel,
+              relay: PublishRelay<MyNoteCellEventType>) {
         thumbnailImageView.kf.setImage(
             with: URL(string: model.imageUrl),
             placeholder: UIImage.randomCardPlaceholderImage
@@ -108,15 +123,22 @@ final class MyNoteCell: UICollectionViewCell {
         spaceInfoLabel.text = "\(model.pyong)평 \(model.floor)"
         addressLabel.text = "\(model.address)"
         metaInfoView.configure(.init(model))
-        likeButton.rx.autoToggle(disposeBag: disposeBag)
+        
+        likeButton.rx.throttleTap
+            .map { MyNoteCellEventType.likeButtonTap(id: model.sharedNoteId) }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
+        
+        cellTapButton.rx.throttleTap
+            .map { MyNoteCellEventType.cellTap(id: model.sharedNoteId) }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
     }
 
     private func configureHierarchy() {
         contentView.add([
-            thumbnailImageView.with(
-                rateLabel,
-                likeButton
-            ),
+            thumbnailImageView.with(rateLabel),
+            likeButton,
             buildingInfoBaseView.with(
                 buildingNameLabel,
                 purchaseLabel,
@@ -125,8 +147,10 @@ final class MyNoteCell: UICollectionViewCell {
                 addressLabel,
                 metaInfoView
             ),
+            cellTapButton,
             separatorView
         ])
+        
     }
     
     private func configureLayout() {
@@ -145,7 +169,7 @@ final class MyNoteCell: UICollectionViewCell {
         
         likeButton.snp.makeConstraints {
             $0.size.equalTo(20)
-            $0.right.bottom.equalToSuperview().inset(8)
+            $0.right.bottom.equalTo(thumbnailImageView).inset(8)
         }
         
         buildingInfoBaseView.snp.makeConstraints {
@@ -188,6 +212,10 @@ final class MyNoteCell: UICollectionViewCell {
             $0.height.equalTo(18)
             $0.top.equalTo(addressLabel.snp.bottom).offset(3)
             $0.left.equalToSuperview()
+        }
+        
+        cellTapButton.snp.makeConstraints {
+            $0.edges.equalToSuperview()
         }
         
         separatorView.snp.makeConstraints {
