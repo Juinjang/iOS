@@ -22,7 +22,7 @@ final class LookAroundContentCell: BaseCollectionViewCell {
     
     func configureCell(content: LookAroundContent) {
         iconImageView.image = content.iconImage
-        titleLabel.setAttributeString(text: content.title, color: .gray600, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
+        titleLabel.setAttribute(text: content.title, color: .gray600, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
     
     override func configureHierarchy() {

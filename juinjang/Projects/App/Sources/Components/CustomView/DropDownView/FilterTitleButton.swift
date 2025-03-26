@@ -23,7 +23,7 @@ final class FilterTitleButton: UIButton {
     private func configureView(title: String) {
         setTitle(title, for: .normal)
         setImage(.ImjangList.arrowDown, for: .normal)
-        titleLabel?.setAttributeString(text: title, color: .gray450, font: .pretendard(size: 14, weight: .semiBold), lineHeight: 19)
+        titleLabel?.setAttribute(text: title, color: .gray450, font: .pretendard(size: 14, weight: .semiBold), lineHeight: 19)
         setTitleColor(.gray450, for: .normal)
         backgroundColor = .white
     

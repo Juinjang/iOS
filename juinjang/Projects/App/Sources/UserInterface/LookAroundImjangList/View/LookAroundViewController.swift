@@ -49,8 +49,7 @@ final class LookAroundViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.sectionOfLookAroundImjangData }
-            .compactMap { $0 }
+            .compactMap { $0.sectionOfLookAroundImjangData }
             .bind(to: mainView.collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }

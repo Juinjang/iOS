@@ -11,7 +11,7 @@ import Differentiator
 
 final class LookAroundReactor: Reactor {
     private let repository: LookAroundRepository
-    private var disposeBag = DisposeBag()
+    
     var initialState: State = State()
     
     init(repository: LookAroundRepository) {

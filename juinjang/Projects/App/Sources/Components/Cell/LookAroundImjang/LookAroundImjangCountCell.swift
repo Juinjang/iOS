@@ -17,16 +17,16 @@ final class LookAroundImjangCountCell: BaseCollectionViewCell {
     
     private let titleLabel = UILabel().then {
         let title = "임장노트"
-        $0.setAttribute(text: title, color: .gray600, font: .pretendard(size: 18, weight: .bold))
+        $0.setAttribute(text: title, color: .gray600, font: .pretendard(size: 18, weight: .bold), lineHeight: 24)
     }
     
     private let countLabel = UILabel().then {
         let title = "33"
-        $0.setAttributeString(text: title, color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 24)
+        $0.setAttribute(text: title, color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
     
     func configureCell(imjangCount: Int) {
-        countLabel.setAttributeString(text: "\(imjangCount)", color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
+        countLabel.setAttribute(text: "\(imjangCount)", color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
      
     override func configureHierarchy() {

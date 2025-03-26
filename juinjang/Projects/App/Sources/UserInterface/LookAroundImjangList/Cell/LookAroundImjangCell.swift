@@ -42,7 +42,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
     
     private let purchasedLabel = PaddingLabel(padding: UIEdgeInsets(top: 0, left: 4, bottom: 0, right: 4)).then {
         $0.backgroundColor = .point.withAlphaComponent(0.1)
-        $0.setAttributeString(text: "소장", color: .point, font: .pretendard(size: 12, weight: .medium), lineHeight: 17, alignment: .center)
+        $0.setAttribute(text: "소장", color: .point, font: .pretendard(size: 12, weight: .medium), lineHeight: 17, alignment: .center)
         $0.roundCorners(cornerRadius: 4, corner: .all)
         $0.isHidden = true
     }
@@ -212,20 +212,19 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         super.configureView()
     }
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2
+    }
 }
 
 extension LookAroundImjangCell {
    
     private func createDivideCircleLabel() -> UILabel {
         let label = UILabel()
-        label.setAttribute(text: "・", color: .gray300, font: .pretendard(size: 13, weight: .regular), alignment: .center)
+        label.setAttribute(text: "・", color: .gray300, font: .pretendard(size: 13, weight: .regular), lineHeight: 19, alignment: .center)
         label.frame = CGRect(x: 0, y: 0, width: 13, height: 19)
         return label
-    }
-    
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2
     }
 }
 
@@ -233,7 +232,7 @@ extension LookAroundImjangCell {
     private func setScore(_ score: Double) {
         let score = score.truncateToSingleDecimal()
         let scoreString = String(format: "%.1f", score)
-        scoreLabel.setAttributeString(text: scoreString, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
+        scoreLabel.setAttribute(text: scoreString, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
     }
     
     private func setImjangImage(_ imageUrl: String, propertyType: String) {
@@ -248,7 +247,7 @@ extension LookAroundImjangCell {
     }
     
     private func setRoomName(_ roomName: String) {
-        roomNameLabel.setAttributeString(text: roomName, color: .gray600, font: .pretendard(size: 16, weight: .bold), lineHeight: 23)
+        roomNameLabel.setAttribute(text: roomName, color: .gray600, font: .pretendard(size: 16, weight: .bold), lineHeight: 23)
     }
     
     private func setIsPurchase(_ isPurchase: Bool) {
@@ -257,16 +256,16 @@ extension LookAroundImjangCell {
     
     private func setPrice(_ priceString: String, priceType: String) {
         let priceResult = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-        priceLabel.setAttributeString(text: priceResult, color: .gray450, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
+        priceLabel.setAttribute(text: priceResult, color: .gray450, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
     }
     
     private func setRoomDetail(pyong: Int, floor: String) {
         let roomDetail = "\(pyong)평 \(floor)층"
-        roomDetailNameLabel.setAttributeString(text: roomDetail, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+        roomDetailNameLabel.setAttribute(text: roomDetail, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
     }
     
     private func setRoomAddress(_ address: String) {
-        roomAddressLabel.setAttributeString(text: address, color: .gray400, font: .pretendard(size: 13, weight: .medium), lineHeight: 19)
+        roomAddressLabel.setAttribute(text: address, color: .gray400, font: .pretendard(size: 13, weight: .medium), lineHeight: 19)
     }
     
     private func setProfileImage(_ imageUrl: String) {
@@ -280,16 +279,16 @@ extension LookAroundImjangCell {
     }
     
     private func setOwnerNickname(_ userName: String) {
-        ownerNicknameLabel.setAttributeString(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
+        ownerNicknameLabel.setAttribute(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     
     private func setUploadedDate(_ uploadedDate: Int) {
-        uploadedDateLabel.setAttributeString(text: "\(uploadedDate)개월 전", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
+        uploadedDateLabel.setAttribute(text: "\(uploadedDate)개월 전", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     
     private func setHits(_ hits: Int) {
         let hitsText = hits.convertHitsString()
-        hitsLabel.setAttributeString(text: hitsText, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 16)
+        hitsLabel.setAttribute(text: hitsText, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 16)
     }
     
     private func setIsLiked(_ isLiked: Bool) {

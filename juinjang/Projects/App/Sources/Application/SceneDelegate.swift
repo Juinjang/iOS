@@ -20,8 +20,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(windowScene: windowScene)
 
-        let mainViewController = SplashViewController()
-        mainViewController.reactor = SplashViewReactor()
+        let mainViewController = LookAroundViewController(reactor: LookAroundReactor(repository: MockLookAroundRepository()))
+//        mainViewController.reactor = SplashViewReactor()
         window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
         

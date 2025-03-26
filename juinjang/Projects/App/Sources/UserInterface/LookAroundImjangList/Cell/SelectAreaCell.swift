@@ -27,7 +27,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
     private let messageLabel = UILabel()
     
     private let selectLabel = UILabel().then {
-        $0.setAttributeString(text: "선택", color: .gray450, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+        $0.setAttribute(text: "선택", color: .gray450, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
     }
     
     func configureCell(area: Area?) {
@@ -39,7 +39,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
         }
         title = "지역을 선택해주세요"
         iconImageView.tintColor = .main200
-        messageLabel.setAttributeString(text: title, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+        messageLabel.setAttribute(text: title, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
     }
     
     override func configureHierarchy() {
