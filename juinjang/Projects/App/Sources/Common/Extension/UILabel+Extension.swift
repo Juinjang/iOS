@@ -11,7 +11,7 @@ import UIKit
 extension UILabel {
     
     func design(text: String = "",
-                textColor: UIColor = .gray,
+                textColor: UIColor = .gray500,
                 font: UIFont = .systemFont(ofSize: 14),
                 textAlignment: NSTextAlignment = .left,
                 numberOfLines: Int = 1) {
@@ -50,20 +50,20 @@ extension UILabel {
         self.attributedText = attributedString
     }
     
-    func setAttribute(text: String?, color: UIColor = .gray, font: UIFont? = .pretendard(size: 14, weight: .regular), lineHeightMutliple: CGFloat = 1.35, charSpacing: CGFloat = -0.02, alignment: NSTextAlignment = NSTextAlignment.left) {
+    
+    func setAttribute(text: String?, color: UIColor = .gray500, font: UIFont? = .pretendard(size: 14, weight: .regular), lineHeight: CGFloat = 30, charSpacing: CGFloat = -0.02, alignment: NSTextAlignment = .left) {
         guard let text, let font else { return }
         
         let resultText = text.isEmpty ? "" : text
 
-        let desiredLineHeight = font.lineHeight * lineHeightMutliple
         let style = NSMutableParagraphStyle()
-        style.maximumLineHeight = desiredLineHeight
-        style.minimumLineHeight = desiredLineHeight
+        style.maximumLineHeight = lineHeight
+        style.minimumLineHeight = lineHeight
         style.alignment = alignment
 
         let attributes: [NSAttributedString.Key: Any] = [
             .paragraphStyle: style,
-            .baselineOffset: (desiredLineHeight - font.lineHeight) / 2,
+            .baselineOffset: (lineHeight - font.lineHeight) / 2,
             .kern: charSpacing,
             .font: font,
             .foregroundColor: color,

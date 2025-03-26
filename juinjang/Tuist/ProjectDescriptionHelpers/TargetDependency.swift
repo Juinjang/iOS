@@ -1,7 +1,12 @@
 import ProjectDescription
 
 public enum Module {
+    case core(Core)
     case spm(SPM)
+}
+
+public enum Core: String {
+    case common = "Common"
 }
 
 public enum SPM: String {
@@ -23,6 +28,7 @@ public enum SPM: String {
     case realmSwift = "RealmSwift"
     case rxSwift = "RxSwift"
     case rxCocoa = "RxCocoa"
+    case rxDataSources = "RxDataSources"
     case skeletonView = "SkeletonView"
     case snapKit = "SnapKit"
     case tabman = "Tabman"
@@ -33,6 +39,8 @@ public enum SPM: String {
 extension Module {
     public func asTargetDependency() -> TargetDependency {
         switch self {
+        case .core(let core):
+            return .project(target: core.rawValue, path: .relativeToRoot("Projects/Core"))
         case .spm(let spm):
             return .external(name: spm.rawValue)
         }
