@@ -33,6 +33,7 @@ let project = Project(
                 .spm(.realmSwift),
                 .spm(.rxSwift),
                 .spm(.rxCocoa),
+                .spm(.rxDataSources),
                 .spm(.skeletonView),
                 .spm(.snapKit),
                 .spm(.tabman),
