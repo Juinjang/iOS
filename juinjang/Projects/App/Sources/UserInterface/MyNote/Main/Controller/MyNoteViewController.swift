@@ -89,6 +89,15 @@ final class MyNoteViewController: BaseViewController, View {
             .bind(to: pageContainerCollectionView.rx.items(dataSource: pageDataSource))
             .disposed(by: disposeBag)
         
+        reactor.state
+            .filter { $0.showAlreadyLikedNotice }
+            .subscribe(with: self) { (self, _) in
+                print("Show Alert")
+                
+            }
+            .disposed(by: disposeBag)
+        
+        // MARK: - View Event
         navigationView
             .itemActionRelay
             .withUnretained(self)
@@ -124,7 +133,6 @@ final class MyNoteViewController: BaseViewController, View {
         
         pageContainerCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-        
         
         // MARK: - PageCellEvent
         pageCellEventRelay

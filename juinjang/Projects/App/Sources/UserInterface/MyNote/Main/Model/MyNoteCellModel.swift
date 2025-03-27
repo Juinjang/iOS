@@ -12,7 +12,7 @@ struct MyNoteCellModel {
     let bulidingName: String
     let imageUrl: String
     let isPurchase: Bool
-    let isLike: Bool
+    var isLike: Bool
     let rate: Double
     let type: String
     let price: String
