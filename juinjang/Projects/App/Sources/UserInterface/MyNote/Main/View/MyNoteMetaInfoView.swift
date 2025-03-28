@@ -106,14 +106,6 @@ final class MyNoteMetaInfoView: BaseView {
         viewCountLabel.text = model.viewCount
     }
     
-    func reset() {
-        profileImageView.kf.cancelDownloadTask()
-        profileImageView.image = UIImage.Setting.profile
-        nicknameLabel.text = nil
-        createDateLabel.text = nil
-        viewCountLabel.text = nil
-    }
-    
     private func makeDotLabel() -> UILabel {
         return UILabel().then {
             $0.font = .pretendard(size: 13, weight: .regular)

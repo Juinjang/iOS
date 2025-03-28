@@ -47,12 +47,6 @@ final class MyNoteFilterHeader: BaseView {
             .disposed(by: disposeBag)
     }
     
-    func prepareForReuse() {
-        disposeBag = DisposeBag()
-        noticeView.alpha = 1.0
-        noticeView.isHidden = false
-    }
-    
     override func configureHierarchy() {
         super.configureHierarchy()
         add(
