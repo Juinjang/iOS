@@ -10,6 +10,7 @@ import KakaoSDKCommon
 import KakaoSDKAuth
 import Firebase
 import AmplitudeSwift
+import IQKeyboardManagerSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -17,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        IQKeyboardManager.shared.enable = true
         KakaoSDK.initSDK(appKey: APIKey.kakaoSDKKey)
         FirebaseApp.configure()
         return true
