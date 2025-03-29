@@ -33,7 +33,6 @@ final class MyNoteSearchViewController: BaseViewController, View {
     }
     
     override func loadView() {
-        super.loadView()
         view = mainView
     }
     

@@ -51,7 +51,6 @@ final class MyNoteSearchViewReactor: Reactor {
                 dependency.myNoteRepository
                     .fetchMyNotes(keyword: keyword)
                     .map { notes in
-                        
                         return .setList(notes.map { MyNoteCellModel(model: $0) })
                     },
                 
