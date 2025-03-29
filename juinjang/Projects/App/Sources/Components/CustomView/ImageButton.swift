@@ -28,7 +28,8 @@ final class ImageButton: UIButton {
     }
     
     init(normalImage: UIImage,
-         selectedImage: UIImage? = nil) {
+         selectedImage: UIImage? = nil,
+         isAlwaysTemplate: Bool = true) {
         self.image = normalImage
         self.selectedImage = selectedImage
         super.init(frame: .zero)

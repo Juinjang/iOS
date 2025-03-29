@@ -128,7 +128,7 @@ final class JuinjangAPIManager {
         }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor())
         .validate()
         .response { response in
-            print("StatusCode: \(response.response?.statusCode)")
+            print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success:
                 print(response)
@@ -151,7 +151,7 @@ final class JuinjangAPIManager {
                 multipartFormData.append(jsonData, withName: "recordRequestDTO", mimeType: "application/json")
             }
         }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor()).responseDecodable(of: RecordResponseDTO.self, completionHandler: { response in
-            print("StatusCode: \(response.response?.statusCode)")
+            print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let responseData):
                 guard let recordResponse = responseData.result else {
@@ -181,7 +181,7 @@ final class JuinjangAPIManager {
         let api = JuinjangAPI.regenerateToken
         AF.request(api.endpoint, method: api.method, headers: api.header)
             .responseDecodable(of: BaseResponse<RefreshDto>.self) { response in
-                print(#function, "액세스 토큰 재발급 StatusCode: \(response.response?.statusCode)")
+                print(#function, "액세스 토큰 재발급 StatusCode: \(String(describing: response.response?.statusCode))")
                 switch response.result {
                 case .success(let success):
                     guard let result = success.result else {

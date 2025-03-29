@@ -57,5 +57,6 @@ let package = Package(
         .package(url: "https://github.com/uias/Tabman", from: "3.0.2"),
         .package(url: "https://github.com/devxoul/Then", from: "3.0.0"),
         .package(url: "https://github.com/scalessec/Toast-Swift", from: "5.1.0"),
+        .package(url: "https://github.com/RxSwiftCommunity/RxDataSources", from: "5.0.2"),
     ]
 )
