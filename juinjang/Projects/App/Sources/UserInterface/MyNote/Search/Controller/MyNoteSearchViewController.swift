@@ -17,24 +17,7 @@ import ReactorKit
 final class MyNoteSearchViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
     
-    private let navigationView = SearchNavigationView().then {
-        $0.searchPlaceHolder = "건물명이나 주소를 검색해 보세요."
-        $0.leftItem = [.pop]
-    }
-    
-    private lazy var searchCollectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: createCompositionalLayout()).then {
-            $0.register(MyNoteCell.self)
-            $0.contentInset = .init(top: 4, left: 0, bottom: 0, right: 0)
-            $0.showsVerticalScrollIndicator = false
-        }
-    }()
-    
-    private let emptyView = MyNoteEmptyView().then {
-        $0.configure(text: "일치하는 임장노트가 없어요")
-    }
-    
-    private let cellEventRelay = PublishRelay<MyNoteCellEventType>()
+    private let mainView = MyNoteSearchView()
     
     init(reactor: MyNoteSearchViewReactor) {
         super.init()
@@ -47,29 +30,31 @@ final class MyNoteSearchViewController: BaseViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureView()
-        configureHierarchy()
-        configureLayout()
+    }
+    
+    override func loadView() {
+        super.loadView()
+        view = mainView
     }
     
     func bind(reactor: MyNoteSearchViewReactor) {
         reactor.state
             .map { [MyNoteSearchSectionModel(items: $0.list)] }
-            .bind(to: searchCollectionView.rx.items(dataSource: createDataSource()))
+            .bind(to: mainView.searchCollectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
         
         reactor.state
             .map { $0.isEmpty }
-            .bind(to: searchCollectionView.rx.isHidden)
+            .bind(to: mainView.searchCollectionView.rx.isHidden)
             .disposed(by: disposeBag)
         
         reactor.state
             .map { !$0.isEmpty }
-            .bind(to: emptyView.rx.isHidden )
+            .bind(to: mainView.emptyView.rx.isHidden )
             .disposed(by: disposeBag)
         
-        navigationView
-            .itemActionRelay
+        mainView
+            .navigationEventRelay
             .subscribe(with: self) { (self, action) in
                 switch action {
                 case .popButtonTap:
@@ -81,47 +66,21 @@ final class MyNoteSearchViewController: BaseViewController, View {
             }
             .disposed(by: disposeBag)
         
-        cellEventRelay
+        mainView
+            .cellEventRelay
             .subscribe(with: self) { (self, event) in
-                
+                switch event {
+                case .cellTap(id: let noteId):
+                    break
+                case .likeButtonTap(id: let noteId):
+                    break
+                }
             }
             .disposed(by: disposeBag)
     }
-    
-    private func configureView() {
-        view.backgroundColor = .mainWhite
-    }
-    
-    private func configureHierarchy() {
-        view.add(
-            navigationView,
-            searchCollectionView,
-            emptyView
-        )
-    }
-    
-    private func configureLayout() {
-        navigationView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(44)
-            $0.horizontalEdges.equalToSuperview()
-        }
-        
-        searchCollectionView.snp.makeConstraints {
-            $0.top.equalTo(navigationView.snp.bottom)
-            $0.horizontalEdges.bottom.equalToSuperview()
-        }
-        
-        emptyView.snp.makeConstraints {
-            $0.height.equalTo(269)
-            $0.width.equalToSuperview()
-            $0.centerY.equalToSuperview()
-        }
-    }
 }
 
-
-// MARK: - CollectionView Layout
+// MARK: - CollectionView DataSource
 extension MyNoteSearchViewController {
     private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MyNoteSearchSectionModel> {
         return .init(
@@ -131,35 +90,9 @@ extension MyNoteSearchViewController {
                     MyNoteCell.self,
                     for: indexPath
                 ).then {
-                    $0.bind(item, relay: self.cellEventRelay)
+                    $0.bind(item, relay: self.mainView.cellEventRelay)
                 }
             }
         )
-    }
-    
-    private func createCompositionalLayout() -> UICollectionViewLayout {
-        let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
-            let itemSize = NSCollectionLayoutSize(
-                widthDimension: .fractionalWidth(1.0),
-                heightDimension: .absolute(136)
-            )
-            
-            let item = NSCollectionLayoutItem(layoutSize: itemSize)
-            
-            let groupSize = itemSize
-            let group = NSCollectionLayoutGroup.vertical(
-                layoutSize: groupSize,
-                subitems: [item]
-            )
-            
-            let section = NSCollectionLayoutSection(group: group).then {
-                $0.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-                $0.interGroupSpacing = 0
-            }
-            
-            return section
-        }
-        
-        return layout
     }
 }
