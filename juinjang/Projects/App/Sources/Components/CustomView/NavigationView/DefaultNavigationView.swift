@@ -48,7 +48,7 @@ enum NavigationButton {
 enum NavigationAction {
     case popButtonTap
     case searchButtonTap
-    case searchSummit
+    case searchSummit(keyword: String)
     case settingButtonTap
     case recordButtonTap
 }
