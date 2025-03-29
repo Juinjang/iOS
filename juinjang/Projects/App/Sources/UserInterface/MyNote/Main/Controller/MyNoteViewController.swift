@@ -50,7 +50,6 @@ final class MyNoteViewController: BaseViewController, View {
     }
     
     override func loadView() {
-        super.loadView()
         view = mainView
     }
     
