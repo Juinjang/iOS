@@ -15,7 +15,6 @@ struct MyNotePageModel {
     var items: [MyNoteCellModel]
 }
 
-
 extension MyNotePageModel: AnimatableSectionModelType {
     typealias Item = MyNoteCellModel
     typealias Identity = String

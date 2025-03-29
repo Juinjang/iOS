@@ -140,7 +140,7 @@ extension MyNoteViewReactor {
                     transactionType: transactionTypeAction,
                     saleType: saleTypeAction
                 )
-            )
+            ).delay(.milliseconds(180), scheduler: MainScheduler.instance)
             
         case .noticeCloseButtonTap:
             return .just(.hideNotice)
