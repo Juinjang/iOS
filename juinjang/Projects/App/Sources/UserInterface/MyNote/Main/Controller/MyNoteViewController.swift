@@ -87,13 +87,15 @@ final class MyNoteViewController: BaseViewController, View {
             }
             .disposed(by: disposeBag)
         
-        mainView.segmentedView
+        mainView
+            .segmentedView
             .scrollSelectedRelay
             .map { Reactor.Action.categoryButtonDidTap($0) }
             .bind(to: reactor!.action)
             .disposed(by: disposeBag)
         
-        mainView.segmentedView
+        mainView
+            .segmentedView
             .buttonTapSelectedRelay
             .withUnretained(self)
             .subscribe { (self, index) in
@@ -106,7 +108,8 @@ final class MyNoteViewController: BaseViewController, View {
             }
             .disposed(by: disposeBag)
         
-        mainView.pageContainerCollectionView.rx.setDelegate(self)
+        mainView
+            .pageContainerCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
     }
     
