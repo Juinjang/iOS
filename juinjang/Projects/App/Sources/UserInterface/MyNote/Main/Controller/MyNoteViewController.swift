@@ -15,39 +15,7 @@ import RxDataSources
 final class MyNoteViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
     
-    private let navigationView = DefaultNavigationView().then {
-        $0.title = "마이노트"
-        $0.leftItem = [.pop]
-        $0.rightItem = [.search]
-    }
-    
-    private lazy var segmentedView: UnderLineSegmentedView = {
-        return UnderLineSegmentedView(
-            titles: MyNoteCategoryType.allCases.map { $0.toText },
-            horizontalInset: 46.5
-        ).then {
-            $0.bind(to: pageContainerCollectionView)
-        }
-    }()
-    
-    private lazy var pageContainerCollectionView: UICollectionView = {
-        return UICollectionView(
-            frame: .zero,
-            collectionViewLayout: UICollectionViewFlowLayout().then {
-                $0.scrollDirection = .horizontal
-                $0.minimumLineSpacing = 0
-                $0.minimumInteritemSpacing = 0
-                $0.sectionInset = .zero
-            }
-        ).then {
-            $0.bounces = false
-            $0.isPagingEnabled = true
-            $0.showsHorizontalScrollIndicator = false
-            $0.register(MyNotePageCell.self)
-        }
-    }()
-    
-    private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
+    private let mainView = MyNoteView()
     
     private lazy var pageDataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<Void, MyNotePageModel>>(
         configureCell: { [weak self] _, collectionView, indexPath, item in
@@ -59,7 +27,7 @@ final class MyNoteViewController: BaseViewController, View {
             ).then {
                 $0.bind(
                     page: item,
-                    relay: self.pageCellEventRelay
+                    relay: self.mainView.pageCellEventRelay
                 )
             }
         }
@@ -76,9 +44,14 @@ final class MyNoteViewController: BaseViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        makeConstraints()
+        bindViewEvent()
+        bindPageCellEvent()
         reactor?.action.onNext(.viewDidLoad)
+    }
+    
+    override func loadView() {
+        super.loadView()
+        view = mainView
     }
     
     func bind(reactor: MyNoteViewReactor) {
@@ -86,7 +59,7 @@ final class MyNoteViewController: BaseViewController, View {
             .map { state -> [SectionModel<Void, MyNotePageModel>] in
                 return [SectionModel(model: (), items: state.pages)]
             }
-            .bind(to: pageContainerCollectionView.rx.items(dataSource: pageDataSource))
+            .bind(to: self.mainView.pageContainerCollectionView.rx.items(dataSource: pageDataSource))
             .disposed(by: disposeBag)
         
         reactor.state
@@ -96,10 +69,12 @@ final class MyNoteViewController: BaseViewController, View {
                 
             }
             .disposed(by: disposeBag)
-        
-        // MARK: - View Event
-        navigationView
-            .itemActionRelay
+    }
+    
+    // MARK: - View Event
+    func bindViewEvent() {
+        mainView
+            .navigationEventRelay
             .withUnretained(self)
             .subscribe { (self, action) in
                 switch action {
@@ -112,17 +87,17 @@ final class MyNoteViewController: BaseViewController, View {
             }
             .disposed(by: disposeBag)
         
-        segmentedView
+        mainView.segmentedView
             .scrollSelectedRelay
             .map { Reactor.Action.categoryButtonDidTap($0) }
-            .bind(to: reactor.action)
+            .bind(to: reactor!.action)
             .disposed(by: disposeBag)
         
-        segmentedView
+        mainView.segmentedView
             .buttonTapSelectedRelay
             .withUnretained(self)
             .subscribe { (self, index) in
-                self.pageContainerCollectionView.scrollToItem(
+                self.mainView.pageContainerCollectionView.scrollToItem(
                     at: IndexPath(item: index, section: 0),
                     at: .centeredHorizontally,
                     animated: true
@@ -131,56 +106,32 @@ final class MyNoteViewController: BaseViewController, View {
             }
             .disposed(by: disposeBag)
         
-        pageContainerCollectionView.rx.setDelegate(self)
+        mainView.pageContainerCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
-        
-        // MARK: - PageCellEvent
-        pageCellEventRelay
+    }
+    
+    // MARK: - PageCellEvent
+    func bindPageCellEvent() {
+        mainView.pageCellEventRelay
             .filter { !$0.isCellTap }
             .filter { $0 != MyNotePageEventType.shareButtonTap }
             .map { Reactor.Action.pageCellEventOccurred(event: $0) }
-            .bind(to: reactor.action)
+            .bind(to: reactor!.action)
             .disposed(by: disposeBag)
         
-        pageCellEventRelay
+        mainView.pageCellEventRelay
             .compactMap { $0.cellTapId }
             .subscribe(with: self) { (self, id) in
                 print("cell Selected \(id)")
             }
             .disposed(by: disposeBag)
         
-        pageCellEventRelay
+        mainView.pageCellEventRelay
             .filter { $0 == .shareButtonTap }
             .subscribe(with: self) { (self, _) in
                 print("노트 공유하러 가기 클릭")
             }
             .disposed(by: disposeBag)
-    }
-    
-    private func setupView() {
-        view.backgroundColor = .white
-        view.add(
-            navigationView,
-            segmentedView,
-            pageContainerCollectionView
-        )
-    }
-    
-    private func makeConstraints() {
-        navigationView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.horizontalEdges.equalToSuperview()
-        }
-        
-        segmentedView.snp.makeConstraints {
-            $0.top.equalTo(navigationView.snp.bottom)
-            $0.horizontalEdges.equalToSuperview()
-        }
-        
-        pageContainerCollectionView.snp.makeConstraints {
-            $0.top.equalTo(segmentedView.snp.bottom)
-            $0.horizontalEdges.bottom.equalToSuperview()
-        }
     }
 }
 
