@@ -36,12 +36,14 @@ final class SearchNavigationView: DefaultNavigationView {
     
     override func configureView() {
         super.configureView()
+        
         self.isTitleHidden = true
         self.bind()
     }
     
     override func configureHierarchy() {
         super.configureHierarchy()
+        
         self.addSubview(searchBar.with(
             searchTextField,
             searchToggleButton
@@ -91,7 +93,9 @@ final class SearchNavigationView: DefaultNavigationView {
         self.searchTextField.rx.controlEvent(.editingDidEndOnExit)
             .withUnretained(self)
             .subscribe { (self, _) in
-                self.itemActionRelay.accept(.searchSummit)
+                if let keyword = self.searchTextField.text {
+                    self.itemActionRelay.accept(.searchSummit(keyword: keyword))
+                }
             }
             .disposed(by: disposeBag)
         

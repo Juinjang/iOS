@@ -106,7 +106,8 @@ final class MyNoteViewController: BaseViewController, View {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
                 case .searchButtonTap:
-                    print("push MyNoteSearchViewController")
+                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(myNoteRepository: MyNoteRepository())))
+                    self.navigationController?.pushViewController(viewController, animated: true)
                 default: break
                 }
             }

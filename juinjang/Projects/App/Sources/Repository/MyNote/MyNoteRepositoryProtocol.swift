@@ -7,12 +7,12 @@
 
 import RxSwift
 
-
-
 protocol MyNoteRepositoryProtocol {
     func fetchMyNotes(category: MyNoteCategoryType,
                       offset: Int,
                       limit: Int) -> Observable<[MyNoteModel]>
+    
+    func fetchMyNotes(keyword: String) -> Observable<[MyNoteModel]>
 }
 
 extension MyNoteRepositoryProtocol {

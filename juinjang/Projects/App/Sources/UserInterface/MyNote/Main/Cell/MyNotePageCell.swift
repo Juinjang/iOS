@@ -43,7 +43,7 @@ final class MyNotePageCell: UICollectionViewCell {
     private let emptyView = MyNoteEmptyView()
     private lazy var innerCollectionView: UICollectionView = {
         return UICollectionView(frame: .zero,
-                                collectionViewLayout: createCompositionalLayout(isExpanded: true)).then {
+                                collectionViewLayout: createCompositionalLayout()).then {
             $0.register(MyNoteCell.self)
             $0.showsVerticalScrollIndicator = false
         }
@@ -197,7 +197,7 @@ extension MyNotePageCell {
         )
     }
     
-    private func createCompositionalLayout(isExpanded: Bool) -> UICollectionViewLayout {
+    private func createCompositionalLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             let itemSize = NSCollectionLayoutSize(
                 widthDimension: .fractionalWidth(1.0),
