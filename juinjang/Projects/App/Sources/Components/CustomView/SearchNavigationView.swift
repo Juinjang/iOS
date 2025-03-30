@@ -17,7 +17,7 @@ final class SearchNavigationView: DefaultNavigationView {
         $0.layer.cornerRadius = 20
     }
     
-    let searchTextField = UITextField().then {
+    private let searchTextField = UITextField().then {
         $0.font = .pretendard(size: 14, weight: .regular)
         $0.returnKeyType = .search
         $0.inputAccessoryView = UIView()
@@ -91,13 +91,20 @@ final class SearchNavigationView: DefaultNavigationView {
         self.searchTextField.rx.controlEvent(.editingDidEndOnExit)
             .withUnretained(self)
             .subscribe { (self, _) in
-                self.itemActionRelay.accept(.searchSummit)
+                if let keyword = self.searchTextField.text {
+                    self.itemActionRelay.accept(.searchSummit(keyword: keyword))
+                }
+                self.searchTextField.text = ""
             }
             .disposed(by: disposeBag)
         
         self.isSearchActiveRelay
             .bind(to: self.searchToggleButton.rx.isSearchActive)
             .disposed(by: disposeBag)
+    }
+    
+    func setSearchTextFiledBecomeResponder() {
+        searchTextField.becomeFirstResponder()
     }
 }
 
