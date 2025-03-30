@@ -69,6 +69,11 @@ final class LookAroundSearchView: BaseView {
     func setSearchTextFiledBecomeResponder() {
         navigationView.setSearchTextFiledBecomeResponder()
     }
+    
+    func showSearchKeywordCollectionView(_ isEmpty: Bool) {
+        if searchKeywordCollectionView.isHidden == isEmpty { return }
+        searchKeywordCollectionView.isHidden = isEmpty
+    }
 }
 
 extension LookAroundSearchView {

@@ -62,8 +62,13 @@ final class LookAroundSearchViewController: BaseViewController, View {
             )
             .disposed(by: disposeBag)
         
-        
-        
+        reactor.state
+            .map { $0.recentSearchKeywordList.isEmpty }
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(with: self) { owner, isEmpty in
+                owner.mainView.showSearchKeywordCollectionView(isEmpty)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func showSearchResultVC(_ searchText: String) {

@@ -25,10 +25,8 @@ final class RecentSearchKeywordCell: BaseCollectionViewCell {
     }
     
     var disposeBag = DisposeBag()
-    let deleteKeywordTappedRelay = PublishRelay<Void>()
     
     func configureCell(keyword: String, relay: PublishRelay<SearchKeywordCellEventType>) {
-        print(#function)
         searchKeywordLabel.setAttribute(text: keyword, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
    
         deleteButton.rx.tap
