@@ -29,14 +29,21 @@ final class LookAroundSearchViewController: BaseViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        bindCellEvent()
         reactor?.action.onNext(.viewDidLoad)
+        bindCellEvent()
     }
     
     func bindCellEvent() {
-        mainView.deleteKeywordTappedRelay
-            .bind(with: self) { owner, _ in
-                print("asdf")
+        mainView.cellEventTapRelay
+            .compactMap { $0.deleteTapKeyword }
+            .bind(with: self) { owner, keyword in
+                owner.reactor?.action.onNext(.deleteKeywordButtonTapped(keyword: keyword))
+            }
+            .disposed(by: disposeBag)
+        
+        mainView.searchKeywordCollectionView.rx.modelSelected(String.self)
+            .bind(with: self) { owner, keyword  in
+                owner.showSearchResultVC(keyword)
             }
             .disposed(by: disposeBag)
     }
@@ -69,6 +76,8 @@ final class LookAroundSearchViewController: BaseViewController, View {
                 owner.mainView.showSearchKeywordCollectionView(isEmpty)
             }
             .disposed(by: disposeBag)
+        
+      
     }
     
     private func showSearchResultVC(_ searchText: String) {
@@ -98,7 +107,7 @@ extension LookAroundSearchViewController {
                 return collectionView.dequeueReusableCell(RecentSearchKeywordCell.self, for: indexPath).then {
                     $0.configureCell(
                         keyword: item,
-                        relay: self.mainView.deleteKeywordTappedRelay
+                        relay: self.mainView.cellEventTapRelay
                     )
                 }
             } , configureSupplementaryView: { pageDataSource, collectionView, _, indexPath in

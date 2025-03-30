@@ -14,7 +14,7 @@ final class LookAroundSearchReactor: Reactor {
         case viewDidLoad
         case searchSummitButtonTapped(keyword: String)
         case removeAllKeywordTapped
-        case delteKeywordButtonTapped(index: Int)
+        case deleteKeywordButtonTapped(keyword: String)
     }
     
     enum Mutation {
@@ -41,9 +41,10 @@ final class LookAroundSearchReactor: Reactor {
             let list = getRecentSearchList()
             return .just(.setRecentSearchKeywordList(list))
             
-        case .delteKeywordButtonTapped(let index):
-            print("deleteKeywordButtonTapped")
-            return .empty()
+        case .deleteKeywordButtonTapped(let keyword):
+            deleteSearchKeyword(keyword)
+            let list = getRecentSearchList()
+            return .just(.setRecentSearchKeywordList(list))
         }
     }
     
@@ -76,12 +77,19 @@ final class LookAroundSearchReactor: Reactor {
     }
     
     private func removeAllSearchKeyword() {
-        print(#function)
         UserDefaultManager.shared.clearKey(UserDefaultManager.UDKey.lookAroundSearchKeywords.rawValue)
     }
     
+    private func deleteSearchKeyword(_ keyword: String) {
+        var keywordArray = UserDefaultManager.shared.lookAroundSearchKeywords
+        if let index = keywordArray.firstIndex(where: { $0 == keyword }) {
+            keywordArray.remove(at: index)
+        }
+        
+        UserDefaultManager.shared.lookAroundSearchKeywords = keywordArray
+    }
+    
     private func getRecentSearchList() -> [String] {
-        print(#function, UserDefaultManager.shared.lookAroundSearchKeywords)
         return UserDefaultManager.shared.lookAroundSearchKeywords
     }
 }

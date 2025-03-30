@@ -26,7 +26,7 @@ final class LookAroundSearchView: BaseView {
     
     private let disposeBag = DisposeBag()
     let navigationEventRelay = PublishRelay<NavigationAction>()
-    let deleteKeywordTappedRelay = PublishRelay<SearchKeywordCellEventType>()
+    let cellEventTapRelay = PublishRelay<SearchKeywordCellEventType>()
     
     override init(frame: CGRect) {
         super.init(frame: frame)

@@ -13,6 +13,15 @@ enum SearchKeywordCellEventType: Equatable {
     case deleteButtonTap(keyword: String)
 }
 
+extension SearchKeywordCellEventType {
+    var deleteTapKeyword: String? {
+        if case let .deleteButtonTap(keyword) = self {
+            return keyword
+        }
+        return nil
+    }
+}
+
 final class RecentSearchKeywordCell: BaseCollectionViewCell {
     private let clockIcon = UIImageView().then {
         $0.design(image: UIImage.ImjangList.clock, contentMode: .scaleAspectFit)
@@ -31,10 +40,7 @@ final class RecentSearchKeywordCell: BaseCollectionViewCell {
    
         deleteButton.rx.tap
             .map { SearchKeywordCellEventType.deleteButtonTap(keyword: keyword) }
-            .bind(with: self, onNext: { owner, event in
-                print("sadfasd")
-                relay.accept(event)
-            })
+            .bind(to: relay)
             .disposed(by: disposeBag)
     }
     
@@ -44,7 +50,7 @@ final class RecentSearchKeywordCell: BaseCollectionViewCell {
     }
     
     override func configureHierarchy() {
-        add(clockIcon, searchKeywordLabel, deleteButton)
+        contentView.add(clockIcon, searchKeywordLabel, deleteButton)
     }
     
     override func configureLayout() {
