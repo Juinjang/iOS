@@ -21,7 +21,8 @@ final class MyNoteStopShareViewReactor: Reactor {
         case setStopped(Bool)
         case setError(String?)
         case setList([MyNoteCellModel])
-        case addSelectedItem(MyNoteCellModel)
+        case setSelectedList([Int])
+        case addSelectedItem(Int)
     }
     
     // MARK: - State
@@ -30,7 +31,7 @@ final class MyNoteStopShareViewReactor: Reactor {
         var isStopped: Bool = false
         var errorMessage: String? = nil
         var list: [MyNoteCellModel] = []
-        var selectedList: [MyNoteCellModel] = []
+        var selectedList: [Int] = []
     }
     
     let initialState = State()
@@ -70,6 +71,7 @@ final class MyNoteStopShareViewReactor: Reactor {
         case .removeButtonDidTap:
             return .concat([
                 .just(.setLoading(true)),
+                // 공유 중단 API 사용
                 .just(.setLoading(false))
             ])
         case .cellEventOccurred(event: let event):
@@ -91,6 +93,8 @@ final class MyNoteStopShareViewReactor: Reactor {
             newState.list = list
         case .addSelectedItem(let item):
             newState.selectedList.append(item)
+        case .setSelectedList(let list):
+            newState.selectedList = list
         }
         return newState
     }
@@ -103,7 +107,33 @@ extension MyNoteStopShareViewReactor {
         case .likeButtonTap(let id):
             return .empty()
         case .cellTap(let id):
-            return .empty()
+            var updatedList = currentState.list
+            guard let index = updatedList.firstIndex(where: { $0.sharedNoteId == id }) else {
+                return .empty()
+            }
+            
+            // 현재 셀 모델
+            var item = updatedList[index]
+            
+            // 토글
+            item.isSelected.toggle()
+            updatedList[index] = item
+            
+            // selectedList 업데이트
+            var updatedSelectedList = currentState.selectedList
+            
+            if item.isSelected {
+                if !updatedSelectedList.contains(where: { $0 == id }) {
+                    updatedSelectedList.append(item.sharedNoteId)
+                }
+            } else {
+                updatedSelectedList.removeAll(where: { $0 == id })
+            }
+            
+            return .concat([
+                .just(.setList(updatedList)),
+                .just(.setSelectedList(updatedSelectedList))
+            ])
         }
     }
 }

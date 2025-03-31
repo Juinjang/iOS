@@ -45,6 +45,15 @@ final class MyNoteStopShareViewController: BaseViewController, View {
             .map { [StopShareSection(model: (), items: $0.list)] }
             .bind(to: mainView.stopShareCollectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.selectedList.count }
+            .distinctUntilChanged()
+            .subscribe(with: self) { (self, count) in
+                self.mainView.selectedCountLabel.text = "\(count)개 선택됨"
+                self.mainView.selectedCountLabel.textColor = count > 0 ? .main : .gray400
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindViewEvent() {
@@ -70,12 +79,7 @@ final class MyNoteStopShareViewController: BaseViewController, View {
     private func bindCellEvent() {
         cellEventRelay
             .subscribe(with: self) { (self, event) in
-//                switch event {
-//                case .cellTap(id: <#T##Int#>):
-//                    
-//                case .likeButtonTap(id: <#T##Int#>):
-//                    
-//                }
+                self.reactor?.action.onNext(.cellEventOccurred(event: event))
             }
             .disposed(by: disposeBag)
     }

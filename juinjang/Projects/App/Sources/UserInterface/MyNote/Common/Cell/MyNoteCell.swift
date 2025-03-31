@@ -248,7 +248,6 @@ extension MyNoteCell {
     
     private func updateStopShareDefaultView() {
         backgroundColor = .mainWhite
-//        layer.addBorder([.all], color: .stroke, width: 1)
         layer.borderWidth = 1
         layer.borderColor = UIColor.stroke.cgColor
         layer.cornerRadius = 12
@@ -256,6 +255,8 @@ extension MyNoteCell {
     
     private func updateStopShareSelectedView() {
         backgroundColor = .bg2
-        layer.addBorder([.all], color: .main, width: 1)
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.main.cgColor
+        layer.cornerRadius = 12
     }
 }
