@@ -153,7 +153,6 @@ extension [MyNoteModel] {
             monthAge: 5,
             viewCount: 1000
         )
-//         필요한 만큼 추가
     ]
     
     static let ownMock: [MyNoteModel] = [
