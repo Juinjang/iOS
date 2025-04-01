@@ -45,18 +45,7 @@ final class LookAroundSearchReactor: Reactor {
             let list = getRecentSearchList()
             return .just(.setRecentSearchKeywordList(list))
             
-        case .searchSummitButtonTapped(let keyword):
-            saveSearchText(keyword)
-            let searchKeywordlist = getRecentSearchList()
-            return .concat([
-                .just(.setRecentSearchKeywordList(searchKeywordlist)),
-                dependency.lookAroundRepository.fetchLookAroundImjang(keyword: keyword)
-                    .map {
-                        Mutation.setSearchResultList($0)
-                    }
-            ])
-            
-        case .searchKeywordTapped(let keyword):
+        case .searchSummitButtonTapped(let keyword), .searchKeywordTapped(let keyword):
             saveSearchText(keyword)
             let searchKeywordlist = getRecentSearchList()
             return .concat([
