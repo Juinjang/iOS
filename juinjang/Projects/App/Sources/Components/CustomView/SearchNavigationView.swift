@@ -94,17 +94,27 @@ final class SearchNavigationView: DefaultNavigationView {
                 if let keyword = self.searchTextField.text {
                     self.itemActionRelay.accept(.searchSummit(keyword: keyword))
                 }
-                self.searchTextField.text = ""
             }
             .disposed(by: disposeBag)
         
         self.isSearchActiveRelay
             .bind(to: self.searchToggleButton.rx.isSearchActive)
             .disposed(by: disposeBag)
+        
+        self.isSearchActiveRelay
+            .withUnretained(self)
+            .subscribe { (self, isActive) in
+                self.itemActionRelay.accept(.searchActive(isActive: isActive))
+            }
+            .disposed(by: disposeBag)
     }
     
-    func setSearchTextFiledBecomeResponder() {
+    func setSearchTextFieldBecomeResponder() {
         searchTextField.becomeFirstResponder()
+    }
+    
+    func setSearchTextFieldText(_ text: String) {
+        searchTextField.text = text
     }
 }
 
