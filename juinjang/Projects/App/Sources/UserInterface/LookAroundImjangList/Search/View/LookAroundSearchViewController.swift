@@ -17,6 +17,7 @@ final class LookAroundSearchViewController: BaseViewController, View {
     private let mainView = LookAroundSearchView()
     
     private lazy var searchKeywordDataSource = configureSearchKeywordDataSource()
+    private lazy var searchResultDataSource = configureSearchResultDataSource()
     
     init(reactor: LookAroundSearchReactor) {
         super.init()
@@ -43,7 +44,9 @@ final class LookAroundSearchViewController: BaseViewController, View {
         
         mainView.searchKeywordCollectionView.rx.modelSelected(String.self)
             .bind(with: self) { owner, keyword  in
-                owner.showSearchResultVC(keyword)
+                owner.mainView.showSearchResultCollectionView(false)
+                owner.reactor?.action.onNext(.searchKeywordTapped(keyword: keyword))
+                owner.mainView.setSearchTextFieldText(keyword)
             }
             .disposed(by: disposeBag)
     }
@@ -54,16 +57,21 @@ final class LookAroundSearchViewController: BaseViewController, View {
                 switch navigationAction {
                 case .popButtonTap:
                     owner.popVC()
+                    
                 case .searchSummit(let keyword):
-                    owner.showSearchResultVC(keyword)
+                    owner.mainView.showSearchResultCollectionView(false)
                     reactor.action.onNext(.searchSummitButtonTapped(keyword: keyword))
+                    
+                case .searchActive(let isActive):
+                    let isEmpty = reactor.currentState.recentSearchKeywordList.isEmpty
+                    owner.mainView.setCollectionViewSearchActive(isActive, isEmpty: isEmpty)
                 default: break
                 }
             }
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { [LookAroundSearchSectionModel(items: $0.recentSearchKeywordList)] }
+            .map { [SearchKeywordSectionModel(items: $0.recentSearchKeywordList)] }
             .bind(to: mainView.searchKeywordCollectionView.rx.items(
                 dataSource: configureSearchKeywordDataSource())
             )
@@ -73,15 +81,14 @@ final class LookAroundSearchViewController: BaseViewController, View {
             .map { $0.recentSearchKeywordList.isEmpty }
             .asDriver(onErrorDriveWith: .empty())
             .drive(with: self) { owner, isEmpty in
-                owner.mainView.showSearchKeywordCollectionView(isEmpty)
+                owner.mainView.setCollectionViewSearchKeywordEmpty(isEmpty)
             }
             .disposed(by: disposeBag)
         
-      
-    }
-    
-    private func showSearchResultVC(_ searchText: String) {
-        print(#function, searchText)
+        reactor.state
+            .map { $0.searchResultList }
+            .bind(to: mainView.searchResultCollectionView.rx.items(dataSource: searchResultDataSource))
+            .disposed(by: disposeBag)
     }
     
     private func popVC() {
@@ -94,32 +101,50 @@ final class LookAroundSearchViewController: BaseViewController, View {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        mainView.setSearchTextFiledBecomeResponder()
+        mainView.setSearchTextFieldBecomeResponder()
     }
 }
 
 extension LookAroundSearchViewController {
-    private func configureSearchKeywordDataSource() -> RxCollectionViewSectionedReloadDataSource<LookAroundSearchSectionModel> {
-        return RxCollectionViewSectionedReloadDataSource<LookAroundSearchSectionModel>(
-            configureCell: { [weak self] _, collectionView, indexPath, item in
-                guard let self else { return UICollectionViewCell() }
-                
-                return collectionView.dequeueReusableCell(RecentSearchKeywordCell.self, for: indexPath).then {
-                    $0.configureCell(
-                        keyword: item,
-                        relay: self.mainView.cellEventTapRelay
-                    )
-                }
-            } , configureSupplementaryView: { pageDataSource, collectionView, _, indexPath in
-                return collectionView.dequeueReusableSupplementaryView(SearchKeywordHeader.self, ofKind: UICollectionView.elementKindSectionHeader, for: indexPath).then { [weak self] in
-                    guard let self else { return }
-                    $0.configure()
-                    $0.removeAllButtonTappedRelay
-                        .bind(with: self) { owner, _ in
-                            owner.reactor?.action.onNext(.removeAllKeywordTapped)
-                        }
-                        .disposed(by: $0.disposeBag)
-                }
-            })
+    private func configureSearchKeywordDataSource() -> RxCollectionViewSectionedReloadDataSource<SearchKeywordSectionModel> {
+        return RxCollectionViewSectionedReloadDataSource<SearchKeywordSectionModel>(
+        configureCell: { [weak self] _, collectionView, indexPath, item in
+            guard let self else { return UICollectionViewCell() }
+            
+            return collectionView.dequeueReusableCell(RecentSearchKeywordCell.self, for: indexPath).then {
+                $0.configureCell(
+                    keyword: item,
+                    relay: self.mainView.cellEventTapRelay
+                )
+            }
+        } , configureSupplementaryView: { [weak self] dataSource, collectionView, item, indexPath in
+            return collectionView.dequeueReusableSupplementaryView(SearchKeywordHeader.self, ofKind: UICollectionView.elementKindSectionHeader, for: indexPath).then { [weak self] in
+                guard let self else { return }
+                $0.configure()
+                $0.removeAllButtonTappedRelay
+                    .bind(with: self) { owner, _ in
+                        owner.reactor?.action.onNext(.removeAllKeywordTapped)
+                    }
+                    .disposed(by: $0.disposeBag)
+            }
+        })
+    }
+    
+    private func configureSearchResultDataSource() -> RxCollectionViewSectionedReloadDataSource<LookAroundSearchResultSectionModel> {
+        return RxCollectionViewSectionedReloadDataSource<LookAroundSearchResultSectionModel>(configureCell: { dataSource, collectionView, indexPath, lookAroundImjangData in
+            switch dataSource[indexPath] {
+            case .imjangCountSection(let imjangCount):
+                let cell = collectionView.dequeueReusableCell(LookAroundImjangCountCell.self, for: indexPath)
+                cell.configureCell(imjangCount: imjangCount)
+                return cell
+
+            case .imjangListSection(let lookAroundImjang):
+                let cell = collectionView.dequeueReusableCell(LookAroundImjangCell.self, for: indexPath)
+                cell.configureCell(lookAroundImjang)
+                return cell
+            }
+        } , configureSupplementaryView: { dataSource, collectionView, _, indexPath in
+            return collectionView.dequeueReusableSupplementaryView(LookAroundFilterHeader.self, ofKind: UICollectionView.elementKindSectionHeader, for: indexPath)
+        })
     }
 }
