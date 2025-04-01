@@ -16,24 +16,14 @@ final class MyNoteMetaInfoView: BaseView {
     private let stackView = UIStackView().then {
         $0.axis = .horizontal
         $0.spacing = 0
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
     }
     
-    private let nicknameLabel = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .regular)
-        $0.textColor = .gray400
+    private let nicknameLabel = RegularLabel().then {
+        $0.maxTextWidth = 24
     }
     
-    private let createDateLabel = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .regular)
-        $0.textColor = .gray400
-    }
-    
-    private let dotLabel = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .regular)
-        $0.textColor = .gray300
-        $0.text = "・"
-    }
+    private let createDateLabel = RegularLabel()
     
     private let viewCountBaseView = UIView()
     
@@ -42,10 +32,8 @@ final class MyNoteMetaInfoView: BaseView {
         $0.image = .eye
     }
     
-    private let viewCountLabel = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .regular)
-        $0.textColor = .gray400
-        $0.textAlignment = .center
+    private let viewCountLabel = RegularLabel().then {
+        $0.fontAlignment = .center
     }
     
     override func configureHierarchy() {
@@ -101,7 +89,7 @@ final class MyNoteMetaInfoView: BaseView {
             with: URL(string: model.imageUrl),
             placeholder: UIImage.Setting.profile
         )
-        nicknameLabel.setTruncatedTextByWidth(model.nickname)
+        nicknameLabel.text = model.nickname
         createDateLabel.text = model.createDate
         viewCountLabel.text = model.viewCount
     }
@@ -115,10 +103,9 @@ final class MyNoteMetaInfoView: BaseView {
     }
     
     private func makeDotLabel() -> UILabel {
-        return UILabel().then {
-            $0.font = .pretendard(size: 13, weight: .regular)
-            $0.textColor = .gray300
-            $0.textAlignment = .center
+        return RegularLabel().then {
+            $0.fontColor = .gray300
+            $0.fontAlignment = .center
             $0.text = "・"
         }.then { label in
             label.snp.makeConstraints {

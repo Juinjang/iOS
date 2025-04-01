@@ -21,9 +21,9 @@ final class MyNoteNoticeView: BaseView {
     
     private let iconImageView = UIImageView()
     
-    private let noticeLabel = UILabel().then {
-        $0.textColor = .gray400
-        $0.font = .pretendard(size: 14, weight: .medium)
+    private let noticeLabel = MediumLabel().then {
+        $0.fontColor = .gray400
+        $0.fontSize = 14
     }
     
     private let closeButton = ImageButton(normalImage: .x24).then {

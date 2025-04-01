@@ -33,36 +33,28 @@ final class MyNoteCell: UICollectionViewCell {
     
     private let buildingInfoBaseView = UIView()
     
-    private let buildingNameLabel = UILabel().then {
-        $0.textColor = .gray600
-        $0.font = .pretendard(size: 16, weight: .bold)
-        $0.lineBreakMode = .byTruncatingTail
-        $0.numberOfLines = 1
-    }
+    private let buildingNameLabel = BoldLabel()
 
-    private let purchaseLabel = UILabel().then {
+    private let purchaseLabel = MediumLabel().then {
         $0.backgroundColor = .point.withAlphaComponent(0.1)
         $0.layer.cornerRadius = 4
         $0.layer.masksToBounds = true
         $0.text = "소장"
-        $0.textAlignment = .center
-        $0.textColor = .point
-        $0.font = .pretendard(size: 12, weight: .medium)
+        $0.fontAlignment = .center
+        $0.fontColor = .point
+        $0.fontSize = 12
     }
     
-    private let priceLabel = UILabel().then {
-        $0.font = .pretendard(size: 16, weight: .medium)
-        $0.textColor = .gray450
+    private let priceLabel = MediumLabel()
+    
+    private let spaceInfoLabel = MediumLabel().then {
+        $0.fontSize = 14
+        $0.fontColor = .gray400
     }
     
-    private let spaceInfoLabel = UILabel().then {
-        $0.font = .pretendard(size: 14, weight: .medium)
-        $0.textColor = .gray400
-    }
-    
-    private let addressLabel = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .medium)
-        $0.textColor = .gray400
+    private let addressLabel = MediumLabel().then {
+        $0.fontSize = 13
+        $0.fontColor = .gray400
     }
     
     private let metaInfoView = MyNoteMetaInfoView().then {

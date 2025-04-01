@@ -15,9 +15,9 @@ final class MyNoteStarRateLabel: BaseView {
         $0.contentMode = .scaleAspectFit
     }
     
-    private let label = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .semiBold)
-        $0.textColor = .white
+    private let label = SemiBoldLabel().then {
+        $0.fontSize = 13
+        $0.fontColor = .mainWhite
     }
     
     var rateNumber: Double = 0.0 {
