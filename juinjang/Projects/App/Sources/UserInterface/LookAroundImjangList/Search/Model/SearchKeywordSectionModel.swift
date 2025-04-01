@@ -7,11 +7,11 @@
 
 import RxDataSources
 
-struct LookAroundSearchSectionModel {
+struct SearchKeywordSectionModel {
     var items: [String]
 }
 
-extension LookAroundSearchSectionModel: SectionModelType {
+extension SearchKeywordSectionModel: SectionModelType {
     typealias Identity = String
     typealias Item = String
 
@@ -19,7 +19,7 @@ extension LookAroundSearchSectionModel: SectionModelType {
         return "search_section"
     }
 
-    init(original: LookAroundSearchSectionModel, items: [Item]) {
+    init(original: SearchKeywordSectionModel, items: [Item]) {
         self = original
         self.items = items
     }
