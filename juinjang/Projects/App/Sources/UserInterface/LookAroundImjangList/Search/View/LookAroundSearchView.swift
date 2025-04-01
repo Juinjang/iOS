@@ -65,7 +65,6 @@ final class LookAroundSearchView: BaseView {
         navigationView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
             make.horizontalEdges.equalToSuperview()
-            make.height.equalTo(44)
         }
         
         searchKeywordCollectionView.snp.makeConstraints { make in
