@@ -53,7 +53,7 @@ final class LookAroundSearchViewController: BaseViewController, View {
     
     func bind(reactor: LookAroundSearchReactor) {
         mainView.navigationEventRelay
-            .bind(with: self) { (owner, navigationAction) in
+            .subscribe(with: self) { (owner, navigationAction) in
                 switch navigationAction {
                 case .popButtonTap:
                     owner.popVC()
@@ -139,7 +139,7 @@ extension LookAroundSearchViewController {
                 return cell
 
             case .imjangListSection(let lookAroundImjang):
-                let cell = collectionView.dequeueReusableCell(LookAroundImjangCell.self, for: indexPath)
+                let cell = collectionView.dequeueReusableCell(LookAroundCell.self, for: indexPath)
                 cell.configureCell(lookAroundImjang)
                 return cell
             }

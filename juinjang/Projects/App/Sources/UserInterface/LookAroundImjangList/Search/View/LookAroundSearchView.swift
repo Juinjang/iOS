@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 import RxRelay
 import RxSwift
 
@@ -28,7 +29,7 @@ final class LookAroundSearchView: BaseView {
         
     lazy var searchResultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createImjangCompositionalLayout()).then {
         $0.register(LookAroundImjangCountCell.self)
-        $0.register(LookAroundImjangCell.self)
+        $0.register(LookAroundCell.self)
         $0.register(
             LookAroundFilterHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader

@@ -12,7 +12,7 @@ final class LookAroundSearchReactor: Reactor {
     var initialState = State()
     
     struct Dependency {
-        let lookAroundRepository: LookAroundRepository
+        let lookAroundRepository: LookAroundRepositoryProtocol
     }
 
     let dependency: Dependency

@@ -7,13 +7,13 @@
 
 import RxSwift
 
-protocol LookAroundRepository {
+protocol LookAroundRepositoryProtocol {
     func fetchLookAroundImjang(cursor: Int,
                                limit: Int,
                                keyword: String) -> Observable<LookAroundImjangResult>
 }
 
-extension LookAroundRepository {
+extension LookAroundRepositoryProtocol {
     func fetchLookAroundImjang(cursor: Int = 0,
                                limit: Int = 15,
                                keyword: String = "건물") -> Observable<LookAroundImjangResult> {
@@ -21,7 +21,7 @@ extension LookAroundRepository {
     }
 }
 
-final class MockLookAroundRepository: LookAroundRepository {
+final class MockLookAroundRepository: LookAroundRepositoryProtocol {
     private var currentCursor: Int = 0
     func fetchLookAroundImjang(cursor: Int = 0, limit: Int = 15, keyword: String = "건물") -> RxSwift.Observable<LookAroundImjangResult> {
         currentCursor = cursor

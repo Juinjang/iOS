@@ -10,8 +10,8 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class MoreButtonReusableCell: BaseCollectionReusableView {
-    fileprivate let moreButton: PaddingButton = {
+final class SeeMoreReusableCell: BaseCollectionReusableView {
+    private let moreButton: PaddingButton = {
         let button: PaddingButton = .init(
             padding: UIEdgeInsets(top: 12.0, left: 0.0, bottom: 12.0, right: 0.0)
         )

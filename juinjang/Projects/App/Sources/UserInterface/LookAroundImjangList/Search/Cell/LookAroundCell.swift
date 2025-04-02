@@ -6,9 +6,10 @@
 //
 
 import UIKit
+import SnapKit
 import Then
 
-final class LookAroundImjangCell: BaseCollectionViewCell {
+final class LookAroundCell: BaseCollectionViewCell {
     private let imjangImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 6
@@ -109,6 +110,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
     }
 
     override func configureHierarchy() {
+        super.configureHierarchy()
         [starImageView, scoreLabel].forEach {
             scoreStackView.addArrangedSubview($0)
         }
@@ -133,6 +135,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
     }
 
     override func configureLayout() {
+        super.configureLayout()
         imjangImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(12)
             make.leading.equalToSuperview().inset(24)
@@ -218,7 +221,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
     }
 }
 
-extension LookAroundImjangCell {
+extension LookAroundCell {
 
     private func createDivideCircleLabel() -> UILabel {
         let label = UILabel()
@@ -228,10 +231,9 @@ extension LookAroundImjangCell {
     }
 }
 
-extension LookAroundImjangCell {
+extension LookAroundCell {
     private func setScore(_ score: Double) {
-        let score = score.truncateToSingleDecimal()
-        let scoreString = String(format: "%.1f", score)
+        let scoreString = score.truncateToSingleDecimal().convertTo1fString()
         scoreLabel.setAttribute(text: scoreString, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
     }
 
