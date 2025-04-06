@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
 
 final class MyNoteStopShareView: BaseView {
     let navigationView = DefaultNavigationView().then {
@@ -107,5 +108,16 @@ extension MyNoteStopShareView {
         }
         
         return layout
+    }
+}
+
+extension Reactive where Base: MyNoteStopShareView {
+    var selectedCount: Binder<Int> {
+        return Binder(base) { view, count in
+            view.selectedCountLabel.text = "\(count)개 선택됨"
+            view.selectedCountLabel.textColor = count > 0 ? .main : .gray400
+            view.removeButton.backgroundColor = count == 0 ? .null : .main
+            view.removeButton.isEnabled = count == 0 ? false : true
+        }
     }
 }

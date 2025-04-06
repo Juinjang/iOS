@@ -49,15 +49,13 @@ final class MyNoteStopShareViewController: BaseViewController, View {
         reactor.state
             .map { $0.selectedList.count }
             .distinctUntilChanged()
-            .subscribe(with: self) { (self, count) in
-                self.mainView.selectedCountLabel.text = "\(count)개 선택됨"
-                self.mainView.selectedCountLabel.textColor = count > 0 ? .main : .gray400
-            }
+            .bind(to: mainView.rx.selectedCount)
             .disposed(by: disposeBag)
     }
     
     private func bindViewEvent() {
-        mainView.navigationView
+        mainView
+            .navigationView
             .itemActionRelay
             .subscribe(with: self) { (self, action) in
                 switch action {
@@ -68,8 +66,8 @@ final class MyNoteStopShareViewController: BaseViewController, View {
             }
             .disposed(by: disposeBag)
         
-        mainView.removeButton
-            .rx.throttleTap
+        mainView
+            .removeButton.rx.throttleTap
             .subscribe(with: self) { (self, _) in
                 self.reactor?.action.onNext(.removeButtonDidTap)
             }
