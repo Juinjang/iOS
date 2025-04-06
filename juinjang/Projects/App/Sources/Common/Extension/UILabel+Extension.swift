@@ -53,7 +53,7 @@ extension UILabel {
     
     func setAttribute(text: String?, color: UIColor = .gray500, font: UIFont? = .pretendard(size: 14, weight: .regular), lineHeight: CGFloat = 30, charSpacing: CGFloat = -0.02, alignment: NSTextAlignment = .left) {
         guard let text, let font else { return }
-        
+
         let resultText = text.isEmpty ? "" : text
 
         let style = NSMutableParagraphStyle()

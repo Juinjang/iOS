@@ -14,6 +14,7 @@ final class UserDefaultManager {
     
     enum UDKey: String, CaseIterable {
         case searchKeywords
+        case lookAroundSearchKeywords
         case accessToken
         case refreshToken
         case nickname
@@ -33,6 +34,11 @@ final class UserDefaultManager {
     var searchKeywords: [String] {
         get { ud.array(forKey: UDKey.searchKeywords.rawValue) as? [String] ?? [] }
         set { ud.set(newValue, forKey: UDKey.searchKeywords.rawValue) }
+    }
+    
+    var lookAroundSearchKeywords: [String] {
+        get { ud.array(forKey: UDKey.lookAroundSearchKeywords.rawValue) as? [String] ?? [] }
+        set { ud.set(newValue, forKey: UDKey.lookAroundSearchKeywords.rawValue) }
     }
     
     var accessToken: String {
