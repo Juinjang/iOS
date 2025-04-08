@@ -64,10 +64,9 @@ final class MyNoteViewController: BaseViewController, View {
         reactor.state
             .compactMap(\.alreadyLikedNoteId)
             .subscribe(with: self) { (self, _) in
-                print("Show Alert")
                 let alertView = MyNoteAlertView()
                 alertView.eventRelay
-                    .map { MyNoteViewReactor.Action.alertEventOccurred(event: $0) } // 바인딩 시키고 커밋 찍고 풀리퀘 올리자
+                    .map { MyNoteViewReactor.Action.alertEventOccurred(event: $0) }
                     .bind(to: reactor.action)
                     .disposed(by: self.disposeBag)
                 self.present(alertView, animated: true)
