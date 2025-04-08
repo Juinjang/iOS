@@ -4,7 +4,7 @@ import Then
 import Lottie
 import Alamofire
 import SkeletonView
-import Common
+//import Common
 
 protocol updateNicknameDelegate: AnyObject {
     func updateNickname()
@@ -33,10 +33,10 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         super.viewWillAppear(animated)
         
         // 화면 전환 이벤트 로깅
-        AnalyticsManager.log(event: MainViewEvent(
-                name: .enter_main_view,
-                parameters: ["MainScreen": "MainViewController"])
-        )
+//        AnalyticsManager.log(event: MainViewEvent(
+//                name: .enter_main_view,
+//                parameters: ["MainScreen": "MainViewController"])
+//        )
     }
     
     // MARK: - viewDidLoad()

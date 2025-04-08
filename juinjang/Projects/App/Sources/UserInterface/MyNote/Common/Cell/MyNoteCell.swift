@@ -123,6 +123,7 @@ final class MyNoteCell: UICollectionViewCell {
         spaceInfoLabel.text = "\(model.pyong)평 \(model.floor)"
         addressLabel.text = "\(model.address)"
         metaInfoView.configure(.init(model))
+        configureStopShareLayout(model)
         
         likeButton.rx.throttleTap
             .map { MyNoteCellEventType.likeButtonTap(id: model.sharedNoteId) }
@@ -223,5 +224,39 @@ final class MyNoteCell: UICollectionViewCell {
             $0.bottom.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
+    }
+}
+
+// MARK: - StopShare Layout Update
+extension MyNoteCell {
+    private func configureStopShareLayout(_ model: MyNoteCellModel) {
+        if model.isStopShare {
+            separatorView.isHidden = true
+            layer.masksToBounds = true
+            layer.cornerRadius = 10
+            
+            thumbnailImageView.snp.remakeConstraints {
+                $0.width.equalTo(144)
+                $0.height.equalTo(112)
+                $0.left.equalToSuperview().offset(12)
+                $0.centerY.equalToSuperview()
+            }
+            
+            model.isSelected ? updateStopShareSelectedView() : updateStopShareDefaultView()
+        }
+    }
+    
+    private func updateStopShareDefaultView() {
+        backgroundColor = .mainWhite
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.stroke.cgColor
+        layer.cornerRadius = 12
+    }
+    
+    private func updateStopShareSelectedView() {
+        backgroundColor = .bg2
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.main.cgColor
+        layer.cornerRadius = 12
     }
 }

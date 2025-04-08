@@ -13,25 +13,11 @@ import SnapKit
 import RxDataSources
 
 final class MyNoteViewController: BaseViewController, View {
+    typealias MyNoteMainSection = SectionModel<Void, MyNotePageModel>
     var disposeBag = DisposeBag()
     
     private let mainView = MyNoteView()
-    
-    private lazy var pageDataSource = RxCollectionViewSectionedReloadDataSource<SectionModel<Void, MyNotePageModel>>(
-        configureCell: { [weak self] _, collectionView, indexPath, item in
-            guard let self = self else { return UICollectionViewCell() }
-            
-            return collectionView.dequeueReusableCell(
-                MyNotePageCell.self,
-                for: indexPath
-            ).then {
-                $0.bind(
-                    page: item,
-                    relay: self.mainView.pageCellEventRelay
-                )
-            }
-        }
-    )
+    private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
     
     init(reactor: MyNoteViewReactor) {
         super.init()
@@ -58,7 +44,7 @@ final class MyNoteViewController: BaseViewController, View {
             .map { state -> [SectionModel<Void, MyNotePageModel>] in
                 return [SectionModel(model: (), items: state.pages)]
             }
-            .bind(to: self.mainView.pageContainerCollectionView.rx.items(dataSource: pageDataSource))
+            .bind(to: self.mainView.pageContainerCollectionView.rx.items(dataSource: createDataSource()))
             .disposed(by: disposeBag)
         
         reactor.state
@@ -73,7 +59,8 @@ final class MyNoteViewController: BaseViewController, View {
     // MARK: - View Event
     func bindViewEvent() {
         mainView
-            .navigationEventRelay
+            .navigationView
+            .itemActionRelay
             .withUnretained(self)
             .subscribe { (self, action) in
                 switch action {
@@ -115,24 +102,40 @@ final class MyNoteViewController: BaseViewController, View {
     
     // MARK: - PageCellEvent
     func bindPageCellEvent() {
-        mainView.pageCellEventRelay
+        pageCellEventRelay
             .filter { !$0.isCellTap }
             .filter { $0 != MyNotePageEventType.shareButtonTap }
             .map { Reactor.Action.pageCellEventOccurred(event: $0) }
             .bind(to: reactor!.action)
             .disposed(by: disposeBag)
         
-        mainView.pageCellEventRelay
+        pageCellEventRelay
             .compactMap { $0.cellTapId }
             .subscribe(with: self) { (self, id) in
                 print("cell Selected \(id)")
             }
             .disposed(by: disposeBag)
         
-        mainView.pageCellEventRelay
+        pageCellEventRelay
             .filter { $0 == .shareButtonTap }
             .subscribe(with: self) { (self, _) in
                 print("노트 공유하러 가기 클릭")
+            }
+            .disposed(by: disposeBag)
+        
+        pageCellEventRelay
+            .filter { $0 == .stopShareButtonTap }
+            .subscribe(with: self) { (self, _) in
+                self.navigationController?.pushViewController(
+                    MyNoteStopShareViewController(
+                        reactor: .init(
+                            dependency: .init(
+                                myNoteRepository: MyNoteRepository()
+                            )
+                        )
+                    ),
+                    animated: true
+                )
             }
             .disposed(by: disposeBag)
     }
@@ -144,5 +147,24 @@ extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         return CGSize(width: collectionView.bounds.width,
                       height: collectionView.bounds.height)
+    }
+}
+
+// MARK: - MyNote Page DataSource
+extension MyNoteViewController {
+    private func createDataSource() ->RxCollectionViewSectionedReloadDataSource<MyNoteMainSection> {
+        return .init(configureCell: { [weak self] _, collectionView, indexPath, item in
+            guard let self = self else { return UICollectionViewCell() }
+            
+            return collectionView.dequeueReusableCell(
+                MyNotePageCell.self,
+                for: indexPath
+            ).then {
+                $0.bind(
+                    page: item,
+                    relay: self.pageCellEventRelay
+                )
+            }
+        })
     }
 }
