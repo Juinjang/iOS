@@ -33,14 +33,12 @@ final class MyNoteCell: UICollectionViewCell {
     
     private let buildingInfoBaseView = UIView()
     
-    private let buildingNameLabel = H3Label().then {
+    private let buildingNameLabel = DSLabel(.title).then {
         $0.fontColor = .gray600
-        $0.fontSize = 16
-        $0.lineHeight = 23.2
-        $0.letterSpacing = -0.2
+        $0.fontWeight = .bold
     }
 
-    private let purchaseLabel = BodyLabel().then {
+    private let purchaseLabel = DSLabel(.body).then {
         $0.backgroundColor = .point.withAlphaComponent(0.1)
         $0.layer.cornerRadius = 4
         $0.layer.masksToBounds = true
@@ -48,29 +46,21 @@ final class MyNoteCell: UICollectionViewCell {
         $0.fontAlignment = .center
         $0.fontColor = .point
         $0.fontSize = 12
-        $0.lineHeight = 17.4
-        $0.letterSpacing = -0.2
     }
     
-    private let priceLabel = BodyLabel().then {
+    private let priceLabel = DSLabel(.body).then {
         $0.fontColor = .gray450
         $0.fontSize = 16
-        $0.lineHeight = 23.2
-        $0.letterSpacing = -0.2
     }
     
-    private let spaceInfoLabel = BodyLabel().then {
+    private let spaceInfoLabel = DSLabel(.body).then {
         $0.fontColor = .gray400
         $0.fontSize = 14
-        $0.lineHeight = 20.3
-        $0.letterSpacing = -0.2
     }
     
-    private let addressLabel = BodyLabel().then {
+    private let addressLabel = DSLabel(.body).then {
         $0.fontSize = 13
         $0.fontColor = .gray400
-        $0.lineHeight = 18.85
-        $0.letterSpacing = -0.2
     }
     
     private let metaInfoView = MyNoteMetaInfoView().then {
