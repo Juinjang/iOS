@@ -23,6 +23,8 @@ struct MyNoteCellModel {
     let onwerNickname: String
     let monthAge: Int
     let viewCount: Int
+    var isStopShare: Bool = false
+    var isSelected: Bool = false
     
     init(model: MyNoteModel) {
         sharedNoteId = model.sharedNoteId
@@ -46,6 +48,10 @@ struct MyNoteCellModel {
 extension MyNoteCellModel: IdentifiableType {
     var identity: Int {
         return sharedNoteId
+    }
+    
+    mutating func setupStopShare() {
+        self.isStopShare = true
     }
 }
 

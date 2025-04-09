@@ -102,6 +102,21 @@ final class SearchNavigationView: DefaultNavigationView {
         self.isSearchActiveRelay
             .bind(to: self.searchToggleButton.rx.isSearchActive)
             .disposed(by: disposeBag)
+        
+        self.isSearchActiveRelay
+            .withUnretained(self)
+            .subscribe { (self, isActive) in
+                self.itemActionRelay.accept(.searchActive(isActive: isActive))
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func setSearchTextFieldBecomeResponder() {
+        searchTextField.becomeFirstResponder()
+    }
+    
+    func setSearchTextFieldText(_ text: String) {
+        searchTextField.text = text
     }
 }
 

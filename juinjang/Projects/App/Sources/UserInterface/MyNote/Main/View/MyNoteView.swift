@@ -15,7 +15,7 @@ import RxDataSources
 final class MyNoteView: BaseView {
     private let disposeBag = DisposeBag()
     
-    private let navigationView = DefaultNavigationView().then {
+    let navigationView = DefaultNavigationView().then {
         $0.title = "마이노트"
         $0.leftItem = [.pop]
         $0.rightItem = [.search]
@@ -46,10 +46,7 @@ final class MyNoteView: BaseView {
             $0.register(MyNotePageCell.self)
         }
     }()
-    
-    let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
-    let navigationEventRelay = PublishRelay<NavigationAction>()
-    
+        
     override func configureView() {
         super.configureView()
     }

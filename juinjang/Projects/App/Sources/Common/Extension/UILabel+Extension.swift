@@ -58,7 +58,7 @@ extension UILabel {
                       charSpacing: CGFloat = -0.02,
                       alignment: NSTextAlignment = .left) {
         guard let text, let font else { return }
-        
+
         let resultText = text.isEmpty ? "" : text
         
         let style = NSMutableParagraphStyle()
