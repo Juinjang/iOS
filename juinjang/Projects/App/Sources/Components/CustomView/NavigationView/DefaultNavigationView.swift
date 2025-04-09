@@ -56,10 +56,9 @@ enum NavigationAction {
 
 class DefaultNavigationView: BaseView {
     var disposeBag = DisposeBag()
-    private let titleLabel: UILabel = UILabel().then {
-        $0.font = .pretendard(size: 16, weight: .semiBold)
-        $0.textColor = .gray600
-        $0.textAlignment = .center
+    private let titleLabel = DSLabel(.title).then {
+        $0.fontColor = .gray600
+        $0.fontAlignment = .center
     }
     
     var title: String? {
