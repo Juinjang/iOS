@@ -12,6 +12,7 @@ final class MyNoteViewReactor: Reactor {
         case viewDidLoad
         case categoryButtonDidTap(Int)
         case pageCellEventOccurred(event: MyNotePageEventType)
+        case alertEventOccurred(event: AlertEventType)
     }
 
     enum Mutation {
@@ -21,8 +22,9 @@ final class MyNoteViewReactor: Reactor {
         case hideNotice
         case updateFilter(transactionType: TransactionTypeAction?,
                           saleType: SaleTypeAction?)
-        case showAlreadyLikedNotice
+        case showAlreadyLikedNotice(id: Int)
         case setLikeTrue(id: Int)
+        case resetAlert
     }
 
     struct State {
@@ -53,7 +55,7 @@ final class MyNoteViewReactor: Reactor {
                 items: []
             )
         ]
-        var showAlreadyLikedNotice: Bool = false
+        var alreadyLikedNoteId: Int? = nil
     }
     
     struct Dependency {
@@ -83,6 +85,9 @@ final class MyNoteViewReactor: Reactor {
             return handleCategoryChange(index: index)
         case .pageCellEventOccurred(event: let event):
             return handlePageCellEvent(event)
+        case .alertEventOccurred(event: let event):
+            // like API Call
+            return .just(.resetAlert)
         }
     }
 
@@ -105,10 +110,12 @@ final class MyNoteViewReactor: Reactor {
             updateFilter(&state,
                          transactionType: transactionType,
                          saleType: saleType)
-        case .showAlreadyLikedNotice:
-            state.showAlreadyLikedNotice = true
+        case .showAlreadyLikedNotice(let id):
+            state.alreadyLikedNoteId = id
         case .setLikeTrue(id: let id):
             setLikeTrue(&state, id: id)
+        case .resetAlert:
+            state.alreadyLikedNoteId = nil
         }
         
         return state
@@ -161,7 +168,7 @@ extension MyNoteViewReactor {
             
             if let item = currentPage.items.first(where: { $0.sharedNoteId == id }) {
                 if item.isLike {
-                    return .just(.showAlreadyLikedNotice)
+                    return .just(.showAlreadyLikedNotice(id: id))
                 } else {
                     return .just(.setLikeTrue(id: id))
                 }

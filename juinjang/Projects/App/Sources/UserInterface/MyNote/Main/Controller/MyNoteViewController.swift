@@ -48,10 +48,14 @@ final class MyNoteViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .filter { $0.showAlreadyLikedNotice }
+            .compactMap(\.alreadyLikedNoteId)
             .subscribe(with: self) { (self, _) in
-                print("Show Alert")
-                
+                let alertView = MyNoteAlertView()
+                alertView.eventRelay
+                    .map { MyNoteViewReactor.Action.alertEventOccurred(event: $0) }
+                    .bind(to: reactor.action)
+                    .disposed(by: self.disposeBag)
+                self.present(alertView, animated: true)
             }
             .disposed(by: disposeBag)
     }
