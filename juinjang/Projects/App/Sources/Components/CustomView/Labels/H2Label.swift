@@ -7,11 +7,12 @@
 
 import UIKit
 
-final class MediumLabel: BaseAttributedLabel {
+final class H2Label: BaseAttributedLabel {
     override func commonInit() {
         super.commonInit()
-        fontSize = 16
-        fontColor = .gray450
-        fontWeight = .medium
+        fontSize = 20
+        fontWeight = .bold
+        lineHeight = 27
+        letterSpacing = -0.4
     }
 }

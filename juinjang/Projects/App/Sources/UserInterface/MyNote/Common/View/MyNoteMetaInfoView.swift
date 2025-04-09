@@ -19,11 +19,22 @@ final class MyNoteMetaInfoView: BaseView {
         $0.distribution = .fill
     }
     
-    private let nicknameLabel = RegularLabel().then {
+    private let nicknameLabel = BodyLabel().then {
+        $0.fontWeight = .regular
+        $0.fontColor = .gray400
+        $0.fontSize = 13
+        $0.lineHeight = 18.85
+        $0.letterSpacing = -0.2
         $0.maxTextWidth = 24
     }
     
-    private let createDateLabel = RegularLabel()
+    private let createDateLabel = BodyLabel().then {
+        $0.fontWeight = .regular
+        $0.fontColor = .gray400
+        $0.fontSize = 13
+        $0.lineHeight = 18.85
+        $0.letterSpacing = -0.2
+    }
     
     private let viewCountBaseView = UIView()
     
@@ -32,8 +43,13 @@ final class MyNoteMetaInfoView: BaseView {
         $0.image = .eye
     }
     
-    private let viewCountLabel = RegularLabel().then {
+    private let viewCountLabel = BodyLabel().then {
+        $0.fontWeight = .regular
         $0.fontAlignment = .center
+        $0.fontColor = .gray400
+        $0.fontSize = 13
+        $0.lineHeight = 18.85
+        $0.letterSpacing = -0.2
     }
     
     override func configureHierarchy() {
@@ -103,7 +119,10 @@ final class MyNoteMetaInfoView: BaseView {
     }
     
     private func makeDotLabel() -> UILabel {
-        return RegularLabel().then {
+        return BodyLabel().then {
+            $0.fontSize = 13
+            $0.lineHeight = 18.85
+            $0.letterSpacing = -0.2
             $0.fontColor = .gray300
             $0.fontAlignment = .center
             $0.text = "・"

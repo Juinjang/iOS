@@ -10,10 +10,11 @@ import UIKit
 protocol AttributeLabelable: UILabel {
     var fontColor: UIColor { get set }
     var fontSize: CGFloat { get set }
-    var charSpacing: CGFloat { get set }
+    var letterSpacing: CGFloat { get set }
     var fontAlignment: NSTextAlignment { get set }
     var fontWeight: UIFont.PretendardWeight { get set }
     var maxTextWidth: CGFloat? { get set }
+    var lineHeight: CGFloat { get set }
     
     func updateAttributedText()
 }
@@ -26,8 +27,8 @@ extension AttributeLabelable {
             } ?? (text ?? ""),
             color: fontColor,
             font: UIFont.pretendard(size: fontSize, weight: fontWeight),
-            lineHeight: fontSize*1.45,
-            charSpacing: charSpacing,
+            lineHeight: lineHeight,
+            charSpacing: letterSpacing,
             alignment: fontAlignment
         )
     }

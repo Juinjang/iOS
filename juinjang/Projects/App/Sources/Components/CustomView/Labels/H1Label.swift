@@ -7,11 +7,12 @@
 
 import UIKit
 
-final class BoldLabel: BaseAttributedLabel {
+final class H1Label: BaseAttributedLabel {
     override func commonInit() {
         super.commonInit()
-        fontSize = 16
-        fontColor = .gray600
+        fontSize = 24
         fontWeight = .bold
+        lineHeight = 32.4
+        letterSpacing = -0.48
     }
 }

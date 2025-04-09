@@ -7,11 +7,12 @@
 
 import UIKit
 
-final class SemiBoldLabel: BaseAttributedLabel {
+final class H4Label: BaseAttributedLabel {
     override func commonInit() {
         super.commonInit()
-        fontSize = 14
-        fontColor = .gray500
+        fontSize = 20
         fontWeight = .semiBold
+        lineHeight = 27
+        letterSpacing = -0.4
     }
 }

@@ -10,10 +10,11 @@ import UIKit
 class BaseAttributedLabel: UILabel, AttributeLabelable {
     var fontColor: UIColor = .gray400 { didSet { updateAttributedText() } }
     var fontSize: CGFloat = 14 { didSet { updateAttributedText() } }
-    var charSpacing: CGFloat = -0.02 { didSet { updateAttributedText() } }
+    var letterSpacing: CGFloat = -0.02 { didSet { updateAttributedText() } }
     var fontAlignment: NSTextAlignment = .left { didSet { updateAttributedText() } }
     var fontWeight: UIFont.PretendardWeight = .bold { didSet { updateAttributedText() }}
     var maxTextWidth: CGFloat? { didSet { updateAttributedText() } }
+    var lineHeight: CGFloat = 32.4 { didSet { updateAttributedText() } }
 
     override var text: String? {
         didSet { updateAttributedText() }
