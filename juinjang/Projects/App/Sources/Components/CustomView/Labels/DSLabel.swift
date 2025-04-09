@@ -31,17 +31,6 @@ enum DSFontStyle {
         case .reguler: return .regular
         }
     }
-    
-    var letterSpacing: CGFloat  {
-        switch self {
-        case .h1: return -0.48
-        case .h2, .h4: return -0.4
-        case .h3: return -0.36
-        case .title, .body: return -0.32
-        case .body2: return -0.28
-        case .reguler: return -0.2
-        }
-    }
 }
 
 final class DSLabel: UILabel {
@@ -49,7 +38,6 @@ final class DSLabel: UILabel {
     var fontAlignment: NSTextAlignment = .left { didSet { updateAttributedText() } }
     var fontSize: CGFloat = 14 { didSet { updateAttributedText() } }
     var fontWeight: UIFont.PretendardWeight = .bold { didSet { updateAttributedText() }}
-    var letterSpacing: CGFloat = -0.02 { didSet { updateAttributedText() } }
     var maxTextWidth: CGFloat? { didSet { updateAttributedText() } }
     
     private var lineHeight: CGFloat {
@@ -59,6 +47,10 @@ final class DSLabel: UILabel {
             return fontSize * 1.45
         }
     }
+    
+    private var letterSpacing: CGFloat {
+        return fontSize * -0.02
+    }
 
     override var text: String? {
         didSet { updateAttributedText() }
@@ -67,7 +59,6 @@ final class DSLabel: UILabel {
     init(_ style: DSFontStyle) {
         self.fontSize = style.size
         self.fontWeight = style.weight
-        self.letterSpacing = style.letterSpacing
         super.init(frame: .zero)
         commonInit()
         updateAttributedText()
