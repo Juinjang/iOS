@@ -17,3 +17,20 @@ extension Reactive where Base: UIButton {
                       scheduler: MainScheduler.instance)
     }
 }
+
+extension Reactive where Base: UICollectionView {
+    func bindSectionItems<S: Hashable, I: Hashable>(
+        to dataSource: UICollectionViewDiffableDataSource<S, I>,
+        orderedBy preferredOrder: [S]
+    ) -> Binder<[S: [I]]> {
+        return Binder(base) { collectionView, sectionItems in
+            var snapshot = NSDiffableDataSourceSnapshot<S, I>()
+            let sections = preferredOrder.filter { sectionItems.keys.contains($0) }
+            snapshot.appendSections(sections)
+            for section in sections {
+                snapshot.appendItems(sectionItems[section] ?? [], toSection: section)
+            }
+            dataSource.apply(snapshot, animatingDifferences: true)
+        }
+    }
+}
