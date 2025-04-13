@@ -30,15 +30,15 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
     
     private let infoMockModel: ImjangDetailInfoModel = {
         return .init(
-            isBuyer: false,
+            isBuyer: true,
             requiredPencils: 3,
-            imageCount: 1,
+            imageCount: 3,
             checkedCount: 32,
             reviewLength: 450,
             bulidingName: "판교푸르지오월드마크",
             propertyType: "APARTMENT",
             buyerCount: 10,
-            images: ["",""],
+            images: ["", "", ""],
             address: "서울시 동작구 노들로2길 7 (노량진드림 스퀘어 복합빌딩) A1620호",
             addressShort: "서울시 동작구",
             priceType: "PULL_RENT",
