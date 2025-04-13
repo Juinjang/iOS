@@ -21,4 +21,5 @@ struct MyNoteModel: Codable {
     let onwerNickname: String
     let monthAge: Int
     let viewCount: Int
+    var propertyType: String
 }

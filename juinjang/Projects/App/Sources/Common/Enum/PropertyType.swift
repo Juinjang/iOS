@@ -21,4 +21,13 @@ enum PropertyType: String, CaseIterable {
         case .DETACHED_HOUSE: return .ImjangList.detachedHouse
         }
     }
+    
+    var detailImage: UIImage {
+        switch self {
+        case .APARTMENT: return .apartmentDetail
+        case .VILLA: return .villaDetail
+        case .OFFICE_TEL: return .officeTelDetail
+        case .DETACHED_HOUSE: return .detachedHouseDetail
+        }
+    }
 }

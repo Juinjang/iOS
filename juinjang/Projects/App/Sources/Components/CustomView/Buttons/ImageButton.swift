@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
 
 final class ImageButton: UIButton {
     override var contentMode: UIView.ContentMode {
@@ -17,9 +18,17 @@ final class ImageButton: UIButton {
     
     private var customImageView = UIImageView()
     
-    var selectedImage: UIImage?
+    var selectedImage: UIImage? {
+        didSet {
+            self.commonInit()
+        }
+    }
     
-    var image: UIImage
+    var image: UIImage? {
+        didSet {
+            self.commonInit()
+        }
+    }
     
     override var isSelected: Bool {
         didSet {
@@ -27,7 +36,7 @@ final class ImageButton: UIButton {
         }
     }
     
-    init(normalImage: UIImage,
+    init(normalImage: UIImage? = nil,
          selectedImage: UIImage? = nil,
          isAlwaysTemplate: Bool = true) {
         self.image = normalImage
@@ -41,7 +50,7 @@ final class ImageButton: UIButton {
     }
     
     private func commonInit() {
-        self.customImageView.image = self.image.withRenderingMode(.alwaysTemplate)
+        self.customImageView.image = self.image?.withRenderingMode(.alwaysTemplate)
         self.clipsToBounds = true
         self.backgroundColor = .clear
         self.addSubview(customImageView)
@@ -54,7 +63,23 @@ final class ImageButton: UIButton {
         if self.isSelected {
             self.customImageView.image = self.selectedImage?.withRenderingMode(.alwaysTemplate)
         } else {
-            self.customImageView.image = self.image.withRenderingMode(.alwaysTemplate)
+            self.customImageView.image = self.image?.withRenderingMode(.alwaysTemplate)
         }
+    }
+}
+
+extension ImageButton {
+    func setImage(urlString: String?,
+                  placeholder: UIImage? = nil) {
+        guard let urlString = urlString,
+              let url = URL(string: urlString) else {
+            self.customImageView.image = placeholder
+            return
+        }
+
+        self.customImageView.kf.setImage(
+            with: url,
+            placeholder: placeholder
+        )
     }
 }

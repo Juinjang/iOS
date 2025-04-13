@@ -12,7 +12,6 @@ import RxCocoa
 
 final class ImjangDetailViewController: BaseViewController, View {
     typealias DataSource = UICollectionViewDiffableDataSource<ImjangDetailSection, BaseCellItem>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<ImjangDetailSection, BaseCellItem>
     var disposeBag: DisposeBag = DisposeBag()
     private var dataSource: DataSource!
     private let mainView = ImjangDetailView()
@@ -66,7 +65,9 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
             guard let sectionItem = item as? ImjangDetailSectionProvidable else { return UICollectionViewCell() }
             switch sectionItem.sectionType {
             case .info:
+                guard let item = item as? ImjangDetailInfoCellItem else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailInfoCell.self, for: indexPath)
+                cell.bind(item.model)
                 return cell
             case .report:
                 let cell = collectionView.dequeueReusableCell(ImjangDetailReportCell.self, for: indexPath)
