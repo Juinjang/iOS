@@ -30,7 +30,7 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
     
     private let infoMockModel: ImjangDetailInfoModel = {
         return .init(
-            isBuyer: true,
+            isBuyer: false,
             requiredPencils: 3,
             imageCount: 3,
             checkedCount: 32,

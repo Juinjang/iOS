@@ -70,7 +70,9 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
                 cell.bind(item.model)
                 return cell
             case .report:
+                guard let item = item as? ImjangDetailReportCellItem else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailReportCell.self, for: indexPath)
+                cell.bind(item.model)
                 return cell
             case .checkList:
                 let cell = collectionView.dequeueReusableCell(ImjangDetailCheckListCell.self, for: indexPath)

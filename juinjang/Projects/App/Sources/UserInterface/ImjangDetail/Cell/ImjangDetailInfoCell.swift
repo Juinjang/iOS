@@ -28,7 +28,6 @@ final class ImjangDetailInfoCell: BaseCollectionViewCell {
         buildingDetailInfoView.configure(for: infoModel)
         buildingInfoView.configure(for: infoModel)
         userInfoView.configure(for: infoModel)
-        
         configureLayoutForCount(for: infoModel)
     }
     
