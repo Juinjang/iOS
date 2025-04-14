@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-final class ImageButton: UIButton {
+class ImageButton: UIButton {
     override var contentMode: UIView.ContentMode {
         didSet {
             self.customImageView.contentMode = contentMode

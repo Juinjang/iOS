@@ -11,19 +11,19 @@ import SnapKit
 import Kingfisher
 
 final class MultiImageContentView: BaseView {
-    private let mainImageButton = ExpandableImageView().then {
+    private let mainImageButton = ExpandableImageButton().then {
         $0.roundCorners(cornerRadius: 5, corner: .all)
         $0.backgroundColor = .gray2
         $0.isHiddenExpandButton = true
     }
     
-    private let secondImageButton = ExpandableImageView().then {
+    private let secondImageButton = ExpandableImageButton().then {
         $0.roundCorners(cornerRadius: 5, corner: .all)
         $0.backgroundColor = .gray2
         $0.isHiddenExpandButton = true
     }
     
-    private let thirdImageButton = ExpandableImageView().then {
+    private let thirdImageButton = ExpandableImageButton().then {
         $0.roundCorners(cornerRadius: 5, corner: .all)
         $0.backgroundColor = .gray2
         $0.isHiddenExpandButton = true

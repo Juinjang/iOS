@@ -12,6 +12,6 @@ import SnapKit
 final class ImjangDetailReportCell: BaseCollectionViewCell {
     override func configureView() {
         super.configureView()
-        self.contentView.backgroundColor = .systemFill
+        self.contentView.backgroundColor = .gray100
     }
 }

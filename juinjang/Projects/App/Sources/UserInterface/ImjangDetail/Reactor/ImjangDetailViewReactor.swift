@@ -15,13 +15,11 @@ final class ImjangDetailViewReactor: Reactor {
     
     enum Mutation {
         case updateItem(section: ImjangDetailSection, item: BaseCellItem)
-        case markSectionAppeared(ImjangDetailSection)
     }
     
     struct State {
         let title: String
         var sectionItems: [ImjangDetailSection: [BaseCellItem]]
-        var appearedSections: Set<ImjangDetailSection>
     }
         
     struct Dependency {
@@ -37,8 +35,7 @@ final class ImjangDetailViewReactor: Reactor {
         self.dependency = dependency
         self.initialState = State(
             title: dependency.title,
-            sectionItems: [:],
-            appearedSections: [.info, .report]
+            sectionItems: [:]
         )
     }
     
@@ -59,8 +56,6 @@ final class ImjangDetailViewReactor: Reactor {
         switch mutation {
         case let .updateItem(section, item):
             newState.sectionItems[section] = [item]
-        case .markSectionAppeared(let section):
-            newState.appearedSections.insert(section)
         }
         return newState
     }

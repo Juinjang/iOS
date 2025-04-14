@@ -62,7 +62,7 @@ extension ImjangDetailView {
             
             switch section {
             case .info:
-                return self.singleItemSection(height: self.infoCellHeight)
+                return self.singleItemSection(height: self.heightDifferenceFromOriginal())
             case .report:
                 return self.singleItemSection(height: 590)
             case .checkList:
@@ -87,6 +87,17 @@ extension ImjangDetailView {
     }
 }
 
+extension ImjangDetailView {
+    private func heightDifferenceFromOriginal() -> CGFloat {
+        let newWidth = UIScreen.main.bounds.width
+        let originalWidth: CGFloat = 389
+        let originalHeight: CGFloat = 171
+        let scaledHeight = newWidth * (originalHeight / originalWidth)
+        
+        return self.infoCellHeight-(originalHeight - scaledHeight)
+    }
+}
+
 extension Reactive where Base: ImjangDetailView {
     var navigationTitle: Binder<String> {
         return Binder(base) { view, title in
@@ -97,8 +108,10 @@ extension Reactive where Base: ImjangDetailView {
     var updateLayoutBasedOnInfoSection: Binder<[ImjangDetailSection: [BaseCellItem]]> {
         return Binder(base) { view, sectionItems in
             guard let infoItem = sectionItems[.info]?.first as? ImjangDetailInfoCellItem else { return }
-            view.infoCellHeight = infoItem.model.buyerCount < 10 ? CGFloat(646) : CGFloat(688)
+            view.infoCellHeight = infoItem.model.buyerCount < 10 ? CGFloat(612) : CGFloat(654)
             view.reviewCellHeight = infoItem.model.isBuyer ? CGFloat(603) : CGFloat(223)
         }
     }
 }
+
+
