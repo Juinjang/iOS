@@ -12,12 +12,8 @@ import RxSwift
 import RxCocoa
 import Kingfisher
 
-final class ExpandableImageView: BaseView {
-    private let imageView = UIImageView().then {
-        $0.contentMode = .scaleAspectFill
-    }
-    
-    fileprivate let expandButton = ImageButton().then {
+final class ExpandableImageButton: ImageButton {
+    fileprivate let expandButton = UIImageView().then {
         $0.image = .ImjangNote.maximize
         $0.tintColor = .mainWhite
     }
@@ -28,48 +24,29 @@ final class ExpandableImageView: BaseView {
         }
     }
     
-    override func configureHierarchy() {
-        super.configureHierarchy()
-        
-        add(imageView, expandButton)
+    init() {
+        super.init()
+        configureHierarchy()
+        configureLayout()
+        configureView()
     }
     
-    override func configureLayout() {
-        super.configureLayout()
-        
-        imageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func configureView() {
+        contentMode = .scaleAspectFill
+    }
+    
+    private func configureHierarchy() {
+        add(expandButton)
+    }
+    
+    private func configureLayout() {
         expandButton.snp.makeConstraints {
             $0.size.equalTo(24)
             $0.right.bottom.equalToSuperview().inset(12)
         }
-    }
-}
-
-extension ExpandableImageView {
-    func setImage(urlString: String?,
-                  placeholder: UIImage? = nil) {
-        guard let urlString = urlString,
-              let url = URL(string: urlString) else {
-            self.imageView.image = placeholder
-            return
-        }
-
-        self.imageView.kf.setImage(
-            with: url,
-            placeholder: placeholder
-        )
-    }
-}
-
-
-extension Reactive where Base: ExpandableImageView {
-    var expandTap: ControlEvent<Void> {
-        let source = base.expandButton.rx.tap
-            .throttle(.milliseconds(500), scheduler: MainScheduler.instance)
-        
-        return ControlEvent(events: source)
     }
 }

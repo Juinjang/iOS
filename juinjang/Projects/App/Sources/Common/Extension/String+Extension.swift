@@ -126,4 +126,30 @@ extension String {
             bytes[10], bytes[11], bytes[12], bytes[13], bytes[14], bytes[15]
         ))
     }
+    
+    var formattedKoreanCurrency: String {
+        guard let value = Int(self) else { return self }
+        
+        let billion = value / 100_000_000
+        let remainder = (value % 100_000_000) / 10_000
+        
+        switch (billion, remainder) {
+        case (let b, let r) where b > 0 && r > 0:
+            return "\(b)억 \(NumberFormatter.withComma.string(from: NSNumber(value: r)) ?? "\(r)")"
+        case (let b, _) where b > 0:
+            return "\(b)억"
+        case (_, let r) where r > 0:
+            return NumberFormatter.withComma.string(from: NSNumber(value: r)) ?? "\(r)"
+        default:
+            return "0"
+        }
+    }
+}
+
+private extension NumberFormatter {
+    static let withComma: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter
+    }()
 }
