@@ -12,6 +12,5 @@ import SnapKit
 final class ImjangDetailCheckListCell: BaseCollectionViewCell {
     override func configureView() {
         super.configureView()
-        self.contentView.backgroundColor = .systemCyan
     }
 }

@@ -61,9 +61,9 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
             indoorKeyword: "상당히 쾌적한",
             publicSpaceKeyword: "훌륭한",
             locationConditionsKeyword: "좋은 편안",
-            indoorRate: 4.5,
-            publicSpaceRate: 4.5,
-            locationConditionsRate: 4.5,
+            indoorRate: 2.5,
+            publicSpaceRate: 3.3,
+            locationConditionsRate: 2.3,
             totalRate: 4.5
         )
     }()
