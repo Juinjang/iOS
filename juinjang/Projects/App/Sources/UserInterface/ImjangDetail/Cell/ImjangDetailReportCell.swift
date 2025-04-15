@@ -15,19 +15,12 @@ final class ImjangDetailReportCell: BaseCollectionViewCell {
         $0.textColor = .gray600
     }
     
-    private let reportInfoView = ReportInfoView().then {
-        $0.roundCorners(cornerRadius: 5, corner: .all)
-        $0.layer.borderColor = UIColor.stroke.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.shadowColor = UIColor.black.cgColor
-        $0.layer.shadowOffset = CGSize(width: 0, height: 2)
-        $0.layer.shadowRadius = 6
-        $0.layer.shadowOpacity = 0.1
-        $0.layer.masksToBounds = false
-    }
+    private let reportInfoView = ReportInfoView()
+    private let reportGraphView = ReportGraphView()
     
     func bind(_ reportModel: ImjangDetailReportModel) {
         reportInfoView.configure(for: reportModel)
+        reportGraphView.configure(for: reportModel)
     }
     
     override func configureView() {
@@ -37,7 +30,11 @@ final class ImjangDetailReportCell: BaseCollectionViewCell {
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        contentView.add(titleLabel, reportInfoView)
+        contentView.add(
+            titleLabel,
+            reportInfoView,
+            reportGraphView
+        )
     }
     
     override func configureLayout() {
@@ -52,6 +49,12 @@ final class ImjangDetailReportCell: BaseCollectionViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(9)
             $0.horizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(198)
+        }
+        
+        reportGraphView.snp.makeConstraints {
+            $0.top.equalTo(reportInfoView.snp.bottom).offset(12)
+            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.height.equalTo(278)
         }
     }
 }

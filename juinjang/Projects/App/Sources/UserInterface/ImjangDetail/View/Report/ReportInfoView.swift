@@ -57,6 +57,18 @@ final class ReportInfoView: BaseView {
         )
     }
     
+    override func configureView() {
+        super.configureView()
+        roundCorners(cornerRadius: 5, corner: .all)
+        layer.borderColor = UIColor.stroke.cgColor
+        layer.borderWidth = 1
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 3
+        layer.shadowOpacity = 0.1
+        layer.masksToBounds = false
+    }
+    
     override func configureHierarchy() {
         super.configureHierarchy()
         
