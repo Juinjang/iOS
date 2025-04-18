@@ -13,7 +13,7 @@ final class RateTriangleView: UIView {
     var isGradient: Bool = false
     var gradientColors: [CGColor] = []
     private var rates: [Double] = [0.0, 0.0, 0.0]
-    private let maxRate: CGFloat = 4.5
+    private let maxRate: CGFloat = 5.0
     
     override init(frame: CGRect) {
         super.init(frame: frame)

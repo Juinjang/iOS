@@ -33,4 +33,19 @@ extension Reactive where Base: UICollectionView {
             dataSource.apply(snapshot, animatingDifferences: true)
         }
     }
+    
+    func isCellAboveCenter(at indexPath: IndexPath) -> Observable<Bool> {
+        return contentOffset
+            .map { [weak base] offset -> Bool in
+                guard
+                    let base = base,
+                    let attr = base.layoutAttributesForItem(at: indexPath)
+                else { return false }
+                
+                let cellTop = attr.frame.minY - offset.y
+                let centerY = base.bounds.height / 2
+                return cellTop < centerY
+            }
+            .distinctUntilChanged()
+    }
 }

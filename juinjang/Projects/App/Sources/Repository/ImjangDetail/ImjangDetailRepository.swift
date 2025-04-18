@@ -18,7 +18,7 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
             .delay(.milliseconds(700), scheduler: MainScheduler.instance)
     }
     
-    func fetchCheckList() -> Observable<ImjangDetailCheckListModel> {
+    func fetchCheckList() -> Observable<[ImjangDetailCheckListModel]> {
         return Observable.just(checkListMockModel)
             .delay(.milliseconds(700), scheduler: MainScheduler.instance)
     }
@@ -30,7 +30,7 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
     
     private let infoMockModel: ImjangDetailInfoModel = {
         return .init(
-            isBuyer: false,
+            isBuyer: true,
             requiredPencils: 3,
             imageCount: 3,
             checkedCount: 32,
@@ -68,21 +68,40 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
         )
     }()
     
-    private let checkListMockModel: ImjangDetailCheckListModel = {
-        return .init(
-            answerId: 1,
-            questionId: 3,
-            category: "LOCATION_CONDITION",
-            limjangId: 1,
-            answer: "4",
-            answerType: "SCORE"
-        )
+    private let checkListMockModel: [ImjangDetailCheckListModel] = {
+        return [
+            .init(answerId: 1,
+                  questionId: 3,
+                  category: "LOCATION_CONDITION",
+                  limjangId: 1,
+                  answer: "4",
+                  answerType: "SCORE"),
+            .init(answerId: 2,
+                  questionId: 4,
+                  category: "LOCATION_CONDITION",
+                  limjangId: 1,
+                  answer: "수인분당",
+                  answerType: "DROPDOWN"),
+            .init(answerId: 3,
+                  questionId: 20,
+                  category: "LOCATION_CONDITION",
+                  limjangId: 1,
+                  answer: "2023년",
+                  answerType: "DROPDOWN")
+//            ,
+//            .init(answerId: <#T##Int#>,
+//                  questionId: <#T##Int#>,
+//                  category: <#T##String#>,
+//                  limjangId: <#T##Int#>,
+//                  answer: <#T##String#>,
+//                  answerType: <#T##String#>)
+        ]
     }()
     
     private let reviewMockModel: ImjangDetailReviewModel = {
         return .init(
             rate: 3.5,
-            review: "사아아ㅏ아아아아아아랑해요~~~------"
+            review: "예시 후기내용 국회의원과 정부는 법률안을 제출할 수 있다. 모든 국민은 통신의 비밀을 침해받지 아니한다. \n국민경제자문회의의 조직·직무범위 기타 필요한 사항은 법률로 정한다."
         )
     }()
 }

@@ -16,7 +16,7 @@ final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
         $0.backgroundColor = .gray100
     }
     
-    private let stackView = UIStackView().then {
+    let stackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
         $0.distribution = .equalSpacing
