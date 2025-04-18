@@ -11,15 +11,18 @@ import Foundation
 final class ImjangDetailViewReactor: Reactor {
     enum Action {
         case viewDidLoad
+        case checkListCategoryDidTap(index: Int)
     }
     
     enum Mutation {
-        case updateItem(section: ImjangDetailSection, item: BaseCellItem)
+        case updateItem(section: ImjangDetailSection, item: [BaseCellItem])
+        case updateAllCheckListItems(items: [ImjangDetailCheckListCellItem])
     }
     
     struct State {
         let title: String
         var sectionItems: [ImjangDetailSection: [BaseCellItem]]
+        var allCheckListItems: [ImjangDetailCheckListCellItem]
     }
         
     struct Dependency {
@@ -35,7 +38,8 @@ final class ImjangDetailViewReactor: Reactor {
         self.dependency = dependency
         self.initialState = State(
             title: dependency.title,
-            sectionItems: [:]
+            sectionItems: [:],
+            allCheckListItems: []
         )
     }
     
@@ -48,6 +52,13 @@ final class ImjangDetailViewReactor: Reactor {
                 createSection(for: .checkList),
                 createSection(for: .review)
             )
+        case .checkListCategoryDidTap(index: let index):
+            return .just(.updateItem(
+                section: .checkList,
+                item: self.currentState.allCheckListItems.filter {
+                    $0.model.category == CheckListCategoryType(rawValue: index)?.title
+                }
+            ))
         }
     }
     
@@ -55,50 +66,61 @@ final class ImjangDetailViewReactor: Reactor {
         var newState = state
         switch mutation {
         case let .updateItem(section, item):
-            newState.sectionItems[section] = [item]
+            newState.sectionItems[section] = item
+        case .updateAllCheckListItems(items: let items):
+            newState.allCheckListItems = items
         }
         return newState
     }
 }
 
+// MARK: - Mutate Methods
 extension ImjangDetailViewReactor {
     private func createSection(for section: ImjangDetailSection) -> Observable<Mutation> {
         let repository = dependency.repository
         
-        let request: Observable<BaseCellItem>
+        let request: Observable<[BaseCellItem]>
         
         switch section {
         case .info:
             request = repository.fetchInfo()
                 .map {
-                    ImjangDetailInfoCellItem(
+                    [ImjangDetailInfoCellItem(
                         id: UUID().uuidString,
                         model: $0
-                    )
+                    )]
                 }
         case .report:
             request = repository.fetchReport()
                 .map {
-                    ImjangDetailReportCellItem(
+                    [ImjangDetailReportCellItem(
                         id: UUID().uuidString,
                         model: $0
-                    )
+                    )]
                 }
         case .checkList:
-            request = repository.fetchCheckList()
-                .map {
-                    ImjangDetailCheckListCellItem(
-                        id: UUID().uuidString,
-                        model: $0
-                    )
+            return repository.fetchCheckList()
+                .flatMap { models -> Observable<Mutation> in
+                    let items = models.map {
+                        ImjangDetailCheckListCellItem(id: UUID().uuidString, model: $0)
+                    }
+                    return Observable.from([
+                        .updateAllCheckListItems(items: items),
+                        .updateItem(section: .checkList,
+                                    item: items.filter {
+                            $0.model.category == CheckListCategoryType(
+                                rawValue: 0 // Default: 입지여건
+                            )?.title
+                        })
+                    ])
                 }
         case .review:
             request = repository.fetchReview()
                 .map {
-                    ImjangDetailReviewCellItem(
+                    [ImjangDetailReviewCellItem(
                         id: UUID().uuidString,
                         model: $0
-                    )
+                    )]
                 }
         }
         

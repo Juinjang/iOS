@@ -10,6 +10,6 @@ import RxSwift
 protocol ImjangDetailRepositoryProtocol {
     func fetchInfo() -> Observable<ImjangDetailInfoModel>
     func fetchReport() -> Observable<ImjangDetailReportModel>
-    func fetchCheckList() -> Observable<ImjangDetailCheckListModel>
+    func fetchCheckList() -> Observable<[ImjangDetailCheckListModel]>
     func fetchReview() -> Observable<ImjangDetailReviewModel>
 }
