@@ -88,13 +88,6 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
                   limjangId: 1,
                   answer: "2023년",
                   answerType: "DROPDOWN")
-//            ,
-//            .init(answerId: <#T##Int#>,
-//                  questionId: <#T##Int#>,
-//                  category: <#T##String#>,
-//                  limjangId: <#T##Int#>,
-//                  answer: <#T##String#>,
-//                  answerType: <#T##String#>)
         ]
     }()
     

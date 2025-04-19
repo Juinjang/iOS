@@ -37,6 +37,9 @@ final class ImjangDetailViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         reactor?.action.onNext(.viewDidLoad)
+        DispatchQueue.main.async {
+            self.present(PencilAlertView(title: "판교푸르지오월드마크", pencilCount: 0, needPencilCount: 3), animated: true)
+        }
     }
     
     func bind(reactor: ImjangDetailViewReactor) {
