@@ -6,7 +6,7 @@
 //
 
 struct ImjangDetailInfoModel: Codable {
-    let isBuyer: Bool
+    var isBuyer: Bool
     let requiredPencils: Int
     let imageCount: Int
     let checkedCount: Int
@@ -29,4 +29,5 @@ struct ImjangDetailInfoModel: Codable {
     let owerProfileUrl: String
     let owerNickname: String
     let ownerProfileBio: String
+    let isOneRoom: Bool
 }

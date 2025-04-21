@@ -17,6 +17,12 @@ final class ImjangDetailCheckListHeaderView: BaseCollectionReusableView {
         $0.text = "체크리스트"
     }
     
+    private let oneRoomNoticeLabel = DSLabel(.body2).then {
+        $0.fontSize = 13
+        $0.fontColor = .mainStroke
+        $0.text = "원룸용 체크리스트로 작성됨"
+    }
+    
     private let segmentedView = UnderLineSegmentedView(titles: [
         "입지여건",
         "공용공간",
@@ -29,16 +35,24 @@ final class ImjangDetailCheckListHeaderView: BaseCollectionReusableView {
     
     private var disposeBag = DisposeBag()
     
-    func bind(for relay: PublishRelay<Int>) {
+    func bind(for relay: PublishRelay<Int>,
+              isOneRoom: Bool,
+              isBuyer: Bool) {
         disposeBag = DisposeBag()
         segmentedView.buttonTapSelectedRelay
             .bind(to: relay)
             .disposed(by: disposeBag)
+        oneRoomNoticeLabel.isHidden = !isOneRoom
+        segmentedView.isHidden = !isBuyer
+        separatorView.isHidden = !isBuyer
     }
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        add(titleLabel, separatorView, segmentedView)
+        add(titleLabel,
+            oneRoomNoticeLabel,
+            separatorView,
+            segmentedView)
     }
     
     override func configureLayout() {
@@ -48,6 +62,11 @@ final class ImjangDetailCheckListHeaderView: BaseCollectionReusableView {
             $0.top.equalToSuperview().offset(37)
             $0.height.equalTo(24)
             $0.left.equalToSuperview().offset(24)
+        }
+        
+        oneRoomNoticeLabel.snp.makeConstraints {
+            $0.centerY.equalTo(titleLabel.snp.centerY)
+            $0.left.equalTo(titleLabel.snp.left).offset(82)
         }
         
         separatorView.snp.makeConstraints {

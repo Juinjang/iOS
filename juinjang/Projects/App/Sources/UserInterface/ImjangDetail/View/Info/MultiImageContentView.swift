@@ -207,6 +207,8 @@ extension MultiImageContentView {
     }
     
     private func applyImageLayoutForBuyer(for model: ImjangDetailInfoModel) {
+        checkCountView.isHidden = true
+        imageCountView.isHidden = true
         switch model.imageCount {
         case 0, 1:
             setupBuyerLayoutForSingleImage()

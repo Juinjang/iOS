@@ -21,8 +21,11 @@ final class ImjangDetailCheckListCell: BaseCollectionViewCell {
     
     private let textAnswerView = TextAnswerView()
     
-    func bind(_ model: ImjangDetailCheckListModel) {
-        guard let item = items.first(where: {
+    func bind(_ model: ImjangDetailCheckListModel,
+              isOneRoom: Bool,
+              isBuyer: Bool) {
+        let dataSource = isBuyer ? (isOneRoom ? oneRoomItems : items) : items
+        guard let item = dataSource.first(where: {
             $0.questionId == model.questionId &&
             $0.category == CheckListCategoryType.from(raw: model.category)
         }) else { return }

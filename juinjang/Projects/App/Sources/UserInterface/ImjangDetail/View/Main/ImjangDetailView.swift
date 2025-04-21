@@ -17,9 +17,17 @@ final class ImjangDetailView: BaseView {
     
     fileprivate var infoCellHeight: CGFloat = 0
     fileprivate var reviewCellHeight: CGFloat = 0
+    fileprivate var isBuyer: Bool = false
     
     lazy var detailCollectionView: UICollectionView = {
-        return UICollectionView(frame: .zero, collectionViewLayout: createLayout()).then {
+        let layout = createLayout()
+        layout.register(CheckListNoteOpenView.self,
+                        forDecorationViewOfKind: "overlay-view")
+        
+        return UICollectionView(
+            frame: .zero,
+            collectionViewLayout: layout
+        ).then {
             $0.register(
                 ImjangDetailInfoCell.self,
                 ImjangDetailReportCell.self,
@@ -82,7 +90,7 @@ extension ImjangDetailView {
             case .report:
                 return self.singleItemSection(height: 590)
             case .checkList:
-                return self.checkListSection(cellHeight: 98, headerHeight: 129)
+                return self.checkListSection(cellHeight: 98, headerHeight: self.isBuyer ? 129 : 94)
             case .review:
                 return self.singleItemSection(height: self.reviewCellHeight)
             }
@@ -131,8 +139,17 @@ extension ImjangDetailView {
             elementKind: UICollectionView.elementKindSectionFooter,
             alignment: .bottom
         )
-        
         section.boundarySupplementaryItems = [header, footer]
+        
+        if !self.isBuyer {
+            section.decorationItems = [
+                NSCollectionLayoutDecorationItem.background(elementKind: "overlay-view").then {
+                    $0.zIndex = 100
+                    $0.contentInsets = NSDirectionalEdgeInsets(top: 94, leading: 0, bottom: 0, trailing: 0)
+                }
+            ]
+        }
+        
         return section
     }
 }
@@ -184,6 +201,12 @@ extension Reactive where Base: ImjangDetailView {
     var scrollToTop: Binder<Void> {
         return Binder(base) { view, _ in
             view.detailCollectionView.setContentOffset(.zero, animated: true)
+        }
+    }
+    
+    var isBuyer: Binder<Bool> {
+        return Binder(base) { view, bool in
+            view.isBuyer = bool
         }
     }
 }

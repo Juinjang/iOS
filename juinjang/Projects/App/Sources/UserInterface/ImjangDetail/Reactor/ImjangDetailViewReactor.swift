@@ -12,17 +12,25 @@ final class ImjangDetailViewReactor: Reactor {
     enum Action {
         case viewDidLoad
         case checkListCategoryDidTap(index: Int)
+        case noteOpenButtonDidTap
     }
     
     enum Mutation {
         case updateItem(section: ImjangDetailSection, item: [BaseCellItem])
         case updateAllCheckListItems(items: [ImjangDetailCheckListCellItem])
+        case updateIsOneRoom(Bool)
+        case updateIsBuyer(Bool)
+        case updateIsShowPencilAlert(Bool)
+        case updateIsBuyerInInfoSection(Bool)
     }
     
     struct State {
         let title: String
         var sectionItems: [ImjangDetailSection: [BaseCellItem]]
         var allCheckListItems: [ImjangDetailCheckListCellItem]
+        var isOneRoom: Bool
+        var isBuyer: Bool
+        var isShowPencilAlert: Bool
     }
         
     struct Dependency {
@@ -39,7 +47,10 @@ final class ImjangDetailViewReactor: Reactor {
         self.initialState = State(
             title: dependency.title,
             sectionItems: [:],
-            allCheckListItems: []
+            allCheckListItems: [],
+            isOneRoom: false,
+            isBuyer: false,
+            isShowPencilAlert: false
         )
     }
     
@@ -49,8 +60,22 @@ final class ImjangDetailViewReactor: Reactor {
             return .concat(
                 createSection(for: .info),
                 createSection(for: .report),
-                createSection(for: .checkList),
-                createSection(for: .review)
+                .deferred { [weak self] in
+                    guard let self = self else { return .empty() }
+                    return .concat(
+                        self.currentState.isBuyer
+                        ? .empty()
+                        : .just(.updateIsShowPencilAlert(true)),
+                        
+                        self.currentState.isBuyer
+                        ? self.createSection(for: .checkList)
+                        : self.createCheckListHolderSection(),
+                        
+                        self.currentState.isBuyer
+                        ? self.createSection(for: .review)
+                        : .empty()
+                    )
+                }
             )
         case .checkListCategoryDidTap(index: let index):
             return .just(.updateItem(
@@ -59,6 +84,18 @@ final class ImjangDetailViewReactor: Reactor {
                     $0.model.category == CheckListCategoryType(rawValue: index)?.title
                 }
             ))
+        case .noteOpenButtonDidTap:
+            return .concat(
+                .just(.updateIsBuyer(true)),
+                .just(.updateIsBuyerInInfoSection(true)),
+                .deferred { [weak self] in
+                    guard let self = self else { return .empty() }
+                    return .concat(
+                        createSection(for: .checkList),
+                        createSection(for: .review)
+                    )
+                }
+            )
         }
     }
     
@@ -69,6 +106,14 @@ final class ImjangDetailViewReactor: Reactor {
             newState.sectionItems[section] = item
         case .updateAllCheckListItems(items: let items):
             newState.allCheckListItems = items
+        case .updateIsOneRoom(let bool):
+            newState.isOneRoom = bool
+        case .updateIsBuyer(let bool):
+            newState.isBuyer = bool
+        case .updateIsShowPencilAlert(let bool):
+            newState.isShowPencilAlert = bool
+        case .updateIsBuyerInInfoSection(let bool):
+            newState = updateBuyerInInfoSection(newState, isBuyer: bool)
         }
         return newState
     }
@@ -83,12 +128,17 @@ extension ImjangDetailViewReactor {
         
         switch section {
         case .info:
-            request = repository.fetchInfo()
-                .map {
-                    [ImjangDetailInfoCellItem(
+            return repository.fetchInfo()
+                .flatMap { model -> Observable<Mutation> in
+                    let item = ImjangDetailInfoCellItem(
                         id: UUID().uuidString,
-                        model: $0
-                    )]
+                        model: model
+                    )
+                    return Observable.from([
+                        .updateItem(section: .info, item: [item]),
+                        .updateIsBuyer(model.isBuyer),
+                        .updateIsOneRoom(model.isOneRoom)
+                    ])
                 }
         case .report:
             request = repository.fetchReport()
@@ -125,5 +175,88 @@ extension ImjangDetailViewReactor {
         }
         
         return request.map { .updateItem(section: section, item: $0) }
+    }
+    
+    private func createCheckListHolderSection() -> Observable<Mutation> {
+        return Observable.just(
+            .updateItem(
+                section: .checkList,
+                item: [
+                    ImjangDetailCheckListCellItem(
+                        id: UUID().uuidString,
+                        model: .init(
+                            answerId: 0,
+                            questionId: 3,
+                            category: "LOCATION_CONDITION",
+                            limjangId: 0,
+                            answer: "5",
+                            answerType: "SCORE"
+                        )
+                    ),
+                    ImjangDetailCheckListCellItem(
+                        id: UUID().uuidString,
+                        model: .init(
+                            answerId: 1,
+                            questionId: 4,
+                            category: "LOCATION_CONDITION",
+                            limjangId: 0,
+                            answer: "6호선",
+                            answerType: "DROPDOWN"
+                        )
+                    ),
+                    ImjangDetailCheckListCellItem(
+                        id: UUID().uuidString,
+                        model: .init(
+                            answerId: 2,
+                            questionId: 20,
+                            category: "LOCATION_CONDITION",
+                            limjangId: 0,
+                            answer: "2023년",
+                            answerType: "DROPDOWN"
+                        )
+                    ),
+                    ImjangDetailCheckListCellItem(
+                        id: UUID().uuidString,
+                        model: .init(
+                            answerId: 3,
+                            questionId: 11,
+                            category: "LOCATION_CONDITION",
+                            limjangId: 0,
+                            answer: "3",
+                            answerType: "SCORE"
+                        )
+                    ),
+                    ImjangDetailCheckListCellItem(
+                        id: UUID().uuidString,
+                        model: .init(
+                            answerId: 4,
+                            questionId: 14,
+                            category: "LOCATION_CONDITION",
+                            limjangId: 0,
+                            answer: "남향",
+                            answerType: "DROPDOWN"
+                        )
+                    )
+                ]
+            )
+        )
+    }
+}
+
+// MARK: - Reduce Methods
+extension ImjangDetailViewReactor {
+    private func updateBuyerInInfoSection(_ state: State, isBuyer: Bool) -> State {
+        var newState = state
+        guard let infoItem = newState.sectionItems[.info]?.first as? ImjangDetailInfoCellItem else {
+            return state
+        }
+        
+        var updatedModel = infoItem.model
+        updatedModel.isBuyer = isBuyer
+        
+        let updatedItem = ImjangDetailInfoCellItem(id: infoItem.id, model: updatedModel)
+        newState.sectionItems[.info] = [updatedItem]
+        
+        return newState
     }
 }

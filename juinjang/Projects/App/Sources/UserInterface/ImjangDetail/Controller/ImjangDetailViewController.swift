@@ -37,9 +37,6 @@ final class ImjangDetailViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         reactor?.action.onNext(.viewDidLoad)
-        DispatchQueue.main.async {
-            self.present(PencilAlertView(title: "판교푸르지오월드마크", pencilCount: 0, needPencilCount: 3), animated: true)
-        }
     }
     
     func bind(reactor: ImjangDetailViewReactor) {
@@ -63,6 +60,38 @@ final class ImjangDetailViewController: BaseViewController, View {
             ))
             .disposed(by: disposeBag)
         
+        reactor.state
+            .map { $0.sectionItems[.info]?.first as? ImjangDetailInfoCellItem }
+            .compactMap { $0 }
+            .distinctUntilChanged { $0.id == $1.id }
+            .subscribe { model in
+                CheckListNoteOpenView.modelRelay.accept(model.model)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isBuyer)
+            .bind(to: mainView.rx.isBuyer)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowPencilAlert)
+            .observe(on: MainScheduler.instance)
+            .distinctUntilChanged()
+            .subscribe(with: self) { (self, bool) in
+                if bool {
+                    self.present(
+                        PencilAlertView(
+                            title: "판교푸르지오월드마크",
+                            pencilCount: 0,
+                            needPencilCount: 3
+                        ),
+                        animated: true
+                    )
+                }
+            }
+            .disposed(by: disposeBag)
+        
         selectedCategoryRelay
             .map { Reactor.Action.checkListCategoryDidTap(index: $0) }
             .bind(to: reactor.action)
@@ -76,6 +105,11 @@ final class ImjangDetailViewController: BaseViewController, View {
         
         mainView.topFloatingButton.rx.throttleTap
             .bind(to: mainView.rx.scrollToTop)
+            .disposed(by: disposeBag)
+        
+        CheckListNoteOpenView.tapRelay
+            .map { Reactor.Action.noteOpenButtonDidTap }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
 }
@@ -97,9 +131,11 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
                 cell.bind(item.model)
                 return cell
             case .checkList:
-                guard let item = item as? ImjangDetailCheckListCellItem else { return UICollectionViewCell() }
+                guard let item = item as? ImjangDetailCheckListCellItem,
+                      let isBuyer = self.reactor?.currentState.isBuyer,
+                      let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailCheckListCell.self, for: indexPath)
-                cell.bind(item.model)
+                cell.bind(item.model, isOneRoom: isOneRoom, isBuyer: isBuyer)
                 return cell
             case .review:
                 guard let item = item as? ImjangDetailReviewCellItem else { return UICollectionViewCell() }
@@ -116,12 +152,18 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
             if kind == UICollectionView.elementKindSectionHeader {
                 switch section {
                 case .checkList:
+                    guard let isOneRoom = self.reactor?.currentState.isOneRoom,
+                          let isBuyer = self.reactor?.currentState.isBuyer else {
+                        return UICollectionReusableView()
+                    }
                     return collectionView.dequeueReusableSupplementaryView(
                         ImjangDetailCheckListHeaderView.self,
                         ofKind: kind,
                         for: indexPath
                     ).then {
-                        $0.bind(for: self.selectedCategoryRelay)
+                        $0.bind(for: self.selectedCategoryRelay,
+                                isOneRoom: isOneRoom,
+                                isBuyer: isBuyer)
                     }
                 default:
                     return nil
