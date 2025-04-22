@@ -18,6 +18,7 @@ final class ImjangDetailViewController: BaseViewController, View {
     private var dataSource: DataSource!
     private let mainView = ImjangDetailView()
     private let selectedCategoryRelay = PublishRelay<Int>()
+    private let infoCellEventRelay = PublishRelay<ImjangDetailInfoCellEvent>()
     
     init(reactor: ImjangDetailViewReactor) {
         super.init()
@@ -47,7 +48,6 @@ final class ImjangDetailViewController: BaseViewController, View {
         
         reactor.state
             .map(\.sectionItems)
-            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .withUnretained(mainView)
             .do(onNext: { view, sectionItems in
@@ -71,6 +71,8 @@ final class ImjangDetailViewController: BaseViewController, View {
         
         reactor.state
             .map(\.isBuyer)
+            .distinctUntilChanged()
+            .skip(1)
             .bind(to: mainView.rx.isBuyer)
             .disposed(by: disposeBag)
         
@@ -89,6 +91,16 @@ final class ImjangDetailViewController: BaseViewController, View {
                         animated: true
                     )
                 }
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowNotBuyerAlert)
+            .observe(on: MainScheduler.instance)
+            .distinctUntilChanged()
+            .skip(1)
+            .subscribe(with: self) { (self, _) in
+                self.showAlert(title: "주인장", message: "구매하지 않은 임장노트에요.", actionHandler: nil)
             }
             .disposed(by: disposeBag)
         
@@ -111,6 +123,20 @@ final class ImjangDetailViewController: BaseViewController, View {
             .map { Reactor.Action.noteOpenButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        infoCellEventRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .addressTap(address: let text):
+                    UIPasteboard.general.string = text
+                    self.showAlert(title: "주인장", message: "전체 복사 완료!", actionHandler: nil)
+                case .expandImageButtonTap(index: let index):
+                    reactor.action.onNext(.expandImageButtonDidTap(index: index))
+                case .likeButtonTap:
+                    reactor.action.onNext(.likeButtonDidTap)
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -123,7 +149,7 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
             case .info:
                 guard let item = item as? ImjangDetailInfoCellItem else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailInfoCell.self, for: indexPath)
-                cell.bind(item.model)
+                cell.bind(item.model, relay: self.infoCellEventRelay)
                 return cell
             case .report:
                 guard let item = item as? ImjangDetailReportCellItem else { return UICollectionViewCell() }

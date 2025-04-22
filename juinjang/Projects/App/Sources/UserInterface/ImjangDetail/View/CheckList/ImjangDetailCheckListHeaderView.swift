@@ -45,6 +45,7 @@ final class ImjangDetailCheckListHeaderView: BaseCollectionReusableView {
         oneRoomNoticeLabel.isHidden = !isOneRoom
         segmentedView.isHidden = !isBuyer
         separatorView.isHidden = !isBuyer
+        layoutIfNeeded()
     }
     
     override func configureHierarchy() {

@@ -8,11 +8,12 @@
 import UIKit
 import Then
 import SnapKit
+import RxRelay
 
 enum ImjangDetailInfoCellEvent {
     case likeButtonTap
-    case expandImageButtonTap
-    case addressTap
+    case expandImageButtonTap(index: Int)
+    case addressTap(address: String)
 }
 
 final class ImjangDetailInfoCell: BaseCollectionViewCell {
@@ -22,10 +23,11 @@ final class ImjangDetailInfoCell: BaseCollectionViewCell {
     private let buildingInfoView = BuildingInfoView()
     private let userInfoView = UserInfoView()
     
-    func bind(_ infoModel: ImjangDetailInfoModel) {
+    func bind(_ infoModel: ImjangDetailInfoModel,
+              relay: PublishRelay<ImjangDetailInfoCellEvent>) {
         bannerView.configure(for: infoModel.buyerCount)
-        imageContentView.configure(for: infoModel)
-        buildingDetailInfoView.configure(for: infoModel)
+        imageContentView.configure(for: infoModel, relay: relay)
+        buildingDetailInfoView.configure(for: infoModel, relay: relay)
         buildingInfoView.configure(for: infoModel)
         userInfoView.configure(for: infoModel)
         configureLayoutForCount(for: infoModel)

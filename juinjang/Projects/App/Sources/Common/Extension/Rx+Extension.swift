@@ -16,6 +16,23 @@ extension Reactive where Base: UIButton {
                       latest: false,
                       scheduler: MainScheduler.instance)
     }
+    
+    func throttleTap(milliseconds: Int) -> Observable<ControlEvent<()>.Element> {
+        return self.controlEvent(.touchUpInside)
+            .throttle(.milliseconds(milliseconds),
+                      latest: false,
+                      scheduler: MainScheduler.instance)
+    }
+}
+
+extension Observable where Element == Void {
+    func withHaptic(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) -> Observable<Void> {
+            return self.do(onNext: {
+                let generator = UIImpactFeedbackGenerator(style: style)
+                generator.prepare()
+                generator.impactOccurred()
+            })
+        }
 }
 
 extension Reactive where Base: UICollectionView {
@@ -30,7 +47,9 @@ extension Reactive where Base: UICollectionView {
             for section in sections {
                 snapshot.appendItems(sectionItems[section] ?? [], toSection: section)
             }
-            dataSource.apply(snapshot, animatingDifferences: true)
+            UIView.performWithoutAnimation {
+                dataSource.apply(snapshot, animatingDifferences: false)
+            }
         }
     }
     

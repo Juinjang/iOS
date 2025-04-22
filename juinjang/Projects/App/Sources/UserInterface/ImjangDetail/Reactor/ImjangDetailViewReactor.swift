@@ -13,6 +13,8 @@ final class ImjangDetailViewReactor: Reactor {
         case viewDidLoad
         case checkListCategoryDidTap(index: Int)
         case noteOpenButtonDidTap
+        case expandImageButtonDidTap(index: Int)
+        case likeButtonDidTap
     }
     
     enum Mutation {
@@ -22,6 +24,8 @@ final class ImjangDetailViewReactor: Reactor {
         case updateIsBuyer(Bool)
         case updateIsShowPencilAlert(Bool)
         case updateIsBuyerInInfoSection(Bool)
+        case updateIsShowNotBuyerAlert(Bool)
+        case updateIsLikedInInfoSection
     }
     
     struct State {
@@ -31,6 +35,7 @@ final class ImjangDetailViewReactor: Reactor {
         var isOneRoom: Bool
         var isBuyer: Bool
         var isShowPencilAlert: Bool
+        var isShowNotBuyerAlert: Bool
     }
         
     struct Dependency {
@@ -50,7 +55,8 @@ final class ImjangDetailViewReactor: Reactor {
             allCheckListItems: [],
             isOneRoom: false,
             isBuyer: false,
-            isShowPencilAlert: false
+            isShowPencilAlert: false,
+            isShowNotBuyerAlert: false
         )
     }
     
@@ -96,6 +102,14 @@ final class ImjangDetailViewReactor: Reactor {
                     )
                 }
             )
+        case .expandImageButtonDidTap(index: _):
+            return self.currentState.isBuyer
+                ? .empty()
+                : .just(.updateIsShowNotBuyerAlert(!self.currentState.isShowNotBuyerAlert))
+        case .likeButtonDidTap:
+            return .just(
+                .updateIsLikedInInfoSection
+            )
         }
     }
     
@@ -114,6 +128,10 @@ final class ImjangDetailViewReactor: Reactor {
             newState.isShowPencilAlert = bool
         case .updateIsBuyerInInfoSection(let bool):
             newState = updateBuyerInInfoSection(newState, isBuyer: bool)
+        case .updateIsShowNotBuyerAlert(let bool):
+            newState.isShowNotBuyerAlert = bool
+        case .updateIsLikedInInfoSection:
+            newState = toggleLikedInInfoSection(newState)
         }
         return newState
     }
@@ -254,6 +272,21 @@ extension ImjangDetailViewReactor {
         var updatedModel = infoItem.model
         updatedModel.isBuyer = isBuyer
         
+        let updatedItem = ImjangDetailInfoCellItem(id: infoItem.id, model: updatedModel)
+        newState.sectionItems[.info] = [updatedItem]
+        
+        return newState
+    }
+    
+    private func toggleLikedInInfoSection(_ state: State) -> State {
+        var newState = state
+        guard let infoItem = newState.sectionItems[.info]?.first as? ImjangDetailInfoCellItem else {
+            return state
+        }
+
+        var updatedModel = infoItem.model
+        updatedModel.isLiked.toggle()
+
         let updatedItem = ImjangDetailInfoCellItem(id: infoItem.id, model: updatedModel)
         newState.sectionItems[.info] = [updatedItem]
         

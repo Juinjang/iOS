@@ -88,7 +88,32 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
                   category: "LOCATION_CONDITION",
                   limjangId: 1,
                   answer: "2023년",
+                  answerType: "DROPDOWN"),
+            .init(answerId: 2,
+                  questionId: 4,
+                  category: "PUBLIC_SPACE",
+                  limjangId: 1,
+                  answer: "수인분당",
+                  answerType: "DROPDOWN"),
+            .init(answerId: 3,
+                  questionId: 20,
+                  category: "PUBLIC_SPACE",
+                  limjangId: 1,
+                  answer: "2023년",
+                  answerType: "DROPDOWN"),
+            .init(answerId: 2,
+                  questionId: 4,
+                  category: "INDOOR",
+                  limjangId: 1,
+                  answer: "수인분당",
+                  answerType: "DROPDOWN"),
+            .init(answerId: 3,
+                  questionId: 20,
+                  category: "INDOOR",
+                  limjangId: 1,
+                  answer: "2023년",
                   answerType: "DROPDOWN")
+            
         ]
     }()
     

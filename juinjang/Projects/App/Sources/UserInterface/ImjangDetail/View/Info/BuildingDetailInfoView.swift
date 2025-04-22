@@ -8,6 +8,9 @@
 import UIKit
 import Then
 import SnapKit
+import RxRelay
+import RxSwift
+import RxCocoa
 
 final class BuildingDetailInfoView: BaseView {
     private let summaryInfoLabel = DSLabel(.body2).then {
@@ -60,7 +63,11 @@ final class BuildingDetailInfoView: BaseView {
         $0.backgroundColor = .stroke
     }
     
-    func configure(for model: ImjangDetailInfoModel) {
+    private var dispoaseBag = DisposeBag()
+    
+    func configure(for model: ImjangDetailInfoModel,
+                   relay: PublishRelay<ImjangDetailInfoCellEvent>) {
+        self.dispoaseBag = DisposeBag()
         guard let priceType = PriceType(rawValue: model.priceType)?.title else { return }
         summaryInfoLabel.text = model.addressShort
         secondSummaryInfoLabel.text = PropertyType(rawValue: model.propertyType)?.title
@@ -69,6 +76,20 @@ final class BuildingDetailInfoView: BaseView {
         priceLabel.text = "\(priceType) \(model.price.formattedKoreanCurrency)"
         addressContentLabel.text = model.address
         sharedDateLabel.text = "\(model.period) · 조회 \(model.viewCount)"
+        
+        likeButton.rx.throttleTap(milliseconds: 2000)
+            .withHaptic()
+            .subscribe(with: self) { (self,_) in
+                relay.accept(.likeButtonTap)
+                self.likeButton.isSelected.toggle()
+            }
+            .disposed(by: dispoaseBag)
+        
+        addressBaseButton.rx.throttleTap
+            .subscribe(with: self) { (self, _) in
+                relay.accept(.addressTap(address: model.address))
+            }
+            .disposed(by: dispoaseBag)
     }
     
     override func configureHierarchy() {

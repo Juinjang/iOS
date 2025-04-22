@@ -9,6 +9,8 @@ import UIKit
 import Then
 import SnapKit
 import Kingfisher
+import RxSwift
+import RxRelay
 
 final class MultiImageContentView: BaseView {
     private let mainImageButton = ExpandableImageButton().then {
@@ -37,7 +39,11 @@ final class MultiImageContentView: BaseView {
         $0.roundCorners(cornerRadius: 5, corner: .all)
     }
     
-    func configure(for model: ImjangDetailInfoModel) {
+    private var disposeBag = DisposeBag()
+    
+    func configure(for model: ImjangDetailInfoModel,
+                   relay: PublishRelay<ImjangDetailInfoCellEvent>) {
+        disposeBag = DisposeBag()
         prepareForReuse()
         
         model.isBuyer
@@ -50,6 +56,44 @@ final class MultiImageContentView: BaseView {
         
         imageCountView.configure(for: model)
         checkCountView.configure(for: model)
+        
+        [mainImageButton,
+         secondImageButton,
+         thirdImageButton].enumerated().forEach { index, button in
+            button.rx.throttleTap
+                .subscribe(with: self) { (self, _) in
+                    relay.accept(.expandImageButtonTap(index: index))
+                }
+                .disposed(by: disposeBag)
+        }
+        
+        if model.isBuyer {
+            mainImageButton.rx.throttleTap
+                .subscribe(with: self) { (self, _) in
+                    // relay.accept(index: 0)
+                }
+                .disposed(by: disposeBag)
+            
+            secondImageButton.rx.throttleTap
+                .subscribe(with: self) { (self, _) in
+                    // relay.accept(index: 1)
+
+                }
+                .disposed(by: disposeBag)
+            
+            thirdImageButton.rx.throttleTap
+                .subscribe(with: self) { (self, _) in
+                    // relay.accept(index: 2)
+
+                }
+                .disposed(by: disposeBag)
+        } else {
+            mainImageButton.rx.throttleTap
+                .subscribe(with: self) { (self, _) in
+                    // 시스템 알림: "구매하지 않은 임장노트예요."
+                }
+                .disposed(by: disposeBag)
+        }
     }
     
     func prepareForReuse() {

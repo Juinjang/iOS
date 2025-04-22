@@ -42,6 +42,7 @@ final class ImjangDetailView: BaseView {
                 WhiteSpacerFooterView.self,
                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter
             )
+            $0.showsVerticalScrollIndicator = false
         }
     }()
     
@@ -207,6 +208,7 @@ extension Reactive where Base: ImjangDetailView {
     var isBuyer: Binder<Bool> {
         return Binder(base) { view, bool in
             view.isBuyer = bool
+            view.detailCollectionView.reloadData()
         }
     }
 }

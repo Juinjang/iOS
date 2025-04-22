@@ -19,7 +19,7 @@ struct ImjangDetailInfoModel: Codable {
     let addressShort: String
     let priceType: String
     let price: String
-    let isLiked: Bool
+    var isLiked: Bool
     let likedCount: Int
     let period: String
     let updatedAt: String?
