@@ -15,8 +15,8 @@ struct TriangleGraphModel {
     var cornerRadius: CGFloat = 1.5
     var isGradient: Bool = false
     var gradientColors: [CGColor] = [
-        UIColor.mainGradient1.withAlphaComponent(0.8).cgColor,
-        UIColor.mainGradient2.withAlphaComponent(0.7).cgColor
+        UIColor.mainGradient1.cgColor,
+        UIColor.mainGradient2.cgColor
     ]
 }
 
