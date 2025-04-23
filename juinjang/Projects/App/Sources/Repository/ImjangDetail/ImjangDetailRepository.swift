@@ -38,7 +38,7 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
             bulidingName: "판교푸르지오월드마크",
             propertyType: "APARTMENT",
             buyerCount: 10,
-            images: ["", "", ""],
+            images: ["https://ifh.cc/g/XLbxpj.jpg", "https://ifh.cc/g/XLbxpj.jpg", "https://ifh.cc/g/XLbxpj.jpg"], // "https://ifh.cc/g/XLbxpj.jpg"
             address: "서울시 동작구 노들로2길 7 (노량진드림 스퀘어 복합빌딩) A1620호",
             addressShort: "서울시 동작구",
             priceType: "PULL_RENT",
@@ -53,7 +53,7 @@ final class ImjangDetailRepository: ImjangDetailRepositoryProtocol {
             owerProfileUrl: "이미지",
             owerNickname: "닉네임",
             ownerProfileBio: "안녕하세요.",
-            isOneRoom: false
+            isOneRoom: true
         )
     }()
     
