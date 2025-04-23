@@ -64,7 +64,7 @@ final class BuildingDetailInfoView: BaseView {
     }
     
     private var dispoaseBag = DisposeBag()
-    
+        
     func configure(for model: ImjangDetailInfoModel,
                    relay: PublishRelay<ImjangDetailInfoCellEvent>) {
         self.dispoaseBag = DisposeBag()
@@ -81,7 +81,6 @@ final class BuildingDetailInfoView: BaseView {
             .withHaptic()
             .subscribe(with: self) { (self,_) in
                 relay.accept(.likeButtonTap)
-                self.likeButton.isSelected.toggle()
             }
             .disposed(by: dispoaseBag)
         

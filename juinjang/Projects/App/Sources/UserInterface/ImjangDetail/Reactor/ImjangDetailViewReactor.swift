@@ -18,7 +18,7 @@ final class ImjangDetailViewReactor: Reactor {
     }
     
     enum Mutation {
-        case updateItem(section: ImjangDetailSection, item: [BaseCellItem])
+        case updateItem(section: ImjangDetailSection, item: [ImjangDetailBaseCellItem])
         case updateAllCheckListItems(items: [ImjangDetailCheckListCellItem])
         case updateIsOneRoom(Bool)
         case updateIsBuyer(Bool)
@@ -30,7 +30,7 @@ final class ImjangDetailViewReactor: Reactor {
     
     struct State {
         let title: String
-        var sectionItems: [ImjangDetailSection: [BaseCellItem]]
+        var sectionItems: [ImjangDetailSection: [ImjangDetailBaseCellItem]]
         var allCheckListItems: [ImjangDetailCheckListCellItem]
         var isOneRoom: Bool
         var isBuyer: Bool
@@ -88,6 +88,8 @@ final class ImjangDetailViewReactor: Reactor {
                 section: .checkList,
                 item: self.currentState.allCheckListItems.filter {
                     $0.model.category == CheckListCategoryType(rawValue: index)?.title
+                }.map {
+                    ImjangDetailBaseCellItem.checkList(.init(id: $0.id, model: $0.model))
                 }
             ))
         case .noteOpenButtonDidTap:
@@ -142,15 +144,17 @@ extension ImjangDetailViewReactor {
     private func createSection(for section: ImjangDetailSection) -> Observable<Mutation> {
         let repository = dependency.repository
         
-        let request: Observable<[BaseCellItem]>
+        let request: Observable<[ImjangDetailBaseCellItem]>
         
         switch section {
         case .info:
             return repository.fetchInfo()
                 .flatMap { model -> Observable<Mutation> in
-                    let item = ImjangDetailInfoCellItem(
-                        id: UUID().uuidString,
-                        model: model
+                    let item = ImjangDetailBaseCellItem.info(
+                        .init(
+                            id: UUID().uuidString,
+                            model: model
+                        )
                     )
                     return Observable.from([
                         .updateItem(section: .info, item: [item]),
@@ -161,9 +165,11 @@ extension ImjangDetailViewReactor {
         case .report:
             request = repository.fetchReport()
                 .map {
-                    [ImjangDetailReportCellItem(
-                        id: UUID().uuidString,
-                        model: $0
+                    [ImjangDetailBaseCellItem.report(
+                        .init(
+                            id: UUID().uuidString,
+                            model: $0
+                        )
                     )]
                 }
         case .checkList:
@@ -174,20 +180,28 @@ extension ImjangDetailViewReactor {
                     }
                     return Observable.from([
                         .updateAllCheckListItems(items: items),
-                        .updateItem(section: .checkList,
-                                    item: items.filter {
-                            $0.model.category == CheckListCategoryType(
-                                rawValue: 0 // Default: 입지여건
-                            )?.title
-                        })
+                        .updateItem(
+                            section: .checkList,
+                            item: items.filter {
+                                $0.model.category == CheckListCategoryType(
+                                    rawValue: 0 // Default: 입지여건
+                                )?.title
+                            }.map {
+                                ImjangDetailBaseCellItem.checkList(
+                                    .init(id: $0.id, model: $0.model)
+                                )
+                            }
+                        )
                     ])
                 }
         case .review:
             request = repository.fetchReview()
                 .map {
-                    [ImjangDetailReviewCellItem(
-                        id: UUID().uuidString,
-                        model: $0
+                    [ImjangDetailBaseCellItem.review(
+                        .init(
+                            id: UUID().uuidString,
+                            model: $0
+                        )
                     )]
                 }
         }
@@ -200,59 +214,69 @@ extension ImjangDetailViewReactor {
             .updateItem(
                 section: .checkList,
                 item: [
-                    ImjangDetailCheckListCellItem(
-                        id: UUID().uuidString,
-                        model: .init(
-                            answerId: 0,
-                            questionId: 3,
-                            category: "LOCATION_CONDITION",
-                            limjangId: 0,
-                            answer: "5",
-                            answerType: "SCORE"
+                    ImjangDetailBaseCellItem.checkList(
+                        ImjangDetailCheckListCellItem(
+                            id: UUID().uuidString,
+                            model: .init(
+                                answerId: 0,
+                                questionId: 3,
+                                category: "LOCATION_CONDITION",
+                                limjangId: 0,
+                                answer: "5",
+                                answerType: "SCORE"
+                            )
                         )
                     ),
-                    ImjangDetailCheckListCellItem(
-                        id: UUID().uuidString,
-                        model: .init(
-                            answerId: 1,
-                            questionId: 4,
-                            category: "LOCATION_CONDITION",
-                            limjangId: 0,
-                            answer: "6호선",
-                            answerType: "DROPDOWN"
+                    ImjangDetailBaseCellItem.checkList(
+                        ImjangDetailCheckListCellItem(
+                            id: UUID().uuidString,
+                            model: .init(
+                                answerId: 1,
+                                questionId: 4,
+                                category: "LOCATION_CONDITION",
+                                limjangId: 0,
+                                answer: "6호선",
+                                answerType: "DROPDOWN"
+                            )
                         )
                     ),
-                    ImjangDetailCheckListCellItem(
-                        id: UUID().uuidString,
-                        model: .init(
-                            answerId: 2,
-                            questionId: 20,
-                            category: "LOCATION_CONDITION",
-                            limjangId: 0,
-                            answer: "2023년",
-                            answerType: "DROPDOWN"
+                    ImjangDetailBaseCellItem.checkList(
+                        ImjangDetailCheckListCellItem(
+                            id: UUID().uuidString,
+                            model: .init(
+                                answerId: 2,
+                                questionId: 20,
+                                category: "LOCATION_CONDITION",
+                                limjangId: 0,
+                                answer: "2023년",
+                                answerType: "DROPDOWN"
+                            )
                         )
                     ),
-                    ImjangDetailCheckListCellItem(
-                        id: UUID().uuidString,
-                        model: .init(
-                            answerId: 3,
-                            questionId: 11,
-                            category: "LOCATION_CONDITION",
-                            limjangId: 0,
-                            answer: "3",
-                            answerType: "SCORE"
+                    ImjangDetailBaseCellItem.checkList(
+                        ImjangDetailCheckListCellItem(
+                            id: UUID().uuidString,
+                            model: .init(
+                                answerId: 3,
+                                questionId: 11,
+                                category: "LOCATION_CONDITION",
+                                limjangId: 0,
+                                answer: "3",
+                                answerType: "SCORE"
+                            )
                         )
                     ),
-                    ImjangDetailCheckListCellItem(
-                        id: UUID().uuidString,
-                        model: .init(
-                            answerId: 4,
-                            questionId: 14,
-                            category: "LOCATION_CONDITION",
-                            limjangId: 0,
-                            answer: "남향",
-                            answerType: "DROPDOWN"
+                    ImjangDetailBaseCellItem.checkList(
+                        ImjangDetailCheckListCellItem(
+                            id: UUID().uuidString,
+                            model: .init(
+                                answerId: 4,
+                                questionId: 14,
+                                category: "LOCATION_CONDITION",
+                                limjangId: 0,
+                                answer: "남향",
+                                answerType: "DROPDOWN"
+                            )
                         )
                     )
                 ]
@@ -265,14 +289,20 @@ extension ImjangDetailViewReactor {
 extension ImjangDetailViewReactor {
     private func updateBuyerInInfoSection(_ state: State, isBuyer: Bool) -> State {
         var newState = state
-        guard let infoItem = newState.sectionItems[.info]?.first as? ImjangDetailInfoCellItem else {
+        guard case let .info(infoItem) = newState.sectionItems[.info]?.first else {
             return state
         }
         
         var updatedModel = infoItem.model
         updatedModel.isBuyer = isBuyer
         
-        let updatedItem = ImjangDetailInfoCellItem(id: infoItem.id, model: updatedModel)
+        let updatedItem = ImjangDetailBaseCellItem.info(
+            ImjangDetailInfoCellItem(
+                id: infoItem.id,
+                model: updatedModel
+            )
+        )
+        
         newState.sectionItems[.info] = [updatedItem]
         
         return newState
@@ -280,16 +310,35 @@ extension ImjangDetailViewReactor {
     
     private func toggleLikedInInfoSection(_ state: State) -> State {
         var newState = state
-        guard let infoItem = newState.sectionItems[.info]?.first as? ImjangDetailInfoCellItem else {
+        guard case let .info(infoItem) = newState.sectionItems[.info]?.first else {
             return state
         }
 
         var updatedModel = infoItem.model
         updatedModel.isLiked.toggle()
-
-        let updatedItem = ImjangDetailInfoCellItem(id: infoItem.id, model: updatedModel)
+        updatedModel.isLiked
+        ? (updatedModel.likedCount += 1)
+        : (updatedModel.likedCount -= 1)
+        
+        let updatedItem = ImjangDetailBaseCellItem.info(
+            ImjangDetailInfoCellItem(
+                id: infoItem.id,
+                model: updatedModel
+            )
+        )
+        
         newState.sectionItems[.info] = [updatedItem]
         
         return newState
+    }
+}
+
+extension Dictionary where Key == ImjangDetailSection, Value == [ImjangDetailBaseCellItem] {
+    func infoItem() -> ImjangDetailInfoCellItem? {
+        guard let item = self[.info]?.first else { return nil }
+        if case let .info(infoItem) = item {
+            return infoItem
+        }
+        return nil
     }
 }

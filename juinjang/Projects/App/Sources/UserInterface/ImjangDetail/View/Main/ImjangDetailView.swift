@@ -104,7 +104,7 @@ extension ImjangDetailView {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .absolute(height))
+                                               heightDimension: .estimated(height))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
 
         let section = NSCollectionLayoutSection(group: group)
@@ -173,9 +173,9 @@ extension Reactive where Base: ImjangDetailView {
         }
     }
     
-    var updateLayoutBasedOnInfoSection: Binder<[ImjangDetailSection: [BaseCellItem]]> {
+    var updateLayoutBasedOnInfoSection: Binder<[ImjangDetailSection: [ImjangDetailBaseCellItem]]> {
         return Binder(base) { view, sectionItems in
-            guard let infoItem = sectionItems[.info]?.first as? ImjangDetailInfoCellItem else { return }
+            guard let infoItem = sectionItems.infoItem() else { return }
             view.infoCellHeight = infoItem.model.buyerCount < 10 ? CGFloat(612) : CGFloat(654)
             view.reviewCellHeight = infoItem.model.isBuyer ? CGFloat(615) : CGFloat(223)
         }

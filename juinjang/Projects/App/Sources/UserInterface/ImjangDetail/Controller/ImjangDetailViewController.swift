@@ -13,7 +13,7 @@ import RxCocoa
 import RxRelay
 
 final class ImjangDetailViewController: BaseViewController, View {
-    typealias DataSource = UICollectionViewDiffableDataSource<ImjangDetailSection, BaseCellItem>
+    typealias DataSource = UICollectionViewDiffableDataSource<ImjangDetailSection, ImjangDetailBaseCellItem>
     var disposeBag: DisposeBag = DisposeBag()
     private var dataSource: DataSource!
     private let mainView = ImjangDetailView()
@@ -23,8 +23,9 @@ final class ImjangDetailViewController: BaseViewController, View {
     init(reactor: ImjangDetailViewReactor) {
         super.init()
         configureDataSource()
-        mainView.detailCollectionView.delegate = self
         self.reactor = reactor
+        bindView()
+        bindViewEvent()
     }
     
     required init?(coder: NSCoder) {
@@ -61,9 +62,9 @@ final class ImjangDetailViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.sectionItems[.info]?.first as? ImjangDetailInfoCellItem }
+            .map { $0.sectionItems.infoItem() }
             .compactMap { $0 }
-            .distinctUntilChanged { $0.id == $1.id }
+            .distinctUntilChanged()
             .subscribe { model in
                 CheckListNoteOpenView.modelRelay.accept(model.model)
             }
@@ -100,14 +101,17 @@ final class ImjangDetailViewController: BaseViewController, View {
             .distinctUntilChanged()
             .skip(1)
             .subscribe(with: self) { (self, _) in
-                self.showAlert(title: "주인장", message: "구매하지 않은 임장노트에요.", actionHandler: nil)
+                self.showAlert(
+                    title: "주인장",
+                    message: "구매하지 않은 임장노트에요.",
+                    actionHandler: nil
+                )
             }
             .disposed(by: disposeBag)
-        
-        selectedCategoryRelay
-            .map { Reactor.Action.checkListCategoryDidTap(index: $0) }
-            .bind(to: reactor.action)
-            .disposed(by: disposeBag)
+    }
+    
+    private func bindView() {
+        guard let reactor = self.reactor else { return }
         
         mainView.detailCollectionView.rx.isCellAboveCenter(
             at: IndexPath(item: 0, section: ImjangDetailSection.report.rawValue)
@@ -121,6 +125,15 @@ final class ImjangDetailViewController: BaseViewController, View {
         
         CheckListNoteOpenView.tapRelay
             .map { Reactor.Action.noteOpenButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    private func bindViewEvent() {
+        guard let reactor = self.reactor else { return }
+        
+        selectedCategoryRelay
+            .map { Reactor.Action.checkListCategoryDidTap(index: $0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -144,27 +157,22 @@ final class ImjangDetailViewController: BaseViewController, View {
 extension ImjangDetailViewController: UICollectionViewDelegate {
     private func configureDataSource() {
         dataSource = DataSource(collectionView: mainView.detailCollectionView) { collectionView, indexPath, item in
-            guard let sectionItem = item as? ImjangDetailSectionProvidable else { return UICollectionViewCell() }
-            switch sectionItem.sectionType {
-            case .info:
-                guard let item = item as? ImjangDetailInfoCellItem else { return UICollectionViewCell() }
+            switch item {
+            case .info(let item):
                 let cell = collectionView.dequeueReusableCell(ImjangDetailInfoCell.self, for: indexPath)
                 cell.bind(item.model, relay: self.infoCellEventRelay)
                 return cell
-            case .report:
-                guard let item = item as? ImjangDetailReportCellItem else { return UICollectionViewCell() }
+            case .report(let item):
                 let cell = collectionView.dequeueReusableCell(ImjangDetailReportCell.self, for: indexPath)
                 cell.bind(item.model)
                 return cell
-            case .checkList:
-                guard let item = item as? ImjangDetailCheckListCellItem,
-                      let isBuyer = self.reactor?.currentState.isBuyer,
+            case .checkList(let item):
+                guard let isBuyer = self.reactor?.currentState.isBuyer,
                       let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailCheckListCell.self, for: indexPath)
                 cell.bind(item.model, isOneRoom: isOneRoom, isBuyer: isBuyer)
                 return cell
-            case .review:
-                guard let item = item as? ImjangDetailReviewCellItem else { return UICollectionViewCell() }
+            case .review(let item):
                 let cell = collectionView.dequeueReusableCell(ImjangDetailReviewCell.self, for: indexPath)
                 cell.bind(item.model)
                 return cell
@@ -172,7 +180,6 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
         }
         
         dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-            
             let section = ImjangDetailSection(rawValue: indexPath.section)
             
             if kind == UICollectionView.elementKindSectionHeader {
@@ -182,6 +189,7 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
                           let isBuyer = self.reactor?.currentState.isBuyer else {
                         return UICollectionReusableView()
                     }
+                    
                     return collectionView.dequeueReusableSupplementaryView(
                         ImjangDetailCheckListHeaderView.self,
                         ofKind: kind,
@@ -213,3 +221,4 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
         }
     }
 }
+
