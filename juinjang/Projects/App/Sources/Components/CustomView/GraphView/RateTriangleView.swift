@@ -67,6 +67,7 @@ final class RateTriangleView: UIView {
         
         if isGradient {
             configureGradient(ctx: ctx, path: path, rect: rect)
+            layer.compositingFilter = "multiplyBlendMode"
             layer.shadowColor = UIColor.mainShadow.withAlphaComponent(0.7).cgColor
             layer.shadowOffset = CGSize(width: 0, height: 0)
             layer.shadowRadius = 10

@@ -39,8 +39,8 @@ final class ReportGraphView: BaseView {
                         model.publicSpaceRate],
                 isGradient: true,
                 gradientColors: [
-                    UIColor.main.withAlphaComponent(0.5).cgColor,
-                    UIColor.mainGradientTriangle2.withAlphaComponent(0.5).cgColor
+                    UIColor.mainGradientTriangle1.withAlphaComponent(0.8).cgColor,
+                    UIColor.mainGradientTriangle2.withAlphaComponent(0.8).cgColor
                 ]
             )
         ])
