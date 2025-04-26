@@ -8,3 +8,4 @@
 protocol ImjangDetailSectionProvidable {
     var sectionType: ImjangDetailSection { get }
 }
+
