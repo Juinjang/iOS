@@ -8,6 +8,7 @@
 final class ImjangShareSelectCellItem: BaseCellItem, ImjangShareSelectSectionProvidable {
     let model: ImjangShareSelectModel
     var sectionType: ImjangShareSelectSection { .select }
+    var isSelected: Bool = false
 
     init(id: String,
          model: ImjangShareSelectModel) {

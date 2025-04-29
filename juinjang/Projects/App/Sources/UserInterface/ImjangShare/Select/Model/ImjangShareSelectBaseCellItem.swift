@@ -21,9 +21,10 @@ enum ImjangShareSelectBaseCellItem: Hashable {
         case .select(let item):
             hasher.combine("select")
             hasher.combine(item)
+            hasher.combine(item.isSelected)
         }
     }
-
+    
     static func ==(lhs: ImjangShareSelectBaseCellItem,
                    rhs: ImjangShareSelectBaseCellItem) -> Bool {
         switch (lhs, rhs) {
@@ -32,7 +33,8 @@ enum ImjangShareSelectBaseCellItem: Hashable {
         case (.notice(let l), .notice(let r)):
             return l.id == r.id
         case (.select(let l), .select(let r)):
-            return l.id == r.id
+            return l.id == r.id &&
+            l.isSelected == r.isSelected
         default:
             return false
         }

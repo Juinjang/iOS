@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 4/26/25.
 //
 
-enum ImjangShareSelectSection {
+enum ImjangShareSelectSection: Int {
     case guide
     case notice
     case select
