@@ -70,12 +70,14 @@ final class ImjangShareSelectCell: BaseCollectionViewCell {
               relay: PublishRelay<String>) {
         disposeBag = DisposeBag()
         
+        guard let priceType = PriceType(rawValue: item.model.priceType)?.title else { return }
+        
         tumbnailImageView.kf.setImage(
             with: URL(string: item.model.imageUrl),
             placeholder: PropertyType(rawValue: item.model.propertyType)?.image
         )
         buildingNameLabel.text = item.model.name
-        priceLabel.text = item.model.price
+        priceLabel.text = "\(priceType) \(item.model.price.formattedKoreanCurrency)"
         pyungLabel.text = "\(item.model.pyong)평 \(item.model.floor)층"
         addressLabel.text = item.model.shortAddress
         starRateLabel.text = "\(item.model.rate ?? 0.0)"

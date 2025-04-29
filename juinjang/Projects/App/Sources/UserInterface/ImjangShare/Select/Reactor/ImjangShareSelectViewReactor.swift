@@ -123,7 +123,6 @@ extension ImjangShareSelectViewReactor {
         section: ImjangShareSelectSection,
         models: [ImjangShareSelectModel] = []
     ) -> Observable<Mutation> {
-        
         let items: [ImjangShareSelectBaseCellItem]
         
         switch section {
