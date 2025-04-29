@@ -8,8 +8,20 @@
 import RxSwift
 
 final class ImjangShareRepository: ImjangShareRepositoryProcotol {
+    private var fetchCount = 0
+    
     func fetchShareSelectNote() -> Observable<[ImjangShareSelectModel]> {
-        return Observable.just(createMockShareSelectModels())
+        fetchCount += 1
+        
+        let result: [ImjangShareSelectModel]
+        
+        if fetchCount >= 3 {
+            result = []
+        } else {
+            result = createMockShareSelectModels()
+        }
+        
+        return Observable.just(result)
             .delay(.milliseconds(700), scheduler: MainScheduler.instance)
     }
 }
@@ -116,6 +128,34 @@ extension ImjangShareRepository {
                   shortAddress: "성남시 분당구",
                   rewardPencil: 3),
             .init(noteId: 8,
+                  purposeType: "RESIDENTIAL_PURPOSE",
+                  propertyType: "APARTMENT",
+                  priceType: "MARKET_PRICE",
+                  name: "판교집",
+                  imageUrl: "",
+                  isScraped: false,
+                  rate: 4.5,
+                  price: "2200000000",
+                  monthlyRent: nil,
+                  pyong: 45,
+                  floor: "20",
+                  shortAddress: "성남시 분당구",
+                  rewardPencil: 3),
+            .init(noteId: 9,
+                  purposeType: "RESIDENTIAL_PURPOSE",
+                  propertyType: "APARTMENT",
+                  priceType: "MARKET_PRICE",
+                  name: "판교집",
+                  imageUrl: "",
+                  isScraped: false,
+                  rate: 4.5,
+                  price: "2200000000",
+                  monthlyRent: nil,
+                  pyong: 45,
+                  floor: "20",
+                  shortAddress: "성남시 분당구",
+                  rewardPencil: 3),
+            .init(noteId: 10,
                   purposeType: "RESIDENTIAL_PURPOSE",
                   propertyType: "APARTMENT",
                   priceType: "MARKET_PRICE",

@@ -23,6 +23,9 @@ final class ImjangShareSelectViewReactor: Reactor {
         case updateNickname(nickname: String)
         case updateIsShowEmptyView(bool: Bool)
         case updateSelectItem(id: String)
+        case updateIsLastPage(Bool)
+        case addSectionItems(section: ImjangShareSelectSection,
+                             item: [ImjangShareSelectBaseCellItem])
     }
     
     // MARK: - State
@@ -32,6 +35,7 @@ final class ImjangShareSelectViewReactor: Reactor {
         var isShowEmptyView: Bool?
         var isActivatedNextButton: Bool
         var selectItem: ImjangShareSelectCellItem?
+        var isLastPage: Bool?
     }
     
     struct Dependency {
@@ -45,7 +49,8 @@ final class ImjangShareSelectViewReactor: Reactor {
         nickname: "",
         isShowEmptyView: nil,
         isActivatedNextButton: false,
-        selectItem: nil
+        selectItem: nil,
+        isLastPage: nil
     )
     
     private let dependency: Dependency
@@ -63,7 +68,7 @@ final class ImjangShareSelectViewReactor: Reactor {
                 createInitialSections()
             )
         case .moreButtonDidTap:
-            return .empty()
+            return fetchMoreSelectModel()
         case .cellDidTap(id: let id):
             return .just(.updateSelectItem(id: id))
         }
@@ -81,8 +86,30 @@ final class ImjangShareSelectViewReactor: Reactor {
             newState.isShowEmptyView = bool
         case let .updateSelectItem(id):
             newState = updateSelectedItem(state: newState, selectedId: id)
+        case .updateIsLastPage(let bool):
+            newState.isLastPage = bool
+        case let .addSectionItems(section, items):
+            var existingItems = newState.sectionItems[section] ?? []
+            existingItems.append(contentsOf: items)
+            newState.sectionItems[section] = existingItems
         }
         return newState
+    }
+    
+    private func createSectionItems(
+        section: ImjangShareSelectSection,
+        models: [ImjangShareSelectModel] = []
+    ) -> [ImjangShareSelectBaseCellItem] {
+        switch section {
+        case .guide:
+            return [.guide(.init(id: UUID().uuidString))]
+        case .notice:
+            return [.notice(.init(id: UUID().uuidString))]
+        case .select:
+            return models.map {
+                .select(ImjangShareSelectCellItem(id: UUID().uuidString, model: $0))
+            }
+        }
     }
 }
 
@@ -103,45 +130,45 @@ extension ImjangShareSelectViewReactor {
                 if models.isEmpty {
                     return .concat(
                         .just(.updateIsShowEmptyView(bool: true)),
-                        self.createSection(section: .guide)
+                        .just(.updateSectionItems(
+                            section: .guide,
+                            item: self.createSectionItems(section: .guide)
+                        ))
                     )
                 } else {
                     return .concat(
                         .just(.updateIsShowEmptyView(bool: false)),
-                        self.createSection(section: .guide),
-                        self.createSection(section: .notice),
-                        self.createSection(
+                        .just(.updateSectionItems(
+                            section: .guide,
+                            item: self.createSectionItems(section: .guide)
+                        )),
+                        .just(.updateSectionItems(
+                            section: .notice,
+                            item: self.createSectionItems(section: .notice)
+                        )),
+                        .just(.updateSectionItems(
                             section: .select,
-                            models: models
-                        )
+                            item: self.createSectionItems(section: .select, models: models)
+                        ))
                     )
                 }
             }
     }
     
-    private func createSection(
-        section: ImjangShareSelectSection,
-        models: [ImjangShareSelectModel] = []
-    ) -> Observable<Mutation> {
-        let items: [ImjangShareSelectBaseCellItem]
-        
-        switch section {
-        case .guide:
-            items = [.guide(.init(id: UUID().uuidString))]
-        case .notice:
-            items = [.notice(.init(id: UUID().uuidString))]
-        case .select:
-            items = models.map {
-                .select(ImjangShareSelectCellItem(id: UUID().uuidString, model: $0))
+    private func fetchMoreSelectModel() -> Observable<Mutation> {
+        return dependency.imjangShareRepository.fetchShareSelectNote()
+            .flatMap { models -> Observable<Mutation> in
+                let pageSize = 10
+                let isLastPage = models.count < pageSize || models.isEmpty
+                
+                return .concat(
+                    .just(.updateIsLastPage(isLastPage)),
+                    .just(.addSectionItems(
+                        section: .select,
+                        item: self.createSectionItems(section: .select, models: models)
+                    ))
+                )
             }
-        }
-        
-        return .just(
-            .updateSectionItems(
-                section: section,
-                item: items
-            )
-        )
     }
 }
 

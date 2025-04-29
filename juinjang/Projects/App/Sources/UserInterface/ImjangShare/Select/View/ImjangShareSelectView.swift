@@ -16,6 +16,8 @@ final class ImjangShareSelectView: BaseView {
         $0.leftItem = [.pop]
     }
     
+    fileprivate var isLastPage: Bool = false
+    
     lazy var imjangShareCollectionView: UICollectionView = {
         return UICollectionView(
             frame: .zero,
@@ -115,15 +117,16 @@ extension ImjangShareSelectView {
         
         let section = NSCollectionLayoutSection(group: group)
         
-        // 마지막 models 인지 분기처리 필요
-        let footer = NSCollectionLayoutBoundarySupplementaryItem(
-            layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .absolute(94)),
-            elementKind: UICollectionView.elementKindSectionFooter,
-            alignment: .bottom
-        )
-        
-        section.boundarySupplementaryItems = [footer]
+        if !isLastPage {
+            let footer = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                   heightDimension: .absolute(94)),
+                elementKind: UICollectionView.elementKindSectionFooter,
+                alignment: .bottom
+            )
+            
+            section.boundarySupplementaryItems = [footer]
+        }
         
         return section
     }
@@ -159,6 +162,15 @@ extension Reactive where Base: ImjangShareSelectView {
                     $0.horizontalEdges.equalToSuperview()
                     $0.bottom.equalTo(view.nextButton.snp.top).offset(-16)
                 }
+            }
+        }
+    }
+    
+    var isLastPage: Binder<Bool> {
+        return Binder(base) { view, isLastPage in
+            view.isLastPage = isLastPage
+            if isLastPage {
+                view.imjangShareCollectionView.reloadData()
             }
         }
     }

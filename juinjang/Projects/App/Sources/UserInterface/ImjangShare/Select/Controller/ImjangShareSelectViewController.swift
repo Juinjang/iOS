@@ -69,6 +69,13 @@ final class ImjangShareSelectViewController: BaseViewController, View {
             .compactMap { $0 }
             .bind(to: mainView.rx.isShowEmptyView)
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isLastPage)
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .bind(to: mainView.rx.isLastPage)
+            .disposed(by: disposeBag)
     }
     
     func bindEvent() {
