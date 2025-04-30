@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import RxSwift
 
 protocol TargetType: URLRequestConvertible {
     var baseURL: String { get }
@@ -18,33 +19,45 @@ protocol TargetType: URLRequestConvertible {
 }
 
 extension TargetType {
-    func asURLRequest() throws -> URLRequest {
-        guard let url = createURL() else { throw NetworkError.invalidUrl }
-        var request = URLRequest(url: url)
-        request.httpMethod = method.rawValue
-        
-        var allHeaders: [String: String] = [:]
-        header.forEach {
-            allHeaders.updateValue($1, forKey: $0)
+    var header: [String : String] {
+        return [
+            "Content-Type": "application/json",
+            "Authorization": "Bearer \(UserDefaultManager.shared.accessToken)"
+        ]
+    }
+    
+    var baseURL: String {
+        guard let baseURL = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
+            fatalError("BASE_URL not found in Info.plist")
         }
-        request.allHTTPHeaderFields = allHeaders
-        
-        if let parameters = parameters {
-            request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
-        }
-        
-        return request
+        return baseURL
+    }
+    
+    func request(_ provider: NetworkProvider<Self>) -> Single<Data> {
+        return provider.request(self)
     }
     
     func createURL() -> URL? {
-        var urlComponents = URLComponents(string: baseURL.appending(path))
-        var items = [URLQueryItem]()
-        
+        var components = URLComponents(string: baseURL + path)
         if !queryItems.isEmpty {
-            queryItems.forEach { items.append($0) }
-            urlComponents?.queryItems = items
+            components?.queryItems = queryItems
+        }
+        return components?.url
+    }
+    
+    func asURLRequest() throws -> URLRequest {
+        guard let url = createURL() else {
+            throw URLError(.badURL)
         }
         
-        return urlComponents?.url
+        var request = URLRequest(url: url)
+        request.httpMethod = method.rawValue
+        request.allHTTPHeaderFields = header
+
+        if let parameters = parameters {
+            request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
+        }
+
+        return request
     }
 }

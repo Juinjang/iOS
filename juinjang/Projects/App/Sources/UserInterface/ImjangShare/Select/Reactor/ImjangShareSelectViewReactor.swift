@@ -39,7 +39,7 @@ final class ImjangShareSelectViewReactor: Reactor {
     }
     
     struct Dependency {
-        let imjangShareRepository: ImjangShareRepositoryProcotol
+        let noteRepository: NoteRepositoryProtocol
         let userRepository: UserRepositoryProtocol
     }
     
@@ -124,8 +124,9 @@ extension ImjangShareSelectViewReactor {
     
     private func createInitialSections() -> Observable<Mutation> {
         return dependency
-            .imjangShareRepository
-            .fetchShareSelectNote()
+            .noteRepository
+            .getShareableMyNotes()
+            .asObservable()
             .flatMap { models -> Observable<Mutation> in
                 if models.isEmpty {
                     return .concat(
@@ -156,7 +157,10 @@ extension ImjangShareSelectViewReactor {
     }
     
     private func fetchMoreSelectModel() -> Observable<Mutation> {
-        return dependency.imjangShareRepository.fetchShareSelectNote()
+        return dependency
+            .noteRepository
+            .getShareableMyNotes()
+            .asObservable()
             .flatMap { models -> Observable<Mutation> in
                 let pageSize = 10
                 let isLastPage = models.count < pageSize || models.isEmpty
