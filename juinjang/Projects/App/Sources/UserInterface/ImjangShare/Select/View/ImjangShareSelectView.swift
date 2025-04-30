@@ -12,7 +12,7 @@ import RxSwift
 import RxCocoa
 
 final class ImjangShareSelectView: BaseView {
-    fileprivate let navigationView = DefaultNavigationView().then {
+    let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
     }
     

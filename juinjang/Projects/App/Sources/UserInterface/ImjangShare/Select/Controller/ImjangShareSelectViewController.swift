@@ -90,6 +90,18 @@ final class ImjangShareSelectViewController: BaseViewController, View {
             .map { Reactor.Action.cellDidTap(id: $0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        mainView
+            .navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.navigationController?.dismiss(animated: true)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
