@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-final class ImjangShareSelectGuideCell: BaseCollectionViewCell {
+final class ShareSelectGuideCell: BaseCollectionViewCell {
     private let containerView = UIView().then {
         $0.roundCorners(cornerRadius: 8, corner: .all)
         $0.backgroundColor = .bg

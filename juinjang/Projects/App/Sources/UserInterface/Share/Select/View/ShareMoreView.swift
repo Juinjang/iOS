@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 import RxRelay
 
-final class ImjangShareMoreView: BaseCollectionReusableView {
+final class ShareMoreView: BaseCollectionReusableView {
     private let moreButton = MoreButton()
     private var disposeBag = DisposeBag()
     

@@ -8,7 +8,7 @@
 import ReactorKit
 import Foundation
 
-final class ImjangShareSelectViewReactor: Reactor {
+final class ShareSelectViewReactor: Reactor {
     // MARK: - Action
     enum Action {
         case viewDidLoad
@@ -18,23 +18,23 @@ final class ImjangShareSelectViewReactor: Reactor {
     
     // MARK: - Mutation
     enum Mutation {
-        case updateSectionItems(section: ImjangShareSelectSection,
-                                item: [ImjangShareSelectBaseCellItem])
+        case updateSectionItems(section: ShareSelectSection,
+                                item: [ShareSelectBaseCellItem])
         case updateNickname(nickname: String)
         case updateIsShowEmptyView(bool: Bool)
         case updateSelectItem(id: String)
         case updateIsLastPage(Bool)
-        case addSectionItems(section: ImjangShareSelectSection,
-                             item: [ImjangShareSelectBaseCellItem])
+        case addSectionItems(section: ShareSelectSection,
+                             item: [ShareSelectBaseCellItem])
     }
     
     // MARK: - State
     struct State {
-        var sectionItems: [ImjangShareSelectSection: [ImjangShareSelectBaseCellItem]]
+        var sectionItems: [ShareSelectSection: [ShareSelectBaseCellItem]]
         var nickname: String
         var isShowEmptyView: Bool?
         var isActivatedNextButton: Bool
-        var selectItem: ImjangShareSelectCellItem?
+        var selectItem: ShareSelectCellItem?
         var isLastPage: Bool?
     }
     
@@ -97,9 +97,9 @@ final class ImjangShareSelectViewReactor: Reactor {
     }
     
     private func createSectionItems(
-        section: ImjangShareSelectSection,
-        models: [ImjangShareSelectModel] = []
-    ) -> [ImjangShareSelectBaseCellItem] {
+        section: ShareSelectSection,
+        models: [ShareSelectModel] = []
+    ) -> [ShareSelectBaseCellItem] {
         switch section {
         case .guide:
             return [.guide(.init(id: UUID().uuidString))]
@@ -107,14 +107,14 @@ final class ImjangShareSelectViewReactor: Reactor {
             return [.notice(.init(id: UUID().uuidString))]
         case .select:
             return models.map {
-                .select(ImjangShareSelectCellItem(id: UUID().uuidString, model: $0))
+                .select(ShareSelectCellItem(id: UUID().uuidString, model: $0))
             }
         }
     }
 }
 
 // MARK: - Mutate Methods
-extension ImjangShareSelectViewReactor {
+extension ShareSelectViewReactor {
     private func fetchUserNickname() -> Observable<Mutation> {
         return dependency
             .userRepository
@@ -178,7 +178,7 @@ extension ImjangShareSelectViewReactor {
 
 
 // MARK: - Reduce Methods
-extension ImjangShareSelectViewReactor {
+extension ShareSelectViewReactor {
     private func updateSelectedItem(state: State, selectedId: String) -> State {
         var newState = state
         guard var items = newState.sectionItems[.select] else { return state }
@@ -186,7 +186,7 @@ extension ImjangShareSelectViewReactor {
         items = items.map {
             guard case let .select(item) = $0 else { return $0 }
             let isAlreadySelected = item.isSelected && item.id == selectedId
-            let newItem = ImjangShareSelectCellItem(id: item.id, model: item.model)
+            let newItem = ShareSelectCellItem(id: item.id, model: item.model)
             newItem.isSelected = !isAlreadySelected && item.id == selectedId
             return .select(newItem)
         }

@@ -7,6 +7,6 @@
 
 import RxSwift
 
-protocol ImjangShareRepositoryProcotol {
-    func fetchShareSelectNote() ->  Observable<[ImjangShareSelectModel]>
+protocol ShareRepositoryProcotol {
+    func fetchShareSelectNote() ->  Observable<[ShareSelectModel]>
 }

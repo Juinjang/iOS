@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-final class ImjangShareSelectEmptyView: BaseView {
+final class ShareSelectEmptyView: BaseView {
     private let containerView = UIView()
     
     private let emptyImageView = UIImageView().then {

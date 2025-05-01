@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 4/26/25.
 //
 
-struct ImjangShareSelectModel: Codable {
+struct ShareSelectModel: Codable {
     let noteId: Int
     let purposeType: String
     let propertyType: String

@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class ImjangShareSelectView: BaseView {
+final class ShareSelectView: BaseView {
     let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
     }
@@ -24,19 +24,19 @@ final class ImjangShareSelectView: BaseView {
             collectionViewLayout: createLayout()
         ).then {
             $0.register(
-                ImjangShareSelectGuideCell.self,
-                ImjangShareSelectNoticeCell.self,
-                ImjangShareSelectCell.self
+                ShareSelectGuideCell.self,
+                ShareSelectNoticeCell.self,
+                ShareSelectCell.self
             )
             $0.register(
-                ImjangShareMoreView.self,
+                ShareMoreView.self,
                 forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter
             )
             $0.bounces = false
         }
     }()
     
-    fileprivate let emptyView = ImjangShareSelectEmptyView().then {
+    fileprivate let emptyView = ShareSelectEmptyView().then {
         $0.isHidden = true
     }
     fileprivate let nextButton = FilledButton(title: "다음으로")
@@ -69,10 +69,10 @@ final class ImjangShareSelectView: BaseView {
     }
 }
 
-extension ImjangShareSelectView {
+extension ShareSelectView {
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            guard let section = ImjangShareSelectSection(rawValue: sectionIndex) else { return nil }
+            guard let section = ShareSelectSection(rawValue: sectionIndex) else { return nil }
             
             switch section {
             case .guide:
@@ -132,7 +132,7 @@ extension ImjangShareSelectView {
     }
 }
 
-extension Reactive where Base: ImjangShareSelectView {
+extension Reactive where Base: ShareSelectView {
     var navigationTitle: Binder<String> {
         return Binder(base) { view, nickname in
             view.navigationView.title = "\(nickname)님의 임장노트 나누기"

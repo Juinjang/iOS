@@ -12,7 +12,7 @@ import RxSwift
 import RxRelay
 import Kingfisher
 
-final class ImjangShareSelectCell: BaseCollectionViewCell {
+final class ShareSelectCell: BaseCollectionViewCell {
     private var disposeBag = DisposeBag()
     
     private let containerButton = UIButton().then {
@@ -66,7 +66,7 @@ final class ImjangShareSelectCell: BaseCollectionViewCell {
         $0.setImage(.bookmarkOn22, for: .selected)
     }
     
-    func bind(item: ImjangShareSelectCellItem,
+    func bind(item: ShareSelectCellItem,
               relay: PublishRelay<String>) {
         disposeBag = DisposeBag()
         
@@ -174,7 +174,7 @@ final class ImjangShareSelectCell: BaseCollectionViewCell {
     }
 }
 
-extension ImjangShareSelectCell {
+extension ShareSelectCell {
     private func setupViewForSelected() {
         containerButton.layer.borderColor = UIColor.main.cgColor
         containerButton.backgroundColor = .bg2

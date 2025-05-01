@@ -5,10 +5,10 @@
 //  Created by KimDongWoo on 4/26/25.
 //
 
-enum ImjangShareSelectBaseCellItem: Hashable {
-    case guide(ImjangShareSelectGuideCellItem)
-    case notice(ImjangShareSelectNoticeCellItem)
-    case select(ImjangShareSelectCellItem)
+enum ShareSelectBaseCellItem: Hashable {
+    case guide(ShareSelectGuideCellItem)
+    case notice(ShareSelectNoticeCellItem)
+    case select(ShareSelectCellItem)
     
     func hash(into hasher: inout Hasher) {
         switch self {
@@ -25,8 +25,8 @@ enum ImjangShareSelectBaseCellItem: Hashable {
         }
     }
     
-    static func ==(lhs: ImjangShareSelectBaseCellItem,
-                   rhs: ImjangShareSelectBaseCellItem) -> Bool {
+    static func ==(lhs: ShareSelectBaseCellItem,
+                   rhs: ShareSelectBaseCellItem) -> Bool {
         switch (lhs, rhs) {
         case (.guide(let l), .guide(let r)):
             return l.id == r.id

@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-final class ImjangShareSelectNoticeCell: BaseCollectionViewCell {
+final class ShareSelectNoticeCell: BaseCollectionViewCell {
     private let firstContentLabel = DSLabel(.h4).then {
         $0.fontColor = .gray600
         $0.fontAlignment = .left

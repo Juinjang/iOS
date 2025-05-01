@@ -12,15 +12,15 @@ import ReactorKit
 import RxSwift
 import RxRelay
 
-final class ImjangShareSelectViewController: BaseViewController, View {
-    typealias DataSource = UICollectionViewDiffableDataSource<ImjangShareSelectSection, ImjangShareSelectBaseCellItem>
+final class ShareSelectViewController: BaseViewController, View {
+    typealias DataSource = UICollectionViewDiffableDataSource<ShareSelectSection, ShareSelectBaseCellItem>
     var disposeBag: DisposeBag = DisposeBag()
-    private let mainView = ImjangShareSelectView()
+    private let mainView = ShareSelectView()
     private let selectCellRelay = PublishRelay<String>()
     private let moreButtonTapRelay = PublishRelay<Void>()
     private var dataSource: DataSource!
 
-    init(reactor: ImjangShareSelectViewReactor) {
+    init(reactor: ShareSelectViewReactor) {
         super.init()
         configureDataSource()
         self.reactor = reactor
@@ -40,7 +40,7 @@ final class ImjangShareSelectViewController: BaseViewController, View {
         reactor?.action.onNext(.viewDidLoad)
     }
     
-    func bind(reactor: ImjangShareSelectViewReactor) {
+    func bind(reactor: ShareSelectViewReactor) {
         reactor.state
             .map(\.nickname)
             .distinctUntilChanged()
@@ -106,31 +106,31 @@ final class ImjangShareSelectViewController: BaseViewController, View {
 }
 
 // MARK: - Setup DataSource
-extension ImjangShareSelectViewController {
+extension ShareSelectViewController {
     private func configureDataSource() {
         dataSource = DataSource(collectionView: mainView.imjangShareCollectionView) { collectionView, indexPath, item in
             switch item {
             case .guide:
-                let cell = collectionView.dequeueReusableCell(ImjangShareSelectGuideCell.self, for: indexPath)
+                let cell = collectionView.dequeueReusableCell(ShareSelectGuideCell.self, for: indexPath)
                 return cell
             case .notice:
-                let cell = collectionView.dequeueReusableCell(ImjangShareSelectNoticeCell.self, for: indexPath)
+                let cell = collectionView.dequeueReusableCell(ShareSelectNoticeCell.self, for: indexPath)
                 return cell
             case .select(let item):
-                let cell = collectionView.dequeueReusableCell(ImjangShareSelectCell.self, for: indexPath)
+                let cell = collectionView.dequeueReusableCell(ShareSelectCell.self, for: indexPath)
                 cell.bind(item: item, relay: self.selectCellRelay)
                 return cell
             }
         }
         
         dataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
-            let section = ImjangShareSelectSection(rawValue: indexPath.section)
+            let section = ShareSelectSection(rawValue: indexPath.section)
             
             if kind == UICollectionView.elementKindSectionFooter {
                 switch section {
                 case .select:
                     return collectionView.dequeueReusableSupplementaryView(
-                        ImjangShareMoreView.self,
+                        ShareMoreView.self,
                         ofKind: kind,
                         for: indexPath
                     ).then {

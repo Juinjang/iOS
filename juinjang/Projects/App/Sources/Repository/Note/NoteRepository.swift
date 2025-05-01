@@ -27,9 +27,9 @@ final class NoteRepository: NoteRepositoryProtocol {
             .mapResult([MyNoteModel].self, using: jsonDecoder)
     }
     
-    func getShareableMyNotes() -> Single<[ImjangShareSelectModel]> {
+    func getShareableMyNotes() -> Single<[ShareSelectModel]> {
         return NoteAPI.getShareableNotes
             .request(networkProvider)
-            .mapResult([ImjangShareSelectModel].self, using: jsonDecoder)
+            .mapResult([ShareSelectModel].self, using: jsonDecoder)
     }
 }

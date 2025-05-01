@@ -7,13 +7,13 @@
 
 import RxSwift
 
-final class ImjangShareRepository: ImjangShareRepositoryProcotol {
+final class ShareRepository: ShareRepositoryProcotol {
     private var fetchCount = 0
     
-    func fetchShareSelectNote() -> Observable<[ImjangShareSelectModel]> {
+    func fetchShareSelectNote() -> Observable<[ShareSelectModel]> {
         fetchCount += 1
         
-        let result: [ImjangShareSelectModel]
+        let result: [ShareSelectModel]
         
         if fetchCount >= 3 {
             result = []
@@ -26,8 +26,8 @@ final class ImjangShareRepository: ImjangShareRepositoryProcotol {
     }
 }
 
-extension ImjangShareRepository {
-    private func createMockShareSelectModels() -> [ImjangShareSelectModel] {
+extension ShareRepository {
+    private func createMockShareSelectModels() -> [ShareSelectModel] {
         return [
             .init(noteId: 1,
                   purposeType: "RESIDENTIAL_PURPOSE",
