@@ -15,9 +15,9 @@ enum NoteAPI: TargetType {
     var path: String {
         switch self {
         case .getMyNotes:
-            return "/api/v2/users/notes"
+            return "v2/users/notes"
         case .getShareableNotes:
-            return "/api/v2/users/notes/Shareable"
+            return "v2/users/notes/shareable"
         }
     }
 

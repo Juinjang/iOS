@@ -24,12 +24,12 @@ final class NoteRepository: NoteRepositoryProtocol {
     func getMyNotes() -> Single<[MyNoteModel]> {
         return NoteAPI.getMyNotes
             .request(networkProvider)
-            .map([MyNoteModel].self, using: jsonDecoder)
+            .mapResult([MyNoteModel].self, using: jsonDecoder)
     }
     
     func getShareableMyNotes() -> Single<[ImjangShareSelectModel]> {
         return NoteAPI.getShareableNotes
             .request(networkProvider)
-            .map([ImjangShareSelectModel].self, using: jsonDecoder)
+            .mapResult([ImjangShareSelectModel].self, using: jsonDecoder)
     }
 }

@@ -35,11 +35,10 @@ final class NetworkProvider<T: TargetType> {
                     return
                 }
                 
-                if let data = data,
-                   let jsonString = String(data: data, encoding: .utf8) {
+                if let data = data, let jsonString = String(data: data, encoding: .utf8) {
                     print("📦 Response Body:\n\(jsonString)")
                 } else {
-                    print("⚠️ Empty or non-UTF8 data")
+                    print("⚠️ Response is empty or not UTF-8 encoded")
                 }
                 
                 guard let httpResponse = response as? HTTPURLResponse,

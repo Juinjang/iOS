@@ -97,7 +97,7 @@ final class ImjangShareSelectViewController: BaseViewController, View {
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .popButtonTap:
-                    self.navigationController?.dismiss(animated: true)
+                    self.dismiss(animated: true)
                 default: break
                 }
             }
