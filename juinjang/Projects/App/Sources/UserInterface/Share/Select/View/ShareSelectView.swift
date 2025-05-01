@@ -1,5 +1,5 @@
 //
-//  ImjangShareSelectView.swift
+//  ShareSelectView.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 4/26/25.
@@ -18,7 +18,7 @@ final class ShareSelectView: BaseView {
     
     fileprivate var isLastPage: Bool = false
     
-    lazy var imjangShareCollectionView: UICollectionView = {
+    lazy var shareCollectionView: UICollectionView = {
         return UICollectionView(
             frame: .zero,
             collectionViewLayout: createLayout()
@@ -43,7 +43,7 @@ final class ShareSelectView: BaseView {
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        add(navigationView, imjangShareCollectionView, emptyView)
+        add(navigationView, shareCollectionView, emptyView)
     }
     
     override func configureLayout() {
@@ -54,7 +54,7 @@ final class ShareSelectView: BaseView {
             $0.horizontalEdges.equalToSuperview()
         }
         
-        imjangShareCollectionView.snp.makeConstraints {
+        shareCollectionView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
             $0.bottom.equalToSuperview()
@@ -157,7 +157,7 @@ extension Reactive where Base: ShareSelectView {
                     $0.bottom.equalTo(view.safeAreaLayoutGuide)
                 }
                 
-                view.imjangShareCollectionView.snp.remakeConstraints {
+                view.shareCollectionView.snp.remakeConstraints {
                     $0.top.equalTo(view.navigationView.snp.bottom)
                     $0.horizontalEdges.equalToSuperview()
                     $0.bottom.equalTo(view.nextButton.snp.top).offset(-16)
@@ -170,7 +170,7 @@ extension Reactive where Base: ShareSelectView {
         return Binder(base) { view, isLastPage in
             view.isLastPage = isLastPage
             if isLastPage {
-                view.imjangShareCollectionView.reloadData()
+                view.shareCollectionView.reloadData()
             }
         }
     }

@@ -1,5 +1,5 @@
 //
-//  ImjangShareSelectViewController.swift
+//  ShareSelectViewController.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 4/26/25.
@@ -56,7 +56,7 @@ final class ShareSelectViewController: BaseViewController, View {
         reactor.state
             .map(\.sectionItems)
             .distinctUntilChanged()
-            .bind(to: mainView.imjangShareCollectionView.rx.bindSectionItems(
+            .bind(to: mainView.shareCollectionView.rx.bindSectionItems(
                 to: dataSource,
                 orderedBy: [.guide, .notice, .select]
             ))
@@ -109,7 +109,7 @@ final class ShareSelectViewController: BaseViewController, View {
 // MARK: - Setup DataSource
 extension ShareSelectViewController {
     private func configureDataSource() {
-        dataSource = DataSource(collectionView: mainView.imjangShareCollectionView) { collectionView, indexPath, item in
+        dataSource = DataSource(collectionView: mainView.shareCollectionView) { collectionView, indexPath, item in
             switch item {
             case .guide:
                 let cell = collectionView.dequeueReusableCell(ShareSelectGuideCell.self, for: indexPath)

@@ -1,5 +1,5 @@
 //
-//  ImjangShareSelectEmptyCell.swift
+//  ShareSelectEmptyCell.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 4/27/25.
