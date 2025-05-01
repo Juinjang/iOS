@@ -167,7 +167,7 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         self.navigationController?.pushViewController(DeleteImjangVC, animated: true)
     }
     
-    @objc private func showImjangShareSelectVC() {
+    @objc private func showShareSelectVC() {
         let viewController = ShareSelectViewController(
             reactor: .init(
                 dependency: .init(
@@ -420,7 +420,7 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                         return UICollectionReusableView()
                     }
                     header.deleteButton.addTarget(self, action: #selector(showDeleteImjangVC), for: .touchUpInside)
-                    header.shareButton.addTarget(self, action: #selector(showImjangShareSelectVC), for: .touchUpInside)
+                    header.shareButton.addTarget(self, action: #selector(showShareSelectVC), for: .touchUpInside)
                     header.sendFilterItemDelegate = self
                     
                     return header
