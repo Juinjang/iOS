@@ -1,5 +1,5 @@
 //
-//  ImjangShareMoreView.swift
+//  ShareMoreView.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 4/28/25.
