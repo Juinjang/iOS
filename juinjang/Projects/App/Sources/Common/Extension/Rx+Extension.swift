@@ -25,6 +25,34 @@ extension Reactive where Base: UIButton {
     }
 }
 
+extension Reactive where Base: UIScreen {
+    var isRecording: Observable<Bool> {
+        return Observable.create { observer in
+            observer.onNext(UIScreen.main.isCaptured)
+
+            let token = NotificationCenter.default.addObserver(
+                forName: UIScreen.capturedDidChangeNotification,
+                object: nil,
+                queue: .main
+            ) { _ in
+                observer.onNext(UIScreen.main.isCaptured)
+            }
+
+            return Disposables.create {
+                NotificationCenter.default.removeObserver(token)
+            }
+        }
+    }
+}
+
+extension Reactive where Base: UIApplication {
+    var didCapture: Observable<Void> {
+        return NotificationCenter.default.rx
+            .notification(UIApplication.userDidTakeScreenshotNotification)
+            .map { _ in }
+    }
+}
+
 extension Observable where Element == Void {
     func withHaptic(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) -> Observable<Void> {
             return self.do(onNext: {

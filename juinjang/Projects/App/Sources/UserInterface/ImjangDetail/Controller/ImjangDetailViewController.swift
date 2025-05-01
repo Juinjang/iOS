@@ -108,6 +108,16 @@ final class ImjangDetailViewController: BaseViewController, View {
                 )
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowCaptureAlert)
+            .observe(on: MainScheduler.instance)
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, _) in
+                self.showCaptureAlert()
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindView() {
@@ -150,6 +160,25 @@ final class ImjangDetailViewController: BaseViewController, View {
                 }
             }
             .disposed(by: disposeBag)
+        
+        UIApplication.shared.rx.didCapture
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { (self, _) in
+                self.showCaptureAlert()
+            }
+            .disposed(by: disposeBag)
+        
+        UIScreen.main.rx.isRecording
+            .observe(on: MainScheduler.instance)
+            .map { Reactor.Action.screenRecordingChanged(isRecording: $0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+    }
+    
+    private func showCaptureAlert() {
+        self.showAlert(title: "캡쳐 시 주의사항",
+                       message: "구매한 콘텐츠를 캡쳐한 스크린샷을 온/오프라인에 유포/공유할 경우 법적인 제재를 받을 수 있습니다.",
+                       actionHandler: nil)
     }
 }
 
