@@ -11,7 +11,6 @@ import Then
 
 final class ShareWriteView: BaseView {
     
-    
     override func configureView() {
         super.configureView()
     }
