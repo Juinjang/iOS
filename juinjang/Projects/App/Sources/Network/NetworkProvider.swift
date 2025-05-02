@@ -21,38 +21,27 @@ final class NetworkProvider<T: TargetType> {
                 return Disposables.create()
             }
             
-            var request = URLRequest(url: url)
-            request.httpMethod = target.method.rawValue
-            request.allHTTPHeaderFields = target.header
-            
-            if let parameters = target.parameters {
-                request.httpBody = try? JSONSerialization.data(withJSONObject: parameters)
+            AF.request(
+                url,
+                method: target.method,
+                parameters: target.parameters,
+                encoding: JSONEncoding.default,
+                headers: HTTPHeaders(target.header),
+                interceptor: AuthInterceptor()
+            ).responseData { response in
+                switch response.result {
+                case .success(let data):
+                    if let json = String(data: data, encoding: .utf8) {
+                        print("📦 Response JSON:\n\(json)")
+                    }
+                    single(.success(data))
+                case .failure(let error):
+                    print("❌ Alamofire Error: \(error)")
+                    single(.failure(NetworkError.failedRequest))
+                }
             }
             
-            let task = URLSession.shared.dataTask(with: request) { data, response, error in
-                if let error = error {
-                    single(.failure(error))
-                    return
-                }
-                
-                if let data = data, let jsonString = String(data: data, encoding: .utf8) {
-                    print("📦 Response Body:\n\(jsonString)")
-                } else {
-                    print("⚠️ Response is empty or not UTF-8 encoded")
-                }
-                
-                guard let httpResponse = response as? HTTPURLResponse,
-                      (200...299).contains(httpResponse.statusCode),
-                      let data = data else {
-                    single(.failure(URLError(.badServerResponse)))
-                    return
-                }
-                
-                single(.success(data))
-            }
-            
-            task.resume()
-            return Disposables.create { task.cancel() }
+            return Disposables.create()
         }
     }
 }
