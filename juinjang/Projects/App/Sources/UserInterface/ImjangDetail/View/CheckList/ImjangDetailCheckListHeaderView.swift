@@ -38,7 +38,6 @@ final class ImjangDetailCheckListHeaderView: BaseCollectionReusableView {
     func bind(for relay: PublishRelay<Int>,
               isOneRoom: Bool,
               isBuyer: Bool) {
-        disposeBag = DisposeBag()
         segmentedView.buttonTapSelectedRelay
             .bind(to: relay)
             .disposed(by: disposeBag)
@@ -46,6 +45,11 @@ final class ImjangDetailCheckListHeaderView: BaseCollectionReusableView {
         segmentedView.isHidden = !isBuyer
         separatorView.isHidden = !isBuyer
         layoutIfNeeded()
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
     }
     
     override func configureHierarchy() {

@@ -67,7 +67,6 @@ final class BuildingDetailInfoView: BaseView {
         
     func configure(for model: ImjangDetailInfoModel,
                    relay: PublishRelay<ImjangDetailInfoCellEvent>) {
-        self.dispoaseBag = DisposeBag()
         guard let priceType = PriceType(rawValue: model.priceType)?.title else { return }
         summaryInfoLabel.text = model.addressShort
         secondSummaryInfoLabel.text = PropertyType(rawValue: model.propertyType)?.title
@@ -89,6 +88,10 @@ final class BuildingDetailInfoView: BaseView {
                 relay.accept(.addressTap(address: model.address))
             }
             .disposed(by: dispoaseBag)
+    }
+    
+    func prepareForReuse() {
+        dispoaseBag = DisposeBag()
     }
     
     override func configureHierarchy() {
