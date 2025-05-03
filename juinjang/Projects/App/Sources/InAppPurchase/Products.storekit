@@ -1,0 +1,185 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "46735A44",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.49",
+      "familyShareable" : false,
+      "internalID" : "6745320647",
+      "localizations" : [
+        {
+          "description" : "연필 12개를 제공합니다",
+          "displayName" : "연필 12개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil12",
+      "referenceName" : "Pencil12",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "6745320894",
+      "localizations" : [
+        {
+          "description" : "연필 16개를 제공합니다",
+          "displayName" : "연필 16개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil16",
+      "referenceName" : "Pencil16",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "6745320848",
+      "localizations" : [
+        {
+          "description" : "연필 20개를 제공합니다",
+          "displayName" : "연필 20개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil20",
+      "referenceName" : "Pencil20",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "6745320825",
+      "localizations" : [
+        {
+          "description" : "연필 24개가 제공됩니다",
+          "displayName" : "연필 24개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil24",
+      "referenceName" : "Pencil24",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "1.99",
+      "familyShareable" : false,
+      "internalID" : "6745320999",
+      "localizations" : [
+        {
+          "description" : "연필 28개를 제공합니다",
+          "displayName" : "연필 28개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil28",
+      "referenceName" : "Pencil28",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6745321100",
+      "localizations" : [
+        {
+          "description" : "연필 32개가 제공됩니다",
+          "displayName" : "연필 32개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil32",
+      "referenceName" : "Pencil32",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "6745321077",
+      "localizations" : [
+        {
+          "description" : "연필 36개가 제공됩니다.",
+          "displayName" : "연필 36개",
+          "locale" : "ko"
+        }
+      ],
+      "productID" : "consumable.pencil36",
+      "referenceName" : "Pencil36",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "6605941969",
+    "_developerTeamID" : "VJBC86TDTZ",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 767993500.95809102,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Load Products"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Purchase"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Verification"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Store Sync"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Subscription Status"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "App Transaction"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Manage Subscriptions Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Refund Request Sheet"
+      },
+      {
+        "current" : null,
+        "enabled" : false,
+        "name" : "Offer Code Redeem Sheet"
+      }
+    ]
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

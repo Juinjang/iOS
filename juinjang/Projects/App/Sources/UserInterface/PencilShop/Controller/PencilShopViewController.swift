@@ -1,0 +1,225 @@
+//
+//  PencilShopViewController.swift
+//  juinjang
+//
+//  Created by 조유진 on 4/1/25.
+//
+
+import UIKit
+import ReactorKit
+
+final class PencilShopViewController: BaseViewController, View {
+    private let mainView = PencilShopView()
+    
+    typealias ObtainedDataSource = UICollectionViewDiffableDataSource<ObtainedPencilSection, ObtainedPencilModel>
+    private var obtainedDataSource: ObtainedDataSource!
+    
+    typealias PurchasedDataSource = UICollectionViewDiffableDataSource<PurchasedPencilSection, PurchasedPencilModel>
+    private var purchasedDataSource: PurchasedDataSource!
+    
+    typealias UsedDataSource =
+    UICollectionViewDiffableDataSource<UsedPencilSection, UsedPencilModel>
+    private var usedDataSource: UsedDataSource!
+    
+    var disposeBag = DisposeBag()
+    
+    init(reactor: PencilShopReactor) {
+        super.init()
+        configureObtainedDataSource()
+        configurePurchasedDataSource()
+        configureUsedDataSource()
+        self.reactor = reactor
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bindViewEvent()
+        reactor?.action.onNext(.viewDidLoad)
+    }
+    
+    func bind(reactor: PencilShopReactor) {
+        
+        reactor.state
+            .compactMap { $0.products }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, products in
+                owner.mainView.setProductList(products)
+            }
+            .disposed(by: disposeBag)
+
+        reactor.state
+            .map { $0.obtainedSections }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, sections in
+                owner.applyObtainedSnapshot(sections: sections)
+                owner.mainView.obtainedView.setListEmpty(empty: sections.isEmpty)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.purchasedSections }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, sections in
+                owner.applyPurchasedSnapshot(sections: sections)
+                owner.mainView.purchasedView.setListEmpty(empty: sections.isEmpty)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.usedSections }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, sections in
+                owner.applyUsedSnapshot(sections: sections)
+                owner.mainView.usedView.setListEmpty(empty: sections.isEmpty)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .compactMap { $0.purchaseResult }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, response in
+                owner.mainView.buyingView.setPencilCount(count: response.pencilCount)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func bindViewEvent() {
+        mainView
+            .navigationEventRelay
+            .withUnretained(self)
+            .subscribe { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
+
+        
+        mainView
+            .segmentedView
+            .buttonTapSelectedRelay
+            .withUnretained(self)
+            .subscribe { (self, index) in
+                self.mainView.scrollToPage(categoryType: PencilShopCategoryType(rawValue: index) ?? .buying)
+                self.reactor?.action.onNext(.categoryButtonDidTap(index))
+            }
+            .disposed(by: disposeBag)
+        
+        
+        mainView.buyingView.priceTappedRelay
+            .map {
+                return Reactor.Action.priceButtonDidTap($0)
+            }
+            .bind(to: reactor!.action)
+            .disposed(by: disposeBag)
+        
+        mainView.obtainedView.collectionView.rx.itemSelected
+            .subscribe(with: self) { owner, indexPath in
+                if let model = owner.obtainedDataSource.itemIdentifier(for: indexPath) {
+                  print("selected: \(model)")
+                }
+            }
+            .disposed(by: disposeBag)
+    }
+
+    override func loadView() {
+        view = mainView
+    }
+    
+    private func applyObtainedSnapshot(sections: [ObtainedSectionModel]) {
+        var snapshot = NSDiffableDataSourceSnapshot<ObtainedPencilSection, ObtainedPencilModel>()
+        
+        for section in sections {
+            snapshot.appendSections([section.section])
+            snapshot.appendItems(section.obtainedPencils, toSection: section.section)
+        }
+        
+        obtainedDataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func configureObtainedDataSource() {
+        self.obtainedDataSource =  UICollectionViewDiffableDataSource<ObtainedPencilSection, ObtainedPencilModel>(
+            collectionView: mainView.obtainedView.collectionView
+        ) { collectionView, indexPath, item in
+            let cell = collectionView.dequeueReusableCell(ObtainedPencilCell.self, for: indexPath)
+            cell.configureCell(obtainedPencil: item)
+            return cell
+        }
+    }
+    
+    private func applyPurchasedSnapshot(sections: [PurchasedSectionModel]) {
+        var snapshot = NSDiffableDataSourceSnapshot<PurchasedPencilSection, PurchasedPencilModel>()
+        
+        for section in sections {
+            snapshot.appendSections([section.section])
+            snapshot.appendItems(section.obtainedPencils, toSection: section.section)
+        }
+        
+        purchasedDataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func configurePurchasedDataSource() {
+        self.purchasedDataSource =  UICollectionViewDiffableDataSource<PurchasedPencilSection, PurchasedPencilModel>(
+            collectionView: mainView.purchasedView.collectionView
+        ) { collectionView, indexPath, item in
+            let cell = collectionView.dequeueReusableCell(PurchasedPencilCell.self, for: indexPath)
+            cell.configureCell(purchasedPencil: item)
+            return cell
+        }
+        
+        purchasedDataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            if kind == UICollectionView.elementKindSectionHeader {
+                return collectionView.dequeueReusableSupplementaryView(
+                    PencilGuideHeader.self,
+                    ofKind: kind,
+                    for: indexPath
+                ).then {
+                    $0.configureHeader(guideMessage: "구매한 연필은 취소할 수 없어요.")
+                }
+            }
+
+            return nil
+        }
+    }
+    
+    private func applyUsedSnapshot(sections: [UsedSectionModel]) {
+        var snapshot = NSDiffableDataSourceSnapshot<UsedPencilSection, UsedPencilModel>()
+        
+        for section in sections {
+            snapshot.appendSections([section.section])
+            snapshot.appendItems(section.usedPencils, toSection: section.section)
+        }
+        
+        usedDataSource.apply(snapshot, animatingDifferences: true)
+    }
+    
+    private func configureUsedDataSource() {
+        self.usedDataSource =  UICollectionViewDiffableDataSource<UsedPencilSection, UsedPencilModel>(
+            collectionView: mainView.usedView.collectionView
+        ) { collectionView, indexPath, item in
+            let cell = collectionView.dequeueReusableCell(UsedPencilCell.self, for: indexPath)
+            cell.configureCell(usedPencil: item)
+            return cell
+        }
+        
+        usedDataSource.supplementaryViewProvider = { collectionView, kind, indexPath in
+            if kind == UICollectionView.elementKindSectionHeader {
+                return collectionView.dequeueReusableSupplementaryView(
+                    PencilGuideHeader.self,
+                    ofKind: kind,
+                    for: indexPath
+                ).then {
+                    $0.configureHeader(guideMessage: "사용한 연필은 취소할 수 없어요.")
+                }
+            }
+
+            return nil
+        }
+    }
+}
