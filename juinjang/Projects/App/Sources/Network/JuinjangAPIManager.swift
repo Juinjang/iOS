@@ -25,6 +25,19 @@ final class JuinjangAPIManager {
                    headers: api.header,
                    interceptor: AuthInterceptor())
         .responseDecodable(of: type) { response in
+            if let url = response.request?.url {
+                print("🌐 Final Request URL: \(url.absoluteString)")
+            }
+            
+            if let statusCode = response.response?.statusCode {
+                print("📡 Status Code: \(statusCode)")
+            }
+            
+            if let data = response.data,
+               let responseBody = String(data: data, encoding: .utf8) {
+                print("📦 Response Body:\n\(responseBody)")
+            }
+            
             switch response.result {
             case .success(let success):
                 completionHandler(success, nil)
@@ -67,6 +80,15 @@ final class JuinjangAPIManager {
                    headers: api.header,
                    interceptor: AuthInterceptor())
         .responseDecodable(of: type) { response in
+            if let statusCode = response.response?.statusCode {
+                print("📡 Status Code: \(statusCode)")
+            }
+            
+            if let data = response.data,
+               let responseBody = String(data: data, encoding: .utf8) {
+                print("📦 Response Body:\n\(responseBody)")
+            }
+            
             switch response.result {
             case .success(let success):
                 print(success)
