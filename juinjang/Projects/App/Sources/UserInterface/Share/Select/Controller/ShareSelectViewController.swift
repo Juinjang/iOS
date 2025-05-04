@@ -97,7 +97,8 @@ final class ShareSelectViewController: BaseViewController, View {
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .popButtonTap:
-                    self.dismiss(animated: true)
+                    self.navigationController?.navigationBar.isHidden = false
+                    self.navigationController?.popViewController(animated: true)
                 default: break
                 }
             }

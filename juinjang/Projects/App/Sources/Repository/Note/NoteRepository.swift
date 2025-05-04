@@ -21,15 +21,10 @@ final class NoteRepository: NoteRepositoryProtocol {
         self.jsonDecoder = jsonDecoder
     }
     
-    func getMyNotes() -> Single<[MyNoteModel]> {
-        return NoteAPI.getMyNotes
-            .request(networkProvider)
-            .mapResult([MyNoteModel].self, using: jsonDecoder)
-    }
-    
     func getShareableMyNotes() -> Single<[ShareSelectModel]> {
         return NoteAPI.getShareableNotes
             .request(networkProvider)
-            .mapResult([ShareSelectModel].self, using: jsonDecoder)
+            .mapResult(NoteListDTO<ShareSelectModel>.self, using: jsonDecoder)
+            .map { $0.notes }
     }
 }

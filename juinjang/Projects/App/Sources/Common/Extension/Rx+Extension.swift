@@ -70,24 +70,31 @@ extension Reactive where Base: UICollectionView {
 }
 
 extension PrimitiveSequence where Trait == SingleTrait, Element == Data {
-    func mapResult<T: Decodable>(
-        _ type: T.Type,
-        at keyPath: String = "result",
+    func map<D: Codable>(
+        _ type: D.Type,
         using decoder: JSONDecoder = JSONDecoder()
-    ) -> Single<T> {
+    ) -> Single<D> {
         return flatMap { data in
             do {
-                let jsonObject = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
-                guard let resultObject = jsonObject?[keyPath] else {
-                    throw NetworkError.invalidData
-                }
-                
-                let resultData = try JSONSerialization.data(withJSONObject: resultObject)
-                let decoded = try decoder.decode(T.self, from: resultData)
+                let decoded = try decoder.decode(D.self, from: data)
                 return .just(decoded)
             } catch {
                 return .error(error)
             }
         }
+    }
+    
+    func mapResult<T: Codable>(
+        _ type: T.Type,
+        using decoder: JSONDecoder = JSONDecoder()
+    ) -> Single<T> {
+        return self
+            .map(BaseResponse<T>.self, using: decoder)
+            .flatMap { response in
+                guard let result = response.result else {
+                    return .error(NetworkError.invalidData)
+                }
+                return .just(result)
+            }
     }
 }

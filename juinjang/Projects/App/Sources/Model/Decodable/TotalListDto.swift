@@ -73,3 +73,5 @@ struct LimjangDTO: Codable {
     let createdAt: String
     let updatedAt: String
 }
+
+
