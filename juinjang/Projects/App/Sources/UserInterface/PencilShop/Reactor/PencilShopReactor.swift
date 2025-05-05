@@ -37,6 +37,7 @@ final class PencilShopReactor: Reactor {
         case setPurchasedList([PurchasedPencilModel])
         case setUsedList([UsedPencilModel])
         case purchaseCompleted(VerifiyTransactionResponse)
+        case purchaseFailed(Error)
     }
     
     struct State {
@@ -45,6 +46,7 @@ final class PencilShopReactor: Reactor {
         var purchasedSections: [PurchasedSectionModel] = []
         var usedSections: [UsedSectionModel] = []
         var purchaseResult: VerifiyTransactionResponse?
+        var error: String?
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
@@ -71,6 +73,8 @@ final class PencilShopReactor: Reactor {
             setUsedSectionModel(state: &state, usedList: array)
         case .purchaseCompleted(let result):
             state.purchaseResult = result
+        case .purchaseFailed(let error):
+            state.error = error.localizedDescription
         }
         return state
     }
@@ -123,12 +127,22 @@ extension PencilShopReactor {
     private func buyProduct(product: Product) -> Observable<Mutation> {
         dependency.storeKitService.requestPurchase(product: product)
             .asObservable()
-            .flatMap { _ in Observable.empty() }
+            .flatMap { result -> Observable<Mutation> in
+                guard let result else {
+                    return .just(.purchaseFailed(StoreError.failedPurchase))
+                }
+                return .just(.purchaseCompleted(result))
+            }
+            .catch { error -> Observable<Mutation> in
+                return .just(.purchaseFailed(error))
+           }
     }
     
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-        return dependency.storeKitService.transactionCompleted
+        let transactionMutation = dependency.storeKitService.transactionCompleted
             .map { Mutation.purchaseCompleted($0) }
+
+        return Observable.merge(mutation, transactionMutation)
     }
 }
 

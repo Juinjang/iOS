@@ -20,10 +20,17 @@ final class MockBuyPencilRepository: BuyPencilRepositoryProtocol {
 }
 
 extension VerifiyTransactionResponse {
-    static let mock: VerifiyTransactionResponse = VerifiyTransactionResponse(isSuccess: true, pencilCount: 12)
+    static let mock: VerifiyTransactionResponse = VerifiyTransactionResponse(
+        isSuccess: true,
+        currentPencilCount: 12,
+        purchasedPencilCount: 3,
+        transactionId: "asdf"
+    )
 }
 
-struct VerifiyTransactionResponse: Codable {
+struct VerifiyTransactionResponse: Codable, Equatable {
     let isSuccess: Bool
-    let pencilCount: Int
+    let currentPencilCount: Int
+    let purchasedPencilCount: Int
+    let transactionId: String
 }

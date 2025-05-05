@@ -64,32 +64,31 @@ final class StoreKitService {
         products.sorted(by: { return $0.displayName < $1.displayName })
     }
 
-    func purchase(_ product: Product) async throws {
-        print(#function)
+    func purchase(_ product: Product) async throws -> VerifiyTransactionResponse? {
         let result = try await product.purchase()
 
         switch result {
         case .success(let verificationResult):
             do {
                 let transaction = try checkVerified(verificationResult)
-
+                
                 // 서버 검증
                 let verifyResult = try await buyPencilRepository.verifyTransaction(transaction: transaction)
 
                 if verifyResult.isSuccess {
-                    transactionCompleted.onNext(verifyResult)
                     await transaction.finish()
+                    return verifyResult
                 } else {
                     await transaction.finish()
-                    return
+                    return nil
                 }
 
             } catch {
-                storePendingTransaction(jws: verificationResult.jwsRepresentation)
-                return
+//                storePendingTransaction(jws: verificationResult.jwsRepresentation)
+                return nil
             }
-        case .userCancelled, .pending: return
-        default: return
+        case .userCancelled, .pending: return nil
+        default: return nil
         }
     }
     
@@ -156,15 +155,13 @@ extension StoreKitService {
         }
     }
     
-    func requestPurchase(product: Product) -> Single<Void> {
-        print(#function)
+    func requestPurchase(product: Product) -> Single<VerifiyTransactionResponse?> {
         return Single.create { single in
             let task = Task.detached { [weak self] in
                 guard let self else { return }
                 do {
-                    print("try")
-                    try await purchase(product)
-                    single(.success(()))
+                    let verifyResult = try await purchase(product)
+                    single(.success((verifyResult)))
                 } catch {
                     single(.failure(error))
                 }
