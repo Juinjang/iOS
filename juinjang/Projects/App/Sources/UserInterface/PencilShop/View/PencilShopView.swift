@@ -45,7 +45,7 @@ final class PencilShopView: BaseView {
          }
      }()
     
-    lazy var scrollView = UIScrollView().then {
+    private lazy var scrollView = UIScrollView().then {
         $0.showsHorizontalScrollIndicator = false
         $0.isScrollEnabled = false
         $0.isPagingEnabled = true
@@ -58,7 +58,7 @@ final class PencilShopView: BaseView {
         $0.axis = .horizontal
     }
     
-    var pages: [UIView] = []
+    private var pages: [UIView] = []
     
     let navigationEventRelay = PublishRelay<NavigationAction>()
     let buyingView = BuyingView()
@@ -75,7 +75,6 @@ final class PencilShopView: BaseView {
     }
     
     func setProductList(_ products: [Product]) {
-        print(#function, products)
         buyingView.setProductList(products)
     }
     

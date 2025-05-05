@@ -44,6 +44,7 @@ final class PencilInfoView: UIStackView {
         directionalLayoutMargins = NSDirectionalEdgeInsets(top: 10, leading: 10, bottom: 10, trailing: 10)
         spacing = 0
         axis = .horizontal
+        alignment = .center
         distribution = .fillEqually
     }
     
@@ -92,14 +93,26 @@ final class PencilInfoView: UIStackView {
     
     func createTitleLabel(title: String) -> UILabel {
         let label = UILabel()
-        label.setAttribute(text: title, color: .gray600, font: .pretendard(size: 14, weight: .medium), lineHeight: 20, alignment: .center)
+        label.setAttribute(
+            text: title,
+            color: .gray600,
+            font: .pretendard(size: 14, weight: .medium),
+            lineHeight: 20,
+            alignment: .center
+        )
         return label
     }
     
     func createValueLabel(value: Int, info: PencilInfo) -> UILabel {
         let label = UILabel()
         let color: UIColor = info == .notEnoughPencil ? .main : .gray600
-        label.setAttribute(text: "\(value)", color: color, font: .pretendard(size: 20, weight: .semiBold), lineHeight: 27, alignment: .center)
+        label.setAttribute(
+            text: "\(value)",
+            color: color,
+            font: .pretendard(size: 20, weight: .semiBold),
+            lineHeight: 27,
+            alignment: .center
+        )
         return label
     }
     

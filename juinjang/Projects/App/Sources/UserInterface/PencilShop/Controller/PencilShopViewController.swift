@@ -42,7 +42,6 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     func bind(reactor: PencilShopReactor) {
-        
         reactor.state
             .compactMap { $0.products }
             .observe(on: MainScheduler.instance)
@@ -80,9 +79,11 @@ final class PencilShopViewController: BaseViewController, View {
         
         reactor.state
             .compactMap { $0.purchaseResult }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, response in
-                owner.mainView.buyingView.setPencilCount(count: response.pencilCount)
+                owner.showPurchasedPopupView(response: response)
+                owner.mainView.buyingView.setPencilCount(count: response.currentPencilCount)
             }
             .disposed(by: disposeBag)
     }
@@ -99,7 +100,6 @@ final class PencilShopViewController: BaseViewController, View {
                 }
             }
             .disposed(by: disposeBag)
-
         
         mainView
             .segmentedView
@@ -130,6 +130,10 @@ final class PencilShopViewController: BaseViewController, View {
 
     override func loadView() {
         view = mainView
+    }
+    
+    private func showPurchasedPopupView(response: VerifiyTransactionResponse) {
+        self.present(PurchasePopupViewController(purchasedPencilCount: response.purchasedPencilCount, currentPencilCount: response.currentPencilCount), animated: true)
     }
     
     private func applyObtainedSnapshot(sections: [ObtainedSectionModel]) {

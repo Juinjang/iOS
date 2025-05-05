@@ -93,7 +93,7 @@ final class BuyingView: BaseView {
         pencilUsageGuideView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.top.equalTo(pencilItemStackView.snp.bottom).offset(164)
-            make.bottom.lessThanOrEqualToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
     
