@@ -69,6 +69,12 @@ class BaseAlertView: BaseView {
 
 // MARK: - Setup Views
 extension BaseAlertView {
+    func setBackgroundDismissEnabled(_ enabled: Bool) {
+        if enabled {
+            addBackgroundTapGesture()
+        }
+    }
+    
     func setDismissButtonVisible(_ isVisible: Bool) {
         dismissButton.isHidden = !isVisible
     }
@@ -146,6 +152,18 @@ extension BaseAlertView {
             button.snp.makeConstraints {
                 $0.width.equalTo(width)
             }
+        }
+    }
+    
+    private func addBackgroundTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleBackgroundTap(_:)))
+        addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func handleBackgroundTap(_ sender: UITapGestureRecognizer) {
+        let location = sender.location(in: self)
+        if !containerView.frame.contains(location) {
+            eventRelay.accept(.cancel) // or .dismiss if you define it
         }
     }
 }
