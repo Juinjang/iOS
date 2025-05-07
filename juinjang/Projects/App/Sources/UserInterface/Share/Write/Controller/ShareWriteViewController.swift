@@ -149,6 +149,7 @@ extension ShareWriteViewController {
                 
             case .review:
                 let cell = collectionView.dequeueReusableCell(ShareWriteReviewCell.self, for: indexPath)
+                cell.bind(relay: self.reviewTextRelay)
                 return cell
             }
         }

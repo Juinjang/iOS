@@ -39,7 +39,6 @@ final class ShareWriteViewReactor: Reactor {
         var sectionItems: [ShareWriteSection: [ShareWriteBaseCellItem]] = [:]
         var buildingName: String = ""
         var isPublic: Bool = true
-        var isDonePeriodEdit: Bool = false
         var selectImjangPeriod: ImjangPeriod?
         var reviewContentText: String = ""
         var isActivatedUploadButton: Bool = false
@@ -47,7 +46,6 @@ final class ShareWriteViewReactor: Reactor {
         mutating func evaluateUploadButtonState() {
             isActivatedUploadButton =
                 !buildingName.isEmpty &&
-                isDonePeriodEdit &&
                 selectImjangPeriod != nil &&
                 !reviewContentText.isEmpty
         }
@@ -111,8 +109,10 @@ final class ShareWriteViewReactor: Reactor {
             newState.evaluateUploadButtonState()
         case .updateBuildingName(let text):
             newState.buildingName = text
+            newState.evaluateUploadButtonState()
         case .updateReviewContent(let text):
             newState.reviewContentText = text
+            newState.evaluateUploadButtonState()
         }
         
         return newState
