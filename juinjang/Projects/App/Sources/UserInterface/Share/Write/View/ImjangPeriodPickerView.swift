@@ -65,8 +65,8 @@ final class ImjangPeriodPickerView: BaseAlertViewController {
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let selectedYearIndex = years.firstIndex(of: "\(selectedPeriod.year)년") ?? 0
-        let selectedMonthIndex = months.firstIndex(of: "\( Int(selectedPeriod.month) ?? 0)월") ?? 0
+        let selectedYearIndex = years.firstIndex(of: selectedPeriod.year.yearWithUnit) ?? 0
+        let selectedMonthIndex = months.firstIndex(of: selectedPeriod.month.monthWithUnit) ?? 0
         let selectedPhaseIndex = phases.firstIndex(of: selectedPeriod.phase) ?? 0
 
         pickerView.selectRow(selectedYearIndex,
@@ -98,7 +98,7 @@ final class ImjangPeriodPickerView: BaseAlertViewController {
                 
                 return ImjangPeriod(
                     year: year,
-                    month: String(format: "%02d", Int(month) ?? 1),
+                    month: month.paddedToTwoDigits,
                     phase: phase
                 )
             }

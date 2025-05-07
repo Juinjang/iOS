@@ -9,6 +9,9 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
+import RxRelay
+import RxCocoa
 
 final class ShareWriteBuildingCell: BaseCollectionViewCell {
     private let titleLabel = DSLabel(.title).then {
@@ -35,6 +38,21 @@ final class ShareWriteBuildingCell: BaseCollectionViewCell {
         $0.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         $0.placeholder = "건물명을 18자 이내로 작성해주세요 *예시: 주인장A 1차"
         $0.textAlignment = .left
+    }
+    
+    private var disposeBag = DisposeBag()
+    
+    func bind(relay: PublishRelay<String>) {
+        contentTextField.rx.text
+            .orEmpty
+            .distinctUntilChanged()
+            .bind(to: relay)
+            .disposed(by: disposeBag)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
     }
     
     override func configureHierarchy() {

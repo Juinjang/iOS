@@ -16,6 +16,8 @@ final class ShareWriteViewReactor: Reactor {
         case didTapNavigationButton(NavigationAction)
         case didTapSelectPulbicButton(Bool)
         case selectedImjangPeriod(ImjangPeriod)
+        case editingBuildingName(String)
+        case editingReviewContent(String)
     }
     
     // MARK: - Mutation
@@ -26,17 +28,29 @@ final class ShareWriteViewReactor: Reactor {
                                items: [ShareWriteBaseCellItem])
         case updateIsPublic(Bool)
         case updateImjangPeriod(ImjangPeriod)
+        case updateBuildingName(String)
+        case updateReviewContent(String)
     }
     
     // MARK: - State
     struct State {
         var nickname: String = ""
         var popViewTrigger: Observable<Void>? = nil
-        var isActivatedUploadButton: Bool = false
+        var sectionItems: [ShareWriteSection: [ShareWriteBaseCellItem]] = [:]
+        var buildingName: String = ""
         var isPublic: Bool = true
         var isDonePeriodEdit: Bool = false
-        var sectionItems: [ShareWriteSection: [ShareWriteBaseCellItem]] = [:]
         var selectImjangPeriod: ImjangPeriod?
+        var reviewContentText: String = ""
+        var isActivatedUploadButton: Bool = false
+        
+        mutating func evaluateUploadButtonState() {
+            isActivatedUploadButton =
+                !buildingName.isEmpty &&
+                isDonePeriodEdit &&
+                selectImjangPeriod != nil &&
+                !reviewContentText.isEmpty
+        }
     }
     
     struct Dependency {
@@ -71,6 +85,10 @@ final class ShareWriteViewReactor: Reactor {
             return .just(.updateIsPublic(bool))
         case .selectedImjangPeriod(let period):
             return .just(.updateImjangPeriod(period))
+        case .editingBuildingName(let text):
+            return .just(.updateBuildingName(text))
+        case .editingReviewContent(let text):
+            return .just(.updateReviewContent(text))
         }
     }
     
@@ -90,6 +108,11 @@ final class ShareWriteViewReactor: Reactor {
             newState = toggleIsPublicInPhotoSection(newState, bool: bool)
         case .updateImjangPeriod(let period):
             newState = updateImjangPeriod(newState, period)
+            newState.evaluateUploadButtonState()
+        case .updateBuildingName(let text):
+            newState.buildingName = text
+        case .updateReviewContent(let text):
+            newState.reviewContentText = text
         }
         
         return newState

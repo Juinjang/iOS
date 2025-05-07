@@ -18,8 +18,10 @@ final class ShareWriteViewController: BaseViewController, View {
     private var dataSource: DataSource!
     private let mainView = ShareWriteView()
     
+    private let buildingNameTextRelay = PublishRelay<String>()
     private let isPhotoPublicRelay = PublishRelay<Bool>()
     private let timeCellClickRelay = PublishRelay<Void>()
+    private let reviewTextRelay = PublishRelay<String>()
     
     init(reactor: ShareWriteViewReactor) {
         super.init()
@@ -102,6 +104,16 @@ final class ShareWriteViewController: BaseViewController, View {
                 )
             }
             .disposed(by: disposeBag)
+        
+        buildingNameTextRelay
+            .map { Reactor.Action.editingBuildingName($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        reviewTextRelay
+            .map { Reactor.Action.editingReviewContent($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -122,6 +134,7 @@ extension ShareWriteViewController {
                 
             case .building:
                 let cell = collectionView.dequeueReusableCell(ShareWriteBuildingCell.self, for: indexPath)
+                cell.bind(relay: self.buildingNameTextRelay)
                 return cell
                 
             case .photo(let item):

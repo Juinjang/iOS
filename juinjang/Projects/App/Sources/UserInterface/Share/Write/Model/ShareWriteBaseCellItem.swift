@@ -44,7 +44,8 @@ enum ShareWriteBaseCellItem: Hashable {
             l.isPublic == r.isPublic
         case (.time(let l), .time(let r)):
             return l.id == r.id &&
-            l.periodModel == r.periodModel
+            l.periodModel == r.periodModel &&
+            l.isDoneEdit == r.isDoneEdit
         case (.review(let l), .review(let r)):
             return l.id == r.id
         default:

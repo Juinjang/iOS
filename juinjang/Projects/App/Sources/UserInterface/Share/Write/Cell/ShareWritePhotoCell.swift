@@ -14,7 +14,7 @@ import RxRelay
 final class ShareWritePhotoCell: BaseCollectionViewCell {
     private let titleLabel = DSLabel(.title).then {
         $0.fontColor = .gray600
-        $0.text = "건물명"
+        $0.text = "임장 사진 공유"
         $0.fontAlignment = .left
     }
     
