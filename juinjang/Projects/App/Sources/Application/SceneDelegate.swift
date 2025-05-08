@@ -29,7 +29,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                                          propertyType: "VILLA",
                                          priceType: "MARKET_PRICE",
                                          name: "내집",
-                                         imageUrl: "",
+                                         imageUrl: "ㄴㅁㅇ",
                                          isScraped: false,
                                          rate: 4.5,
                                          price: "2200000000",

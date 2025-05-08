@@ -85,6 +85,7 @@ final class ShareWriteView: BaseView {
 // MARK: - Create Layout
 extension ShareWriteView {
     fileprivate func configureLayout(with sections: [ShareWriteSection]) {
+        guard sections != sectionIdentifiers else { return }
         self.sectionIdentifiers = sections
         writeCollectionView.setCollectionViewLayout(createLayout(), animated: false)
     }
