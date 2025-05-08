@@ -40,12 +40,10 @@ final class DSLabel: UILabel {
     var fontWeight: UIFont.PretendardWeight = .bold { didSet { updateAttributedText() }}
     var maxTextWidth: CGFloat? { didSet { updateAttributedText() } }
     
+    private var _lineHeight: CGFloat?
+    
     private var lineHeight: CGFloat {
-        if fontSize >= 18 {
-            return fontSize * 1.35
-        } else {
-            return fontSize * 1.45
-        }
+        return _lineHeight ?? (fontSize >= 18 ? fontSize * 1.35 : fontSize * 1.45)
     }
     
     private var letterSpacing: CGFloat {
@@ -71,6 +69,11 @@ final class DSLabel: UILabel {
     func commonInit() {
         numberOfLines = 0
         lineBreakMode = .byTruncatingTail
+    }
+    
+    func setLineHeight(_ height: CGFloat) {
+        self._lineHeight = height
+        updateAttributedText()
     }
     
     func updateAttributedText() {

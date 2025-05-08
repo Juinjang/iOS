@@ -70,8 +70,14 @@ final class ShareWriteViewController: BaseViewController, View {
             .distinctUntilChanged()
             .bind(to: mainView.writeCollectionView.rx.bindSectionItems(
                 to: dataSource,
-                orderedBy: [.notice, .share, .building, .photo, .time, .review]
+                orderedBy: [.notice, .share, .building, .photo, .period, .review]
             ))
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.sectionItems)
+            .distinctUntilChanged()
+            .bind(to: mainView.rx.configureVisibleSections)
             .disposed(by: disposeBag)
     }
     
@@ -142,8 +148,8 @@ extension ShareWriteViewController {
                 cell.bind(item: item.isPublic, relay: self.isPhotoPublicRelay)
                 return cell
                 
-            case .time(let item):
-                let cell = collectionView.dequeueReusableCell(ShareWriteTimeCell.self, for: indexPath)
+            case .period(let item):
+                let cell = collectionView.dequeueReusableCell(ShareWritePeriodCell.self, for: indexPath)
                 cell.bind(model: item, relay: self.timeCellClickRelay)
                 return cell
                 

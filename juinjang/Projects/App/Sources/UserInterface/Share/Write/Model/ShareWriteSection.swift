@@ -10,6 +10,6 @@ enum ShareWriteSection: Int {
     case share
     case building
     case photo
-    case time
+    case period
     case review
 }

@@ -156,10 +156,3 @@ extension PageUnderLineUpdatable where Self: UIView {
         return closestIndex
     }
 }
-
-
-fileprivate extension Array {
-    subscript(safe index: Int) -> Element? {
-        return (0..<count).contains(index) ? self[index] : nil
-    }
-}

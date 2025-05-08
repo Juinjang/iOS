@@ -24,7 +24,6 @@ final class ImjangPeriodView: BaseView {
         $0.fontColor = .gray600
     }
     
-    
     func configure(model: ImjangPeriodType,
                    isDoneEdit: Bool) {
         isDoneEdit

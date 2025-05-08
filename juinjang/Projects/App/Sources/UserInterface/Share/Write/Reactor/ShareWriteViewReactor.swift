@@ -68,13 +68,14 @@ final class ShareWriteViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
+            let isEmpty = dependency.selectedModel.imageUrl.isEmpty
             return .concat(
                 fetchUserNickname(),
                 createSection(type: .notice),
                 createSection(type: .share),
                 createSection(type: .building),
-                createSection(type: .photo),
-                createSection(type: .time),
+                isEmpty ? .empty() : createSection(type: .photo),
+                createSection(type: .period),
                 createSection(type: .review)
             )
         case .didTapNavigationButton(let action):
@@ -164,9 +165,9 @@ extension ShareWriteViewReactor {
                         isPublic: self.currentState.isPublic
                     )
                 )
-            case .time:
-                return .time(
-                    ShareWriteTimeCellItem(
+            case .period:
+                return .period(
+                    ShareWritePeriodCellItem(
                         id: UUID().uuidString,
                         isDoneEdit: false,
                         periodModel: ImjangPeriod.from()
@@ -209,18 +210,18 @@ extension ShareWriteViewReactor {
                                     _ period: ImjangPeriod) -> State {
         var newState = state
         
-        guard let currentItem = newState.sectionItems[.time]?.first,
-              case let .time(timeItem) = currentItem else {
+        guard let currentItem = newState.sectionItems[.period]?.first,
+              case let .period(periodItem) = currentItem else {
             return state
         }
         
-        let updatedItem = ShareWriteBaseCellItem.time(
-            .init(id: timeItem.id,
+        let updatedItem = ShareWriteBaseCellItem.period(
+            .init(id: periodItem.id,
                   isDoneEdit: true,
                   periodModel: period)
         )
         newState.selectImjangPeriod = period
-        newState.sectionItems[.time] = [updatedItem]
+        newState.sectionItems[.period] = [updatedItem]
         return newState
     }
 }

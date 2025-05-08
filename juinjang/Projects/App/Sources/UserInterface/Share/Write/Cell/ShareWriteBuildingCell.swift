@@ -48,6 +48,11 @@ final class ShareWriteBuildingCell: BaseCollectionViewCell {
             .distinctUntilChanged()
             .bind(to: relay)
             .disposed(by: disposeBag)
+        
+        contentTextField.rx.text.orEmpty
+            .map { String($0.prefix(18)) }
+            .bind(to: contentTextField.rx.text)
+            .disposed(by: disposeBag)
     }
     
     override func prepareForReuse() {

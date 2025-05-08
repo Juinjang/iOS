@@ -133,7 +133,10 @@ final class JuinjangAPIManager {
         }
         
         AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(imageData, withName: "multipartFile", fileName: "image.jpg", mimeType: "image/jpeg")
+            multipartFormData.append(imageData,
+                                     withName: "multipartFile",
+                                     fileName: "image.jpg",
+                                     mimeType: "image/jpeg")
         }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor())
         .validate()
         .responseDecodable(of: type) { response in

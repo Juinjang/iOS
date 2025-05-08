@@ -10,7 +10,7 @@ enum ShareWriteBaseCellItem: Hashable {
     case share(ShareWriteShareCellItem)
     case building(ShareWriteBuildingCellItem)
     case photo(ShareWritePhotoCellItem)
-    case time(ShareWriteTimeCellItem)
+    case period(ShareWritePeriodCellItem)
     case review(ShareWriteReviewCellItem)
     
     func hash(into hasher: inout Hasher) {
@@ -23,8 +23,8 @@ enum ShareWriteBaseCellItem: Hashable {
             hasher.combine("building")
         case .photo:
             hasher.combine("photo")
-        case .time:
-            hasher.combine("time")
+        case .period:
+            hasher.combine("period")
         case .review:
             hasher.combine("review")
         }
@@ -42,7 +42,7 @@ enum ShareWriteBaseCellItem: Hashable {
         case (.photo(let l), .photo(let r)):
             return l.id == r.id &&
             l.isPublic == r.isPublic
-        case (.time(let l), .time(let r)):
+        case (.period(let l), .period(let r)):
             return l.id == r.id &&
             l.periodModel == r.periodModel &&
             l.isDoneEdit == r.isDoneEdit

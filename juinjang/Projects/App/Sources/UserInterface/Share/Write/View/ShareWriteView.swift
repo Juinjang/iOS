@@ -25,14 +25,23 @@ final class ShareWriteView: BaseView {
                 ShareWriteShareCell.self,
                 ShareWriteBuildingCell.self,
                 ShareWritePhotoCell.self,
-                ShareWriteTimeCell.self,
+                ShareWritePeriodCell.self,
                 ShareWriteReviewCell.self
             )
         }
     }()
     
+    fileprivate var sectionIdentifiers: [ShareWriteSection] = []
+    
+    private let uploadNoticeLabel = DSLabel(.body2).then {
+        $0.fontSize = 13
+        $0.fontColor = .gray400
+        $0.fontAlignment = .center
+        $0.text = "공유 후에는 체크리스트 수정이 제한돼요"
+    }
+    
     fileprivate let uploadButton = FilledButton(title: "업로드하기")
-
+    
     override func configureView() {
         super.configureView()
     }
@@ -42,6 +51,7 @@ final class ShareWriteView: BaseView {
         
         add(navigationView,
             writeCollectionView,
+            uploadNoticeLabel,
             uploadButton)
     }
     
@@ -56,7 +66,12 @@ final class ShareWriteView: BaseView {
         writeCollectionView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
-            $0.bottom.equalTo(uploadButton.snp.top).offset(-16)
+            $0.bottom.equalTo(uploadNoticeLabel.snp.top).offset(-22)
+        }
+        
+        uploadNoticeLabel.snp.makeConstraints {
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalTo(uploadButton.snp.top).offset(-13)
         }
         
         uploadButton.snp.makeConstraints {
@@ -69,9 +84,14 @@ final class ShareWriteView: BaseView {
 
 // MARK: - Create Layout
 extension ShareWriteView {
+    fileprivate func configureLayout(with sections: [ShareWriteSection]) {
+        self.sectionIdentifiers = sections
+        writeCollectionView.setCollectionViewLayout(createLayout(), animated: false)
+    }
+    
     private func createLayout() -> UICollectionViewCompositionalLayout {
         return UICollectionViewCompositionalLayout { sectionIndex, _ in
-            guard let section = ShareWriteSection(rawValue: sectionIndex) else { return nil }
+            guard let section = self.sectionIdentifiers[safe: sectionIndex] else { return nil }
             
             switch section {
             case .notice:
@@ -82,10 +102,10 @@ extension ShareWriteView {
                 return self.singleItemSection(height: 98)
             case .photo:
                 return self.singleItemSection(height: 111)
-            case .time:
+            case .period:
                 return self.singleItemSection(height: 128)
             case .review:
-                return self.singleItemSection(height: 360)
+                return self.singleItemSection(height: 483)
             }
         }
     }
@@ -119,6 +139,21 @@ extension Reactive where Base: ShareWriteView {
     var isActivatedUploadButton: Binder<Bool> {
         return Binder(base) { view, bool in
             view.uploadButton.isActivated = bool
+        }
+    }
+    
+    var configureVisibleSections: Binder<[ShareWriteSection: [ShareWriteBaseCellItem]]> {
+        return Binder(base) { view, sectionItems in
+            view.configureLayout(
+                with: [
+                    .notice,
+                    .share,
+                    .building,
+                    .photo,
+                    .period,
+                    .review
+                ].filter { sectionItems[$0] != nil }
+            )
         }
     }
 }
