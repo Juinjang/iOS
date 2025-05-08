@@ -17,6 +17,7 @@ final class PlaceholderTextView: BaseView {
         $0.textColor = .label
         $0.isScrollEnabled = true
         $0.backgroundColor = .clear
+        $0.textContainerInset.top = 0
         $0.font = UIFont.pretendard(size: 14, weight: .medium)
         $0.textColor = .gray450
         $0.returnKeyType = .default
@@ -89,7 +90,7 @@ final class PlaceholderTextView: BaseView {
         super.configureLayout()
         
         textView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(-6)
+            $0.top.equalToSuperview().offset(2)
             $0.left.equalToSuperview().offset(-5)
             $0.right.bottom.equalToSuperview()
         }

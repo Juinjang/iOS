@@ -70,7 +70,14 @@ final class ShareWriteViewController: BaseViewController, View {
             .distinctUntilChanged()
             .bind(to: mainView.writeCollectionView.rx.bindSectionItems(
                 to: dataSource,
-                orderedBy: [.notice, .share, .building, .photo, .period, .review]
+                orderedBy: [
+                    .notice,
+                    .share,
+                    .building,
+                    .photo,
+                    .period,
+                    .review
+                ]
             ))
             .disposed(by: disposeBag)
         
