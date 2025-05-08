@@ -59,6 +59,12 @@ final class PlaceholderTextView: BaseView {
                 }
                 return text
             }
+            .do(onNext: { [weak self] text in
+                guard let self = self,
+                      text.count >= self.maxLength else { return }
+                let bottom = NSMakeRange(text.count - 1, 1)
+                self.textView.scrollRangeToVisible(bottom)
+            })
             .bind(to: textView.rx.text)
             .disposed(by: disposeBag)
         
