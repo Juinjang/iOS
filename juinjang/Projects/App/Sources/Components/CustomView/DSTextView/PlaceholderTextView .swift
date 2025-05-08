@@ -19,6 +19,7 @@ final class PlaceholderTextView: BaseView {
         $0.backgroundColor = .clear
         $0.font = UIFont.pretendard(size: 14, weight: .medium)
         $0.textColor = .gray450
+        $0.returnKeyType = .default
     }
     
     private let placeholderLabel = DSLabel(.body2).then {

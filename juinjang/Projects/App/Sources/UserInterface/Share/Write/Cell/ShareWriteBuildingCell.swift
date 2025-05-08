@@ -38,6 +38,8 @@ final class ShareWriteBuildingCell: BaseCollectionViewCell {
         $0.font = UIFont.systemFont(ofSize: 14, weight: .medium)
         $0.placeholder = "건물명을 18자 이내로 작성해주세요 *예시: 주인장A 1차"
         $0.textAlignment = .left
+        $0.inputAccessoryView = UIView()
+        $0.returnKeyType = .done
     }
     
     private var disposeBag = DisposeBag()
