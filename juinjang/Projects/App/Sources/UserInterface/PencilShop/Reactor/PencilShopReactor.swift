@@ -19,7 +19,7 @@ final class PencilShopReactor: Reactor {
         let usedPencilRepository: UsedPencilRepositoryProtocol
     }
     
-    let dependency: Dependency
+    private let dependency: Dependency
     
     init(dependency: Dependency) {
         self.dependency = dependency
