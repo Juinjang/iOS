@@ -1,5 +1,5 @@
 //
-//  StoreKitService.swift
+//  InAppPurchaseService.swift
 //  juinjang
 //
 //  Created by 조유진 on 4/28/25.
@@ -10,7 +10,7 @@ import StoreKit
 import RxSwift
 
 
-final class StoreKitService {
+final class InAppPurchaseService {
     private let productIdList: [String: String]
     private var pencilProductList: [Product] = []
     
@@ -21,7 +21,7 @@ final class StoreKitService {
     
     init(buyPencilRepository: BuyPencilRepositoryProtocol) {
         self.buyPencilRepository = buyPencilRepository
-        self.productIdList = StoreKitService.loadProductIdList()
+        self.productIdList = InAppPurchaseService.loadProductIdList()
         
         updateListenerTask = listenForTransactions()
         
@@ -39,7 +39,6 @@ final class StoreKitService {
         return data
     }
     
-    @MainActor
     private func requestProducts() async throws -> [Product] {
         do {
             let storeProducts = try await Product.products(for: productIdList.keys)
@@ -52,6 +51,7 @@ final class StoreKitService {
                     break
                 }
             }
+            
             pencilProductList = sortByName(newPencils)
             return pencilProductList
         } catch {
@@ -134,7 +134,7 @@ final class StoreKitService {
     }
 }
 
-extension StoreKitService {
+extension InAppPurchaseService {
     func requestProductList() -> Single<[Product]> {
         
         return Single.create { single in

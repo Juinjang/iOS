@@ -13,7 +13,7 @@ final class PencilShopReactor: Reactor {
     var initialState = State()
     
     struct Dependency {
-        let storeKitService: StoreKitService
+        let storeKitService: InAppPurchaseService
         let obtainedPencilRepository: ObtainedPencilRepositoryProtocol
         let purchasedPencilRepository: PurchasedPencilRepositoryProtocol
         let usedPencilRepository: UsedPencilRepositoryProtocol
