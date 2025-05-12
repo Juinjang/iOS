@@ -15,7 +15,9 @@ final class JuinjangAPIManager {
     static let shared = JuinjangAPIManager()
     private init() { }
     
-    func fetchData<T: Decodable>(type: T.Type, api: JuinjangAPI, completionHandler: @escaping (T?, NetworkError?) -> Void) {
+    func fetchData<T: Decodable>(type: T.Type,
+                                 api: JuinjangAPI,
+                                 completionHandler: @escaping (T?, NetworkError?) -> Void) {
         
         AF.request(api.endpoint,
                    method: api.method,
@@ -23,6 +25,19 @@ final class JuinjangAPIManager {
                    headers: api.header,
                    interceptor: AuthInterceptor())
         .responseDecodable(of: type) { response in
+            if let url = response.request?.url {
+                print("🌐 Final Request URL: \(url.absoluteString)")
+            }
+            
+            if let statusCode = response.response?.statusCode {
+                print("📡 Status Code: \(statusCode)")
+            }
+            
+            if let data = response.data,
+               let responseBody = String(data: data, encoding: .utf8) {
+                print("📦 Response Body:\n\(responseBody)")
+            }
+            
             switch response.result {
             case .success(let success):
                 completionHandler(success, nil)
@@ -53,7 +68,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func postData<T: Decodable>(type: T.Type, api: JuinjangAPI, parameter: [String:Any], completionHandler: @escaping (T?, NetworkError?) -> Void) {
+    func postData<T: Decodable>(type: T.Type,
+                                api: JuinjangAPI,
+                                parameter: [String:Any],
+                                completionHandler: @escaping (T?, NetworkError?) -> Void) {
         
         AF.request(api.endpoint,
                    method: api.method,
@@ -62,6 +80,15 @@ final class JuinjangAPIManager {
                    headers: api.header,
                    interceptor: AuthInterceptor())
         .responseDecodable(of: type) { response in
+            if let statusCode = response.response?.statusCode {
+                print("📡 Status Code: \(statusCode)")
+            }
+            
+            if let data = response.data,
+               let responseBody = String(data: data, encoding: .utf8) {
+                print("📦 Response Body:\n\(responseBody)")
+            }
+            
             switch response.result {
             case .success(let success):
                 print(success)
@@ -73,7 +100,8 @@ final class JuinjangAPIManager {
         }
     }
     
-    func postData<T: Decodable>(api: TargetType, parameter: [String:Any]) -> Single<T> {
+    func postData<T: Decodable>(api: TargetType,
+                                parameter: [String:Any]) -> Single<T> {
         return Single.create { observer in
             AF.request(api.path,
                        method: api.method,
@@ -95,14 +123,20 @@ final class JuinjangAPIManager {
         }
     }
     
-    func uploadProfileImage<T: Decodable>(image: UIImage, type: T.Type, api: JuinjangAPI, completionHandler: @escaping (T?, NetworkError?) -> Void) {
+    func uploadProfileImage<T: Decodable>(image: UIImage,
+                                          type: T.Type,
+                                          api: JuinjangAPI,
+                                          completionHandler: @escaping (T?, NetworkError?) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.2) else {
             print("Could not get JPEG representation of image")
             return
         }
         
         AF.upload(multipartFormData: { multipartFormData in
-            multipartFormData.append(imageData, withName: "multipartFile", fileName: "image.jpg", mimeType: "image/jpeg")
+            multipartFormData.append(imageData,
+                                     withName: "multipartFile",
+                                     fileName: "image.jpg",
+                                     mimeType: "image/jpeg")
         }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor())
         .validate()
         .responseDecodable(of: type) { response in
@@ -117,7 +151,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func uploadImages(imjangId: Int, images: [UIImage], api: JuinjangAPI, completion: @escaping (Result<Void, Error>) -> Void) {
+    func uploadImages(imjangId: Int,
+                      images: [UIImage],
+                      api: JuinjangAPI,
+                      completion: @escaping (Result<Void, Error>) -> Void) {
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append("\(imjangId)".data(using: .utf8)!, withName: "limjangId")
             for (index, image) in images.enumerated() {
@@ -128,7 +165,7 @@ final class JuinjangAPIManager {
         }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor())
         .validate()
         .response { response in
-            print("StatusCode: \(response.response?.statusCode)")
+            print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success:
                 print(response)
@@ -140,7 +177,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func uploadRecordFile(api: JuinjangAPI, fileURL: URL, dto: RecordRequestDTO, completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
+    func uploadRecordFile(api: JuinjangAPI,
+                          fileURL: URL,
+                          dto: RecordRequestDTO,
+                          completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
         
         AF.upload(multipartFormData: { [weak self] multipartFormData in
             guard let self else { return }
@@ -151,7 +191,7 @@ final class JuinjangAPIManager {
                 multipartFormData.append(jsonData, withName: "recordRequestDTO", mimeType: "application/json")
             }
         }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor()).responseDecodable(of: RecordResponseDTO.self, completionHandler: { response in
-            print("StatusCode: \(response.response?.statusCode)")
+            print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let responseData):
                 guard let recordResponse = responseData.result else {
@@ -181,7 +221,7 @@ final class JuinjangAPIManager {
         let api = JuinjangAPI.regenerateToken
         AF.request(api.endpoint, method: api.method, headers: api.header)
             .responseDecodable(of: BaseResponse<RefreshDto>.self) { response in
-                print(#function, "액세스 토큰 재발급 StatusCode: \(response.response?.statusCode)")
+                print(#function, "액세스 토큰 재발급 StatusCode: \(String(describing: response.response?.statusCode))")
                 switch response.result {
                 case .success(let success):
                     guard let result = success.result else {

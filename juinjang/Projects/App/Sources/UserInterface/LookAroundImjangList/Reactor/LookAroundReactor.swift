@@ -10,11 +10,11 @@ import UIKit
 import Differentiator
 
 final class LookAroundReactor: Reactor {
-    private let repository: LookAroundRepository
+    private let repository: MockLookAroundRepository
     
     var initialState: State = State()
     
-    init(repository: LookAroundRepository) {
+    init(repository: MockLookAroundRepository) {
         self.repository = repository
     }
     
@@ -137,18 +137,18 @@ struct Area {
     let dong: [String]?
 }
 
-enum PropertyType: String, CaseIterable {
-    case APARTMENT
-    case VILLA
-    case OFFICE_TEL
-    case DETACHED_HOUSE
-    
-    var image: UIImage {
-        switch self {
-        case .APARTMENT: return .ImjangList.apartment
-        case .VILLA: return .ImjangList.villa
-        case .OFFICE_TEL: return .ImjangList.officeTel
-        case .DETACHED_HOUSE: return .ImjangList.detachedHouse
-        }
-    }
-}
+//enum PropertyType: String, CaseIterable {
+//    case APARTMENT
+//    case VILLA
+//    case OFFICE_TEL
+//    case DETACHED_HOUSE
+//    
+//    var image: UIImage {
+//        switch self {
+//        case .APARTMENT: return .ImjangList.apartment
+//        case .VILLA: return .ImjangList.villa
+//        case .OFFICE_TEL: return .ImjangList.officeTel
+//        case .DETACHED_HOUSE: return .ImjangList.detachedHouse
+//        }
+//    }
+//}

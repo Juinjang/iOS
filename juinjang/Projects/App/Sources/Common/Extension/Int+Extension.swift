@@ -9,11 +9,14 @@ import Foundation
 
 extension Int {
     static func convertTimeToInt(time: TimeInterval) -> Int? {
-        print("녹음된 시간: \(time)")
-
         return Int(time)
     }
     
+    // 추후 로직 적용 추가
+    var monthAgoString: String {
+        return "\(self)개월 전"
+    }
+
     func convertHitsString() -> String {
         return self > 999 ? "999+" : "\(self)"
     }

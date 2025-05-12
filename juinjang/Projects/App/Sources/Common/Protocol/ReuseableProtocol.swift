@@ -35,9 +35,3 @@ extension UITableViewHeaderFooterView: ReuseableProtocol {
         String(describing: self)
     }
 }
-
-//extension UICollectionReusableView: ReuseableProtocol {
-//    static var identifier: String {
-//        String(describing: self)
-//    }
-//}
