@@ -66,7 +66,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "떙땡땡땡",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         ),
         .init(
             sharedNoteId: 1,
@@ -83,7 +84,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "떙땡",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         ),
         .init(
             sharedNoteId: 2,
@@ -100,7 +102,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "asdd",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         ),
         .init(
             sharedNoteId: 3,
@@ -117,7 +120,9 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "as",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
+
         ),
         .init(
             sharedNoteId: 4,
@@ -134,7 +139,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "떙땡",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         ),
         .init(
             sharedNoteId: 5,
@@ -151,7 +157,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "떙땡",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         )
     ]
     
@@ -174,7 +181,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "떙땡",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         ),
         .init(
             sharedNoteId: 1,
@@ -191,7 +199,8 @@ extension [MyNoteModel] {
             onwerImageUrl: "",
             onwerNickname: "떙땡",
             monthAge: 5,
-            viewCount: 1000
+            viewCount: 1000,
+            propertyType: "APARTMENT"
         )
     ]
 }

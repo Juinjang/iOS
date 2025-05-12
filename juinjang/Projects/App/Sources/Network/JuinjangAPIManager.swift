@@ -15,7 +15,9 @@ final class JuinjangAPIManager {
     static let shared = JuinjangAPIManager()
     private init() { }
     
-    func fetchData<T: Decodable>(type: T.Type, api: JuinjangAPI, completionHandler: @escaping (T?, NetworkError?) -> Void) {
+    func fetchData<T: Decodable>(type: T.Type,
+                                 api: JuinjangAPI,
+                                 completionHandler: @escaping (T?, NetworkError?) -> Void) {
         
         AF.request(api.endpoint,
                    method: api.method,
@@ -53,7 +55,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func postData<T: Decodable>(type: T.Type, api: JuinjangAPI, parameter: [String:Any], completionHandler: @escaping (T?, NetworkError?) -> Void) {
+    func postData<T: Decodable>(type: T.Type,
+                                api: JuinjangAPI,
+                                parameter: [String:Any],
+                                completionHandler: @escaping (T?, NetworkError?) -> Void) {
         
         AF.request(api.endpoint,
                    method: api.method,
@@ -73,7 +78,8 @@ final class JuinjangAPIManager {
         }
     }
     
-    func postData<T: Decodable>(api: TargetType, parameter: [String:Any]) -> Single<T> {
+    func postData<T: Decodable>(api: TargetType,
+                                parameter: [String:Any]) -> Single<T> {
         return Single.create { observer in
             AF.request(api.path,
                        method: api.method,
@@ -95,7 +101,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func uploadProfileImage<T: Decodable>(image: UIImage, type: T.Type, api: JuinjangAPI, completionHandler: @escaping (T?, NetworkError?) -> Void) {
+    func uploadProfileImage<T: Decodable>(image: UIImage,
+                                          type: T.Type,
+                                          api: JuinjangAPI,
+                                          completionHandler: @escaping (T?, NetworkError?) -> Void) {
         guard let imageData = image.jpegData(compressionQuality: 0.2) else {
             print("Could not get JPEG representation of image")
             return
@@ -117,7 +126,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func uploadImages(imjangId: Int, images: [UIImage], api: JuinjangAPI, completion: @escaping (Result<Void, Error>) -> Void) {
+    func uploadImages(imjangId: Int,
+                      images: [UIImage],
+                      api: JuinjangAPI,
+                      completion: @escaping (Result<Void, Error>) -> Void) {
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append("\(imjangId)".data(using: .utf8)!, withName: "limjangId")
             for (index, image) in images.enumerated() {
@@ -140,7 +152,10 @@ final class JuinjangAPIManager {
         }
     }
     
-    func uploadRecordFile(api: JuinjangAPI, fileURL: URL, dto: RecordRequestDTO, completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
+    func uploadRecordFile(api: JuinjangAPI,
+                          fileURL: URL,
+                          dto: RecordRequestDTO,
+                          completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
         
         AF.upload(multipartFormData: { [weak self] multipartFormData in
             guard let self else { return }

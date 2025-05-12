@@ -27,6 +27,7 @@ final class UserDefaultManager {
         case kakaoTargetId
         case appleAuthCode
         case agreeVersion
+        case isShowShareAlert
     }
     
     let ud = UserDefaults.standard
@@ -105,6 +106,11 @@ final class UserDefaultManager {
     var agreeVersion: String {
         get { ud.string(forKey: UDKey.agreeVersion.rawValue) ?? "" }
         set { ud.set(newValue, forKey: UDKey.agreeVersion.rawValue) }
+    }
+    
+    var isShowShareAlert: Bool? {
+        get { ud.object(forKey: UDKey.isShowShareAlert.rawValue) as? Bool }
+        set { ud.set(newValue, forKey: UDKey.isShowShareAlert.rawValue) }
     }
     
     func removeUserInfo() {

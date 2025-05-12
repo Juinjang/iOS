@@ -111,7 +111,7 @@ final class MyNoteCell: UICollectionViewCell {
               relay: PublishRelay<MyNoteCellEventType>) {
         thumbnailImageView.kf.setImage(
             with: URL(string: model.imageUrl),
-            placeholder: UIImage.randomCardPlaceholderImage
+            placeholder: PropertyType(rawValue: model.propertyType)?.image
         )
         rateLabel.rateNumber = model.rate
         likeButton.isSelected = model.isLike

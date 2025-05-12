@@ -25,6 +25,7 @@ struct MyNoteCellModel {
     let viewCount: Int
     var isStopShare: Bool = false
     var isSelected: Bool = false
+    var propertyType: String
     
     init(model: MyNoteModel) {
         sharedNoteId = model.sharedNoteId
@@ -42,6 +43,7 @@ struct MyNoteCellModel {
         onwerNickname = model.onwerNickname
         monthAge = model.monthAge
         viewCount = model.viewCount
+        propertyType = model.propertyType
     }
 }
 

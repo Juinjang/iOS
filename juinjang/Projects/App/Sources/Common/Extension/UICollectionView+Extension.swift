@@ -27,6 +27,10 @@ extension UICollectionView {
         )
     }
     
+    func register(_ cellTypes: UICollectionViewCell.Type...) {
+        cellTypes.forEach { self.register($0, forCellWithReuseIdentifier: String(describing: $0)) }
+    }
+    
     func dequeueReusableCell<T: UICollectionViewCell>(
         _ cellClass: T.Type,
         for indexPath: IndexPath

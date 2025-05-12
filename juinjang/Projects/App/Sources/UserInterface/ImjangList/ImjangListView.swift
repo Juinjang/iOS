@@ -116,6 +116,7 @@ final class ImjangListView: UIView {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isSkeletonable = true
+        collectionView.clipsToBounds = false
     }
 }
 
