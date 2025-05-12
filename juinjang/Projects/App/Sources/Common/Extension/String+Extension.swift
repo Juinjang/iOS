@@ -132,6 +132,21 @@ extension String {
             return "0"
         }
     }
+    
+    var paddedToTwoDigits: String {
+        guard let intValue = Int(self) else { return "01" }
+        return String(format: "%02d", intValue)
+    }
+    
+    var monthWithUnit: String {
+        guard let intValue = Int(self) else { return self }
+        return "\(intValue)월"
+    }
+    
+    var yearWithUnit: String {
+        guard let intValue = Int(self) else { return self }
+        return "\(intValue)년"
+    }
 }
 
 private extension NumberFormatter {

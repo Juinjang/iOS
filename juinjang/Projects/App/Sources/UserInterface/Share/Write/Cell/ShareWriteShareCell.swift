@@ -1,21 +1,23 @@
 //
-//  ShareSelectCell.swift
+//  ShareWriteShareCell.swift
 //  juinjang
 //
-//  Created by KimDongWoo on 4/26/25.
+//  Created by KimDongWoo on 5/4/25.
 //
 
 import UIKit
 import Then
 import SnapKit
-import RxSwift
-import RxRelay
 import Kingfisher
 
-final class ShareSelectCell: BaseCollectionViewCell {
-    private var disposeBag = DisposeBag()
+final class ShareWriteShareCell: BaseCollectionViewCell {
+    private let titleLabel = DSLabel(.h3).then {
+        $0.fontColor = .gray600
+        $0.text = "공유할 임장"
+        $0.fontAlignment = .left
+    }
     
-    private let containerButton = UIButton().then {
+    private let containerView = UIView().then {
         $0.roundCorners(cornerRadius: 10, corner: .all)
         $0.layer.borderColor = UIColor.stroke.cgColor
         $0.layer.borderWidth = 1
@@ -66,38 +68,27 @@ final class ShareSelectCell: BaseCollectionViewCell {
         $0.setImage(.bookmarkOn22, for: .selected)
     }
     
-    func bind(item: ShareSelectCellItem,
-              relay: PublishRelay<String>) {
-        disposeBag = DisposeBag()
-        
-        guard let priceType = PriceType(rawValue: item.model.priceType)?.title else { return }
+    func bind(item: ShareSelectModel) {
+        guard let priceType = PriceType(rawValue: item.priceType)?.title else { return }
         
         tumbnailImageView.kf.setImage(
-            with: URL(string: item.model.imageUrl),
-            placeholder: PropertyType(rawValue: item.model.propertyType)?.image
+            with: URL(string: item.imageUrl),
+            placeholder: PropertyType(rawValue: item.propertyType)?.image
         )
-        buildingNameLabel.text = item.model.name
-        priceLabel.text = "\(priceType) \(item.model.price.formattedKoreanCurrency)"
-        pyungLabel.text = "\(item.model.pyong)평 \(item.model.floor)층"
-        addressLabel.text = item.model.shortAddress
-        starRateLabel.text = "\(item.model.rate ?? 0.0)"
-        bookmarkButton.isSelected = item.model.isScraped
-        
-        item.isSelected
-        ? setupViewForSelected()
-        : setupViewForDeselected()
-        
-        containerButton.rx.throttleTap
-            .map { item.id }
-            .bind(to: relay)
-            .disposed(by: disposeBag)
+        buildingNameLabel.text = item.name
+        priceLabel.text = "\(priceType) \(item.price.formattedKoreanCurrency)"
+        pyungLabel.text = "\(item.pyong)평 \(item.floor)층"
+        addressLabel.text = item.shortAddress
+        starRateLabel.text = "\(item.rate ?? 0.0)"
+        bookmarkButton.isSelected = item.isScraped
     }
     
     override func configureHierarchy() {
         super.configureHierarchy()
         
         contentView.add(
-            containerButton.with(
+            titleLabel,
+            containerView.with(
                 tumbnailImageView,
                 buildingNameLabel,
                 coinIconView,
@@ -114,9 +105,15 @@ final class ShareSelectCell: BaseCollectionViewCell {
     override func configureLayout() {
         super.configureLayout()
         
-        containerButton.snp.makeConstraints {
-            $0.verticalEdges.equalToSuperview().inset(6)
+        titleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(8)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        containerView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(12)
             $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview().inset(16)
         }
         
         tumbnailImageView.snp.makeConstraints {
@@ -171,17 +168,5 @@ final class ShareSelectCell: BaseCollectionViewCell {
             $0.centerY.equalTo(starRateLabel.snp.centerY)
             $0.size.equalTo(22)
         }
-    }
-}
-
-extension ShareSelectCell {
-    private func setupViewForSelected() {
-        containerButton.layer.borderColor = UIColor.main.cgColor
-        containerButton.backgroundColor = .bg2
-    }
-    
-    private func setupViewForDeselected() {
-        containerButton.layer.borderColor = UIColor.stroke.cgColor
-        containerButton.backgroundColor = .mainWhite
     }
 }

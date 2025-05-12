@@ -60,6 +60,7 @@ class BaseAlertViewController: UIViewController {
         
     init(height: CGFloat,
          isShowDismissButton: Bool = false,
+         isBackgroundDismissEnabled: Bool = false,
          contentViews: [UIView],
          buttons: [AlertButtonType]) {
         super.init(nibName: nil, bundle: nil)
@@ -69,6 +70,7 @@ class BaseAlertViewController: UIViewController {
         mainView.setButtons(with: buttons)
         mainView.addContainerSubviews(contentViews)
         mainView.setDismissButtonVisible(isShowDismissButton)
+        mainView.setBackgroundDismissEnabled(isBackgroundDismissEnabled)
     }
     
     required init?(coder: NSCoder) {

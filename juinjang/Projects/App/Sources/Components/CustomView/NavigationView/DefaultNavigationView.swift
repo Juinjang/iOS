@@ -45,7 +45,7 @@ enum NavigationButton {
     }
 }
 
-enum NavigationAction {
+enum NavigationAction: Equatable {
     case popButtonTap
     case searchButtonTap
     case searchSummit(keyword: String)
