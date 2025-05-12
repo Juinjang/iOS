@@ -14,9 +14,7 @@ final class PencilShopReactor: Reactor {
     
     struct Dependency {
         let storeKitService: InAppPurchaseService
-        let obtainedPencilRepository: ObtainedPencilRepositoryProtocol
-        let purchasedPencilRepository: PurchasedPencilRepositoryProtocol
-        let usedPencilRepository: UsedPencilRepositoryProtocol
+        let pencilShopRepository: PencilShopRepositoryProtocol
     }
     
     private let dependency: Dependency
@@ -92,18 +90,18 @@ extension PencilShopReactor {
                 .asObservable()
                 
         case .obtainedPencil:
-            return dependency.obtainedPencilRepository.fetchObtainedPencilList()
+            return dependency.pencilShopRepository.fetchObtainedPencilList()
                 .flatMap { obtainedList -> Observable<Mutation> in
                     return .just(.setObtainedList(obtainedList))
                 }
             
         case .purchasedPencil:
-            return dependency.purchasedPencilRepository.fetchPurchasedPencilList()
+            return dependency.pencilShopRepository.fetchPurchasedPencilList()
                 .flatMap { purchasedList -> Observable<Mutation> in
                     return .just(.setPurchasedList(purchasedList))
                 }
         case .usedPencil:
-            return dependency.usedPencilRepository.fetchUsedPencilList()
+            return dependency.pencilShopRepository.fetchUsedPencilList()
                 .flatMap { usedList -> Observable<Mutation> in
                     return .just(.setUsedList(usedList))
                 }

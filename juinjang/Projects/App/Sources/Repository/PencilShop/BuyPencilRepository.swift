@@ -9,11 +9,11 @@ import RxSwift
 import Foundation
 import StoreKit
 
-protocol BuyPencilRepositoryProtocol {
+protocol VerifyTransactionRepositoryProtocol {
     func verifyTransaction(transaction: Transaction) async throws -> VerifiyTransactionResponse
 }
 
-final class MockBuyPencilRepository: BuyPencilRepositoryProtocol {
+final class MockVerifyTransactionRepository: VerifyTransactionRepositoryProtocol {
     func verifyTransaction(transaction: Transaction) async throws -> VerifiyTransactionResponse {
         return .mock
     }

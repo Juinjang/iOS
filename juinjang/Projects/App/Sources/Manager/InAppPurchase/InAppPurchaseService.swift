@@ -17,9 +17,9 @@ final class InAppPurchaseService {
     var updateListenerTask: Task<Void, Never>? = nil
     let transactionCompleted = PublishSubject<VerifiyTransactionResponse>() // 외부에 알림용
     
-    let buyPencilRepository: BuyPencilRepositoryProtocol
+    let buyPencilRepository: VerifyTransactionRepositoryProtocol
     
-    init(buyPencilRepository: BuyPencilRepositoryProtocol) {
+    init(buyPencilRepository: VerifyTransactionRepositoryProtocol) {
         self.buyPencilRepository = buyPencilRepository
         self.productIdList = InAppPurchaseService.loadProductIdList()
         
