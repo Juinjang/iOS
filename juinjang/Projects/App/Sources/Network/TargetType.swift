@@ -33,8 +33,9 @@ extension TargetType {
         return baseURL
     }
     
-    func request(_ provider: NetworkProvider<Self>) -> Single<Data> {
-        return provider.request(self)
+    func request<T: Decodable>(_ type: T.Type,
+                               _ provider: JuinjangAPIManager) -> Single<T> {
+        return provider.fetchData<T>(api: self)
     }
     
     func createURL() -> URL? {

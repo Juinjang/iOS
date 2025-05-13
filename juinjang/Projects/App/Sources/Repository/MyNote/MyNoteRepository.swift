@@ -24,6 +24,17 @@ extension MyNoteCategoryType {
             return "좋아한 노트"
         }
     }
+    
+    var toRequestType: String {
+        switch self {
+        case .share:
+            return "SHARED"
+        case .own:
+            return "OWNED"
+        case .like:
+            return "LIKED"
+        }
+    }
 }
 
 final class MyNoteRepository: MyNoteRepositoryProtocol {

@@ -8,5 +8,7 @@
 import RxSwift
 
 protocol NoteRepositoryProtocol {
+    func getMyNotes(param: NoteRequestDTO) -> Single<[MyNoteModel]>
     func getShareableMyNotes() -> Single<[ShareSelectModel]>
 }
+

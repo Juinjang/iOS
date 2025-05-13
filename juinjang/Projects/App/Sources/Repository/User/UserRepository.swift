@@ -10,7 +10,7 @@ import RxSwift
 final class UserRepository: UserRepositoryProtocol {
     private let userDefault: UserDefaultManager
     
-    init(userDefault: UserDefaultManager) {
+    init(userDefault: UserDefaultManager = UserDefaultManager.shared) {
         self.userDefault = userDefault
     }
     
