@@ -183,7 +183,7 @@ extension MyNoteViewReactor {
     private func initialFetchNotes(for category: MyNoteCategoryType) -> Observable<Mutation> {
         let currentNoticeState = currentState.pages.first(where: { $0.category == category })?.isShowingNotice ?? true
         
-        return dependency.noteRepository.getMyNotes(
+        return dependency.noteRepository.retrieveMyNotes(
             param: NoteRequestDTO(
                 noteType: category.toRequestType,
                 propertyType: "",

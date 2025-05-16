@@ -14,7 +14,7 @@ final class UserRepository: UserRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func getUserNickname() -> Observable<String> {
+    func getUserNickname() -> Single<String> {
         return .just(userDefault.nickname)
     }
 }

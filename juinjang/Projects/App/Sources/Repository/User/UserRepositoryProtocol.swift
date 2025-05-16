@@ -8,5 +8,5 @@
 import RxSwift
 
 protocol UserRepositoryProtocol {
-    func getUserNickname() -> Observable<String>
+    func getUserNickname() -> Single<String>
 }

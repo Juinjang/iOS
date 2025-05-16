@@ -853,7 +853,8 @@ final class ImjangNoteViewController: BaseViewController,
         print("토큰값 \(token)")
 
         // 저장된 체크리스트 불러오기
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self, api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self,
+                                            api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
             guard let self = self else { return }
             guard let checkListResponse = response else { return }
             

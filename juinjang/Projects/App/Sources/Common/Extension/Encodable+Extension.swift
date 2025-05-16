@@ -15,4 +15,15 @@ extension Encodable {
             return URLQueryItem(name: key, value: "\(child.value)")
         }
     }
+    
+    func toDictionary() -> [String: Any]? {
+        do {
+            let data = try JSONEncoder().encode(self)
+            let dict = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any]
+            return dict
+        } catch {
+            print("❌ toDictionary Error: \(error)")
+            return nil
+        }
+    }
 }

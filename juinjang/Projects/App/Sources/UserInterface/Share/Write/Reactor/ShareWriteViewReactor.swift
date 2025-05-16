@@ -126,6 +126,7 @@ extension ShareWriteViewReactor {
         return dependency
             .userRepository
             .getUserNickname()
+            .asObservable()
             .map { .updateNickname(nickname: $0) }
     }
     

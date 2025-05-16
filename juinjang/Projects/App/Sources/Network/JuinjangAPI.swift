@@ -91,7 +91,8 @@ enum JuinjangAPI {
         case .updateAgreeVersion:
             return URL(string: baseURL + "members/terms")!
             
-        case .showChecklist(let imjangId), .saveChecklist(let imjangId):
+        case .showChecklist(let imjangId),
+                .saveChecklist(let imjangId):
             return URL(string: baseURL + "checklist/\(imjangId)")!
         case .fetchReportInfo(let imjangId):
             return URL(string: baseURL + "report/\(imjangId)")!
