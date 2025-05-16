@@ -568,8 +568,6 @@ final class ImjangNoteViewController: BaseViewController,
         designLabel(modifiedDate,
                     font: UIFont.pretendard(size: 14, weight: .semiBold),
                     textColor: .gray400)
-        
-        
     }
     
     // 이미지 개수에 따라 stackView 설정
@@ -905,7 +903,6 @@ final class ImjangNoteViewController: BaseViewController,
             ]))
         }
     }
-    
     
     // 체크리스트 저장
     private func saveChecklist(items: [CheckListAnswer], token: String, completion: @escaping (DetailDto?, ReportDTO?) -> Void) {

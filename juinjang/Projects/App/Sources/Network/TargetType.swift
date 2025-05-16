@@ -10,12 +10,13 @@ import Alamofire
 import RxSwift
 
 protocol TargetType: URLRequestConvertible {
-    var baseURL: String { get }
+    var baseURL: BaseURLType { get }
     var header: [String: String] { get }
     var path: String { get }
     var method: HTTPMethod { get }
     var queryItems: [URLQueryItem] { get }
     var parameters: [String: Any]? { get }
+    var interceptor: AuthInterceptor? { get }
 }
 
 extension TargetType {
@@ -26,20 +27,21 @@ extension TargetType {
         ]
     }
     
-    var baseURL: String {
-        guard let baseURL = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
-            fatalError("BASE_URL not found in Info.plist")
-        }
-        return baseURL
+    var baseURL: BaseURLType {
+        return .juinjang
+    }
+    
+    var interceptor: AuthInterceptor? {
+        return nil
     }
     
     func request<T: Decodable>(_ type: T.Type,
                                _ provider: JuinjangAPIManager) -> Single<T> {
-        return provider.fetchData<T>(api: self)
+        return provider.fetchData<T>(api: self, interceptor: interceptor)
     }
     
     func createURL() -> URL? {
-        var components = URLComponents(string: baseURL + path)
+        var components = URLComponents(string: baseURL.url + path)
         if !queryItems.isEmpty {
             components?.queryItems = queryItems
         }

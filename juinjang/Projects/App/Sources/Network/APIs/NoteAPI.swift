@@ -84,4 +84,9 @@ enum NoteAPI: TargetType {
             return param.toDictionary()
         }
     }
+    
+    var interceptor: AuthInterceptor? {
+        return AuthInterceptor()
+    }
 }
+

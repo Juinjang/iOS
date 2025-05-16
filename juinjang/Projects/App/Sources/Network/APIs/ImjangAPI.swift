@@ -50,4 +50,8 @@ enum ImjangAPI: TargetType {
             return nil
         }
     }
+    
+    var interceptor: AuthInterceptor? {
+        return AuthInterceptor()
+    }
 }
