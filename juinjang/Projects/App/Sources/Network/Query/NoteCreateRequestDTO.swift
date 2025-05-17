@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 5/17/25.
 //
 
-struct ImjangRequestDTO: Encodable {
+struct NoteCreateRequestDTO: Encodable {
     let purposeType: String
     let propertyType: String
     let priceType: String

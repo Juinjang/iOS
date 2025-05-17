@@ -8,13 +8,28 @@
 import RxSwift
 
 final class UserRepository: UserRepositoryProtocol {
-    private let userDefault: UserDefaultManager
+    private var networkManager: JuinjangAPIManager
+    private var userDefault: UserDefaultManager
     
-    init(userDefault: UserDefaultManager = UserDefaultManager.shared) {
+    init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared,
+         userDefault: UserDefaultManager = UserDefaultManager.shared) {
+        self.networkManager = networkManager
         self.userDefault = userDefault
     }
     
-    func getUserNickname() -> Single<String> {
+    func retrieveUserNickname() -> Single<String> {
         return .just(userDefault.nickname)
+    }
+    
+    func retrieveProfileIntroduction() -> Single<ProfileModel> {
+        return UserAPI.getProfileIntroduction
+            .request(BaseResponse<ProfileModel>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func updateProfileIntroduction(text: String) -> Completable {
+        return UserAPI.patchProfileIntroduction(text)
+            .request(NoResultResponse.self, networkManager)
+            .asCompletable()
     }
 }

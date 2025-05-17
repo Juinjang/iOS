@@ -1,11 +1,11 @@
 //
-//  MyImjangDetailModel.swift
+//  NoteDetailModel.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 5/17/25.
 //
 
-struct MyImjangDetailModel: Codable {
+struct NoteDetailModel: Codable {
     let purposeType: String
     let propertyType: String
     let priceType: String

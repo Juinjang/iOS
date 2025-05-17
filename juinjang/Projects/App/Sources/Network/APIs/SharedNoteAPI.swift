@@ -9,26 +9,38 @@ import Foundation
 import Alamofire
 
 enum SharedNoteAPI: TargetType {
-    case getMyNotes(NoteRequestDTO)
-    case getExploreNotes(ExploreNoteRequestDTO)
+    case getMyNoteList(SharedNoteRequestDTO)
+    case getExploreNoteList(ExploreNoteRequestDTO)
+    case getNoteDetail(Int)
+    case getNoteDetailReport(Int)
+    case getNoteDetailChecklist(Int)
     case postLikeNote(Int)
-    case postShareNote(Int, NoteShareRequestDTO)
+    case postSharedNote(Int, NoteShareRequestDTO)
     case postPurchaseNote(Int)
+    case postNoteReport(NoteReportRequestDTO)
     case deleteLikeNote(Int)
     case deleteSharedNote(Int)
 
     var path: String {
         switch self {
-        case .getMyNotes:
+        case .getMyNoteList:
             return "v2/users/shared-notes"
-        case .getExploreNotes(let param):
+        case .getExploreNoteList(let param):
             return "v2/explore"
+        case .getNoteDetail(let noteId):
+            return "v2/shared-notes/\(noteId)"
+        case .getNoteDetailReport(let noteId):
+            return "v2/notes/\(noteId)/report"
+        case .getNoteDetailChecklist(let noteId):
+            return "v2/shared-note/\(noteId)/checklist"
         case .postLikeNote(let noteID):
             return "v2/shared-notes/\(noteID)/likes"
-        case .postShareNote(let noteID, _):
+        case .postSharedNote(let noteID, _):
             return "v2/shared-notes/\(noteID)"
         case .postPurchaseNote(let noteID):
             return "v2/shared-notes/\(noteID)/purchase"
+        case .postNoteReport:
+            return "v2/reports/shared-note"
         case .deleteLikeNote(let noteID):
             return "v2/shared-notes/\(noteID)/likes"
         case .deleteSharedNote(let noteID):
@@ -38,12 +50,16 @@ enum SharedNoteAPI: TargetType {
 
     var method: HTTPMethod {
         switch self {
-        case .getMyNotes,
-                .getExploreNotes:
+        case .getMyNoteList,
+                .getExploreNoteList,
+                .getNoteDetail,
+                .getNoteDetailReport,
+                .getNoteDetailChecklist:
             return .get
         case .postLikeNote,
-                .postShareNote,
-                .postPurchaseNote:
+                .postSharedNote,
+                .postPurchaseNote,
+                .postNoteReport:
             return .post
         case .deleteLikeNote,
                 .deleteSharedNote:
@@ -53,12 +69,16 @@ enum SharedNoteAPI: TargetType {
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getMyNotes(let param as Encodable),
-                .getExploreNotes(let param as Encodable):
+        case .getMyNoteList(let param as Encodable),
+                .getExploreNoteList(let param as Encodable):
             return param.toQueryItems()
-        case .postLikeNote,
-                .postShareNote,
+        case .getNoteDetail,
+                .getNoteDetailReport,
+                .getNoteDetailChecklist,
+                .postLikeNote,
+                .postSharedNote,
                 .postPurchaseNote,
+                .postNoteReport,
                 .deleteLikeNote,
                 .deleteSharedNote:
             return []
@@ -67,14 +87,18 @@ enum SharedNoteAPI: TargetType {
 
     var parameters: [String : Any]? {
         switch self {
-        case .getMyNotes,
-                .getExploreNotes,
+        case .getMyNoteList,
+                .getExploreNoteList,
+                .getNoteDetail,
+                .getNoteDetailReport,
+                .getNoteDetailChecklist,
                 .postLikeNote,
                 .postPurchaseNote,
                 .deleteLikeNote,
                 .deleteSharedNote:
             return nil
-        case .postShareNote(_, let param):
+        case .postSharedNote(_, let param as Encodable),
+                .postNoteReport(let param as Encodable):
             return param.toDictionary()
         }
     }

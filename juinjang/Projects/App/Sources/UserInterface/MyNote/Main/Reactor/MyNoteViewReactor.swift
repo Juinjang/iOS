@@ -59,7 +59,7 @@ final class MyNoteViewReactor: Reactor {
     }
     
     struct Dependency {
-        let noteRepository: NoteRepositoryProtocol
+        let noteRepository: SharedNoteRepositoryProtocol
     }
     
     struct NotesPageState {
@@ -184,7 +184,7 @@ extension MyNoteViewReactor {
         let currentNoticeState = currentState.pages.first(where: { $0.category == category })?.isShowingNotice ?? true
         
         return dependency.noteRepository.retrieveMyNotes(
-            param: NoteRequestDTO(
+            param: SharedNoteRequestDTO(
                 noteType: category.toRequestType,
                 propertyType: "",
                 priceType: "",

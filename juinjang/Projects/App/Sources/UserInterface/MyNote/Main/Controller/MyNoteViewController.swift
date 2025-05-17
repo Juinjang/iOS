@@ -71,7 +71,7 @@ final class MyNoteViewController: BaseViewController, View {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
                 case .searchButtonTap:
-                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(noteRepository: NoteRepository())))
+                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(noteRepository: SharedNoteRepository())))
                     self.navigationController?.pushViewController(viewController, animated: true)
                 default: break
                 }
@@ -144,7 +144,7 @@ final class MyNoteViewController: BaseViewController, View {
                     MyNoteStopShareViewController(
                         reactor: .init(
                             dependency: .init(
-                                noteRepository: NoteRepository()
+                                noteRepository: SharedNoteRepository()
                             )
                         )
                     ),

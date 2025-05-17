@@ -7,7 +7,7 @@
 
 import RxSwift
 
-final class SharedNoteRespository: SharedNoteRepositoryProtocol {
+final class SharedNoteRepository: SharedNoteRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
     private var userDefault: UserDefaultManager
     
@@ -17,16 +17,33 @@ final class SharedNoteRespository: SharedNoteRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    
-    func retrieveMyNotes(param: NoteRequestDTO) -> Single<[MyNoteModel]> {
-        return SharedNoteAPI.getMyNotes(param)
+    func retrieveMyNotes(param: SharedNoteRequestDTO) -> Single<[MyNoteModel]> {
+        return SharedNoteAPI.getMyNoteList(param)
             .request(BaseResponse<[MyNoteModel]>.self, networkManager)
             .map { try $0.unwrap() }
     }
     
     func retrieveExploreNotes(param: ExploreNoteRequestDTO) -> Single<ExploreNoteResponseDTO> {
-        return SharedNoteAPI.getExploreNotes(param)
+        return SharedNoteAPI.getExploreNoteList(param)
             .request(BaseResponse<ExploreNoteResponseDTO>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveNoteDetail(noteID id: Int) -> Single<ImjangDetailInfoModel> {
+        return SharedNoteAPI.getNoteDetail(id)
+            .request(BaseResponse<ImjangDetailInfoModel>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveNoteDetailReport(noteId id: Int) -> Single<ImjangDetailReportModel> {
+        return SharedNoteAPI.getNoteDetailReport(id)
+            .request(BaseResponse<ImjangDetailReportModel>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveNoteDetailCheckList(noteId id: Int) -> Single<ImjangDetailCheckListDTO> {
+        return SharedNoteAPI.getNoteDetailChecklist(id)
+            .request(BaseResponse<ImjangDetailCheckListDTO>.self, networkManager)
             .map { try $0.unwrap() }
     }
     
@@ -36,10 +53,22 @@ final class SharedNoteRespository: SharedNoteRepositoryProtocol {
             .asCompletable()
     }
     
+    func createSharedNote(noteID id: Int, param: NoteShareRequestDTO) -> Completable {
+        return SharedNoteAPI.postSharedNote(id, param)
+            .request(NoResultResponse.self, networkManager)
+            .asCompletable()
+    }
+
     func createNoteLike(noteID id: Int) -> Single<NoteLikeDTO> {
         return SharedNoteAPI.postLikeNote(id)
             .request(BaseResponse<NoteLikeDTO>.self, networkManager)
             .map { try $0.unwrap() }
+    }
+    
+    func createNoteReport(param: NoteReportRequestDTO) -> Completable {
+        return SharedNoteAPI.postNoteReport(param)
+            .request(NoResultResponse.self, networkManager)
+            .asCompletable()
     }
     
     func deleteNoteLike(noteID id: Int) -> Single<NoteLikeDTO> {

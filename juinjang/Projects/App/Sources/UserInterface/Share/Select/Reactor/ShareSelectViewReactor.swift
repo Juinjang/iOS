@@ -118,7 +118,7 @@ extension ShareSelectViewReactor {
     private func fetchUserNickname() -> Observable<Mutation> {
         return dependency
             .userRepository
-            .getUserNickname()
+            .retrieveUserNickname()
             .asObservable()
             .map { .updateNickname(nickname: $0) }
     }
@@ -126,7 +126,7 @@ extension ShareSelectViewReactor {
     private func createInitialSections() -> Observable<Mutation> {
         return dependency
             .noteRepository
-            .retrieveShareableMyNotes()
+            .retrieveShareableNoteList()
             .asObservable()
             .flatMap { models -> Observable<Mutation> in
                 if models.isEmpty {
@@ -160,7 +160,7 @@ extension ShareSelectViewReactor {
     private func fetchMoreSelectModel() -> Observable<Mutation> {
         return dependency
             .noteRepository
-            .retrieveShareableMyNotes()
+            .retrieveShareableNoteList()
             .asObservable()
             .flatMap { models -> Observable<Mutation> in
                 let pageSize = 10

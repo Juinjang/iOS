@@ -32,7 +32,7 @@ final class MyNoteStopShareViewReactor: Reactor {
     
     // MARK: - Dependency
     struct Dependency {
-        let noteRepository: NoteRepositoryProtocol
+        let noteRepository: SharedNoteRepositoryProtocol
     }
     
     let dependency: Dependency

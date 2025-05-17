@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 5/12/25.
 //
 
-struct NoteRequestDTO: Encodable {
+struct SharedNoteRequestDTO: Encodable {
     let noteType: String
     let propertyType: String
     let priceType: String

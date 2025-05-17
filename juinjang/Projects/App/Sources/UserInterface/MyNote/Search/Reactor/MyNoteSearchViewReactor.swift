@@ -33,7 +33,7 @@ final class MyNoteSearchViewReactor: Reactor {
     
     // MARK: - Dependencies
     struct Dependency {
-        let noteRepository: NoteRepositoryProtocol
+        let noteRepository: SharedNoteRepositoryProtocol
     }
     
     let dependency: Dependency

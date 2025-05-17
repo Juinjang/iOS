@@ -41,7 +41,7 @@ final class ImjangDetailViewReactor: Reactor {
     struct Dependency {
         let id: Int
         let title: String
-        let repository: ImjangRepositoryProtocol
+        let repository: SharedNoteRepositoryProtocol
     }
     
     let initialState: State
@@ -143,7 +143,7 @@ extension ImjangDetailViewReactor {
         
         switch section {
         case .info:
-            return repository.retrieveImjangDetail(noteID: self.dependency.id)
+            return repository.retrieveNoteDetail(noteID: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
                     let item = ImjangDetailBaseCellItem.info(
@@ -159,7 +159,7 @@ extension ImjangDetailViewReactor {
                     ])
                 }
         case .report:
-            request = repository.retrieveImjangDetailReport(noteID: self.dependency.id)
+            request = repository.retrieveNoteDetailReport(noteId: self.dependency.id)
                 .asObservable()
                 .map {
                     [ImjangDetailBaseCellItem.report(
@@ -170,7 +170,7 @@ extension ImjangDetailViewReactor {
                     )]
                 }
         case .checkList:
-            return repository.retrieveImjangDetailCheckList(noteID: self.dependency.id)
+            return repository.retrieveNoteDetailCheckList(noteId: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
                     let items = model.checkListAnswerList.map {

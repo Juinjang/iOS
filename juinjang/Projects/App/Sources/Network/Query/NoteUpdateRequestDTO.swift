@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 5/17/25.
 //
 
-struct ImjangUpdateRequestDTO: Encodable {
+struct NoteUpdateRequestDTO: Encodable {
     let priceType: String
     let price: String
     let monthlyRent: String
