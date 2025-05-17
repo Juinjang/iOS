@@ -36,6 +36,12 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
+    func retrieveExploreNotes(param: ExploreNoteRequestDTO) -> Single<ExploreNoteResponseDTO> {
+        return NoteAPI.getExploreNotes(param)
+            .request(BaseResponse<ExploreNoteResponseDTO>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
     func purchaseNote(noteID id: Int) -> Completable {
         return NoteAPI.postPurchaseNote(id)
             .request(NoResultResponse.self, networkManager)

@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 5/13/25.
 //
 
-struct NoteShareRequestDTO: Codable {
+struct NoteShareRequestDTO: Encodable {
     let buildingName: String
     let isPhotoShared: Bool
     let year: Int

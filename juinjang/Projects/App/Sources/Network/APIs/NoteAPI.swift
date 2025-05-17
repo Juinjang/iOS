@@ -12,6 +12,7 @@ enum NoteAPI: TargetType {
     case getMyNotes(NoteRequestDTO)
     case getShareableNotes
     case getChecklistConditions(Int)
+    case getExploreNotes(ExploreNoteRequestDTO)
     case postLikeNote(Int)
     case postShareNote(Int, NoteShareRequestDTO)
     case postPurchaseNote(Int)
@@ -26,6 +27,8 @@ enum NoteAPI: TargetType {
             return "v2/users/notes/shareable"
         case .getChecklistConditions(let noteID):
             return "v2/note/\(noteID)/checklist-condition"
+        case .getExploreNotes(let param):
+            return "v2/explore"
         case .postLikeNote(let noteID):
             return "v2/shared-notes/\(noteID)/likes"
         case .postShareNote(let noteID, _):
@@ -43,7 +46,8 @@ enum NoteAPI: TargetType {
         switch self {
         case .getShareableNotes,
                 .getMyNotes,
-                .getChecklistConditions:
+                .getChecklistConditions,
+                .getExploreNotes:
             return .get
         case .postLikeNote,
                 .postShareNote,
@@ -54,11 +58,12 @@ enum NoteAPI: TargetType {
             return .delete
         }
     }
-
+    
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getMyNotes(let noteRequestDTO):
-            return noteRequestDTO.toQueryItems()
+        case .getMyNotes(let param as Encodable),
+                .getExploreNotes(let param as Encodable):
+            return param.toQueryItems()
         case .getShareableNotes,
                 .getChecklistConditions,
                 .postLikeNote,
@@ -75,6 +80,7 @@ enum NoteAPI: TargetType {
         case .getMyNotes,
                 .getShareableNotes,
                 .getChecklistConditions,
+                .getExploreNotes,
                 .postLikeNote,
                 .postPurchaseNote,
                 .deleteLikeNote,
