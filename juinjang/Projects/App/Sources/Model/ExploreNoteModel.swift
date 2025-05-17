@@ -24,3 +24,4 @@ struct ExploreNoteModel: Codable {
     let timeAge: String
     let viewCount: Int
 }
+

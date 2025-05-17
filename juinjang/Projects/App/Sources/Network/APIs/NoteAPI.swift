@@ -9,84 +9,59 @@ import Foundation
 import Alamofire
 
 enum NoteAPI: TargetType {
-    case getMyNotes(NoteRequestDTO)
     case getShareableNotes
     case getChecklistConditions(Int)
-    case getExploreNotes(ExploreNoteRequestDTO)
-    case postLikeNote(Int)
-    case postShareNote(Int, NoteShareRequestDTO)
-    case postPurchaseNote(Int)
-    case deleteLikeNote(Int)
-    case deleteSharedNote(Int)
+    case getMyImjangDetail(Int)
+    case postImjang(ImjangRequestDTO)
+    case patchImjang(Int, ImjangUpdateRequestDTO)
 
     var path: String {
         switch self {
-        case .getMyNotes:
-            return "v2/users/shared-notes"
         case .getShareableNotes:
             return "v2/users/notes/shareable"
         case .getChecklistConditions(let noteID):
             return "v2/note/\(noteID)/checklist-condition"
-        case .getExploreNotes(let param):
-            return "v2/explore"
-        case .postLikeNote(let noteID):
-            return "v2/shared-notes/\(noteID)/likes"
-        case .postShareNote(let noteID, _):
-            return "v2/shared-notes/\(noteID)"
-        case .postPurchaseNote(let noteID):
-            return "v2/shared-notes/\(noteID)/purchase"
-        case .deleteLikeNote(let noteID):
-            return "v2/shared-notes/\(noteID)/likes"
-        case .deleteSharedNote(let noteID):
-            return "v2/shared-notes/\(noteID)"
+        case .getMyImjangDetail(let noteID):
+            return "v2/users/notes/\(noteID)"
+        case .postImjang:
+            return "v2/users/notes"
+        case .patchImjang(let noteID,_):
+            return "v2/users/notes/\(noteID)"
         }
     }
 
     var method: HTTPMethod {
         switch self {
         case .getShareableNotes,
-                .getMyNotes,
                 .getChecklistConditions,
-                .getExploreNotes:
+                .getMyImjangDetail:
             return .get
-        case .postLikeNote,
-                .postShareNote,
-                .postPurchaseNote:
+        case .postImjang:
             return .post
-        case .deleteLikeNote,
-                .deleteSharedNote:
-            return .delete
+        case .patchImjang:
+            return .patch
         }
     }
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getMyNotes(let param as Encodable),
-                .getExploreNotes(let param as Encodable):
-            return param.toQueryItems()
         case .getShareableNotes,
                 .getChecklistConditions,
-                .postLikeNote,
-                .postShareNote,
-                .postPurchaseNote,
-                .deleteLikeNote,
-                .deleteSharedNote:
+                .getMyImjangDetail,
+                .postImjang,
+                .patchImjang:
             return []
         }
     }
 
     var parameters: [String : Any]? {
         switch self {
-        case .getMyNotes,
-                .getShareableNotes,
+        case .getShareableNotes,
                 .getChecklistConditions,
-                .getExploreNotes,
-                .postLikeNote,
-                .postPurchaseNote,
-                .deleteLikeNote,
-                .deleteSharedNote:
+                .getMyImjangDetail:
             return nil
-        case .postShareNote(_, let param):
+        case .postImjang(let param as Encodable),
+                .patchImjang(_, let param as Encodable):
             return param.toDictionary()
         }
     }

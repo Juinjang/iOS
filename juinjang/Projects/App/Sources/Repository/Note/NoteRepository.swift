@@ -18,12 +18,6 @@ final class NoteRepository: NoteRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func retrieveMyNotes(param: NoteRequestDTO) -> Single<[MyNoteModel]> {
-        return NoteAPI.getMyNotes(param)
-            .request(BaseResponse<NoteListDTO<MyNoteModel>>.self, networkManager)
-            .map { try $0.unwrap().notes }
-    }
-    
     func retrieveShareableMyNotes() -> Single<[ShareSelectModel]> {
         return NoteAPI.getShareableNotes
             .request(BaseResponse<NoteListDTO<ShareSelectModel>>.self, networkManager)
@@ -36,32 +30,21 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func retrieveExploreNotes(param: ExploreNoteRequestDTO) -> Single<ExploreNoteResponseDTO> {
-        return NoteAPI.getExploreNotes(param)
-            .request(BaseResponse<ExploreNoteResponseDTO>.self, networkManager)
+    func retrieveMyImjangDetail(noteID id: Int) -> Single<MyImjangDetailModel> {
+        return NoteAPI.getMyImjangDetail(id)
+            .request(BaseResponse<MyImjangDetailModel>.self, networkManager)
             .map { try $0.unwrap() }
     }
     
-    func purchaseNote(noteID id: Int) -> Completable {
-        return NoteAPI.postPurchaseNote(id)
+    func createImjang(param: ImjangRequestDTO) -> Completable {
+        return NoteAPI.postImjang(param)
             .request(NoResultResponse.self, networkManager)
             .asCompletable()
     }
     
-    func createNoteLike(noteID id: Int) -> Single<NoteLikeDTO> {
-        return NoteAPI.postLikeNote(id)
-            .request(BaseResponse<NoteLikeDTO>.self, networkManager)
-            .map { try $0.unwrap() }
-    }
-    
-    func deleteNoteLike(noteID id: Int) -> Single<NoteLikeDTO> {
-        return NoteAPI.deleteLikeNote(id)
-            .request(BaseResponse<NoteLikeDTO>.self, networkManager)
-            .map { try $0.unwrap() }
-    }
-    
-    func deleteSharedNote(noteID id: Int) -> Completable {
-        return NoteAPI.deleteSharedNote(id)
+    func updateImjang(noteID id: Int,
+                      param: ImjangUpdateRequestDTO) -> Completable {
+        return NoteAPI.patchImjang(id, param)
             .request(NoResultResponse.self, networkManager)
             .asCompletable()
     }

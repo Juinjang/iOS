@@ -8,13 +8,10 @@
 import RxSwift
 
 protocol NoteRepositoryProtocol {
-    func retrieveMyNotes(param: NoteRequestDTO) -> Single<[MyNoteModel]>
     func retrieveShareableMyNotes() -> Single<[ShareSelectModel]>
     func retrieveChecklistConditions(noteID id: Int) -> Single<ShareableConditionDTO>
-    func retrieveExploreNotes(param: ExploreNoteRequestDTO) -> Single<ExploreNoteResponseDTO>
-    func purchaseNote(noteID id: Int) -> Completable
-    func createNoteLike(noteID id: Int) -> Single<NoteLikeDTO>
-    func deleteNoteLike(noteID id: Int)  -> Single<NoteLikeDTO>
-    func deleteSharedNote(noteID id: Int) -> Completable
+    func retrieveMyImjangDetail(noteID id: Int) -> Single<MyImjangDetailModel>
+    func createImjang(param: ImjangRequestDTO) -> Completable
+    func updateImjang(noteID id: Int, param: ImjangUpdateRequestDTO) -> Completable
 }
 
