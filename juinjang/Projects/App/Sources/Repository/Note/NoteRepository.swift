@@ -9,22 +9,55 @@ import Foundation
 import RxSwift
 
 final class NoteRepository: NoteRepositoryProtocol {
-    private var networkProvider: NetworkProvider<NoteAPI>
+    private var networkManager: JuinjangAPIManager
     private var userDefault: UserDefaultManager
-    private var jsonDecoder: JSONDecoder
     
-    init(networkProvider: NetworkProvider<NoteAPI>,
-         userDefault: UserDefaultManager,
-         jsonDecoder: JSONDecoder = JSONDecoder()) {
-        self.networkProvider = networkProvider
+    init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared,
+         userDefault: UserDefaultManager = UserDefaultManager.shared) {
+        self.networkManager = networkManager
         self.userDefault = userDefault
-        self.jsonDecoder = jsonDecoder
     }
     
-    func getShareableMyNotes() -> Single<[ShareSelectModel]> {
-        return NoteAPI.getShareableNotes
-            .request(networkProvider)
-            .mapResult(NoteListDTO<ShareSelectModel>.self, using: jsonDecoder)
-            .map { $0.notes }
+    func retrieveShareableNoteList() -> Single<[ShareSelectModel]> {
+        return NoteAPI.getShareableNoteList
+            .request(BaseResponse<NoteListDTO<ShareSelectModel>>.self, networkManager)
+            .map { try $0.unwrap().notes }
+    }
+    
+    func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableConditionDTO> {
+        return NoteAPI.getNoteChecklistConditionList(id)
+            .request(BaseResponse<ShareableConditionDTO>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerModel]> {
+        return NoteAPI.getNoteChecklist(id)
+            .request(BaseResponse<CheckListAnswerDTO>.self, networkManager)
+            .map { try $0.unwrap().checkListAnswerList }
+    }
+    
+    func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetailModel> {
+        return NoteAPI.getNoteDetail(id)
+            .request(BaseResponse<NoteDetailModel>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func createNote(param: NoteCreateRequestDTO) -> Completable {
+        return NoteAPI.postNote(param)
+            .request(NoResultResponse.self, networkManager)
+            .asCompletable()
+    }
+    
+    func updateImjang(noteID id: Int,
+                      param: NoteUpdateRequestDTO) -> Completable {
+        return NoteAPI.patchNote(id, param)
+            .request(NoResultResponse.self, networkManager)
+            .asCompletable()
+    }
+    
+    func updateNote(noteID id: Int, param: NoteUpdateRequestDTO) -> Completable {
+        return NoteAPI.patchNote(id, param)
+            .request(NoResultResponse.self, networkManager)
+            .asCompletable()
     }
 }

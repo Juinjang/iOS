@@ -127,7 +127,7 @@ final class MyNotePageCell: UICollectionViewCell {
         disposeBag = DisposeBag()
         noticeView.configure(page.category, relay: closeButtonRelay)
         filterView.configure(page.transactionType, page.saleType)
-        stopShareButton.isHidden = (page.category == .share ? false : true)
+        stopShareButton.isHidden = page.items.isEmpty || page.category != .share
         emptyView.configure(text: createEmptyViewText(category: page.category),
                             isShowButton: page.category == .share,
                             buttonTitle: "노트 공유하러 가기")

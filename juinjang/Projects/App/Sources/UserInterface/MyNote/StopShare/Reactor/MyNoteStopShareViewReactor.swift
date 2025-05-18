@@ -32,7 +32,7 @@ final class MyNoteStopShareViewReactor: Reactor {
     
     // MARK: - Dependency
     struct Dependency {
-        let myNoteRepository: MyNoteRepositoryProtocol
+        let noteRepository: SharedNoteRepositoryProtocol
     }
     
     let dependency: Dependency
@@ -46,8 +46,14 @@ final class MyNoteStopShareViewReactor: Reactor {
         switch action {
         case .viewDidLoad:
             return .concat([
-                dependency.myNoteRepository
-                    .fetchMyNotes(category: .share, offset: 0, limit: 100)
+                dependency.noteRepository
+                    .retrieveMyNotes(param: .init(
+                        noteType: "",
+                        propertyType: "",
+                        priceType: "",
+                        keyword: ""
+                    ))
+                    .asObservable()
                     .map { notes in
                         let models = notes.map { note -> MyNoteCellModel in
                             var model = MyNoteCellModel(model: note)

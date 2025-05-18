@@ -75,7 +75,9 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func callMainImjangRequest() {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self, api: .mainImjang) { response, error in
+        
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
+                                            api: .mainImjang) { response, error in
             if let error = error {
                 print(error.localizedDescription)
                 return

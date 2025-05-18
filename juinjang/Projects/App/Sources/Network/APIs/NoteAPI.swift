@@ -9,31 +9,78 @@ import Foundation
 import Alamofire
 
 enum NoteAPI: TargetType {
-    case getMyNotes
-    case getShareableNotes
+    case getShareableNoteList
+    case getNoteChecklistConditionList(Int)
+    case getNoteChecklist(Int)
+    case getNoteDetail(Int)
+    case getNoteList(String)
+    case postNote(NoteCreateRequestDTO)
+    case patchNote(Int, NoteUpdateRequestDTO)
 
     var path: String {
         switch self {
-        case .getMyNotes:
-            return "v2/users/notes"
-        case .getShareableNotes:
+        case .getShareableNoteList:
             return "v2/users/notes/shareable"
+        case .getNoteChecklistConditionList(let noteID):
+            return "v2/note/\(noteID)/checklist-condition"
+        case .getNoteChecklist(let noteID):
+            return "v2/note/\(noteID)/checklist"
+        case .getNoteDetail(let noteID):
+            return "v2/users/notes/\(noteID)"
+        case .getNoteList:
+            return "v2/users/notes"
+        case .postNote:
+            return "v2/users/notes"
+        case .patchNote(let noteID,_):
+            return "v2/users/notes/\(noteID)"
         }
     }
 
     var method: HTTPMethod {
         switch self {
-        case .getShareableNotes,
-                .getMyNotes:
+        case .getShareableNoteList,
+                .getNoteChecklistConditionList,
+                .getNoteChecklist,
+                .getNoteDetail,
+                .getNoteList:
             return .get
+        case .postNote:
+            return .post
+        case .patchNote:
+            return .patch
+        }
+    }
+    
+    var queryItems: [URLQueryItem] {
+        switch self {
+        case .getShareableNoteList,
+                .getNoteChecklistConditionList,
+                .getNoteChecklist,
+                .getNoteDetail,
+                .postNote,
+                .patchNote:
+            return []
+        case .getNoteList(let sort):
+            return [URLQueryItem(name: "sort", value: sort)]
         }
     }
 
-    var queryItems: [URLQueryItem] {
-        return []
-    }
-
     var parameters: [String : Any]? {
-        return nil
+        switch self {
+        case .getShareableNoteList,
+                .getNoteChecklistConditionList,
+                .getNoteChecklist,
+                .getNoteDetail,
+                .getNoteList:
+            return nil
+        case .postNote(let param as Encodable),
+                .patchNote(_, let param as Encodable):
+            return param.toDictionary()
+        }
+    }
+    
+    var interceptor: AuthInterceptor? {
+        return AuthInterceptor()
     }
 }
+

@@ -185,7 +185,8 @@ final class CheckListViewController: BaseViewController {
     
     // -MARK: API 요청(체크리스트 조회)
     private func showCheckList(completion: @escaping () -> Void) {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self, api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self,
+                                            api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
             if let error = error {
                 print(error.localizedDescription)
                 completion()

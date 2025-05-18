@@ -48,22 +48,28 @@ final class JuinjangAPIManager {
         }
     }
     
-    func fetchData<T: Decodable>(api: TargetType) -> Single<T> {
+    func fetchData<T: Decodable>(api: TargetType,
+                                 interceptor: RequestInterceptor?) -> Single<T> {
         return Single.create { observer in
-            AF.request(api.path,
-                       method: api.method,
-                       parameters: api.parameters,
-                       headers: HTTPHeaders(api.header),
-                       interceptor: AuthInterceptor())
-            .responseDecodable(of: T.self) { response in
-                switch response.result {
-                case .success(let data):
-                    observer(.success(data))
-                case .failure(let failure):
-                    print(failure)
-                    observer(.failure(NetworkError.failedRequest))
-                }
+            do {
+                let request = try api.asURLRequest()
+
+                AF.request(request,
+                           interceptor: interceptor)
+                    .responseDecodable(of: T.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            observer(.success(data))
+                        case .failure(let error):
+                            print(error)
+                            observer(.failure(NetworkError.failedRequest))
+                        }
+                    }
+
+            } catch {
+                observer(.failure(error))
             }
+
             return Disposables.create()
         }
     }
@@ -97,29 +103,6 @@ final class JuinjangAPIManager {
                 print(failure)
                 completionHandler(nil, .failedRequest)
             }
-        }
-    }
-    
-    func postData<T: Decodable>(api: TargetType,
-                                parameter: [String:Any]) -> Single<T> {
-        return Single.create { observer in
-            AF.request(api.path,
-                       method: api.method,
-                       parameters: parameter,
-                       encoding: JSONEncoding.default,
-                       headers: HTTPHeaders(api.header),
-                       interceptor: AuthInterceptor())
-            .responseDecodable(of: T.self) { response in
-                switch response.result {
-                case .success(let data):
-                    print(data)
-                    observer(.success(data))
-                case .failure(let failure):
-                    print(failure)
-                    observer(.failure(NetworkError.failedRequest))
-                }
-            }
-            return Disposables.create()
         }
     }
     
@@ -190,7 +173,12 @@ final class JuinjangAPIManager {
                 print(dto)
                 multipartFormData.append(jsonData, withName: "recordRequestDTO", mimeType: "application/json")
             }
-        }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor()).responseDecodable(of: RecordResponseDTO.self, completionHandler: { response in
+        },
+                  to: api.endpoint,
+                  method: api.method,
+                  headers: api.header,
+                  interceptor: AuthInterceptor())
+        .responseDecodable(of: RecordResponseDTO.self, completionHandler: { response in
             print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let responseData):

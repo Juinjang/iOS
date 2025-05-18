@@ -59,7 +59,7 @@ final class MyNoteViewReactor: Reactor {
     }
     
     struct Dependency {
-        let myNoteRepository: MyNoteRepositoryProtocol
+        let noteRepository: SharedNoteRepositoryProtocol
     }
     
     struct NotesPageState {
@@ -181,22 +181,24 @@ extension MyNoteViewReactor {
     
     // MARK: - Fetch Notes
     private func initialFetchNotes(for category: MyNoteCategoryType) -> Observable<Mutation> {
-        let pageState = getPageState(for: category)
-        let offset = 0
+        let currentNoticeState = currentState.pages.first(where: { $0.category == category })?.isShowingNotice ?? true
         
-        return dependency.myNoteRepository.fetchMyNotes(
-            category: category,
-            offset: offset,
-            limit: pageState.limit
+        return dependency.noteRepository.retrieveMyNotes(
+            param: SharedNoteRequestDTO(
+                noteType: category.toRequestType,
+                propertyType: "",
+                priceType: "",
+                keyword: ""
+            )
         ).map { notes in
             return Mutation.setPage(
                 .init(category: category,
-                      isShowingNotice: true,
+                      isShowingNotice: currentNoticeState,
                       transactionType: .total,
                       saleType: .totalSale,
                       items: notes.map { .init(model: $0) })
             )
-        }
+        }.asObservable()
     }
     
     private func getPageState(for category: MyNoteCategoryType) -> NotesPageState {

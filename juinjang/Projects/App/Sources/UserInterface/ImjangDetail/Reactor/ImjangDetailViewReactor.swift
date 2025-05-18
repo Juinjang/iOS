@@ -41,7 +41,7 @@ final class ImjangDetailViewReactor: Reactor {
     struct Dependency {
         let id: Int
         let title: String
-        let repository: ImjangDetailRepositoryProtocol
+        let repository: SharedNoteRepositoryProtocol
     }
     
     let initialState: State
@@ -75,11 +75,7 @@ final class ImjangDetailViewReactor: Reactor {
                         
                         self.currentState.isBuyer
                         ? self.createSection(for: .checkList)
-                        : self.createCheckListHolderSection(),
-                        
-                        self.currentState.isBuyer
-                        ? self.createSection(for: .review)
-                        : .empty()
+                        : self.createCheckListHolderSection()
                     )
                 }
             )
@@ -143,12 +139,12 @@ final class ImjangDetailViewReactor: Reactor {
 extension ImjangDetailViewReactor {
     private func createSection(for section: ImjangDetailSection) -> Observable<Mutation> {
         let repository = dependency.repository
-        
         let request: Observable<[ImjangDetailBaseCellItem]>
         
         switch section {
         case .info:
-            return repository.fetchInfo()
+            return repository.retrieveNoteDetail(noteID: self.dependency.id)
+                .asObservable()
                 .flatMap { model -> Observable<Mutation> in
                     let item = ImjangDetailBaseCellItem.info(
                         .init(
@@ -163,7 +159,8 @@ extension ImjangDetailViewReactor {
                     ])
                 }
         case .report:
-            request = repository.fetchReport()
+            request = repository.retrieveNoteDetailReport(noteId: self.dependency.id)
+                .asObservable()
                 .map {
                     [ImjangDetailBaseCellItem.report(
                         .init(
@@ -173,14 +170,16 @@ extension ImjangDetailViewReactor {
                     )]
                 }
         case .checkList:
-            return repository.fetchCheckList()
-                .flatMap { models -> Observable<Mutation> in
-                    let items = models.map {
+            return repository.retrieveNoteDetailCheckList(noteId: self.dependency.id)
+                .asObservable()
+                .flatMap { model -> Observable<Mutation> in
+                    let items = model.checkListAnswerList.map {
                         ImjangDetailCheckListCellItem(id: UUID().uuidString, model: $0)
                     }
-                    return Observable.from([
-                        .updateAllCheckListItems(items: items),
-                        .updateItem(
+                    
+                    return Observable.concat([
+                        .just(.updateAllCheckListItems(items: items)),
+                        .just(.updateItem(
                             section: .checkList,
                             item: items.filter {
                                 $0.model.category == CheckListCategoryType(
@@ -191,19 +190,20 @@ extension ImjangDetailViewReactor {
                                     .init(id: $0.id, model: $0.model)
                                 )
                             }
-                        )
+                        )),
+                        self.currentState.isBuyer
+                        ? .just(.updateItem(
+                            section: .review,
+                            item: [ImjangDetailBaseCellItem.review(
+                                .init(id: UUID().uuidString,
+                                      model: .init(rate: model.totalRate,
+                                                   review: model.review))
+                            )]
+                        ))
+                        : .empty()
                     ])
                 }
-        case .review:
-            request = repository.fetchReview()
-                .map {
-                    [ImjangDetailBaseCellItem.review(
-                        .init(
-                            id: UUID().uuidString,
-                            model: $0
-                        )
-                    )]
-                }
+        default: return .empty()
         }
         
         return request.map { .updateItem(section: section, item: $0) }

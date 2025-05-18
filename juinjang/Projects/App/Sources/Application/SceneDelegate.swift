@@ -21,32 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let mainViewController = SplashViewController()
         mainViewController.reactor = SplashViewReactor()
-        window?.rootViewController = ShareWriteViewController(
-            reactor: .init(
-                dependecy: .init(
-                    selectedModel: .init(noteId: 1,
-                                         purposeType: "RESIDENTIAL_PURPOSE",
-                                         propertyType: "VILLA",
-                                         priceType: "MARKET_PRICE",
-                                         name: "내집",
-                                         imageUrl: "ㅁㄴㅇ",
-                                         isScraped: false,
-                                         rate: 4.5,
-                                         price: "2200000000",
-                                         monthlyRent: nil,
-                                         pyong: 10,
-                                         floor: "10",
-                                         shortAddress: "강남구 신사동",
-                                         rewardPencil: 3),
-                    noteRepository: NoteRepository(
-                        networkProvider: NetworkProvider<NoteAPI>.provider,
-                        userDefault: UserDefaultManager.shared),
-                    userRepository: UserRepository(
-                        userDefault: UserDefaultManager.shared
-                    )
-                )
-            )
-        )
+        window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
         
         self.scene = scene

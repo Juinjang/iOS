@@ -171,13 +171,8 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         let viewController = ShareSelectViewController(
             reactor: .init(
                 dependency: .init(
-                    noteRepository: NoteRepository(
-                        networkProvider: NetworkProvider<NoteAPI>.provider,
-                        userDefault: UserDefaultManager.shared
-                    ),
-                    userRepository: UserRepository(
-                        userDefault: UserDefaultManager.shared
-                    )
+                    noteRepository: NoteRepository(),
+                    userRepository: UserRepository()
                 )
             )
         )

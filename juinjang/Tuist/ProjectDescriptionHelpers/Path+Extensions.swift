@@ -5,6 +5,8 @@ public extension Path {
         public static let googleServiceInfoDebug = Path.relativeToRoot("Projects/App/Resources/Firebase/PRD/GoogleService-Info.plist")
         
         public static let appInfo = Path.relativeToRoot("Projects/App/InfoPlists/Info.plist")
+        
+        public static let appInfoDev = Path.relativeToRoot("Projects/App/InfoPlists/Info-dev.plist")
     }
     
     enum config {

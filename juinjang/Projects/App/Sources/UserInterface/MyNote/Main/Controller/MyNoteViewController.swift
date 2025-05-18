@@ -71,7 +71,7 @@ final class MyNoteViewController: BaseViewController, View {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
                 case .searchButtonTap:
-                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(myNoteRepository: MyNoteRepository())))
+                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(noteRepository: SharedNoteRepository())))
                     self.navigationController?.pushViewController(viewController, animated: true)
                 default: break
                 }
@@ -123,7 +123,17 @@ final class MyNoteViewController: BaseViewController, View {
         pageCellEventRelay
             .filter { $0 == .shareButtonTap }
             .subscribe(with: self) { (self, _) in
-                print("노트 공유하러 가기 클릭")
+                self.navigationController?.pushViewController(
+                    ShareSelectViewController(
+                        reactor: .init(
+                            dependency: .init(
+                                noteRepository: NoteRepository(),
+                                userRepository: UserRepository()
+                            )
+                        )
+                    ),
+                    animated: true
+                )
             }
             .disposed(by: disposeBag)
         
@@ -134,7 +144,7 @@ final class MyNoteViewController: BaseViewController, View {
                     MyNoteStopShareViewController(
                         reactor: .init(
                             dependency: .init(
-                                myNoteRepository: MyNoteRepository()
+                                noteRepository: SharedNoteRepository()
                             )
                         )
                     ),
