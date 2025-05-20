@@ -116,13 +116,29 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     lazy var addressLabel = UILabel().then {
         configureLabel($0, text: "주소")
     }
+    
+    private let pyungLabel = DSLabel(.title).then {
+        $0.fontColor = .gray600
+        $0.fontSize = 18
+        $0.text = "층수·평수"
+    }
+    
+    private let floorTextField = RoundedPriceTextField(
+        unitType: .floor,
+        placeHolder: "00"
+    )
+    
+    private let pyungTextField = RoundedPriceTextField(
+        unitType: .pyung,
+        placeHolder: "000"
+    )
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")
     }
     
     lazy var explanationLabel = UILabel().then {
-        let attributedString = NSMutableAttributedString(string: "※ 별명은 리스트 구분을 위해 쓰여요.")
+        let attributedString = NSMutableAttributedString(string: "※ 별명은 나에게만 보여요.")
         attributedString.addAttribute(NSAttributedString.Key.kern, value: -0.3, range: NSRange(location: 0, length: attributedString.length)) // 글자 간격 설정
 
         let customFont = UIFont(name: "Pretendard-Medium", size: 14) ?? UIFont.systemFont(ofSize: 14)
@@ -286,6 +302,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             addressTextField,
             searchAddressButton,
             addressDetailTextField,
+            pyungLabel,
+            floorTextField,
+            pyungTextField,
             explanationLabel,
             houseNicknameTextField,
             backButton,
@@ -378,10 +397,29 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
             $0.top.equalTo(searchAddressButton.snp.bottom).offset(8)
         }
+        
+        
+        // 층수 평수 Label
+        
+        pyungLabel.snp.makeConstraints {
+            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        floorTextField.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(16)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        pyungTextField.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(16)
+            $0.left.equalTo(floorTextField.snp.right).offset(24)
+        }
+        
 
         // 집 별명 Label
         houseNicknameLabel.snp.makeConstraints {
-            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.top.equalTo(floorTextField.snp.bottom).offset(40)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
