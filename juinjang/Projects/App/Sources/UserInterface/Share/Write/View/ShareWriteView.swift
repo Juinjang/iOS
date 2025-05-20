@@ -37,7 +37,7 @@ final class ShareWriteView: BaseView {
         $0.fontSize = 13
         $0.fontColor = .gray400
         $0.fontAlignment = .center
-        $0.text = "공유 후에는 체크리스트 수정이 제한돼요"
+        $0.text = "공유 후 체크리스트 수정사항은 나에게만 보여요"
     }
     
     fileprivate let uploadButton = FilledButton(title: "업로드하기")
