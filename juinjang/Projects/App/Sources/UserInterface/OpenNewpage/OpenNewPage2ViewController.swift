@@ -10,11 +10,15 @@ import Then
 import SnapKit
 import Alamofire
 import AmplitudeSwift
+import RxSwift
 
 final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelegate {
     var newImjang: PostDto?
     var versionInfo: VersionInfo?
     var imjangId: Int? = nil
+    
+    private let repository = NoteRepository()
+    private let disposeBag = DisposeBag()
     
     // -MARK: API 요청
     func createImjang(completionHandler: @escaping (Int?, NetworkError?) -> Void) {
@@ -43,6 +47,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             "nickname": nickname,
             "addressDetail": addressDetailTextField.text?.isEmpty == false ? addressDetailTextField.text! : NSNull()
         ]
+        
+        
+        // MARK: - New API 사용 예정
         
         JuinjangAPIManager.shared.postData(type: BaseResponse<PostResponseDto>.self, api: .createImjang, parameter: parameters) { [weak self] response, error in
             guard let self else { return }
