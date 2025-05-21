@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import SnapKit
+import Then
 import Alamofire
 
 final class EditBasicInfoDetailViewController: BaseViewController {
@@ -55,6 +57,15 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     lazy var addressLabel = UILabel().then {
         configureLabel($0, text: "주소")
     }
+    
+    private let pyungLabel = DSLabel(.title).then {
+        $0.fontSize = 18
+        $0.fontColor = .gray600
+        $0.text = "층수·평수"
+    }
+    
+    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeHolder: "00")
+    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeHolder: "000")
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")
@@ -498,6 +509,9 @@ final class EditBasicInfoDetailViewController: BaseViewController {
          searchAddressButton,
          addressDetailTextField,
          explanationLabel,
+         pyungLabel,
+         floorTextField,
+         pyungTextField,
          houseNicknameTextField,
          priceLabel,
          priceView,
@@ -539,10 +553,26 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
             $0.top.equalTo(searchAddressButton.snp.bottom).offset(8)
         }
+        
+        // 층수 평수
+        pyungLabel.snp.makeConstraints {
+            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        floorTextField.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(16)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        pyungTextField.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(16)
+            $0.left.equalTo(floorTextField.snp.right).offset(24)
+        }
 
         // 집 별명 Label
         houseNicknameLabel.snp.makeConstraints {
-            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.top.equalTo(floorTextField.snp.bottom).offset(40)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
