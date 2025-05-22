@@ -68,33 +68,3 @@ extension Reactive where Base: UICollectionView {
             .distinctUntilChanged()
     }
 }
-
-extension PrimitiveSequence where Trait == SingleTrait, Element == Data {
-    func map<D: Codable>(
-        _ type: D.Type,
-        using decoder: JSONDecoder = JSONDecoder()
-    ) -> Single<D> {
-        return flatMap { data in
-            do {
-                let decoded = try decoder.decode(D.self, from: data)
-                return .just(decoded)
-            } catch {
-                return .error(error)
-            }
-        }
-    }
-    
-    func mapResult<T: Codable>(
-        _ type: T.Type,
-        using decoder: JSONDecoder = JSONDecoder()
-    ) -> Single<T> {
-        return self
-            .map(BaseResponse<T>.self, using: decoder)
-            .flatMap { response in
-                guard let result = response.result else {
-                    return .error(NetworkError.invalidData)
-                }
-                return .just(result)
-            }
-    }
-}

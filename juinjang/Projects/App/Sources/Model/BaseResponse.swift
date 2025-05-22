@@ -12,6 +12,13 @@ struct BaseResponse<T: Codable>: Codable {
     let code: String
     let message: String
     let result: T?
+    
+    func unwrap() throws -> T {
+        guard let result = result else {
+            throw NetworkError.invalidData
+        }
+        return result
+    }
 }
 
 struct NoResultResponse: Codable {

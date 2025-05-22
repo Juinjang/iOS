@@ -48,22 +48,28 @@ final class JuinjangAPIManager {
         }
     }
     
-    func fetchData<T: Decodable>(api: TargetType) -> Single<T> {
+    func fetchData<T: Decodable>(api: TargetType,
+                                 interceptor: RequestInterceptor?) -> Single<T> {
         return Single.create { observer in
-            AF.request(api.path,
-                       method: api.method,
-                       parameters: api.parameters,
-                       headers: HTTPHeaders(api.header),
-                       interceptor: AuthInterceptor())
-            .responseDecodable(of: T.self) { response in
-                switch response.result {
-                case .success(let data):
-                    observer(.success(data))
-                case .failure(let failure):
-                    print(failure)
-                    observer(.failure(NetworkError.failedRequest))
-                }
+            do {
+                let request = try api.asURLRequest()
+
+                AF.request(request,
+                           interceptor: interceptor)
+                    .responseDecodable(of: T.self) { response in
+                        switch response.result {
+                        case .success(let data):
+                            observer(.success(data))
+                        case .failure(let error):
+                            print(error)
+                            observer(.failure(NetworkError.failedRequest))
+                        }
+                    }
+
+            } catch {
+                observer(.failure(error))
             }
+            
             return Disposables.create()
         }
     }

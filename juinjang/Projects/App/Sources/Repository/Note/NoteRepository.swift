@@ -9,22 +9,18 @@ import Foundation
 import RxSwift
 
 final class NoteRepository: NoteRepositoryProtocol {
-    private var networkProvider: NetworkProvider<NoteAPI>
+    private var networkManager: JuinjangAPIManager
     private var userDefault: UserDefaultManager
-    private var jsonDecoder: JSONDecoder
     
-    init(networkProvider: NetworkProvider<NoteAPI>,
-         userDefault: UserDefaultManager,
-         jsonDecoder: JSONDecoder = JSONDecoder()) {
-        self.networkProvider = networkProvider
+    init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared,
+         userDefault: UserDefaultManager = UserDefaultManager.shared) {
+        self.networkManager = networkManager
         self.userDefault = userDefault
-        self.jsonDecoder = jsonDecoder
     }
     
-    func getShareableMyNotes() -> Single<[ShareSelectModel]> {
-        return NoteAPI.getShareableNotes
-            .request(networkProvider)
-            .mapResult(NoteListDTO<ShareSelectModel>.self, using: jsonDecoder)
-            .map { $0.notes }
+    func retrieveShareableNoteList() -> Single<[ShareSelectModel]> {
+        return NoteAPI.getShareableNoteList
+            .request(BaseResponse<NoteListDTO<ShareSelectModel>>.self, networkManager)
+            .map { try $0.unwrap().notes }
     }
 }

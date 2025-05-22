@@ -125,7 +125,8 @@ extension ShareWriteViewReactor {
     private func fetchUserNickname() -> Observable<Mutation> {
         return dependency
             .userRepository
-            .getUserNickname()
+            .retrieveUserNickname()
+            .asObservable()
             .map { .updateNickname(nickname: $0) }
     }
     
