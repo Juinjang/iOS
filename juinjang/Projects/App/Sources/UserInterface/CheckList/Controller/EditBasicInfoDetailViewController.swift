@@ -11,7 +11,6 @@ import Then
 import Alamofire
 
 final class EditBasicInfoDetailViewController: BaseViewController {
-    
     var transactionModel = TransactionModel()
     var imjangId: Int? = nil
     var versionInfo: VersionInfo? = nil
@@ -27,9 +26,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     var priceDetailLabel: UILabel?
     var priceDetailLabel2: UILabel?
-    
     var delegate: SendDetailEditData?
-    
+
     let contentView = UIView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -170,15 +168,23 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var saleButton = UIButton().then {
-        configureButton($0, normalImage: UIImage.OpenNewPage.saleButton, selectedImage: UIImage.OpenNewPage.saleSelectedButton, action: #selector(buttonPressed))
+        configureButton($0,
+                        normalImage: UIImage.OpenNewPage.saleButton,
+                        selectedImage: UIImage.OpenNewPage.saleSelectedButton, action: #selector(buttonPressed))
     }
     
     lazy var jeonseButton = UIButton().then {
-        configureButton($0, normalImage: UIImage.OpenNewPage.jeonseButton, selectedImage: UIImage.OpenNewPage.jeonseSelectedButton, action: #selector(buttonPressed))
+        configureButton($0,
+                        normalImage: UIImage.OpenNewPage.jeonseButton,
+                        selectedImage: UIImage.OpenNewPage.jeonseSelectedButton,
+                        action: #selector(buttonPressed))
     }
     
     lazy var monthlyRentButton = UIButton().then {
-        configureButton($0, normalImage: UIImage.OpenNewPage.monthlyrentButton, selectedImage: UIImage.OpenNewPage.monthlyrentSelectedButton, action: #selector(buttonPressed))
+        configureButton($0,
+                        normalImage: UIImage.OpenNewPage.monthlyrentButton,
+                        selectedImage: UIImage.OpenNewPage.monthlyrentSelectedButton,
+                        action: #selector(buttonPressed))
     }
     
     lazy var priceView = UIView().then {
@@ -225,7 +231,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             }
         }
     }()
-    
     
     lazy var threeDigitPriceField = UITextField().then {
         $0.layer.backgroundColor = UIColor.stroke2.cgColor
