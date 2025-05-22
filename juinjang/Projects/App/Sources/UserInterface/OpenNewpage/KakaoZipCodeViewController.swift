@@ -29,8 +29,7 @@ final class KakaoZipCodeViewController: BaseViewController {
 
         webView = WKWebView(frame: .zero, configuration: configuration)
         self.webView?.navigationDelegate = self
-
-        guard let url = URL(string: "https://suzinlim.github.io/Kakao-Postcode/"),
+        guard let url = URL(string: "https://juinjang.github.io/Kakao-Postcode/"),
             let webView = webView
             else { return }
         let request = URLRequest(url: url) // URLRequest 생성해서
@@ -55,7 +54,8 @@ final class KakaoZipCodeViewController: BaseViewController {
 }
 
 extension KakaoZipCodeViewController: WKScriptMessageHandler {
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController,
+                               didReceive message: WKScriptMessage) {
         if let data = message.body as? [String: Any] {
             address = data["roadAddress"] as? String ?? ""
         }
@@ -73,16 +73,19 @@ extension KakaoZipCodeViewController: WKScriptMessageHandler {
                 editBasicInfoDetailVC.addressTextField.text = address
             }
         }
+        
         self.dismiss(animated: true, completion: nil)
     }
 }
 
 extension KakaoZipCodeViewController: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView,
+                 didStartProvisionalNavigation navigation: WKNavigation!) {
         indicator.startAnimating()
     }
 
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_ webView: WKWebView,
+                 didFinish navigation: WKNavigation!) {
         indicator.stopAnimating()
     }
 }
