@@ -6,10 +6,15 @@
 //
 
 import UIKit
+import Kingfisher
+import SnapKit
+import Then
 
 final class PhotoCollectionViewCell: UICollectionViewCell {
     private let scrollView = UIScrollView()
-    private let imageView = UIImageView()
+    private let imageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -27,11 +32,7 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
     
     func configureCell(imageDto: ImageDto?) {
         guard let imageDto else { return }
-        if let url = URL(string: imageDto.imageUrl) {
-            imageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
-        } else {
-            imageView.image = UIImage(named: "1")
-        }
+        imageView.kf.setImage(with: URL(string: imageDto.imageUrl))
     }
     
     private func configureHierarchy() {
@@ -47,10 +48,11 @@ final class PhotoCollectionViewCell: UICollectionViewCell {
             make.width.equalToSuperview()
             make.height.lessThanOrEqualToSuperview()
             make.edges.equalTo(scrollView.contentLayoutGuide)
+            make.centerY.equalToSuperview()
         }
     }
     private func configureView() {
-        contentView.backgroundColor = .mainWhite
+        contentView.backgroundColor = .clear
         
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
