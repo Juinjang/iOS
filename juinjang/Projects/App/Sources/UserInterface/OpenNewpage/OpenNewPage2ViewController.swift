@@ -51,7 +51,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         
         // MARK: - New API 사용 예정
         
-        JuinjangAPIManager.shared.postData(type: BaseResponse<PostResponseDto>.self, api: .createImjang, parameter: parameters) { [weak self] response, error in
+        JuinjangAPIManager.shared.postData(type: BaseResponse<PostResponseDto>.self,
+                                           api: .createImjang,
+                                           parameter: parameters) { [weak self] response, error in
             guard let self else { return }
             if error == nil {
                 guard let response, let result = response.result else {
