@@ -7,6 +7,7 @@
 
 import UIKit
 import SkeletonView
+import RxSwift
 
 protocol SendFilterItemDelegate: AnyObject {
     func sendFilterItem(filter: Filter)
@@ -22,7 +23,7 @@ final class ImjangListViewController: BaseViewController {
     private let deleteButton = UIButton()   // navigationBar 삭제 버튼
     
     weak var deleteImjangListDelegate: DeleteImjangListDelegate?
-    private var scrapImjangList: [ListDto] = [] {
+    private var scrapImjangList: [NoteDTO] = [] {
         didSet(oldValue) {
             if oldValue.isEmpty && !scrapImjangList.isEmpty {   // 데이터가 존재하게 됐을 때
                 mainView.collectionView.collectionViewLayout = mainView.createCollectionViewLayout(isScrapEmpty: false)
@@ -32,7 +33,7 @@ final class ImjangListViewController: BaseViewController {
 
         }
     }
-    var imjangList: [ListDto] = [] {
+    var imjangList: [NoteDTO] = [] {
         didSet(oldValue) {
             if !oldValue.isEmpty && imjangList.isEmpty {
                 mainView.emptyBackgroundView.isHidden = false
@@ -45,7 +46,23 @@ final class ImjangListViewController: BaseViewController {
     }
     
     private var currentFilter: Filter = .update
-
+    
+    struct Dependency {
+        let noteRepository: NoteRepositoryProtocol
+    }
+    
+    private let dependency: Dependency
+    private var disposeBag = DisposeBag()
+    
+    init(dependency: Dependency) {
+        self.dependency = dependency
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -95,17 +112,17 @@ extension ImjangListViewController {
     private func fetchImjangList(sort: Filter = .update, setScrap: Bool = false) {
         print(#function)
         showSkeletonView()
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: sort.sortValue)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-                self.imjangList = result.limjangList
-                self.setData(scrapedList: result.limjangList)   // 스크랩된것들 scrapList에 추가
+        dependency.noteRepository.retrieveNoteList(sort: sort.sortValue)
+            .asObservable()
+            .subscribe(with: self) { owner, noteResultDTO in
+                print(noteResultDTO)
+                let notes = noteResultDTO.notes
+                self.imjangList = notes
+                self.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
                 self.mainView.collectionView.reloadData()
-            } else {
-                print("failedRequest")
             }
-        }
+            .disposed(by: disposeBag)
+        
     }
     
     private func showSkeletonView() {
@@ -118,21 +135,19 @@ extension ImjangListViewController {
     
     @objc private func refreshImjangList() {
         print(#function)
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: currentFilter.sortValue)) { response, error in
-            if error == nil {
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-                self.imjangList = result.limjangList
-                self.setData(scrapedList: result.limjangList)   // 스크랩된것들 scrapList에 추가
+        dependency.noteRepository.retrieveNoteList(sort: currentFilter.sortValue)
+            .asObservable()
+            .subscribe(with: self) { owner, noteResultDTO in
+                let notes = noteResultDTO.notes
+                self.imjangList = notes
+                self.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
                 self.mainView.collectionView.reloadData()
-            } else {
-                print("failedRequest")
             }
-        }
+            .disposed(by: disposeBag)
     }
     
     // 스크랩 리스트 설정
-    func setData(scrapedList: [ListDto]) {
+    func setData(scrapedList: [NoteDTO]) {
         scrapImjangList = []
         for item in scrapedList {
             if item.isScraped && scrapImjangList.count < 10 {
@@ -196,56 +211,56 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     func deleteImjangList(_ deleteIdList: [Int]) {
         deleteImjangListDelegate?.deleteImjangList(deleteIdList)
         imjangList.removeAll { imjang in
-            deleteIdList.contains(imjang.limjangId)
+            deleteIdList.contains(imjang.noteId)
         }
 
         scrapImjangList.removeAll { scrapImjang in
-            deleteIdList.contains(scrapImjang.limjangId)
+            deleteIdList.contains(scrapImjang.noteId)
         }
         mainView.collectionView.reloadData()
     }
     
-    private func setScrap(imjangNote: ListDto) {
+    private func setScrap(imjangNote: NoteDTO) {
         if scrapImjangList.count < 10 {
             scrapImjangList.append(imjangNote)
         }
     }
     
-    private func cancelScrap(imjangId: Int) {
-        if let index = scrapImjangList.firstIndex(where: { $0.limjangId == imjangId }) {
+    private func cancelScrap(noteId: Int) {
+        if let index = scrapImjangList.firstIndex(where: { $0.noteId == noteId }) {
             scrapImjangList.remove(at: index)
         }
 
-        setIsScrap(imjangId: imjangId, isScraped: false)
+        setIsScrap(noteId: noteId, isScraped: false)
         mainView.collectionView.reloadData()
     }
 
-    private func setScrap(imjangId: Int) {
-        setIsScrap(imjangId: imjangId, isScraped: true)
+    private func setScrap(noteId: Int) {
+        setIsScrap(noteId: noteId, isScraped: true)
 
-        guard let imjang = getImjang(imjangId: imjangId) else { return }
+        guard let imjang = getImjang(noteId: noteId) else { return }
         scrapImjangList.insert(imjang, at: 0)
         mainView.collectionView.reloadData()
     }
     
-    private func getImjang(imjangId: Int) -> ListDto? {
-        if let index = imjangList.firstIndex(where: { $0.limjangId == imjangId }) {
+    private func getImjang(noteId: Int) -> NoteDTO? {
+        if let index = imjangList.firstIndex(where: { $0.noteId == noteId }) {
             let imjang = imjangList[index]
             return imjang
         }
         return nil
     }
 
-    private func setIsScrap(imjangId: Int, isScraped: Bool) {
-        if let imjangIndex = imjangList.firstIndex(where: { $0.limjangId == imjangId }) {
+    private func setIsScrap(noteId: Int, isScraped: Bool) {
+        if let imjangIndex = imjangList.firstIndex(where: { $0.noteId == noteId }) {
             var imjang = imjangList[imjangIndex]
             imjang.isScraped = isScraped
             imjangList[imjangIndex] = imjang
         }
     }
 
-    private func scrapRequest(imjangId: Int) {
-        JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .scrap(imjangId: imjangId)) { response, error in
+    private func scrapRequest(noteId: Int) {
+        JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .scrap(imjangId: noteId)) { response, error in
             if let error = error {
                 print(error.localizedDescription)
             }
@@ -255,8 +270,8 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         }
     }
         
-    private func cancelScrapRequest(imjangId: Int) {
-        JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .cancelScrap(imjangId: imjangId)) { response, error in
+    private func cancelScrapRequest(noteId: Int) {
+        JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .cancelScrap(imjangId: noteId)) { response, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
@@ -298,26 +313,26 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     // 전체 리스트 - 북마크 버튼 클릭 시
     @objc private func bookMarkButtonClicked(sender: UIButton) {
         let imjangNote = imjangList[sender.tag]
-        let imjangId = imjangNote.limjangId
+        let noteId = imjangNote.noteId
         if imjangNote.isScraped {   // 이미 스크랩 되어있으면 스크랩 취소
-            cancelScrap(imjangId: imjangId)
-            cancelScrapRequest(imjangId: imjangId)
+            cancelScrap(noteId: noteId)
+            cancelScrapRequest(noteId: noteId)
         } else {
-            setScrap(imjangId: imjangId)
-            scrapRequest(imjangId: imjangId)
+            setScrap(noteId: noteId)
+            scrapRequest(noteId: noteId)
         }
     }
     
     // 스크랩 - 북마크 버튼 클릭 시
     @objc private func scrapBookmarkButtonClicked(sender: UIButton) {
         let imjangNote = scrapImjangList[sender.tag]
-        let imjangId = imjangNote.limjangId
+        let noteId = imjangNote.noteId
         if imjangNote.isScraped {   // 이미 스크랩 되어있으면 스크랩 취소
-            cancelScrap(imjangId: imjangId)
-            cancelScrapRequest(imjangId: imjangId)
+            cancelScrap(noteId: noteId)
+            cancelScrapRequest(noteId: noteId)
         } else {
-            setScrap(imjangId: imjangId)
-            scrapRequest(imjangId: imjangId)
+            setScrap(noteId: noteId)
+            scrapRequest(noteId: noteId)
         }
     }
 }
@@ -349,7 +364,7 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ScrapCollectionViewCell.identifier, for: indexPath) as? ScrapCollectionViewCell else { return UICollectionViewCell() }
                 
                 let item = scrapImjangList[indexPath.item]
-                cell.setData(imjangNote: item)
+                cell.setData(note: item)
                 cell.bookMarkButton.tag = indexPath.row
                 cell.bookMarkButton.addTarget(self, action: #selector(scrapBookmarkButtonClicked), for: .touchUpInside)
                 
@@ -360,7 +375,7 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                 let item = imjangList[indexPath.item]
                 cell.bookMarkButton.tag = indexPath.row
                 cell.bookMarkButton.addTarget(self, action: #selector(bookMarkButtonClicked), for: .touchUpInside)
-                cell.configureCell(imjangNote: item)
+                cell.configureCell(note: item)
                 
                 return cell
             }
@@ -374,16 +389,16 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
             switch imjangSection {
             case .scrap:
                 let item = scrapImjangList[indexPath.row]
-                callVersionRequest(imjangId: item.limjangId) { [weak self] version in
+                callVersionRequest(imjangId: item.noteId) { [weak self] version in
                 guard let self else { return }
                     if let version = version {
-                      self.showImjangNoteVC(imjangId: item.limjangId, version: version)
+                      self.showImjangNoteVC(imjangId: item.noteId, version: version)
                     } else {
-                      self.showImjangNoteVC(imjangId: item.limjangId, version: version)
+                      self.showImjangNoteVC(imjangId: item.noteId, version: version)
                     }
                 }
             case .list:
-                let imjangId = imjangList[indexPath.row].limjangId
+                let imjangId = imjangList[indexPath.row].noteId
                 callVersionRequest(imjangId: imjangId) { [weak self] version in
                     guard let self else { return }
                     if let version = version {
