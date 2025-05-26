@@ -34,7 +34,7 @@ enum DSFontStyle {
 }
 
 final class DSLabel: UILabel {
-    var fontColor: UIColor = .gray400 { didSet { updateAttributedText() } }
+    var fontColor: UIColor = .gray600 { didSet { updateAttributedText() } }
     var fontAlignment: NSTextAlignment = .left { didSet { updateAttributedText() } }
     var fontSize: CGFloat = 14 { didSet { updateAttributedText() } }
     var fontWeight: UIFont.PretendardWeight = .bold { didSet { updateAttributedText() }}
