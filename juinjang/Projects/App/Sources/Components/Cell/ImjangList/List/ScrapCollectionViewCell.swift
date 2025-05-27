@@ -21,28 +21,11 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
     let emptyBackgroundView = UIView().then {
         $0.backgroundColor = .stroke2
     }
-    let emptyImage = UIImageView().then {
-        $0.image = UIImage.Main.gallery
-        $0.contentMode = .scaleAspectFit
-    }
+    let emptyImage = UIImageView()
     
-    // 방 이름 레이블
-    let roomNameStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.distribution = .equalSpacing
-        $0.spacing = 4
-    }
     let roomNameLabel = DSLabel(.h3)
     let roomIcon = UIImageView()
     
-    
-    let starStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.distribution = .equalSpacing
-        $0.spacing = 2
-    }
     let starIcon = UIImageView()
     let scoreLabel = DSLabel(.title)
     
@@ -251,11 +234,7 @@ extension ScrapCollectionViewCell {
     private func setStackViewBackground(propertyType: String, isEmpty: Bool) {
         emptyImage.isHidden = isEmpty ? false : true
         if isEmpty {
-            totalStackView.addSubview(emptyImage)
-            emptyImage.snp.makeConstraints {
-                $0.center.equalTo(totalStackView)
-                $0.size.equalTo(50)
-            }
+            totalStackView.addArrangedSubview(emptyImage)
             
             if let propertyType = PropertyType(rawValue: propertyType) {
                 emptyImage.image = propertyType.detailImage
@@ -269,17 +248,16 @@ extension ScrapCollectionViewCell {
 // MARK: - Configure UI
 extension ScrapCollectionViewCell {
     private func configureHierarchy() {
-        [totalStackView, roomNameStackView, starStackView, roomPriceLabel, roomAddressLabel, bookMarkButton].forEach {
-            contentView.addSubview($0)
-        }
-        
-        [roomNameLabel, roomIcon].forEach {
-            roomNameStackView.addArrangedSubview($0)
-        }
-        
-        [starIcon, scoreLabel].forEach {
-            starStackView.addArrangedSubview($0)
-        }
+        contentView.add(
+            totalStackView,
+            roomNameLabel,
+            roomIcon,
+            scoreLabel,
+            starIcon,
+            roomPriceLabel,
+            roomAddressLabel,
+            bookMarkButton
+        )
     }
     
     private func configureLayout() {
@@ -289,7 +267,7 @@ extension ScrapCollectionViewCell {
             $0.height.equalTo(117)
         }
         
-        roomNameStackView.snp.makeConstraints {
+        roomNameLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(12)
             $0.top.equalTo(totalStackView.snp.bottom).offset(8)
             $0.height.equalTo(24)
@@ -297,19 +275,26 @@ extension ScrapCollectionViewCell {
         
         roomIcon.snp.makeConstraints {
             $0.size.equalTo(18)
+            $0.centerY.equalTo(roomNameLabel)
+            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(2)
+            $0.trailing.lessThanOrEqualTo(starIcon.snp.leading).offset(-2)
         }
         
-        starStackView.snp.makeConstraints {
-            $0.verticalEdges.equalTo(roomNameStackView)
+        scoreLabel.snp.makeConstraints {
+            $0.top.equalTo(totalStackView.snp.bottom).offset(8)
             $0.trailing.equalToSuperview().inset(12)
+            $0.height.equalTo(23)
         }
+        
         starIcon.snp.makeConstraints {
             $0.size.equalTo(16)
+            $0.centerY.equalTo(scoreLabel)
+            $0.trailing.equalTo(scoreLabel.snp.leading).offset(-2)
         }
         
         roomPriceLabel.snp.makeConstraints {
             $0.horizontalEdges.equalTo(totalStackView)
-            $0.top.equalTo(roomNameStackView.snp.bottom)
+            $0.top.equalTo(roomNameLabel.snp.bottom)
             $0.height.equalTo(23)
         }
         
@@ -325,7 +310,8 @@ extension ScrapCollectionViewCell {
         }
     }
     
-    override func draw(_ rect: CGRect) {
+    override func layoutSubviews() {
+        super.layoutSubviews()
         totalStackView.layer.cornerRadius = 5
     }
     
