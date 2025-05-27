@@ -203,7 +203,7 @@ extension ScrapCollectionViewCell {
     private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
         switch priceType {
         case .SALE, .PULL_RENT, .MARKET_PRICE:
-            roomPriceLabel.text = "\(priceType.title) \(String(describing: note.price.formatToKoreanCurrencyWithZero))"
+            roomPriceLabel.text = "\(priceType.title) \( note.price.formatToKoreanCurrencyWithZero())"
         case .MONTHLY_RENT:
             roomPriceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero()) / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
@@ -227,7 +227,7 @@ extension ScrapCollectionViewCell {
     }
     
     private func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        starIcon.tintColor = empty ? .null : .main
         scoreLabel.textColor = empty ? .null : .main
     }
     
@@ -332,7 +332,7 @@ extension ScrapCollectionViewCell {
         roomNameLabel.design(text: "", font: .pretendard(size: 18, weight: .bold))
         roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         
-        starIcon.design(image: UIImage.starEmpty, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
         scoreLabel.design(textColor: .null, font: .pretendard(size: 16, weight: .semiBold))
         roomAddressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .mainWhite)
