@@ -224,17 +224,18 @@ extension ImjangListView {
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(106))
+            heightDimension: .estimated(132))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        group.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 24, bottom: 0, trailing: 24)
+        group.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 22, bottom: 0, trailing: 22)
         
         let section = NSCollectionLayoutSection(group: group)
         
         section.interGroupSpacing = 8
         
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                       heightDimension: .absolute(49)),
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1.0),
+                        heightDimension: .absolute(49)),
                     elementKind: UICollectionView.elementKindSectionHeader,
                     alignment: .top
                 )

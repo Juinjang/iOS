@@ -6,18 +6,27 @@
 //
 
 import UIKit
+import Then
+import SnapKit
 
 final class ImjangNoteCollectionViewCell: UICollectionViewCell {
-    let roomThumbnailImageView = UIImageView()
-    let roomNameLabel = UILabel()
-    let roomIcon = UIImageView()
-    let roomNameStackView = UIStackView()
-    let priceLabel = UILabel()
-    let starIcon = UIImageView()
-    let scoreLabel = UILabel()
-    let starStackView = UIStackView()
-    let addressLabel = UILabel()
+    private let roomThumbnailImageView = UIImageView()
+    private let roomNameLabel = UILabel()
+    private let roomIcon = UIImageView()
+    
+    private let priceLabel = DSLabel(.body)
+    private let pyongFloorLabel = DSLabel(.reguler).then {
+        $0.fontWeight = .medium
+        $0.fontColor = .gray400
+    }
+    private let addressLabel = UILabel()
+    
+    private let starIcon = UIImageView()
+    private let scoreLabel = UILabel()
+    
     let bookMarkButton = UIButton()
+    
+    private let seperatorView = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -32,50 +41,52 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        configureCell(imjangNote: nil)
+        configureCell(note: nil)
         self.roomThumbnailImageView.image = nil
     }
 }
 
 // MARK: - Configure Cell
 extension ImjangNoteCollectionViewCell {
-    func configureCell(imjangNote: ListDto?) {
-        guard let imjangNote else { return }
+    func configureCell(note: NoteDTO?) {
+        guard let note else { return }
         
-        roomNameLabel.text = imjangNote.nickname
-        let priceTypeString: String
-        switch imjangNote.priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        case 3:
-            priceTypeString = "실거래가"
-        default:
-            priceTypeString = "" // 값이 없을 경우 공백 처리
+
+        roomNameLabel.text = note.name
+        setScore(score: note.rate)
+        
+        priceLabel.text = note.price
+        
+        if note.pyong == nil || note.floor == nil {
+            pyongFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
+        } else {
+            if let pyong = note.pyong, let floor = note.floor {
+                pyongFloorLabel.text = "\(pyong)평 \(floor)층"
+            }
         }
-        setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
-       
-        setScore(score: imjangNote.totalAverage)
         
-        addressLabel.text = imjangNote.address
+        addressLabel.text = note.address
+
+        if let priceType = PriceType(rawValue: note.priceType) {
+            setPriceLabel(note: note, priceType: priceType)
+        }
         
-        let image = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
+        addressLabel.text = note.address
+        
+        let image = note.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(image, for: .normal)
         
-        let images = imjangNote.images
+        let images = note.imageUrl
         if images.isEmpty {
-            let image = UIImage.ImjangList.empty
-            DispatchQueue.main.async {
-                self.roomThumbnailImageView.image = image
+            if let propertyType = PropertyType(rawValue: note.propertyType) {
+                roomThumbnailImageView.image = propertyType.detailImage
+            } else {
+                roomThumbnailImageView.image = UIImage.ImjangList.empty
             }
         } else {
             let image = images[0]
             if let url = URL(string: image) {
                 DispatchQueue.main.async {
-                    //                self.roomThumbnailImageView.image = UIImage(named: image)  // 임시
                     self.roomThumbnailImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
                 }
             }
@@ -84,23 +95,12 @@ extension ImjangNoteCollectionViewCell {
     }
     
     // 가격 설정
-    private func setPriceLabel(priceList: [String], priceType: String) {
-        switch priceList.count {
-        case 1:
-            let priceString = priceList[0]
-            if priceType.isEmpty {
-                priceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                priceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
-        case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-
-            priceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
-        default:
-            priceLabel.text = "편집을 통해 가격을 설정해주세요."
+    private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            priceLabel.text = "\(priceType.title) \(String(describing: note.price.formatToKoreanCurrencyWithZero()))"
+        case .MONTHLY_RENT:
+            priceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero()) / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
     }
     
@@ -122,7 +122,7 @@ extension ImjangNoteCollectionViewCell {
     }
     
     func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        starIcon.tintColor = empty ? .null : .main
         scoreLabel.textColor = empty ? .null : .main
     }
 }
@@ -131,69 +131,90 @@ extension ImjangNoteCollectionViewCell {
 extension ImjangNoteCollectionViewCell {
     
     private func configureHierarchy() {
-        [roomThumbnailImageView, roomNameStackView, priceLabel, starStackView, addressLabel, bookMarkButton].forEach {
-            contentView.addSubview($0)
-        }
-        [roomNameLabel, roomIcon].forEach {
-            roomNameStackView.addArrangedSubview($0)
-        }
-        [starIcon, scoreLabel].forEach {
-            starStackView.addArrangedSubview($0)
-        }
+        contentView.add(
+            roomThumbnailImageView,
+            roomNameLabel,
+            roomIcon,
+            priceLabel,
+            pyongFloorLabel,
+            addressLabel,
+            scoreLabel,
+            starIcon,
+            bookMarkButton,
+            seperatorView
+        )
     }
     
     private func configureLayout() {
         roomThumbnailImageView.snp.makeConstraints {        // 방 썸네일 사진
-            $0.leading.equalTo(contentView.snp.leading).offset(12)
-            $0.centerY.equalTo(contentView)
-            $0.size.equalTo(82)
+            $0.leading.equalToSuperview()
+            $0.verticalEdges.equalToSuperview().inset(12)
+            $0.width.equalTo(144)
+            $0.height.equalTo(112)
         }
         
-        roomNameStackView.snp.makeConstraints {
-            $0.top.equalTo(contentView).offset(12)
-            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(8)
-            $0.trailing.lessThanOrEqualTo(contentView.snp.trailing).inset(12)
-            $0.height.equalTo(24)
+        roomNameLabel.snp.makeConstraints {
+            $0.top.equalTo(roomThumbnailImageView.snp.top).offset(1)
+            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(12)
+            $0.height.equalTo(23)
         }
         
         roomIcon.snp.makeConstraints {
-            $0.size.equalTo(16)
+            $0.size.equalTo(18)
+            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(4)
+            $0.trailing.lessThanOrEqualToSuperview()
+            $0.centerY.equalTo(roomNameLabel)
         }
         
         priceLabel.snp.makeConstraints {
-            $0.top.equalTo(roomNameStackView.snp.bottom)
+            $0.top.equalTo(roomNameLabel.snp.bottom)
             $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.trailing.equalTo(contentView.snp.trailing).inset(12)
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(23)
         }
         
-        starStackView.snp.makeConstraints {
-            $0.height.equalTo(20)
+        pyongFloorLabel.snp.makeConstraints {
             $0.top.equalTo(priceLabel.snp.bottom)
             $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.trailing.greaterThanOrEqualTo(contentView.snp.trailing).inset(12)
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(19)
+        }
+        
+        addressLabel.snp.makeConstraints {
+            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.top.equalTo(pyongFloorLabel.snp.bottom)
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(19)
+        }
+    
+        bookMarkButton.snp.makeConstraints {
+            $0.bottom.equalTo(contentView).inset(12)
+            $0.trailing.equalToSuperview()
+            $0.size.equalTo(18)
+        }
+        
+        scoreLabel.snp.makeConstraints {
+            $0.bottom.equalTo(roomThumbnailImageView.snp.bottom).offset(-2)
+            $0.leading.equalTo(starIcon.snp.trailing).offset(3)
+            $0.height.equalTo(20)
         }
         
         starIcon.snp.makeConstraints {
-            $0.width.height.equalTo(14)
-        }
-        bookMarkButton.snp.makeConstraints {
-            $0.bottom.trailing.equalTo(contentView).inset(12)
-            $0.size.equalTo(18)
-        }
-        addressLabel.snp.makeConstraints {
+            $0.size.equalTo(14)
             $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.top.equalTo(starStackView.snp.bottom)
-            $0.trailing.equalTo(bookMarkButton.snp.leading).offset(-8)
+            $0.centerY.equalTo(scoreLabel.snp.centerY)
         }
         
+        seperatorView.snp.makeConstraints {
+            $0.height.equalTo(1)
+            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.equalToSuperview()
+        }
     }
     
-    override func draw(_ rect: CGRect) {
-        contentView.clipsToBounds = true
-        contentView.layer.cornerRadius = 10
-        contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = UIColor.stroke.cgColor
-        roomThumbnailImageView.layer.cornerRadius = 5
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        roomThumbnailImageView.layer.cornerRadius = 6
         roomThumbnailImageView.clipsToBounds = true
     }
     
@@ -201,25 +222,20 @@ extension ImjangNoteCollectionViewCell {
         contentView.backgroundColor = .mainWhite
         
         roomThumbnailImageView.contentMode = .scaleAspectFill
-        roomNameStackView.axis = .horizontal
-        roomNameStackView.spacing = 4
-        roomNameStackView.alignment = .center
-        roomNameStackView.distribution = .fill
-        
-        starStackView.axis = .horizontal
-        starStackView.spacing = 4
-        starStackView.alignment = .center
-        starStackView.distribution = .fill
-
         
         roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         roomNameLabel.design(text:"", font: .pretendard(size: 16, weight: .bold))
-        priceLabel.design(text:"", font: .pretendard(size: 16, weight: .semiBold))
         
-        starIcon.design(image: UIImage.star, contentMode: .scaleAspectFit)
+        priceLabel.fontColor = .gray450
+        
+        addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 13, weight: .medium))
+        
+        starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
+        
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
-        addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         
         bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .clear)
+        
+        seperatorView.backgroundColor = .stroke
     }
 }
