@@ -13,7 +13,7 @@ final class ShareCompletedButton: UIButton {
     private let mainTitleLabel = DSLabel(.title).then {
         $0.fontSize = 14
         $0.fontColor = .main
-        $0.text = "공유가 완료된 임장노트예요\n공유 후에는 수정할 수 없어요"
+        $0.text = "공유가 완료된 임장노트예요\n공유하면 임장노트 수정은 할 수 없어요"
         $0.fontAlignment = .center
     }
     
