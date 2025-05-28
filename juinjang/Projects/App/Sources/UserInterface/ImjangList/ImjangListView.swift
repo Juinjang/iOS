@@ -35,7 +35,9 @@ final class ImjangListView: UIView {
     
     private func configureHierarchy() {
         addSubview(emptyBackgroundView)
-        [emptyLogoImageView, emptyMessageLabel, newPageButton].forEach {
+        [emptyLogoImageView,
+         emptyMessageLabel,
+         newPageButton].forEach {
             emptyBackgroundView.addSubview($0)
         }
         addSubview(collectionView)

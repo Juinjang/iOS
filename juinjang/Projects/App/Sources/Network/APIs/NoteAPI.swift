@@ -22,7 +22,7 @@ enum NoteAPI: TargetType {
         case .getShareableNoteList:
             return "v2/users/notes/shareable"
         case .getNoteChecklistConditionList(let noteID):
-            return "v2/note/\(noteID)/checklist-condition"
+            return "v2/users/notes/\(noteID)/checklist-condition"
         case .getNoteChecklist(let noteID):
             return "v2/note/\(noteID)/checklist"
         case .getNoteDetail(let noteID):

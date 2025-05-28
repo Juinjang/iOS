@@ -42,7 +42,8 @@ final class OpenNewPageViewController: BaseViewController {
     var selectedPurposeType: Int?
     var selectedPropertyType: Int?
     var selectedPriceType: Int = 3 // 기본값 실거래가로 설정
-    var selectedPrice: [String] = []
+    var selectedPrice: String = ""
+    var selectedMonthlyRent: String = ""
     
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건
     
@@ -1136,12 +1137,12 @@ final class OpenNewPageViewController: BaseViewController {
         // threeDigitPriceField와 fourDigitPriceField의 값을 합쳐서 selectedPrice에 저장
         let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
         let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-        selectedPrice = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)]
+        selectedPrice = String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)
 
         // fourDigitMonthlyRentField의 값이 있다면 추가
         if let monthlyRentValue = fourDigitMonthlyRentField.text, !monthlyRentValue.isEmpty {
             if let monthlyRent = Int(monthlyRentValue) {
-                selectedPrice.append(String(monthlyRent * 10000))
+                self.selectedMonthlyRent = String(monthlyRent * 10000)
             }
         }
         
@@ -1173,7 +1174,9 @@ final class OpenNewPageViewController: BaseViewController {
             propertyType: selectedPropertyType!,
             priceType: selectedPriceType,
             price: selectedPrice,
-            address: "",  // 다음 뷰에서 사용할 값
+            monthlyRent: selectedMonthlyRent,
+            address: "",
+            roadAddress: "",  // 다음 뷰에서 사용할 값
             addressDetail: "",  // 다음 뷰에서 사용할 값
             nickname: ""  // 다음 뷰에서 사용할 값
         )

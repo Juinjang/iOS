@@ -43,6 +43,7 @@ final class CheckListViewController: BaseViewController {
         $0.showsVerticalScrollIndicator = false
         $0.isScrollEnabled = false
         $0.frame.size.height = $0.contentSize.height
+        $0.backgroundColor = .gray100
     }
     
     override func viewDidLoad() {
@@ -321,7 +322,7 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell: CategoryItemTableViewCell = tableView.dequeueReusableCell(withIdentifier: CategoryItemTableViewCell.identifier, for: indexPath) as! CategoryItemTableViewCell
                 let items = self.checkListCategories[indexPath.section - 1]
                 cell.configure(category: items)
-                let arrowImage = items.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandItems
+                let arrowImage = items.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandGray
                 cell.expandButton.setImage(arrowImage, for: .normal)
                 
                 return cell

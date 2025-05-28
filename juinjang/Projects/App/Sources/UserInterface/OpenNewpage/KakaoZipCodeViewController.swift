@@ -12,7 +12,7 @@ final class KakaoZipCodeViewController: BaseViewController {
     
     var webView: WKWebView?
     let indicator = UIActivityIndicatorView(style: .medium)
-    var address = ""
+    var model: PostCodeResponseModel?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,21 +56,23 @@ final class KakaoZipCodeViewController: BaseViewController {
 extension KakaoZipCodeViewController: WKScriptMessageHandler {
     func userContentController(_ userContentController: WKUserContentController,
                                didReceive message: WKScriptMessage) {
-        if let data = message.body as? [String: Any] {
-            address = data["roadAddress"] as? String ?? ""
+        if let data = message.body as? [String: Any],
+           let model = PostCodeResponseModel.from(dictionary: data) {
+            self.model = model
+            print("주소: \(model.address)")
         }
-        print("도로명 주소: \(address)")
         
         // -MARK: 모달로 표시된 뷰 컨트롤러가 UINavigationController를 포함하는 경우
         // 현재 뷰 컨트롤러를 present한 뷰 컨트롤러가 UINavigationController인지 검사
         if let navigationController = presentingViewController as? UINavigationController {
             // navigationController의 topViewController를 검사
             if let openNewPage2VC = navigationController.topViewController as? OpenNewPage2ViewController {
-                openNewPage2VC.addressTextField.text = address
+                openNewPage2VC.addressTextField.text = model?.address
+                openNewPage2VC.postCodeModel = model
             } else if let editBasicInfoVC = navigationController.topViewController as? EditBasicInfoViewController {
-                editBasicInfoVC.addressTextField.text = address
+                editBasicInfoVC.addressTextField.text = model?.address
             } else if let editBasicInfoDetailVC = navigationController.topViewController as? EditBasicInfoDetailViewController {
-                editBasicInfoDetailVC.addressTextField.text = address
+                editBasicInfoDetailVC.addressTextField.text = model?.address
             }
         }
         

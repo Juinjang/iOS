@@ -11,12 +11,16 @@ import Then
 import Kingfisher
 import Alamofire
 import AmplitudeSwift
+import RxSwift
 
 final class ImjangNoteViewController: BaseViewController,
                                 SendEditData,
                                 SendDetailEditData,
                                 ButtonStateDelegate,
                                 SendCheckListData {
+    private let noteRepository = NoteRepository()
+    private let disposeBag = DisposeBag()
+    
     // 스크롤뷰
     let scrollView = UIScrollView().then {
         $0.backgroundColor = .mainWhite
@@ -27,14 +31,8 @@ final class ImjangNoteViewController: BaseViewController,
     let contentView = UIView()
     
     // 하우스 이미지뷰
-    let noImageBackgroundView = UIView().then {
-        $0.backgroundColor = .stroke2
-        $0.layer.cornerRadius = 5
-    }
-    let noImageIcon = UIImageView().then {
-        $0.image = UIImage.ImjangNote.galleryAdd
-        $0.contentMode = .scaleAspectFit
-    }
+    let noImageBackgroundView = UIImageView()
+    let photoRegisterButton = PhotoRegisterButton()
     
     lazy var firstImage = UIImageView()
     lazy var secondImage = UIImageView()
@@ -84,6 +82,12 @@ final class ImjangNoteViewController: BaseViewController,
         $0.spacing = 4
     }
     
+    private let noteDetailInfoView = ImjangNoteDetailInfoView()
+    
+    private let noteShareConditionView = ImjangNoteShareConditionView()
+    
+    private let shareCompletedButton = ShareCompletedButton()
+    
     let infoStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
@@ -101,25 +105,28 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     let editButton = UIButton().then {
-        $0.setImage(UIImage.CheckList.editButton, for: .normal)
+        $0.roundCorners(cornerRadius: 28.5, corner: .all)
+        $0.backgroundColor = .main
+        $0.layer.masksToBounds = false
         $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
         $0.layer.shadowOffset = CGSize(width: 0, height: 4)
         $0.layer.shadowOpacity = 1
-        $0.addTarget(self, action: #selector(editButtonTapped(_:)), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+    }
+    
+    let editImageView = UIImageView().then {
+        $0.image = .CheckList.editButton
     }
     
     lazy var recordingSegmentedVC = RecordingSegmentedViewController(imjangId: imjangId, version: versionDetail)
-    
 
     var completionHandler: (() -> Void)?
-    
-    
     var checkListItems: [CheckListAnswer] = []
     var existingItems = [Int: CheckListAnswer]()
     
     lazy var images: [String] = []
     var imjangId: Int
-    var detailDto: DetailDto? = nil
+    var detailDto: NoteDetailModel? = nil
     var reportDto: ReportDTO?
     var previousVCType: PreviousVCType = .createImjangVC
     var versionInfo: VersionInfo?
@@ -183,99 +190,67 @@ final class ImjangNoteViewController: BaseViewController,
 
     
     private func callRequest() {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
+        noteRepository.retrieveNoteDetail(noteID: imjangId)
+            .asObservable()
+            .subscribe(with: self) { (self, detailData) in
+                self.setData(detailDto: detailData)
             }
-            
-            guard let result = detailDto else { return }
-            if let detailDto = result.result {
-                self.setData(detailDto: detailDto)
+            .disposed(by: disposeBag)
+        
+        noteRepository.retrieveChecklistConditionList(noteID: imjangId)
+            .asObservable()
+            .subscribe(with: self) { (self, conditionDTO) in
+                self.noteShareConditionView.configure(model: conditionDTO)
             }
-        }
+            .disposed(by: disposeBag)
     }
     
-    private func setData(detailDto: DetailDto) {
-        self.navigationItem.title = detailDto.nickname
-        roomNameLabel.text = detailDto.nickname
-        let priceTypeString: String
-        switch detailDto.priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        case 3:
-            priceTypeString = "실거래가"
-        default:
-            priceTypeString = "" // 값이 없을 경우 공백 처리
-        }
-        setPriceLabel(priceList: detailDto.priceList, priceType: priceTypeString)
-        if let addressDetail = detailDto.addressDetail {
-            roomAddressLabel.text = "\(detailDto.address) \(detailDto.addressDetail ?? "")"
-        } else {
-            roomAddressLabel.text = "\(detailDto.address)"
-        }
-        modifiedDate.text = "\(String.dateToString(target: detailDto.updatedAt))"
+    private func setData(detailDto: NoteDetailModel) {
+        self.navigationItem.title = detailDto.buildingName
+        roomNameLabel.text = detailDto.buildingName
+        setPriceLabel(model: detailDto)
+        roomAddressLabel.text = detailDto.address
+        modifiedDate.text = detailDto.updatedAt
         images = detailDto.images
-        
+        noImageBackgroundView.image = detailDto.propertyTypeImage
+        noteDetailInfoView.configure(model: detailDto)
         // 버전 설정
-        let checkListVersion = detailDto.checkListVersion
         // purposeCode (0: 부동산 투자, 1: 직접 입주)
-        if checkListVersion == "LIMJANG" {
+        if detailDto.propertyType == "VILLA" || detailDto.propertyType == "OFFICE_TEL" {
             versionDetail = 0
-        } else if checkListVersion == "NON_LIMJANG" {
+        } else {
             versionDetail = 1
         }
-        if detailDto.purposeCode == 0 {
+        
+        if detailDto.priceType == "MARGET_PRICE" {
             self.versionInfo = VersionInfo(version: versionDetail, editCriteria: 0)
-        } else if detailDto.purposeCode == 1 {
+        } else {
             self.versionInfo = VersionInfo(version: versionDetail, editCriteria: 1)
         }
-        versionInfo?.editCriteria = detailDto.purposeCode
+        versionInfo?.editCriteria = detailDto.purposeType == "INVESTMENT" ? 0 : 1
         setUpImageUI()
         adjustLabelHeight()
     }
     
-    func sendData(imjangId: Int, priceList: [String], address: String, addressDetail: String?, nickname: String, updatedAt: String) {
-        self.navigationItem.title = nickname
-        roomNameLabel.text = nickname
-        setPriceLabel(priceList: priceList, priceType: "")
-        if let addressDetail = addressDetail {
-            roomAddressLabel.text = "\(address) \(addressDetail)"
-        } else {
-            roomAddressLabel.text = address
-        }
-        modifiedDate.text = updatedAt
+    func sendData(imjangId: Int,
+                  model: NoteDetailModel) {
+        self.navigationItem.title = model.buildingName
+        roomNameLabel.text = model.buildingName
+        setPriceLabel(model: model)
+        roomAddressLabel.text = model.address
+        modifiedDate.text = model.updatedAt
         
         NotificationCenter.default.post(name: .refreshImjangList, object: nil)
         NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
         NotificationCenter.default.post(name: .refreshSearchList, object: nil)
     }
     
-    func sendDetailData(imjangId: Int, priceType: Int, priceList: [String], address: String, addressDetail: String?, nickname: String, updatedAt: String) {
-        self.navigationItem.title = nickname
-        roomNameLabel.text = nickname
-        let priceTypeString: String
-        switch priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        default:
-            priceTypeString = "" // 값이 없을 경우 공백 처리
-        }
-        setPriceLabel(priceList: priceList, priceType: priceTypeString)
-        if let addressDetail = addressDetail {
-            roomAddressLabel.text = "\(address) \(addressDetail)"
-        } else {
-            roomAddressLabel.text = address
-        }
-        modifiedDate.text = updatedAt
+    func sendDetailData(imjangId: Int, model: NoteDetailModel) {
+        self.navigationItem.title = model.buildingName
+        roomNameLabel.text = model.buildingName
+        setPriceLabel(model: model)
+        roomAddressLabel.text = model.address
+        modifiedDate.text = model.updatedAt
         
         NotificationCenter.default.post(name: .refreshImjangList, object: nil)
         NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
@@ -297,24 +272,12 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     // 방 가격 설정
-    private func setPriceLabel(priceList: [String], priceType: String) {
-        switch priceList.count {
-        case 1:
-            let priceString = priceList[0]
-            print(priceString.formatToKoreanCurrencyWithZero())
-            if priceType.isEmpty {
-                roomPriceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                roomPriceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
-        case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-            roomPriceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
-
-        default:
-            roomPriceLabel.text = "편집을 통해 가격을 설정해주세요."
+    private func setPriceLabel(model: NoteDetailModel) {
+        if let monthlyRent = model.monthlyRent {
+            // 월세 일 경우
+            roomPriceLabel.text = "\(model.priceTypeToString) \(model.price.formatToKoreanCurrencyWithZero()) / \(monthlyRent.formatToKoreanCurrencyWithZero())"
+        } else {
+            roomPriceLabel.text = "\(model.priceTypeToString) \(model.price.formatToKoreanCurrencyWithZero())"
         }
     }
     
@@ -461,17 +424,26 @@ final class ImjangNoteViewController: BaseViewController,
     
     // MARK: - addSubView()
     private func addSubView() {
-        [scrollView, editButton].forEach {
+        [scrollView, editButton.with(editImageView)].forEach {
             view.addSubview($0)
         }
         
         scrollView.addSubview(contentView)
         
-        [roomStackView, roomPriceLabel, infoStackView, addressBackgroundView, containerView, noImageBackgroundView, stackView].forEach {
+        [roomStackView,
+         roomPriceLabel,
+         noteDetailInfoView,
+         noteShareConditionView,
+         shareCompletedButton,
+         infoStackView,
+         addressBackgroundView,
+         containerView,
+         noImageBackgroundView,
+         stackView].forEach {
             contentView.addSubview($0)
         }
         
-        noImageBackgroundView.addSubview(noImageIcon)
+        noImageBackgroundView.addSubview(photoRegisterButton)
         addressBackgroundView.addSubview(addressStackView)
         
         [showReportLabel, reportImageView].forEach {
@@ -508,7 +480,7 @@ final class ImjangNoteViewController: BaseViewController,
         designLabel(roomNameLabel,
                     alignment: .left,
                     font: UIFont.pretendard(size: 20, weight: .extraBold),
-                    textColor: .main)
+                    textColor: .gray600)
         
         // 방 이름 스택뷰
         setStackView(roomStackView,
@@ -561,13 +533,13 @@ final class ImjangNoteViewController: BaseViewController,
         // 최근 수정날짜 레이블
         designLabel(modifiedDateStringLabel,
                     text: "최근 수정날짜",
-                    font: UIFont.pretendard(size: 14, weight: .semiBold),
-                    textColor: .gray400)
+                    font: UIFont.pretendard(size: 14, weight: .medium),
+                    textColor: .gray300)
         
         // 최근 수정날짜값 레이블
         designLabel(modifiedDate,
-                    font: UIFont.pretendard(size: 14, weight: .semiBold),
-                    textColor: .gray400)
+                    font: UIFont.pretendard(size: 14, weight: .medium),
+                    textColor: .gray300)
     }
     
     // 이미지 개수에 따라 stackView 설정
@@ -670,11 +642,11 @@ final class ImjangNoteViewController: BaseViewController,
             $0.height.equalTo(noImageBackgroundView.snp.width).multipliedBy(171.0 / 342.0)
         }
         
-        noImageIcon.snp.makeConstraints {
-            $0.centerX.equalTo(noImageBackgroundView)
-            $0.centerY.equalTo(noImageBackgroundView)
-            $0.height.equalTo(71)
-            $0.width.equalTo(71)
+        photoRegisterButton.snp.makeConstraints {
+            $0.bottom.equalToSuperview().offset(-9)
+            $0.right.equalToSuperview().offset(-10)
+            $0.height.equalTo(27)
+            $0.width.equalTo(94)
         }
         
     }
@@ -706,6 +678,13 @@ final class ImjangNoteViewController: BaseViewController,
         editButton.snp.makeConstraints {
             $0.bottom.equalTo(view.snp.bottom).offset(-28)
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
+            $0.size.equalTo(57)
+        }
+        
+        editImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(12)
+            $0.left.equalToSuperview().offset(13)
+            $0.size.equalTo(32)
         }
         
         view.bringSubviewToFront(editButton)
@@ -771,20 +750,42 @@ final class ImjangNoteViewController: BaseViewController,
             $0.width.height.equalTo(18)
         }
         
+        
+        // MARK: - 노트 디테일 뷰
+        noteDetailInfoView.snp.makeConstraints {
+            $0.top.equalTo(addressBackgroundView.snp.bottom).offset(12)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(161)
+        }
+        
+        
         // info 스택뷰
         infoStackView.snp.makeConstraints {
             $0.leading.equalTo(noImageBackgroundView.snp.leading)
             $0.trailing.equalTo(noImageBackgroundView.snp.trailing)
-            $0.top.equalTo(addressBackgroundView.snp.bottom).offset(24)
+            $0.top.equalTo(noteDetailInfoView.snp.bottom).offset(12)
+        }
+        
+        // MARK: - 공유 조건 뷰
+        // 평층 입력 X -> 공유 조건 뷰 X
+        
+//        noteShareConditionView.snp.makeConstraints {
+//            $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+//            $0.horizontalEdges.equalToSuperview().inset(24)
+//            $0.height.equalTo(106)
+//        }
+        
+        shareCompletedButton.snp.makeConstraints {
+            $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.height.equalTo(68)
         }
         
         // containerView
         containerView.snp.makeConstraints {
-            $0.top.equalTo(infoStackView.snp.bottom).offset(12)
+            $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
             $0.leading.trailing.equalTo(contentView)
             $0.bottom.equalTo(contentView).offset(-24)
-            //            $0.height.equalTo(view).multipliedBy(1.5)
-            //            $0.height.equalTo(view).multipliedBy(5) // 체크리스트 뷰 컨트롤러에서는 변경될 수 있게 적절한 값으로 설정 필요
         }
         
         recordingSegmentedVC.view.snp.makeConstraints {

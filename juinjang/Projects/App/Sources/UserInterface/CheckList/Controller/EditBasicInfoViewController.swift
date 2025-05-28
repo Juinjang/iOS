@@ -7,9 +7,11 @@
 
 import UIKit
 import Alamofire
+import RxSwift
 
 final class EditBasicInfoViewController: BaseViewController {
-    
+    private let noteRepository = NoteRepository()
+    private let disposeBag = DisposeBag()
     var transactionModel = TransactionModel()
     var imjangId: Int? = nil
     var versionInfo: VersionInfo? = nil
@@ -257,7 +259,8 @@ final class EditBasicInfoViewController: BaseViewController {
     // -MARK: API 요청
     private func getImjang() {
         guard let imjangId = imjangId else { return }
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self,
+                                            api: .detailImjang(imjangId: imjangId)) { detailDto, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
@@ -273,6 +276,8 @@ final class EditBasicInfoViewController: BaseViewController {
     
     func modifyImjang(completionHandler: @escaping (NetworkError?) -> Void) {
         guard let imjangId = imjangId else { return }
+        
+        
         let url = JuinjangAPI.modifyImjang(imjangId: imjangId).endpoint
         
         // threeDigitPriceField와 fourDigitPriceField의 값을 합쳐서 selectedPrice에 저장
@@ -550,24 +555,29 @@ final class EditBasicInfoViewController: BaseViewController {
             guard let self else { return }
             
             guard let imjangId, let version = versionInfo?.version else { return }
-            let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
             
             let threeDisitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
             let fourDisitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-            var priceList = [String(threeDisitPrice * 100000000 + fourDisitPrice * 10000)]
             
             let now = Date()
             let formatter = DateFormatter()
             formatter.dateFormat = "yy.MM.dd"
             let updatedAt = formatter.string(from: now)
             
-            delegate?.sendData(
-                imjangId: imjangId,
-                priceList: priceList,
-                address: addressTextField.text ?? "",
-                addressDetail: addressDetailTextField.text ?? "",
-                nickname: houseNicknameTextField.text ?? "",
-                updatedAt: updatedAt
+            delegate?.sendData(imjangId: imjangId,
+                               model: .init(
+                                purposeType: "",
+                                propertyType: "",
+                                priceType: "",
+                                buildingName: houseNicknameTextField.text ?? "",
+                                images: [],
+                                address: (addressTextField.text ?? "") + (addressDetailTextField.text ?? ""),
+                                price: String(threeDisitPrice * 100000000 + fourDisitPrice * 10000),
+                                monthlyRent: "",
+                                updatedAt: updatedAt,
+                                floor: "",
+                                pyong: 0
+                               )
             )
             
             self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -691,11 +701,5 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
 }
 
 protocol SendEditData {
-    func sendData(
-        imjangId: Int,
-        priceList: [String],
-        address: String,
-        addressDetail: String?,
-        nickname: String,
-        updatedAt: String)
+    func sendData(imjangId: Int, model: NoteDetailModel)
 }

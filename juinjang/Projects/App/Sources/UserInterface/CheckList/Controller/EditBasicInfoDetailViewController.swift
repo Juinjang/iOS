@@ -822,39 +822,37 @@ final class EditBasicInfoDetailViewController: BaseViewController {
 
             let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
             let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-            let fourDigitMonthlyRent = Int(fourDigitMonthlyRentField.text ?? "") ?? 0
             var priceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)]
-            
-            let separatedPriceList: [String]
-            if fourDigitMonthlyRentField.text?.isEmpty == true {
-                separatedPriceList = priceList
-            } else {
-                separatedPriceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000), String(fourDigitMonthlyRent * 10000)]
-            }
             
             let now = Date()
             let formatter = DateFormatter()
             formatter.dateFormat = "yy.MM.dd"
             let updatedAt = formatter.string(from: now)
             
-            var priceType: Int = 0
+            var priceType: String = ""
             
             if saleButton.isSelected {
-                priceType = 0 // 매매
+                priceType = "매매" // 매매
             } else if jeonseButton.isSelected {
-                priceType = 1 // 전세
+                priceType = "전세" // 전세
             } else if monthlyRentButton.isSelected {
-                priceType = 2 // 월세
+                priceType = "월세" // 월세
             }
             
-            delegate?.sendDetailData(
-                imjangId: imjangId,
-                priceType: priceType ?? 0,
-                priceList: separatedPriceList,
-                address: addressTextField.text ?? "",
-                addressDetail: addressDetailTextField.text ?? "",
-                nickname: houseNicknameTextField.text ?? "",
-                updatedAt: updatedAt
+            delegate?.sendDetailData(imjangId: imjangId,
+                                     model: .init(
+                                        purposeType: "",
+                                        propertyType: "",
+                                        priceType: priceType,
+                                        buildingName: houseNicknameTextField.text ?? "",
+                                        images: [],
+                                        address: (addressTextField.text ?? "") + (addressDetailTextField.text ?? ""),
+                                        price: String(threeDigitPrice * 100000000 + fourDigitPrice * 10000),
+                                        monthlyRent: fourDigitMonthlyRentField.text ?? "",
+                                        updatedAt: updatedAt,
+                                        floor: "",
+                                        pyong: 0
+                                     )
             )
             
             self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -978,11 +976,5 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
 }
 
 protocol SendDetailEditData {
-    func sendDetailData(imjangId: Int,
-                  priceType: Int,
-                  priceList: [String],
-                  address: String,
-                  addressDetail: String?,
-                  nickname: String,
-                  updatedAt: String)
+    func sendDetailData(imjangId: Int, model: NoteDetailModel)
 }

@@ -12,3 +12,18 @@ struct ShareableCondition: Codable {
     let requiredCount: Int
     let isSatisfied: Bool
 }
+
+extension ShareableCondition {
+    var categoryToKorean: String {
+        switch self.category {
+        case "LOCATION_CONDITION":
+            return "입지"
+        case "PUBLIC_SPACE":
+            return "공용"
+        case "INDOOR":
+            return "실내"
+        default:
+            return ""
+        }
+    }
+}

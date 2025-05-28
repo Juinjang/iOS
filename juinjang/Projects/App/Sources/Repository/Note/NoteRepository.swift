@@ -42,10 +42,10 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func createNote(param: NoteCreateRequestDTO) -> Completable {
+    func createNote(param: NoteCreateRequestDTO) -> Single<PostNoteResponseModel> {
         return NoteAPI.postNote(param)
-            .request(NoResultResponse.self, networkManager)
-            .asCompletable()
+            .request(BaseResponse<PostNoteResponseModel>.self, networkManager)
+            .map { try $0.unwrap() }
     }
     
     func updateImjang(noteID id: Int,
