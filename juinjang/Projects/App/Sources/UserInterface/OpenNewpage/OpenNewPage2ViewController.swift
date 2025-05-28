@@ -20,6 +20,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     private let repository = NoteRepository()
     private let disposeBag = DisposeBag()
     
+    var postCodeModel: PostCodeResponseModel? 
+    
+    
     // -MARK: API 요청
     func createImjang(completionHandler: @escaping (Int?, NetworkError?) -> Void) {
         guard let newImjang = newImjang else { return }
@@ -38,34 +41,32 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         )
         
         // 이전 뷰 컨트롤러에서 가져온 값들을 parameters에 할당
-        let parameters: Parameters = [
-            "purposeType": newImjang.purposeType,
-            "propertyType": newImjang.propertyType,
-            "priceType": newImjang.priceType,
-            "price": newImjang.price,
-            "address": address,
-            "nickname": nickname,
-            "addressDetail": addressDetailTextField.text?.isEmpty == false ? addressDetailTextField.text! : NSNull()
-        ]
+        let parameter = NoteCreateRequestDTO(
+            purposeType: newImjang.purposeTypeToString,
+            propertyType: newImjang.propertyTypeToString,
+            priceType: newImjang.priceTypeToString,
+            price: newImjang.price,
+            monthlyRent: newImjang.monthlyRent,
+            roadAddress: postCodeModel?.address ?? "",
+            addressDetail: (addressDetailTextField.text?.isEmpty == false) ? addressDetailTextField.text : nil,
+            bcode: postCodeModel?.bcode ?? "",
+            nickname: nickname,
+            floor: floorTextField.text ?? "",
+            pyong: Int(pyungTextField.text ?? "") ?? 0,
+            sido: postCodeModel?.sido ?? "",
+            sigungu: postCodeModel?.sigungu ?? "",
+            bname1: postCodeModel?.bname1 ?? "",
+            bname2: postCodeModel?.bname2 ?? ""
+        )
         
-        
-        // MARK: - New API 사용 예정
-        
-        JuinjangAPIManager.shared.postData(type: BaseResponse<PostResponseDto>.self,
-                                           api: .createImjang,
-                                           parameter: parameters) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                guard let response, let result = response.result else {
-                    print("createImjang Response is Empty")
-                    return
-                }
-                imjangId = result.limjangId
-                completionHandler(imjangId, nil)
-            } else {
-                completionHandler(nil, error)
+        repository.createNote(
+            param: parameter
+        ).asObservable()
+            .subscribe(with: self) { (self, responseModel) in
+                self.imjangId = responseModel.noteId
+                completionHandler(responseModel.noteId, nil)
             }
-        }
+            .disposed(by: disposeBag)
     }
     
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건

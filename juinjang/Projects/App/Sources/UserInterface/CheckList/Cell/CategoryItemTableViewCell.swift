@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import Then
+import SnapKit
 
 final class CategoryItemTableViewCell: UITableViewCell {
     
@@ -19,11 +21,11 @@ final class CategoryItemTableViewCell: UITableViewCell {
     
     let categoryLabel = UILabel().then {
         $0.font = .pretendard(size: 18, weight: .bold)
-        $0.textColor = .main
+        $0.textColor = .gray450
     }
     
     let expandButton = UIButton().then {
-        $0.setImage(UIImage.CheckList.expandItems, for: .normal)
+        $0.setImage(UIImage.CheckList.expandGray, for: .normal)
     }
     
     let expandedItemLabel = UILabel().then {
@@ -31,11 +33,18 @@ final class CategoryItemTableViewCell: UITableViewCell {
         $0.textColor = .gray500
     }
     
+    let baseLineView = UIView().then {
+        $0.backgroundColor = .stroke
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         print("CategoryItemTableViewCell initialized")
         
-        [categoryImage, categoryLabel, expandButton].forEach { addSubview($0) }
+        [categoryImage,
+         categoryLabel,
+         expandButton,
+         baseLineView].forEach { addSubview($0) }
         setupLayout()
     }
     
@@ -45,7 +54,7 @@ final class CategoryItemTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-        self.backgroundColor = .main100
+        self.backgroundColor = .mainWhite
         // Configure the view for the selected state
     }
     
@@ -68,6 +77,11 @@ final class CategoryItemTableViewCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.height.equalTo(22)
             $0.width.equalTo(22)
+        }
+        
+        baseLineView.snp.makeConstraints {
+            $0.horizontalEdges.bottom.equalToSuperview()
+            $0.height.equalTo(1)
         }
     }
     
@@ -98,9 +112,9 @@ enum CategoryItem: String, CaseIterable {
     var image: UIImage {
         switch self {
         case .deadline: return UIImage.CheckList.deadlineItem
-        case .locationConditions: return UIImage.CheckList.locationConditionsItem
-        case .commonSpace: return UIImage.CheckList.publicSpaceItem
-        case .indoor: return UIImage.CheckList.indoorItem
+        case .locationConditions: return UIImage.CheckList.locationGradient
+        case .commonSpace: return UIImage.CheckList.publicSpaceGradient
+        case .indoor: return UIImage.CheckList.indoorGradient
         }
     }
 }

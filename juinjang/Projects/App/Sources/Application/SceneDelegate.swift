@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let mainViewController = SplashViewController()
         mainViewController.reactor = SplashViewReactor()
-        window?.rootViewController = PhotoListViewController(reactor: .init(dependency: .init(photos: ["https://i.postimg.cc/5192hmyQ/unnamed.jpg?dl=1","https://postimg.cc/234gNqct","https://postimg.cc/234gNqct","https://postimg.cc/234gNqct"])))
+        window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
         
         self.scene = scene
