@@ -15,10 +15,10 @@ import RxSwift
 import RxRelay
 
 final class ImjangNoteViewController: BaseViewController,
-                                SendEditData,
-                                SendDetailEditData,
-                                ButtonStateDelegate,
-                                SendCheckListData {
+                                      SendEditData,
+                                      SendDetailEditData,
+                                      ButtonStateDelegate,
+                                      SendCheckListData {
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
     
@@ -124,7 +124,7 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     lazy var recordingSegmentedVC = RecordingSegmentedViewController(imjangId: imjangId, version: versionDetail)
-
+    
     var completionHandler: (() -> Void)?
     var checkListItems: [CheckListAnswer] = []
     var existingItems = [Int: CheckListAnswer]()
@@ -188,19 +188,19 @@ final class ImjangNoteViewController: BaseViewController,
             }
         }
     }
-
+    
     deinit {
         // Notification 해제
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("PageChanged"), object: nil)
     }
-
+    
     
     @objc private func handleCheckListItemsUpdated(_ notification: Notification) {
         if let items = notification.object as? [CheckListAnswer] {
             self.checkListItems = items
         }
     }
-
+    
     
     private func callRequest() {
         noteRepository.retrieveNoteDetail(noteID: imjangId)
@@ -317,10 +317,10 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     func updateButtonState(isSelected: Bool) {
-        editButton.setImage(UIImage.CheckList.completedButton, for: .normal)
+        self.makeEditMode()
         editButton.isSelected = isSelected
     }
-        
+    
     // 방 사진 클릭했을 때 - showImjangImageListVC. 호출
     private func setImageStackViewClick(isEmpty: Bool) {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showImjangImageListVC))
@@ -339,7 +339,7 @@ final class ImjangNoteViewController: BaseViewController,
         thirdImage.isUserInteractionEnabled = isEmpty ? false : true
         noImageBackgroundView.isUserInteractionEnabled = isEmpty ? true : false
     }
-        
+    
     // 이미지 리스트 화면으로 이동
     @objc private func showImjangImageListVC() {
         //        guard let imjangId = imjangId else { return }
@@ -478,7 +478,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 뷰들 디자인
     private func designViews() {
-//        upButton.alpha = 0
+        //        upButton.alpha = 0
         designImageView(maximizeImageView, image: UIImage.ImjangNote.maximize, contentMode: .scaleAspectFit)
         
         // 방 이미지뷰 설정
@@ -873,7 +873,7 @@ final class ImjangNoteViewController: BaseViewController,
     private func saveAnswer(completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
         let token = UserDefaultManager.shared.accessToken
         print("토큰값 \(token)")
-
+        
         // 저장된 체크리스트 불러오기
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self,
                                             api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
@@ -932,7 +932,7 @@ final class ImjangNoteViewController: BaseViewController,
     private func saveChecklist(items: [CheckListAnswer], token: String, completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
         self.requestChecklist(with: .post, items: items, action: "create", token: token, completion: completion)
     }
-
+    
     // 체크리스트 수정
     private func modifyChecklist(items: [CheckListAnswer], token: String, completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
         self.requestChecklist(with: .post, items: items, action: "update", token: token, completion: completion)
@@ -961,14 +961,14 @@ final class ImjangNoteViewController: BaseViewController,
                 "answer": answerValue
             ]
         }
-
+        
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
-
+            
             if let jsonString = String(data: jsonData, encoding: .utf8) {
                 print("JSON Data: \(jsonString)")
             }
-
+            
             var request: URLRequest
             let api = JuinjangAPI.saveChecklist(imjangId: imjangId)
             request = URLRequest(url: api.endpoint)
@@ -1025,7 +1025,7 @@ final class ImjangNoteViewController: BaseViewController,
             totalRate: reportDTOData["totalRate"] as? Float ?? 0
         )
     }
-
+    
     private func createDetailDto(from data: [String: Any]) -> DetailDto {
         let limjangData = data["limjangDto"] as? [String: Any] ?? [:]
         return DetailDto(
@@ -1048,28 +1048,29 @@ final class ImjangNoteViewController: BaseViewController,
         sender.isSelected.toggle()
         isEditMode.toggle()
         if sender.isSelected {
-            editButton.setImage(UIImage.CheckList.completedButton, for: .normal)
+            self.makeEditMode()
+            
             NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: true)
         } else {
-            editButton.setImage(UIImage.CheckList.editButton, for: .normal)
-                NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
+            self.makeDefaultMode()
+            NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
+            
+            saveAnswer { [weak self] detailDto, reportDto in
+                guard let self = self else { return }
                 
-                saveAnswer { [weak self] detailDto, reportDto in
-                    guard let self = self else { return }
-                    
-                    if let detailDto = detailDto, let reportDto = reportDto {
-                        if existingItems.isEmpty {
-                            let reportVC = ReportViewController(imjangId: detailDto.limjangId, savedCheckListItems: checkListItems)
-                            reportVC.checkListDatadelegate = self
-                            reportVC.setData(detailDto: detailDto)
-                            reportVC.setData(reportDto: reportDto)
-                            self.navigationController?.pushViewController(reportVC, animated: true)
-                        }
-                    } else {
-                        print("체크리스트 값이 입력되지 않았습니다.")
-                        editButton.setImage(UIImage.CheckList.editButton, for: .normal)
-                        NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
+                if let detailDto = detailDto, let reportDto = reportDto {
+                    if existingItems.isEmpty {
+                        let reportVC = ReportViewController(imjangId: detailDto.limjangId, savedCheckListItems: checkListItems)
+                        reportVC.checkListDatadelegate = self
+                        reportVC.setData(detailDto: detailDto)
+                        reportVC.setData(reportDto: reportDto)
+                        self.navigationController?.pushViewController(reportVC, animated: true)
                     }
+                } else {
+                    print("체크리스트 값이 입력되지 않았습니다.")
+                    editButton.setImage(UIImage.CheckList.editButton, for: .normal)
+                    NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
+                }
                 
             }
         }
@@ -1083,8 +1084,34 @@ final class ImjangNoteViewController: BaseViewController,
     @objc private func scrollToTop() {
         scrollView.setContentOffset(CGPoint.zero, animated: true)
     }
-}
     
+    private func makeEditMode() {
+        editButton.backgroundColor = .clear
+        editButton.layer.masksToBounds = false
+        editButton.layer.shadowColor = UIColor.clear.cgColor
+        editButton.layer.shadowOffset = CGSize(width: 0, height: 4)
+        editButton.layer.shadowOpacity = 1
+        editImageView.image = .CheckList.completedButton
+        editImageView.snp.remakeConstraints {
+            $0.center.equalToSuperview()
+            $0.size.equalTo(57)
+        }
+    }
+    
+    private func makeDefaultMode() {
+        editButton.backgroundColor = .main
+        editButton.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
+        editButton.layer.shadowOffset = CGSize(width: 0, height: 4)
+        editButton.layer.shadowOpacity = 1
+        editImageView.image = .CheckList.editButton
+        editImageView.snp.remakeConstraints {
+            $0.top.equalToSuperview().offset(12)
+            $0.left.equalToSuperview().offset(13)
+            $0.size.equalTo(32)
+        }
+    }
+}
+
 extension ImjangNoteViewController: UIScrollViewDelegate {
     
     func scrollViewDidScroll(_ scrollView: UIScrollView) {

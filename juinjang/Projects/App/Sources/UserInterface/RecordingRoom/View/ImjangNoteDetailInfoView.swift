@@ -48,6 +48,10 @@ final class ImjangNoteDetailInfoView: BaseView {
                     button.rx.throttleTap
                         .bind(to: relay)
                         .disposed(by: disposeBag)
+                    
+                    button.snp.makeConstraints {
+                        $0.height.equalTo(23)
+                    }
                 }
             }
         }
@@ -105,10 +109,10 @@ extension ImjangNoteDetailInfoView {
     
     fileprivate func createTextButton(text: String) -> UIButton {
         return .init().then {
-            $0.setTitle("눌러서 입력하러 가기", for: .normal)
             $0.titleLabel?.font = UIFont.pretendard(size: 16, weight: .medium)
-            $0.titleLabel?.textColor = .gray300
+            $0.setTitleColor(.gray300, for: .normal)
             $0.titleLabel?.textAlignment = .left
+            $0.setTitle("눌러서 입력하러 가기", for: .normal)
         }
     }
 }
