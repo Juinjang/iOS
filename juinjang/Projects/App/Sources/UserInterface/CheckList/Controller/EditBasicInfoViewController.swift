@@ -259,8 +259,7 @@ final class EditBasicInfoViewController: BaseViewController {
     // -MARK: API 요청
     private func getImjang() {
         guard let imjangId = imjangId else { return }
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self,
-                                            api: .detailImjang(imjangId: imjangId)) { detailDto, error in
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
             if let error = error {
                 print(error.localizedDescription)
                 return
@@ -576,7 +575,8 @@ final class EditBasicInfoViewController: BaseViewController {
                                 monthlyRent: "",
                                 updatedAt: updatedAt,
                                 floor: "",
-                                pyong: 0
+                                pyong: 0,
+                                isShared: false
                                )
             )
             

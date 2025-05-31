@@ -8,6 +8,8 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
+import RxRelay
 
 final class ImjangNoteDetailInfoView: BaseView {
     private let titleStackView = UIStackView().then {
@@ -26,11 +28,28 @@ final class ImjangNoteDetailInfoView: BaseView {
         $0.backgroundColor = .stroke
     }
     
-    func configure(model: NoteDetailModel) {
-        [createContentLabel(text: model.propertyTypeToKorean),
-         createContentLabel(text: "\(model.floor)층"),
-         createContentLabel(text: "\(model.pyong)평")].forEach {
-            contentStackView.addArrangedSubview($0)
+    private let disposeBag = DisposeBag()
+    
+    func configure(model: NoteDetailModel,
+                   relay: PublishRelay<Void>) {
+        if let floor = model.floor,
+           let pyong = model.pyong {
+            [createContentLabel(text: model.propertyTypeToKorean),
+             createContentLabel(text: "\(floor)층"),
+             createContentLabel(text: "\(pyong)평")].forEach {
+                contentStackView.addArrangedSubview($0)
+            }
+        } else {
+            [createContentLabel(text: model.propertyTypeToKorean),
+             createTextButton(text: "눌러서 입력하러 가기"),
+             createTextButton(text: "눌러서 입력하러 가기")].forEach {
+                contentStackView.addArrangedSubview($0)
+                if let button = $0 as? UIButton {
+                    button.rx.throttleTap
+                        .bind(to: relay)
+                        .disposed(by: disposeBag)
+                }
+            }
         }
     }
     
@@ -81,6 +100,15 @@ extension ImjangNoteDetailInfoView {
             $0.fontColor = .gray600
             $0.fontAlignment = .left
             $0.text = text
+        }
+    }
+    
+    fileprivate func createTextButton(text: String) -> UIButton {
+        return .init().then {
+            $0.setTitle("눌러서 입력하러 가기", for: .normal)
+            $0.titleLabel?.font = UIFont.pretendard(size: 16, weight: .medium)
+            $0.titleLabel?.textColor = .gray300
+            $0.titleLabel?.textAlignment = .left
         }
     }
 }

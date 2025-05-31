@@ -851,7 +851,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                                         monthlyRent: fourDigitMonthlyRentField.text ?? "",
                                         updatedAt: updatedAt,
                                         floor: "",
-                                        pyong: 0
+                                        pyong: 0,
+                                        isShared: false
                                      )
             )
             

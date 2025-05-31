@@ -17,8 +17,9 @@ struct NoteDetailModel: Codable {
     let price: String
     let monthlyRent: String?
     let updatedAt: String
-    let floor: String
-    let pyong: Int
+    let floor: String?
+    let pyong: Int?
+    let isShared: Bool
 }
 
 extension NoteDetailModel {

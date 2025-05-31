@@ -26,7 +26,7 @@ final class ConditionItemView: BaseView {
     func configure(model: ShareableCondition) {
         titleLabel.text = model.categoryToKorean
         contentLabel.text = "\(model.answeredCount)/\(model.totalCount)"
-        checkIconView.image = (model.answeredCount == model.requiredCount) ? .checkMain : .checkGray
+        checkIconView.image = (model.answeredCount >= model.requiredCount) ? .checkMain : .checkGray
     }
     
     override func configureView() {
