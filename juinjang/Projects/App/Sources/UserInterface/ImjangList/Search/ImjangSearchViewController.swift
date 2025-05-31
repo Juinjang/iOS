@@ -44,10 +44,8 @@ final class ImjangSearchViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        designNavigationBar()
         navigationController?.isNavigationBarHidden = true
         configureHierarchy()
-//        hideKeyboardWhenTappedAround()
         setDelegate()
         setupConstraints()
         designView()
@@ -70,12 +68,6 @@ final class ImjangSearchViewController: BaseViewController {
         imjangSearchTableView.dataSource = self
     }
     
-//    private func hideKeyboardWhenTappedAround() {
-////        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-//        tap.cancelsTouchesInView = false
-//        view.addGestureRecognizer(tap)
-//    }
-    
     private func bindAction() {
         navigationView
             .itemActionRelay
@@ -94,20 +86,6 @@ final class ImjangSearchViewController: BaseViewController {
     @objc private func popView() {
         navigationController?.popViewController(animated: true)
     }
-    
-    // 네비게이션 바 디자인
-//    private func designNavigationBar() {
-//        self.navigationItem.hidesSearchBarWhenScrolling = false
-//        self.navigationController?.navigationBar.tintColor = .black
-//
-//        // UIBarButtonItem 생성 및 이미지 설정
-//        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-//        let searchTextFieldItem = UIBarButtonItem(customView: searchBar)
-//    
-//        // 네비게이션 아이템에 백 버튼 아이템 설정
-//        self.navigationItem.leftBarButtonItem = backButtonItem
-//        self.navigationItem.rightBarButtonItem = searchTextFieldItem
-//    }
     
     private func configureHierarchy() {
         view.addSubview(navigationView)
