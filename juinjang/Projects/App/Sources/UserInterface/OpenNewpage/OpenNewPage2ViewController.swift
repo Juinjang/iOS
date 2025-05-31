@@ -280,6 +280,8 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         
         addressTextField.delegate = self
         addressTextField.isUserInteractionEnabled = false // 사용자 입력 방지
+        pyungTextField.delegate = self
+        floorTextField.delegate = self
         houseNicknameTextField.delegate = self
         updateImageViewsFromModel()
         setupWidgets()
@@ -506,9 +508,12 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         // 필드가 비어있거나 공백만으로 구성되어 있는지 확인
         let addressTextFieldEmpty = addressTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        
+        let floorTextFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        let pyungTextFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
 
         // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty
+        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && !floorTextFieldEmpty && !pyungTextFieldEmpty
         
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
         if allTextFieldsFilled {
@@ -615,7 +620,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
 
 
 extension OpenNewPage2ViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         // 백 스페이스 실행 가능하도록
         if let char = string.cString(using: String.Encoding.utf8) {
             let isBackSpace = strcmp(char, "\\b")

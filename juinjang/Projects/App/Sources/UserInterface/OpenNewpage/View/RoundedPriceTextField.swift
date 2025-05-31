@@ -44,6 +44,11 @@ final class RoundedPriceTextField: BaseView {
         set { textField.text = newValue }
     }
     
+    var delegate: UITextFieldDelegate? {
+        get { textField.delegate ?? nil  }
+        set { textField.delegate = newValue }
+    }
+    
     init(unitType: MeasurementUnit,
          placeHolder: String,
          placeHolderTextColor: UIColor = .gray300,

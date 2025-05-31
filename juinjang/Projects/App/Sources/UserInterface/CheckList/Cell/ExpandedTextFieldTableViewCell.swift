@@ -94,7 +94,9 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
         }
     }
     
-    func savedConfigure(with imjangId: Int, with answer: String, at indexPath: IndexPath) {
+    func savedConfigure(with imjangId: Int,
+                        with answer: String,
+                        at indexPath: IndexPath) {
         questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
@@ -104,7 +106,8 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     }
     
     // 보기 모드
-    func viewModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
+    func viewModeConfigure(with questionDto: CheckListItem,
+                           at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
         contentLabel.textColor = .null
         backgroundColor = .gray100
@@ -115,7 +118,8 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     }
       
     // 수정 모드
-    func editModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
+    func editModeConfigure(with questionDto: CheckListItem,
+                           at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
