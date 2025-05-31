@@ -12,6 +12,7 @@ import Kingfisher
 import Alamofire
 import AmplitudeSwift
 import RxSwift
+import RxRelay
 
 final class ImjangNoteViewController: BaseViewController,
                                 SendEditData,
@@ -111,7 +112,11 @@ final class ImjangNoteViewController: BaseViewController,
         $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
         $0.layer.shadowOffset = CGSize(width: 0, height: 4)
         $0.layer.shadowOpacity = 1
-        $0.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
+        $0.addTarget(
+            self,
+            action: #selector(editButtonTapped),
+            for: .touchUpInside
+        )
     }
     
     let editImageView = UIImageView().then {
@@ -133,6 +138,8 @@ final class ImjangNoteViewController: BaseViewController,
     var versionDetail: Int
     var editCriteria: Int?
     var isEditMode: Bool = false // 수정 모드 여부
+    
+    private let clickPyungFloorRelay = PublishRelay<Void>()
     
     init(imjangId: Int, version: Int) {
         self.imjangId = imjangId
@@ -164,6 +171,12 @@ final class ImjangNoteViewController: BaseViewController,
         if previousVCType == .createImjangVC {
             NotificationCenter.default.post(name: .refreshImjangList, object: nil)
         }
+        
+        clickPyungFloorRelay
+            .subscribe(with: self) { (self, _) in
+                print("평층 입력 버튼 클릭")
+            }
+            .disposed(by: disposeBag)
     }
     
     @objc private func handlePageChange(notification: Notification) {
@@ -213,7 +226,7 @@ final class ImjangNoteViewController: BaseViewController,
         modifiedDate.text = detailDto.updatedAt
         images = detailDto.images
         noImageBackgroundView.image = detailDto.propertyTypeImage
-        noteDetailInfoView.configure(model: detailDto)
+        noteDetailInfoView.configure(model: detailDto, relay: clickPyungFloorRelay)
         // 버전 설정
         // purposeCode (0: 부동산 투자, 1: 직접 입주)
         if detailDto.propertyType == "VILLA" || detailDto.propertyType == "OFFICE_TEL" {
@@ -769,23 +782,33 @@ final class ImjangNoteViewController: BaseViewController,
         // MARK: - 공유 조건 뷰
         // 평층 입력 X -> 공유 조건 뷰 X
         
-//        noteShareConditionView.snp.makeConstraints {
-//            $0.top.equalTo(infoStackView.snp.bottom).offset(16)
-//            $0.horizontalEdges.equalToSuperview().inset(24)
-//            $0.height.equalTo(106)
-//        }
-        
-        shareCompletedButton.snp.makeConstraints {
-            $0.top.equalTo(infoStackView.snp.bottom).offset(16)
-            $0.horizontalEdges.equalToSuperview().inset(24)
-            $0.height.equalTo(68)
-        }
-        
-        // containerView
-        containerView.snp.makeConstraints {
-            $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
-            $0.leading.trailing.equalTo(contentView)
-            $0.bottom.equalTo(contentView).offset(-24)
+        if let isShared = self.detailDto?.isShared,
+           isShared {
+            shareCompletedButton.snp.makeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(68)
+            }
+            
+            // containerView
+            containerView.snp.makeConstraints {
+                $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
+            }
+        } else {
+            noteShareConditionView.snp.makeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(106)
+            }
+            
+            // containerView
+            containerView.snp.makeConstraints {
+                $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
+            }
         }
         
         recordingSegmentedVC.view.snp.makeConstraints {
