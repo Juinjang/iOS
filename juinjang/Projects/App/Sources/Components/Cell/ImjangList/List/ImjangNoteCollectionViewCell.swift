@@ -90,7 +90,6 @@ extension ImjangNoteCollectionViewCell {
                     self.roomThumbnailImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
                 }
             }
-            
         }
     }
     
@@ -148,7 +147,8 @@ extension ImjangNoteCollectionViewCell {
     private func configureLayout() {
         roomThumbnailImageView.snp.makeConstraints {        // 방 썸네일 사진
             $0.leading.equalToSuperview()
-            $0.verticalEdges.equalToSuperview().inset(12)
+            $0.top.equalToSuperview().inset(4)
+            $0.bottom.equalToSuperview().inset(12)
             $0.width.equalTo(144)
             $0.height.equalTo(112)
         }
@@ -188,7 +188,7 @@ extension ImjangNoteCollectionViewCell {
         }
     
         bookMarkButton.snp.makeConstraints {
-            $0.bottom.equalTo(contentView).inset(12)
+            $0.bottom.equalToSuperview().inset(12)
             $0.trailing.equalToSuperview()
             $0.size.equalTo(18)
         }

@@ -65,8 +65,8 @@ final class ImjangListViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        designNavigationBar()
+        navigationController?.isNavigationBarHidden = true
+        bindAction()
         setDelegate()
         fetchImjangList(sort: .update, setScrap: true)
         mainView.emptyBackgroundView.isHidden = !imjangList.isEmpty
@@ -84,20 +84,33 @@ final class ImjangListViewController: BaseViewController {
         mainView.collectionView.dataSource = self
     }
     
-    // 네비게이션 바 디자인
-    func designNavigationBar() {
-        self.navigationItem.title = "\(UserDefaultManager.shared.nickname)님의 임장노트"
-        self.navigationController?.navigationBar.tintColor = .black
-
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        let addButtonItem = UIBarButtonItem(image: UIImage.ImjangNote.add, style: .plain, target: self, action: #selector(openNewPageVC))
-        let searchButtonItem = UIBarButtonItem(image: UIImage.ImjangList.search, style: .plain, target: self, action: #selector(showSearchVC))
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.rightBarButtonItems = [addButtonItem, searchButtonItem]
+    private func bindAction() {
+        mainView.navigationView.itemActionRelay
+            .bind(with: self, onNext: { owner, action in
+                switch action {
+                case .popButtonTap: owner.popView()
+                case .addButtonTap: owner.openNewPageVC()
+                case .searchButtonTap: owner.showSearchVC()
+                default: break
+                }
+            })
+            .disposed(by: disposeBag)
     }
+    
+    // 네비게이션 바 디자인
+//    func designNavigationBar() {
+//        self.navigationItem.title = "\(UserDefaultManager.shared.nickname)님의 임장노트"
+//        self.navigationController?.navigationBar.tintColor = .black
+//
+//        // UIBarButtonItem 생성 및 이미지 설정
+//        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
+//        let addButtonItem = UIBarButtonItem(image: UIImage.ImjangNote.add, style: .plain, target: self, action: #selector(openNewPageVC))
+//        let searchButtonItem = UIBarButtonItem(image: UIImage.ImjangList.search, style: .plain, target: self, action: #selector(showSearchVC))
+//
+//        // 네비게이션 아이템에 백 버튼 아이템 설정
+//        self.navigationItem.leftBarButtonItem = backButtonItem
+//        self.navigationItem.rightBarButtonItems = [addButtonItem, searchButtonItem]
+//    }
 }
 
 extension ImjangListViewController: SendFilterItemDelegate {

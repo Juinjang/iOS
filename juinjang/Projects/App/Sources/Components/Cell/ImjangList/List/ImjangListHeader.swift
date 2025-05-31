@@ -105,25 +105,25 @@ extension ImjangListHeader {
         
         filterselectBtn.snp.makeConstraints {
             $0.centerY.equalTo(filterBackgroundView)
-            $0.leading.equalToSuperview().offset(16)
+            $0.leading.equalToSuperview()
         }
         
         deleteButton.snp.makeConstraints {
             $0.centerY.equalTo(filterBackgroundView)
-            $0.trailing.equalToSuperview().inset(24)
+            $0.trailing.equalToSuperview()
             $0.size.equalTo(22)
         }
         
         shareButton.snp.makeConstraints {
             $0.centerY.equalTo(filterBackgroundView)
-            $0.right.equalTo(deleteButton.snp.left).offset(-18)
+            $0.trailing.equalTo(deleteButton.snp.leading).offset(-18)
             $0.size.equalTo(22)
         }
         
         chatBubbleView.snp.makeConstraints {
             $0.height.equalTo(34)
             $0.width.equalTo(174)
-            $0.right.equalTo(shareButton.snp.right)
+            $0.trailing.equalTo(shareButton.snp.trailing)
             $0.bottom.equalTo(shareButton.snp.top).offset(-2)
         }
     }

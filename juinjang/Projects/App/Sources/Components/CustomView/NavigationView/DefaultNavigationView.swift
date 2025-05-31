@@ -17,6 +17,7 @@ enum NavigationButton {
     case search
     case setting
     case record
+    case add
     
     var image: UIImage {
         switch self {
@@ -28,6 +29,8 @@ enum NavigationButton {
             return .Main.setting
         case .record:
             return .Main.record
+        case .add:
+            return .ImjangNote.add
         }
     }
     
@@ -41,6 +44,8 @@ enum NavigationButton {
             return .settingButtonTap
         case .record:
             return .recordButtonTap
+        case .add:
+            return .addButtonTap
         }
     }
 }
@@ -52,6 +57,7 @@ enum NavigationAction: Equatable {
     case searchActive(isActive: Bool)
     case settingButtonTap
     case recordButtonTap
+    case addButtonTap
 }
 
 class DefaultNavigationView: BaseView {
