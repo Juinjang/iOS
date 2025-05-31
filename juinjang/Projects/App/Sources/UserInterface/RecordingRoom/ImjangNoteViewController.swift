@@ -513,7 +513,7 @@ final class ImjangNoteViewController: BaseViewController,
                     font: UIFont.pretendard(size: 16, weight: .medium),
                     textColor: .gray400, numberOfLines: 2)
         designImageView(roomLocationIcon,
-                        image: UIImage.ImjangNote.location,
+                        image: UIImage.location1.withRenderingMode(.alwaysOriginal),
                         contentMode: .scaleAspectFit)
         
         setStackView(addressStackView,
