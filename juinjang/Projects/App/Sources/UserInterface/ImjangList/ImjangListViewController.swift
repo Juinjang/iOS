@@ -267,7 +267,8 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         }
     }
 
-    private func callVersionRequest(imjangId: Int, completion: @escaping (Int?) -> Void) {
+    private func callVersionRequest(imjangId: Int,
+                                    completion: @escaping (Int?) -> Void) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
             if error == nil {
                 guard let result = detailDto else {

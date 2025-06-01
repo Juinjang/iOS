@@ -13,7 +13,6 @@ import RxSwift
 
 enum ImjangNoteShareConditionViewEventType {
     case share
-    case tip
 }
 
 final class ImjangNoteShareConditionView: BaseView {
@@ -29,8 +28,6 @@ final class ImjangNoteShareConditionView: BaseView {
     }
     
     private let shareButton = RoundedShareButton()
-    
-    private let shareTipButton = RoundedShareTipButton()
     
     private let conditionBaseView = UIView().then {
         $0.roundCorners(cornerRadius: 8, corner: .all)
@@ -59,7 +56,6 @@ final class ImjangNoteShareConditionView: BaseView {
         secondTitleLabel.fontColor = model.isTotalSatisfied ? .main : .gray500
         conditionBaseView.backgroundColor = model.isTotalSatisfied ? .gray100 : .mainWhite
         shareButton.isHidden = !model.isTotalSatisfied
-        shareTipButton.isHidden = model.isTotalSatisfied
         
         model.conditions.forEach { item in
             conditionStackView.addArrangedSubview(
@@ -71,11 +67,6 @@ final class ImjangNoteShareConditionView: BaseView {
         
         shareButton.rx.throttleTap
             .map { ImjangNoteShareConditionViewEventType.share }
-            .bind(to: relay)
-            .disposed(by: disposeBag)
-        
-        shareTipButton.rx.throttleTap
-            .map { ImjangNoteShareConditionViewEventType.tip }
             .bind(to: relay)
             .disposed(by: disposeBag)
     }
@@ -92,7 +83,6 @@ final class ImjangNoteShareConditionView: BaseView {
         add(mainTitleLabel,
             secondTitleLabel,
             shareButton,
-            shareTipButton,
             conditionBaseView.with(
                 conditionStackView
             )
@@ -110,13 +100,6 @@ final class ImjangNoteShareConditionView: BaseView {
         secondTitleLabel.snp.makeConstraints {
             $0.centerY.equalTo(mainTitleLabel.snp.centerY)
             $0.left.equalTo(mainTitleLabel.snp.right).offset(4)
-        }
-        
-        shareTipButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
-            $0.right.equalToSuperview().offset(-16)
-            $0.width.equalTo(91)
-            $0.height.equalTo(32)
         }
         
         shareButton.snp.makeConstraints {

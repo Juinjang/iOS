@@ -58,7 +58,9 @@ final class PhotoListViewController: BaseViewController, View {
 // MARK: - Setup DataSource
 extension PhotoListViewController {
     private func configureDataSource() {
-        dataSource = DataSource(collectionView: mainView.exposedCollectionView) { collectionView, indexPath, item in
+        dataSource = DataSource(
+            collectionView: mainView.exposedCollectionView
+        ) { collectionView, indexPath, item in
             
             let cell = collectionView.dequeueReusableCell(PhotoCell.self,
                                                           for: indexPath)
