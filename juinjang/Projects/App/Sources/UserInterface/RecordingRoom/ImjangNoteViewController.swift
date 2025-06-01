@@ -196,8 +196,6 @@ final class ImjangNoteViewController: BaseViewController,
                 switch event {
                 case .share:
                     print("Share 버튼 클릭")
-                case .tip:
-                    print("Tip 버튼 클릭")
                 }
             }
             .disposed(by: disposeBag)
