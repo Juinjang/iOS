@@ -190,7 +190,11 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     
     // 삭제 화면으로 이동
     @objc private func showDeleteImjangVC() {
-        let DeleteImjangVC = DeleteImjangViewController()
+        let DeleteImjangVC = DeleteImjangViewController(
+            dependency: DeleteImjangViewController.Dependency(
+                noteRepository: NoteRepository()
+            )
+        )
         DeleteImjangVC.deleteImjangListDelegate = self
         self.navigationController?.pushViewController(DeleteImjangVC, animated: true)
     }

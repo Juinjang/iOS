@@ -9,47 +9,89 @@ import UIKit
 import Then
 import SnapKit
 import Toast
+import RxSwift
 
 final class DeleteImjangViewController: BaseViewController {
-    let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width*0.6, height: 24)).then {
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "삭제할 페이지를 선택해 주세요."
+        $0.titleColor = .gray400
+    }
+    
+    private let titleLabel = UILabel(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width*0.6, height: 24)).then {
         $0.text = "삭제할 페이지를 선택해주세요"
         $0.font = .pretendard(size: 16, weight: .semiBold)
         $0.textColor = .gray400
         $0.textAlignment = .center
     }
     
-    let deleteImjangTableView = UITableView()
-    let deleteButtonBackgroundView = UIView().then {
+    private lazy var collectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+        collectionView.backgroundColor = .white
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(SelectNoteCell.self)
+        collectionView.register(DeleteNoteHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
+        collectionView.allowsMultipleSelection = true
+        return collectionView
+    }()
+    
+    private let deleteButtonBackgroundView = UIView().then {
         $0.backgroundColor = .mainWhite
     }
-    let deleteButton = UIButton()
     
-    var selectedIndexes: Set<Int> = [] {
+    private let deleteButton = UIButton()
+    
+    private var selectedIndexes: Set<Int> = [] {
         didSet {
             setDeleteButtonDesign()
         }
     }
     
-    var imjangList: [ListDto] = []
+    struct Dependency {
+        let noteRepository: NoteRepositoryProtocol
+    }
+    
+    private var imjangList: [NoteDTO] = []
     weak var deleteImjangListDelegate: DeleteImjangListDelegate?
+    private let dependency: Dependency
+    private var disposeBag = DisposeBag()
+    
+    init(dependency: Dependency) {
+        self.dependency = dependency
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        designNavigationBar()
-        configureTableView()
+        bindAction()
+        configureCollectionView()
         configureHierarchy()
         configureLayout()
         configureView()
-        callRequest()
-//        deleteImjangTableView.reloadData()
+        retrieveNoteList()
         deleteButton.addTarget(self, action: #selector(deleteButtonClicked), for: .touchUpInside)
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .bind(with: self, onNext: { owner, action in
+                switch action {
+                case .popButtonTap: owner.popView()
+                default: break
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc private  func deleteButtonClicked() {
         let deleteImjangPopupVC = DeleteImjangPopupViewController()
         guard let roomIndex = selectedIndexes.first else { return }
-        deleteImjangPopupVC.selectedRoomName = imjangList[roomIndex].nickname
+        deleteImjangPopupVC.selectedRoomName = imjangList[roomIndex].name
         deleteImjangPopupVC.selectedCount = selectedIndexes.count
         deleteImjangPopupVC.modalPresentationStyle = .overFullScreen
         
@@ -59,7 +101,7 @@ final class DeleteImjangViewController: BaseViewController {
             print(indexs)
             var ids: [Int] = []
             for index in indexs {
-                ids.append(self.imjangList[index].limjangId)
+                ids.append(self.imjangList[index].noteId)
             }
             print(ids)
             self.deleteRequest(imjangIds: ids)
@@ -84,60 +126,82 @@ final class DeleteImjangViewController: BaseViewController {
             print(response)
             self.selectedIndexes.removeAll()
             self.view.makeToast("선택된 임장이 삭제되었습니다.", duration: 1.0)
-            self.callRequest()
+            self.retrieveNoteList()
         }
     }
     
-    private func callRequest() {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: Filter.update.sortValue)) { response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
+    private func retrieveNoteList() {
+        dependency.noteRepository.retrieveNoteList(sort: Filter.update.sortValue)
+            .asObservable()
+            .subscribe(with: self) { owner, noteResultDTO in
+                print(noteResultDTO)
+                let notes = noteResultDTO.notes
+                owner.imjangList = notes
+                owner.collectionView.reloadData()
             }
-            
-            guard let response = response else { return }
-            guard let result = response.result else { return }
-            self.imjangList = result.limjangList
-            print(self.imjangList.count)
-            self.deleteImjangTableView.reloadData()
-        }
+            .disposed(by: disposeBag)
     }
     
-    private func configureTableView() {
-        deleteImjangTableView.delegate = self
-        deleteImjangTableView.dataSource = self
-        deleteImjangTableView.rowHeight = 116
-        deleteImjangTableView.separatorStyle = .none
-        deleteImjangTableView.showsVerticalScrollIndicator = false
-        deleteImjangTableView.allowsMultipleSelection = true
-        deleteImjangTableView.sectionHeaderTopPadding = 0
-        deleteImjangTableView.register(DeleteImjangTableHeaderView.self, forHeaderFooterViewReuseIdentifier: DeleteImjangTableHeaderView.identifier)
-        deleteImjangTableView.register(DeleteImjangNoteTableViewCell.self, forCellReuseIdentifier: DeleteImjangNoteTableViewCell.identifier)
-    }
-    
-    // 네비게이션 바 디자인
-    private func designNavigationBar() {
-        self.navigationItem.titleView = titleLabel
-        self.navigationController?.navigationBar.tintColor = .black
-
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-      
-        self.navigationItem.leftBarButtonItem = backButtonItem
+    private func configureCollectionView() {
+        collectionView.delegate = self
+        collectionView.dataSource = self
     }
     
     @objc private func popView() {
         navigationController?.popViewController(animated: true)
     }
     
+    func createCollectionViewLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
+            guard let self else { return nil }
+            return selectNoteLayoutSection()
+        }
+    }
+    
+    private func selectNoteLayoutSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(136))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.interGroupSpacing = 8
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1.0),
+                        heightDimension: .absolute(50)),
+                    elementKind: UICollectionView.elementKindSectionHeader,
+                    alignment: .top
+                )
+        sectionHeader.pinToVisibleBounds = true
+        sectionHeader.zIndex = 2
+        section.boundarySupplementaryItems = [sectionHeader]
+        
+        return section
+    }
+    
     private func configureHierarchy() {
-        view.addSubview(deleteImjangTableView)
+        view.addSubview(navigationView)
+        view.addSubview(collectionView)
         view.addSubview(deleteButtonBackgroundView)
         deleteButtonBackgroundView.addSubview(deleteButton)
     }
     
     private func configureLayout() {
-        deleteImjangTableView.snp.makeConstraints {
-            $0.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
             $0.bottom.equalTo(deleteButtonBackgroundView.snp.top)
         }
         
@@ -177,46 +241,22 @@ final class DeleteImjangViewController: BaseViewController {
         if sender.isSelected == true {
             sender.setImage(UIImage.ImjangList.on, for: .normal)
             self.selectedIndexes = Set(0...imjangList.count - 1)
-            deleteImjangTableView.reloadData()
+            collectionView.reloadData()
         } else {
             sender.setImage(UIImage.ImjangList.off, for: .normal)
             self.selectedIndexes.removeAll()
-            deleteImjangTableView.reloadData()
+            collectionView.reloadData()
         }
     }
 }
 
-extension DeleteImjangViewController: UITableViewDelegate, UITableViewDataSource {
-    // 헤더의 높이
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 50
+extension DeleteImjangViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        imjangList.count
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: DeleteImjangTableHeaderView.identifier) as? DeleteImjangTableHeaderView else {
-            return UITableViewHeaderFooterView()
-        }
-        
-        headerView.selectedCountLabel.text = "\(selectedIndexes.count)개 선택됨"   // 개수 변경 필요
-        headerView.selectedCountLabel.textColor = selectedIndexes.count > 0 ? .main : .gray400
-        
-        headerView.removeAllCheckButton.setImage(selectedIndexes.count == imjangList.count && imjangList.count > 0 ? UIImage.ImjangList.on : UIImage.ImjangList.off, for: .normal)
-        headerView.removeAllCheckButton.addTarget(self, action: #selector(removeAllCheckButtonClicked), for: .touchUpInside)
-        
-        return headerView
-    }
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return imjangList.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: DeleteImjangNoteTableViewCell.identifier, for: indexPath) as? DeleteImjangNoteTableViewCell else {
-            return UITableViewCell()
-        }
-        
-        cell.selectionStyle = .none
-    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(SelectNoteCell.self, for: indexPath)
         if selectedIndexes.contains(indexPath.row) {
             cell.isClicked = true
         } else {
@@ -225,14 +265,33 @@ extension DeleteImjangViewController: UITableViewDelegate, UITableViewDataSource
         
         cell.isClicked = selectedIndexes.contains(indexPath.row)
 
-        cell.configureCell(imjangNote: imjangList[indexPath.row])
-        cell.checkImageView.tag = indexPath.row
+        cell.configureCell(note: imjangList[indexPath.row])
         
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let cell = tableView.cellForRow(at: indexPath) as? DeleteImjangNoteTableViewCell else {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let headerView = collectionView.dequeueReusableSupplementaryView(
+                DeleteNoteHeader.self,
+                ofKind: UICollectionView.elementKindSectionHeader,
+                for: indexPath
+            )
+            
+            headerView.selectedCountLabel.text = "\(selectedIndexes.count)개 선택됨"   // 개수 변경 필요
+            headerView.selectedCountLabel.textColor = selectedIndexes.count > 0 ? .main : .gray400
+            
+            headerView.removeAllCheckButton.setImage(selectedIndexes.count == imjangList.count && imjangList.count > 0 ? UIImage.ImjangList.on : UIImage.ImjangList.off, for: .normal)
+            headerView.removeAllCheckButton.addTarget(self, action: #selector(removeAllCheckButtonClicked), for: .touchUpInside)
+            
+            return headerView
+        }
+        
+        return UICollectionReusableView()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectNoteCell else {
             return
         }
         cell.isClicked.toggle()
@@ -241,7 +300,7 @@ extension DeleteImjangViewController: UITableViewDelegate, UITableViewDataSource
         } else {
             selectedIndexes.remove(indexPath.row)
         }
-        
-        deleteImjangTableView.reloadData()
+       
+        collectionView.reloadData()
     }
 }
