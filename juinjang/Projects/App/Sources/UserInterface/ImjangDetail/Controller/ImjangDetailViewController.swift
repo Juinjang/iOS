@@ -157,6 +157,9 @@ final class ImjangDetailViewController: BaseViewController, View {
                     reactor.action.onNext(.expandImageButtonDidTap(index: index))
                 case .likeButtonTap:
                     reactor.action.onNext(.likeButtonDidTap)
+                case .reportButtonTap:
+                    // report Alert 뷰 띄우기
+                    print("신고 버튼 클릭 됨")
                 }
             }
             .disposed(by: disposeBag)

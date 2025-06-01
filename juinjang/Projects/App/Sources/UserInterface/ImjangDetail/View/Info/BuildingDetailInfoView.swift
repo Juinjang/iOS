@@ -59,6 +59,8 @@ final class BuildingDetailInfoView: BaseView {
         $0.fontColor = .gray400
     }
     
+    private let reportButton = ReportButton()
+    
     private let separatorView = UIView().then {
         $0.backgroundColor = .stroke
     }
@@ -88,6 +90,11 @@ final class BuildingDetailInfoView: BaseView {
                 relay.accept(.addressTap(address: model.address))
             }
             .disposed(by: dispoaseBag)
+        
+        reportButton.rx.throttleTap
+            .map { ImjangDetailInfoCellEvent.reportButtonTap }
+            .bind(to: relay)
+            .disposed(by: dispoaseBag)
     }
     
     func prepareForReuse() {
@@ -108,6 +115,7 @@ final class BuildingDetailInfoView: BaseView {
                 addressContentLabel
             ),
             sharedDateLabel,
+            reportButton,
             separatorView
         )
     }
@@ -169,6 +177,13 @@ final class BuildingDetailInfoView: BaseView {
         sharedDateLabel.snp.makeConstraints {
             $0.top.equalTo(addressBaseButton.snp.bottom).offset(12)
             $0.left.equalToSuperview().offset(24)
+        }
+        
+        reportButton.snp.makeConstraints {
+            $0.centerY.equalTo(sharedDateLabel.snp.centerY)
+            $0.right.equalToSuperview().offset(-24)
+            $0.height.equalTo(19)
+            $0.width.equalTo(67)
         }
         
         separatorView.snp.makeConstraints {

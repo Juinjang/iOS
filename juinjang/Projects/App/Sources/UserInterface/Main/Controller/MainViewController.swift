@@ -35,7 +35,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
         bindAction()
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none

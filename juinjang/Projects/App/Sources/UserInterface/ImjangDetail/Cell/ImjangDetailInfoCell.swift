@@ -14,6 +14,7 @@ enum ImjangDetailInfoCellEvent {
     case likeButtonTap
     case expandImageButtonTap(index: Int)
     case addressTap(address: String)
+    case reportButtonTap
 }
 
 final class ImjangDetailInfoCell: BaseCollectionViewCell {

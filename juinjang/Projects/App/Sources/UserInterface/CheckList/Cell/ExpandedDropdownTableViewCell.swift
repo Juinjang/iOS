@@ -268,7 +268,8 @@ final class ExpandedDropdownTableViewCell: UITableViewCell {
     }
     
     // 보기 모드일 때 저장된 값이 있는 경우
-    func savedViewModeConfigure(with answer: String, with options: [Option], at indexPath: IndexPath) {
+    func savedViewModeConfigure(with answer: String,
+                                with options: [Option], at indexPath: IndexPath) {
         // answer와 일치하는 옵션의 인덱스를 찾기
         if let selectedIndex = options.firstIndex(where: { $0.option == answer }) {
             itemPickerView.selectRow(selectedIndex, inComponent: 0, animated: true)

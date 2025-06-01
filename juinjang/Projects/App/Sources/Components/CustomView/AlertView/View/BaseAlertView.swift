@@ -108,7 +108,7 @@ extension BaseAlertView {
             buttonStack.addArrangedSubview(createButton(for: $0))
         }
     }
-
+    
     private func createButton(for type: AlertButtonType) -> UIButton {
         let button = UIButton()
 
