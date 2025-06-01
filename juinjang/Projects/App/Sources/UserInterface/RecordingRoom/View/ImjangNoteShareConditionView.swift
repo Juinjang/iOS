@@ -8,6 +8,13 @@
 import UIKit
 import SnapKit
 import Then
+import RxRelay
+import RxSwift
+
+enum ImjangNoteShareConditionViewEventType {
+    case share
+    case tip
+}
 
 final class ImjangNoteShareConditionView: BaseView {
     private let mainTitleLabel = DSLabel(.title).then {
@@ -35,7 +42,10 @@ final class ImjangNoteShareConditionView: BaseView {
         $0.alignment = .center
     }
     
-    func configure(model: ShareableConditionDTO) {
+    private let disposeBag = DisposeBag()
+    
+    func configure(model: ShareableConditionDTO,
+                   relay: PublishRelay<ImjangNoteShareConditionViewEventType>) {
         if !conditionStackView.subviews.isEmpty {
             conditionStackView.subviews.forEach {
                 conditionStackView.removeArrangedSubview($0)
@@ -58,6 +68,16 @@ final class ImjangNoteShareConditionView: BaseView {
                 }
             )
         }
+        
+        shareButton.rx.throttleTap
+            .map { ImjangNoteShareConditionViewEventType.share }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
+        
+        shareTipButton.rx.throttleTap
+            .map { ImjangNoteShareConditionViewEventType.tip }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
     }
     
     override func configureView() {

@@ -44,7 +44,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
         super.viewDidLoad()
         checkAndShowTermsPopup()
-    
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
