@@ -29,6 +29,7 @@ final class LookAroundViewController: BaseViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
         reactor?.action.onNext(.viewDidLoad)
     }
 

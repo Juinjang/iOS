@@ -29,16 +29,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private var mainImjangList: [LimjangDto] = []
     
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // 화면 전환 이벤트 로깅
-//        AnalyticsManager.log(event: MainViewEvent(
-//                name: .enter_main_view,
-//                parameters: ["MainScreen": "MainViewController"])
-//        )
-    }
-    
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
     
@@ -144,15 +134,24 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         imjangNoteVC.previousVCType = .main
         navigationController?.pushViewController(imjangNoteVC, animated: true)
     }
-    @objc private func newImjangBtnTap() {
+    
+    @objc private func newPageButtonTapped() {
         let vc = OpenNewPageViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    @objc private func myImjangBtnTap() {
+    
+    @objc private func myNoteButtonTapped() {
         let vc = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
         vc.deleteImjangListDelegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }
+    
+    @objc private func lookAroundButtonTapped() {
+        let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(repository: MockLookAroundRepository()))
+        lookAroundVC.navigationController?.isNavigationBarHidden = true
+        self.navigationController?.pushViewController(lookAroundVC, animated: true)
+    }
+    
     @objc private func setttingBtnTap() {
         let vc = SettingViewController()
         vc.updateNicknameDelegate = self
@@ -192,8 +191,9 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             cell.selectionStyle = .none
             cell.backgroundColor = .clear
             
-            cell.newImjangButton.addTarget(self, action: #selector(newImjangBtnTap), for: .touchUpInside)
-            cell.myNoteButton.addTarget(self, action: #selector(myImjangBtnTap), for: .touchUpInside)
+            cell.newPageButton.addTarget(self, action: #selector(newPageButtonTapped), for: .touchUpInside)
+            cell.myNoteButton.addTarget(self, action: #selector(myNoteButtonTapped), for: .touchUpInside)
+            cell.lookAroundButton.addTarget(self, action: #selector(lookAroundButtonTapped), for: .touchUpInside)
             return cell
         }
         else {

@@ -58,7 +58,7 @@ struct LimjangDto: Codable {
     let nickname: String
     let price: String
     let totalAverage: String?    // 체크리스트 생선 전일 경우 값은 nil
-    let address: String
+    let address: String?
 }
 
 struct LimjangDTO: Codable {

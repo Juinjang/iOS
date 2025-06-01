@@ -119,7 +119,7 @@ final class BottomCollectionViewCell: UICollectionViewCell {
     }
     
     private func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        starIcon.tintColor = empty ? .null : .main
         rateLabel.textColor = empty ? .null : .main
     }
     
@@ -136,20 +136,19 @@ final class BottomCollectionViewCell: UICollectionViewCell {
     }
     
     private func configureView() {
-        
         contentView.layer.cornerRadius = 10
         contentView.clipsToBounds = true
-        contentView.layer.borderWidth = 1.5
+        contentView.layer.borderWidth = 1
         contentView.layer.borderColor = UIColor.stroke.cgColor
         contentView.backgroundColor = .mainWhite
 
-        recentImjangImageView.design(cornerRadius: 10)
+        recentImjangImageView.design(cornerRadius: 5)
         recentImjangImageView.backgroundColor = .gray100
         nameLabel.design(font: .pretendard(size: 15, weight: .semiBold), numberOfLines: 2)
         priceLabel.design(textColor: .gray450, font: .pretendard(size: 14, weight: .medium))
-        starIcon.design(image: UIImage.starEmpty, contentMode: .scaleAspectFit)
+        starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
         rateLabel.design(text: "0.0", textColor: .null, font: .pretendard(size: 14, weight: .bold))
-        scoreStackView.design(distribution: .fill, spacing: 3)
+        scoreStackView.design(alignment: .center, distribution: .fill, spacing: 3)
     }
     
     private func configureHierarchy() {
@@ -173,8 +172,7 @@ final class BottomCollectionViewCell: UICollectionViewCell {
             $0.height.equalTo(35)
         }
         scoreStackView.snp.makeConstraints{
-            $0.bottom.equalToSuperview().inset(11)
-            $0.trailing.equalToSuperview().inset(11)
+            $0.bottom.trailing.equalToSuperview().inset(10)
             $0.width.equalTo(42)
         }
         starIcon.snp.makeConstraints {

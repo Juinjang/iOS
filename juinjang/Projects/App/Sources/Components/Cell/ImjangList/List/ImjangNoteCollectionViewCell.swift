@@ -73,7 +73,7 @@ extension ImjangNoteCollectionViewCell {
         
         addressLabel.text = note.address
         
-        let image = note.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
+        let image = note.isScraped ? UIImage.bookmarkOn22 : UIImage.bookmarkOff22
         bookMarkButton.setImage(image, for: .normal)
         
         let images = note.imageUrl
@@ -188,9 +188,9 @@ extension ImjangNoteCollectionViewCell {
         }
     
         bookMarkButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(13)
             $0.trailing.equalToSuperview()
-            $0.size.equalTo(18)
+            $0.size.equalTo(22)
         }
         
         scoreLabel.snp.makeConstraints {
@@ -234,7 +234,7 @@ extension ImjangNoteCollectionViewCell {
         
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
         
-        bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .clear)
+        bookMarkButton.design(image: UIImage.bookmarkOff22, backgroundColor: .clear)
         
         seperatorView.backgroundColor = .stroke
     }

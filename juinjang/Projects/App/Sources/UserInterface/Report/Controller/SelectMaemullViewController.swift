@@ -71,7 +71,6 @@ final class SelectMaemullViewController : BaseViewController {
             menuChildren.append(UIAction(title: filter.title, state: .off,handler: { [weak self] (action: UIAction) in
                 guard let self else { return }
                 self.changefilterTitle(filter.title)
-//                NotificationCenter.default.post(name: .imjangListFilterTapped, object: nil, userInfo: ["title":filter.title])
                 callRequest(sort: filter, excludingId: imjangId)
             }))
         }
@@ -270,7 +269,4 @@ extension SelectMaemullViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 116
     }
-
 }
-
-
