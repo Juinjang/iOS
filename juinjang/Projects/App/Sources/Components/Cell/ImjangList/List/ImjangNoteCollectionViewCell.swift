@@ -8,23 +8,29 @@
 import UIKit
 import Then
 import SnapKit
+import Kingfisher
 
 final class ImjangNoteCollectionViewCell: UICollectionViewCell {
-    private let roomThumbnailImageView = UIImageView()
-    private let roomNameLabel = UILabel()
-    private let roomIcon = UIImageView()
-    
-    private let priceLabel = DSLabel(.body)
-    private let pyongFloorLabel = DSLabel(.reguler).then {
-        $0.fontWeight = .medium
+    let roomThumbnailImageView = UIImageView()
+    let roomNameLabel = UILabel()
+    let roomIcon = UIImageView()
+    let roomNameStackView = UIStackView()
+    let priceLabel = DSLabel(.body).then {
+        $0.fontColor = .gray450
+    }
+    let pyungAndFloorLabel = DSLabel(.body2).then {
+        $0.fontSize = 13
         $0.fontColor = .gray400
     }
-    private let addressLabel = UILabel()
-    
-    private let starIcon = UIImageView()
-    private let scoreLabel = UILabel()
-    
+    let addressLabel = UILabel()
+    let starIcon = UIImageView()
+    let scoreLabel = UILabel()
+    let starStackView = UIStackView()
     let bookMarkButton = UIButton()
+    
+    private let baseLineView = UIView().then {
+        $0.backgroundColor = .stroke
+    }
     
     private let seperatorView = UIView()
     
@@ -68,10 +74,10 @@ extension ImjangNoteCollectionViewCell {
         priceLabel.text = note.price
         
         if note.pyong == nil || note.floor == nil {
-            pyongFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
+            pyungAndFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
         } else {
             if let pyong = note.pyong, let floor = note.floor {
-                pyongFloorLabel.text = "\(pyong)평 \(floor)층"
+                pyungAndFloorLabel.text = "\(pyong)평 \(floor)층"
             }
         }
         
@@ -125,6 +131,26 @@ extension ImjangNoteCollectionViewCell {
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
+        
+        if resultScore == 0.0 {
+            setScoreStyle()
+        } else {
+            setScoreStyle(empty: false)
+        }
+    }
+    
+    private func setPyungAndFloor(model: NoteDTO) {
+        if let pyung = model.pyong,
+           let floor = model.floor {
+            pyungAndFloorLabel.text = "\(pyung)평 \(floor)층"
+        } else {
+            pyungAndFloorLabel.text = "입력 필요"
+        }
+    }
+    
+    func setScoreStyle(empty: Bool = true) {
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star.withRenderingMode(.alwaysOriginal)
+        scoreLabel.textColor = empty ? .null : .main
     }
 }
 
@@ -137,7 +163,7 @@ extension ImjangNoteCollectionViewCell {
             roomNameLabel,
             roomIcon,
             priceLabel,
-            pyongFloorLabel,
+            pyungAndFloorLabel,
             addressLabel,
             scoreLabel,
             starIcon,
@@ -174,7 +200,7 @@ extension ImjangNoteCollectionViewCell {
             $0.height.equalTo(23)
         }
         
-        pyongFloorLabel.snp.makeConstraints {
+        pyungAndFloorLabel.snp.makeConstraints {
             $0.top.equalTo(priceLabel.snp.bottom)
             $0.leading.equalTo(roomNameLabel.snp.leading)
             $0.trailing.equalToSuperview()
@@ -183,7 +209,7 @@ extension ImjangNoteCollectionViewCell {
         
         addressLabel.snp.makeConstraints {
             $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.top.equalTo(pyongFloorLabel.snp.bottom)
+            $0.top.equalTo(pyungAndFloorLabel.snp.bottom)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(19)
         }

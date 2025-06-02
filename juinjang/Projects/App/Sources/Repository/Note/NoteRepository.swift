@@ -18,6 +18,13 @@ final class NoteRepository: NoteRepositoryProtocol {
         self.userDefault = userDefault
     }
     
+    func retrieveNoteList(sort: String,
+                          keyword: String) -> Single<[MyImjangResponseDTO]> {
+        return NoteAPI.getNoteList(sort: sort, keyword: keyword)
+            .request(BaseResponse<NoteListDTO<MyImjangResponseDTO>>.self, networkManager)
+            .map { try $0.unwrap().notes }
+    }
+    
     func retrieveShareableNoteList() -> Single<[ShareSelectModel]> {
         return NoteAPI.getShareableNoteList
             .request(BaseResponse<NoteListDTO<ShareSelectModel>>.self, networkManager)

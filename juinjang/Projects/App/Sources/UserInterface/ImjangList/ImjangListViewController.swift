@@ -23,6 +23,7 @@ final class ImjangListViewController: BaseViewController {
     private let deleteButton = UIButton()   // navigationBar 삭제 버튼
     
     weak var deleteImjangListDelegate: DeleteImjangListDelegate?
+    
     private var scrapImjangList: [NoteDTO] = [] {
         didSet(oldValue) {
             if oldValue.isEmpty && !scrapImjangList.isEmpty {   // 데이터가 존재하게 됐을 때
@@ -33,6 +34,7 @@ final class ImjangListViewController: BaseViewController {
 
         }
     }
+        
     var imjangList: [NoteDTO] = [] {
         didSet(oldValue) {
             if !oldValue.isEmpty && imjangList.isEmpty {
@@ -62,11 +64,10 @@ final class ImjangListViewController: BaseViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        navigationController?.isNavigationBarHidden = true
-        bindAction()
+        bind()
         setDelegate()
         fetchImjangList(sort: .updated, setScrap: true)
         mainView.emptyBackgroundView.isHidden = !imjangList.isEmpty
@@ -83,17 +84,22 @@ final class ImjangListViewController: BaseViewController {
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
     }
-    
-    private func bindAction() {
-        mainView.navigationView.itemActionRelay
-            .bind(with: self, onNext: { owner, action in
-                switch action {
-                case .popButtonTap: owner.popView()
-                case .addButtonTap: owner.openNewPageVC()
-                case .searchButtonTap: owner.showSearchVC()
-                default: break
+        
+    func bind() {
+        mainView.navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.popView()
+                case .searchButtonTap:
+                    self.showSearchVC()
+                case .addButtonTap:
+                    self.openNewPageVC()
+                default:
+                    break
                 }
-            })
+            }
             .disposed(by: disposeBag)
     }
 }
@@ -103,7 +109,7 @@ extension ImjangListViewController {
     private func fetchImjangList(sort: MyNoteFilter = .updated, setScrap: Bool = false) {
         print(#function)
         showSkeletonView()
-        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: nil)
+        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: "")
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)
@@ -113,7 +119,6 @@ extension ImjangListViewController {
                 self.mainView.collectionView.reloadData()
             }
             .disposed(by: disposeBag)
-        
     }
     
     private func showSkeletonView() {
@@ -126,15 +131,18 @@ extension ImjangListViewController {
     
     @objc private func refreshImjangList() {
         print(#function)
-        dependency.noteRepository.retrieveNoteList(sort: currentFilter.parameterValue, keyword: nil)
-            .asObservable()
-            .subscribe(with: self) { owner, noteResultDTO in
-                let notes = noteResultDTO.notes
-                self.imjangList = notes
-                self.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
-                self.mainView.collectionView.reloadData()
-            }
-            .disposed(by: disposeBag)
+        
+        dependency.noteRepository.retrieveNoteList(
+            sort: currentFilter.parameterValue,
+            keyword: ""
+        )
+        .asObservable()
+        .subscribe(with: self) { (self, response) in
+            self.imjangList = response
+            self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
+            self.mainView.collectionView.reloadData()
+        }
+        .disposed(by: disposeBag)
     }
     
     // 스크랩 리스트 설정
@@ -254,8 +262,9 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         }
     }
 
-    private func scrapRequest(noteId: Int) {
-        JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .scrap(imjangId: noteId)) { response, error in
+    private func scrapRequest(imjangId: Int) {
+        JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self,
+                                            api: .scrap(imjangId: imjangId)) { response, error in
             if let error = error {
                 print(error.localizedDescription)
             }
@@ -315,7 +324,7 @@ extension ImjangListViewController: DeleteImjangListDelegate {
             cancelScrapRequest(noteId: noteId)
         } else {
             setScrap(noteId: noteId)
-            scrapRequest(noteId: noteId)
+            scrapRequest(imjangId: noteId)
         }
     }
     
@@ -328,7 +337,7 @@ extension ImjangListViewController: DeleteImjangListDelegate {
             cancelScrapRequest(noteId: noteId)
         } else {
             setScrap(noteId: noteId)
-            scrapRequest(noteId: noteId)
+            scrapRequest(imjangId: noteId)
         }
     }
 }
@@ -353,7 +362,8 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
         2
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if let imjangSection = Section(rawValue: indexPath.section) {
             switch imjangSection {
             case .scrap:

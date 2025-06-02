@@ -8,6 +8,7 @@
 import RxSwift
 
 protocol NoteRepositoryProtocol {
+    func retrieveNoteList(sort: String, keyword: String) -> Single<[MyImjangResponseDTO]>
     func retrieveShareableNoteList() -> Single<[ShareSelectModel]>
     func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableConditionDTO>
     func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerModel]>
