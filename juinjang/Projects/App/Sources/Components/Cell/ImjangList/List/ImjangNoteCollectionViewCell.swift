@@ -6,18 +6,30 @@
 //
 
 import UIKit
+import Then
+import SnapKit
+import Kingfisher
 
 final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     let roomThumbnailImageView = UIImageView()
     let roomNameLabel = UILabel()
     let roomIcon = UIImageView()
     let roomNameStackView = UIStackView()
-    let priceLabel = UILabel()
+    let priceLabel = DSLabel(.body).then {
+        $0.fontColor = .gray450
+    }
+    let pyungAndFloorLabel = DSLabel(.body2).then {
+        $0.fontSize = 13
+        $0.fontColor = .gray400
+    }
+    let addressLabel = UILabel()
     let starIcon = UIImageView()
     let scoreLabel = UILabel()
     let starStackView = UIStackView()
-    let addressLabel = UILabel()
     let bookMarkButton = UIButton()
+    private let baseLineView = UIView().then {
+        $0.backgroundColor = .stroke
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,69 +51,35 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Configure Cell
 extension ImjangNoteCollectionViewCell {
-    func configureCell(imjangNote: ListDto?) {
+    func configureCell(imjangNote: MyImjangResponseDTO?) {
         guard let imjangNote else { return }
         
-        roomNameLabel.text = imjangNote.nickname
-        let priceTypeString: String
-        switch imjangNote.priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        case 3:
-            priceTypeString = "실거래가"
-        default:
-            priceTypeString = "" // 값이 없을 경우 공백 처리
-        }
-        setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
-       
-        setScore(score: imjangNote.totalAverage)
+        roomNameLabel.text = imjangNote.name
         
-        addressLabel.text = imjangNote.address
+        setPriceLabel(model: imjangNote)
+        
+        setPyungAndFloor(model: imjangNote)
+       
+        setScore(score: imjangNote.rate)
+        
+        addressLabel.text = imjangNote.shortAddress
         
         let image = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(image, for: .normal)
         
-        let images = imjangNote.images
-        if images.isEmpty {
-            let image = UIImage.ImjangList.empty
-            DispatchQueue.main.async {
-                self.roomThumbnailImageView.image = image
-            }
-        } else {
-            let image = images[0]
-            if let url = URL(string: image) {
-                DispatchQueue.main.async {
-                    //                self.roomThumbnailImageView.image = UIImage(named: image)  // 임시
-                    self.roomThumbnailImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
-                }
-            }
-            
+        DispatchQueue.main.async {
+            self.roomThumbnailImageView.kf.setImage(
+                with: URL(string: imjangNote.imageUrl.first ?? ""),
+                placeholder: imjangNote.propertyTypeToHolderImage
+            )
         }
     }
     
     // 가격 설정
-    private func setPriceLabel(priceList: [String], priceType: String) {
-        switch priceList.count {
-        case 1:
-            let priceString = priceList[0]
-            if priceType.isEmpty {
-                priceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                priceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
-        case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-
-            priceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
-        default:
-            priceLabel.text = "편집을 통해 가격을 설정해주세요."
-        }
+    private func setPriceLabel(model: MyImjangResponseDTO) {
+        priceLabel.text = (model.monthlyRent == nil)
+        ? "\(model.priceTypeString) \(model.price.formatToKoreanCurrencyWithZero())"
+        : "\(model.priceTypeString) \(model.monthlyRent?.formatToKoreanCurrencyWithZero() ?? "")"
     }
     
     private func setScore(score: String?) {
@@ -121,8 +99,17 @@ extension ImjangNoteCollectionViewCell {
         }
     }
     
+    private func setPyungAndFloor(model: MyImjangResponseDTO) {
+        if let pyung = model.pyong,
+           let floor = model.floor {
+            pyungAndFloorLabel.text = "\(pyung)평 \(floor)층"
+        } else {
+            pyungAndFloorLabel.text = "입력 필요"
+        }
+    }
+    
     func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star.withRenderingMode(.alwaysOriginal)
         scoreLabel.textColor = empty ? .null : .main
     }
 }
@@ -131,28 +118,33 @@ extension ImjangNoteCollectionViewCell {
 extension ImjangNoteCollectionViewCell {
     
     private func configureHierarchy() {
-        [roomThumbnailImageView, roomNameStackView, priceLabel, starStackView, addressLabel, bookMarkButton].forEach {
+        [roomThumbnailImageView,
+         roomNameStackView,
+         priceLabel,
+         pyungAndFloorLabel,
+         addressLabel,
+         starIcon,
+         scoreLabel,
+         bookMarkButton,
+         baseLineView].forEach {
             contentView.addSubview($0)
         }
         [roomNameLabel, roomIcon].forEach {
             roomNameStackView.addArrangedSubview($0)
         }
-        [starIcon, scoreLabel].forEach {
-            starStackView.addArrangedSubview($0)
-        }
     }
     
     private func configureLayout() {
-        roomThumbnailImageView.snp.makeConstraints {        // 방 썸네일 사진
-            $0.leading.equalTo(contentView.snp.leading).offset(12)
-            $0.centerY.equalTo(contentView)
-            $0.size.equalTo(82)
+        roomThumbnailImageView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.left.equalToSuperview().offset(24)
+            $0.height.equalTo(112)
+            $0.width.equalTo(144)
         }
         
         roomNameStackView.snp.makeConstraints {
-            $0.top.equalTo(contentView).offset(12)
-            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(8)
-            $0.trailing.lessThanOrEqualTo(contentView.snp.trailing).inset(12)
+            $0.top.equalTo(roomThumbnailImageView.snp.top)
+            $0.left.equalTo(roomThumbnailImageView.snp.right).offset(12)
             $0.height.equalTo(24)
         }
         
@@ -162,37 +154,47 @@ extension ImjangNoteCollectionViewCell {
         
         priceLabel.snp.makeConstraints {
             $0.top.equalTo(roomNameStackView.snp.bottom)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.trailing.equalTo(contentView.snp.trailing).inset(12)
+            $0.left.equalTo(roomThumbnailImageView.snp.right).offset(12)
+            $0.height.equalTo(23)
         }
         
-        starStackView.snp.makeConstraints {
-            $0.height.equalTo(20)
+        pyungAndFloorLabel.snp.makeConstraints {
             $0.top.equalTo(priceLabel.snp.bottom)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.trailing.greaterThanOrEqualTo(contentView.snp.trailing).inset(12)
+            $0.height.equalTo(19)
+            $0.left.equalTo(roomThumbnailImageView.snp.right).offset(12)
+        }
+        
+        addressLabel.snp.makeConstraints {
+            $0.top.equalTo(pyungAndFloorLabel.snp.bottom)
+            $0.left.equalTo(roomThumbnailImageView.snp.right).offset(12)
+            $0.height.equalTo(19)
         }
         
         starIcon.snp.makeConstraints {
-            $0.width.height.equalTo(14)
-        }
-        bookMarkButton.snp.makeConstraints {
-            $0.bottom.trailing.equalTo(contentView).inset(12)
-            $0.size.equalTo(18)
-        }
-        addressLabel.snp.makeConstraints {
-            $0.leading.equalTo(roomNameLabel.snp.leading)
-            $0.top.equalTo(starStackView.snp.bottom)
-            $0.trailing.equalTo(bookMarkButton.snp.leading).offset(-8)
+            $0.size.equalTo(14)
+            $0.centerY.equalTo(scoreLabel.snp.centerY).offset(-1)
+            $0.left.equalTo(roomThumbnailImageView.snp.right).offset(12)
         }
         
+        scoreLabel.snp.makeConstraints {
+            $0.height.equalTo(20)
+            $0.bottom.equalTo(roomThumbnailImageView.snp.bottom).offset(-2)
+            $0.left.equalTo(starIcon.snp.right).offset(4)
+        }
+        
+        bookMarkButton.snp.makeConstraints {
+            $0.bottom.trailing.equalTo(contentView).inset(24)
+            $0.size.equalTo(18)
+        }
+        
+        baseLineView.snp.makeConstraints {
+            $0.height.equalTo(1)
+            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.bottom.equalToSuperview().inset(12)
+        }
     }
     
     override func draw(_ rect: CGRect) {
-        contentView.clipsToBounds = true
-        contentView.layer.cornerRadius = 10
-        contentView.layer.borderWidth = 1.5
-        contentView.layer.borderColor = UIColor.stroke.cgColor
         roomThumbnailImageView.layer.cornerRadius = 5
         roomThumbnailImageView.clipsToBounds = true
     }

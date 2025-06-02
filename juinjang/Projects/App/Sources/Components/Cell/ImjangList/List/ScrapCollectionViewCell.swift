@@ -73,29 +73,29 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
 // MARK: - Configure Cell
 extension ScrapCollectionViewCell {
     
-    func setData(imjangNote: ListDto?) {
+    func setData(imjangNote: MyImjangResponseDTO?) {
         guard let imjangNote else { return }
-        roomNameLabel.text = imjangNote.nickname
-        setScore(score: imjangNote.totalAverage)
+        roomNameLabel.text = imjangNote.name
+        setScore(score: imjangNote.rate)
         let priceTypeString: String
         switch imjangNote.priceType {
-        case 0:
+        case "SALE":
             priceTypeString = "매매"
-        case 1:
+        case "PULL_RENT":
             priceTypeString = "전세"
-        case 2:
+        case "MONTHLY_RENT":
             priceTypeString = "월세"
-        case 3:
+        case "MARKET_PRICE":
             priceTypeString = "실거래가"
         default:
             priceTypeString = "" // 값이 없을 경우 공백 처리
         }
-        setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
+        setPriceLabel(price: imjangNote.price, priceType: priceTypeString)
         roomAddressLabel.text = imjangNote.address
         let bookmarkImage = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(bookmarkImage, for: .normal)
         
-        let images = imjangNote.images
+        let images = imjangNote.imageUrl
         switch images.count {
         case 0:
             setStackViewBackground(isEmpty: true)
@@ -224,24 +224,8 @@ extension ScrapCollectionViewCell {
         }
     }
     
-    private func setPriceLabel(priceList: [String], priceType: String) {
-        switch priceList.count {
-        case 1:
-            let priceString = priceList[0]
-            print(priceString.formatToKoreanCurrencyWithZero())
-            if priceType.isEmpty {
-                roomPriceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                roomPriceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
-        case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-            roomPriceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
-        default:
-            roomPriceLabel.text = "편집을 통해 가격을 설정해주세요."
-        }
+    private func setPriceLabel(price: String, priceType: String) {
+        roomPriceLabel.text = "\(priceType) \(price.formatToKoreanCurrencyWithZero())"
     }
     
     private func setScore(score: String?) {

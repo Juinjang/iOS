@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import AmplitudeSwift
+import RxSwift
 
 final class OpenNewPageViewController: BaseViewController {
     
@@ -298,16 +299,29 @@ final class OpenNewPageViewController: BaseViewController {
         $0.titleLabel?.lineBreakMode = .byTruncatingTail
     }
     
+    private let disposeBag = DisposeBag()
+    
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "새 페이지 펼치기"
+    }
+    
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .mainWhite
-        self.navigationItem.title = "새 페이지 펼치기"
-        self.navigationController?.navigationBar.tintColor = .black
-        self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage.arrowLeft
-        let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
-        navigationItem.leftBarButtonItem = backButton
+        
+        navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.backButtonTapped()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
+        
         if UIScreen.main.bounds.height <= 667 { // 아이폰 SE(3rd generation) 기준으로 스크린이 작으면
             // 스크롤뷰 사용
             setupScrollView()
@@ -336,7 +350,7 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     func setupScrollView() {
-        view.addSubview(scrollView)
+        view.add(navigationView, scrollView)
         scrollView.addSubview(contentView)
         // 위젯들을 서브뷰로 추가
         [purposeLabel,
@@ -353,6 +367,8 @@ final class OpenNewPageViewController: BaseViewController {
         nextButtonContainerView.addSubview(nextButton)
         setupScrollLayout()
         setButton()
+        
+        view.bringSubviewToFront(navigationView)
     }
     
     func setupWidgets() {
@@ -381,9 +397,14 @@ final class OpenNewPageViewController: BaseViewController {
         let buttonWidth = screenWidth * 0.8769 // 너비 비율
         let buttonHeight = screenHeight * 0.07 // 높이 비율
         
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         // 위젯에 관한 Auto Layout 설정
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(view.snp.width)
 //            $0.height.equalTo(view.snp.height).multipliedBy(0.75)
