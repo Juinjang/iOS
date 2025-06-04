@@ -15,6 +15,7 @@ struct BaseResponse<T: Codable>: Codable {
     
     func unwrap() throws -> T {
         guard let result = result else {
+            print("📌 NetworkError InvalidData")
             throw NetworkError.invalidData
         }
         return result
