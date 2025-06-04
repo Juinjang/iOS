@@ -649,9 +649,14 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard indexPath.row != 0 else {
-            // 카테고리 셀의 높이
-            return 63
+        if indexPath.row == 0 {
+            // section 0이고, 편집 모드가 아닐 경우 (NotEnteredCalendar 셀)
+            if indexPath.section == 0 && !isEditMode {
+                return 52
+            } else {
+                // 나머지 카테고리 셀
+                return 63
+            }
         }
         
         let adjustedSection = isEditMode ? indexPath.section - 1 : indexPath.section

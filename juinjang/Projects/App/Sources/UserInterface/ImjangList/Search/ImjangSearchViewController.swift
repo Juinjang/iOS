@@ -9,6 +9,7 @@ import UIKit
 import Then
 import RxSwift
 import SnapKit
+import RxSwift
 
 final class ImjangSearchViewController: BaseViewController {
     private let navigationView = SearchNavigationView().then {

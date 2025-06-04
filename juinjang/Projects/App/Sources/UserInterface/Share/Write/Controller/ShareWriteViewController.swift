@@ -97,6 +97,12 @@ final class ShareWriteViewController: BaseViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
+        mainView.uploadButton
+            .rx.throttleTap
+            .map { Reactor.Action.uploadButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         isPhotoPublicRelay
             .map { Reactor.Action.didTapSelectPulbicButton($0) }
             .bind(to: reactor.action)

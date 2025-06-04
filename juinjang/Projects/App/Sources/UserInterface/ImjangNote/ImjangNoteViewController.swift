@@ -22,6 +22,8 @@ final class ImjangNoteViewController: BaseViewController,
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
     
+    private let navigationView = DefaultNavigationView()
+    
     // 스크롤뷰
     let scrollView = UIScrollView().then {
         $0.backgroundColor = .mainWhite
@@ -392,6 +394,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 네비게이션 바 디자인
     private func designNavigationBar() {
+        self.navigationController?.navigationBar.isHidden = false
         self.navigationItem.title = ""     // TODO: - 나중에 roomName 으로 연결
         self.navigationController?.navigationBar.tintColor = .black
         

@@ -51,6 +51,10 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
         $0.text = "입력 안함"
     }
     
+    private let baseLineView = UIView().then {
+        $0.backgroundColor = .clear
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.selectionStyle = .none
@@ -62,7 +66,8 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
          separationLine,
          balanceDueImage,
          balanceDueLabel,
-         balanceDueContentLabel].forEach { contentView.addSubview($0) }
+         balanceDueContentLabel,
+         baseLineView].forEach { contentView.addSubview($0) }
         setupLayout()
     }
     
@@ -121,16 +126,22 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
             $0.centerY.equalToSuperview()
             $0.height.equalTo(20)
         }
+        
+        baseLineView.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.height.equalTo(1)
+            $0.horizontalEdges.equalToSuperview()
+        }
     }
     
     // 보기 모드
     func viewModeConfigure(at indexPath: IndexPath) {
-        moveInDateLabel.textColor = .gray500
+        moveInDateLabel.textColor = .gray420
         moveInDateContentLabel.textColor = .gray400
         moveInDateImage.image = UIImage.CheckList.calendar
         moveInDateContentLabel.text = "입력 안함"
         
-        balanceDueLabel.textColor = .gray500
+        balanceDueLabel.textColor = .gray420
         balanceDueContentLabel.textColor = .gray400
         balanceDueImage.image = UIImage.CheckList.wallet
         balanceDueContentLabel.text = "입력 안함"
@@ -144,6 +155,7 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
     
     // 보기 모드일 때 저장된 값이 있는 경우
     func savedViewModeConfigure(with imjangId: Int, with answer: [(Int, String)], at indexPath: IndexPath) {
+        baseLineView.backgroundColor = .stroke
         if answer[0].1 != "" {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyyMMdd"
@@ -151,14 +163,15 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
                 dateFormatter.dateFormat = "yyyy.MM.dd"
                 moveInDateContentLabel.text = dateFormatter.string(from: date)
             }
-            moveInDateLabel.textColor = .main
+            moveInDateLabel.textColor = .gray500
             moveInDateContentLabel.textColor = .gray450
             moveInDateImage.image = UIImage.CheckList.deadlineItem
-            backgroundColor = .main100
+            backgroundColor = .white
             separationLine.image = UIImage.CheckList.separationLine
             separationLine.snp.updateConstraints {
                 $0.trailing.equalTo(balanceDueImage.snp.leading).offset(-10)
             }
+            
         } else if answer[1].1 != "" {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyyMMdd"
@@ -166,10 +179,10 @@ final class NotEnteredCalendarTableViewCell: UITableViewCell {
                 dateFormatter.dateFormat = "yyyy.MM.dd"
                 balanceDueContentLabel.text = dateFormatter.string(from: date)
             }
-            balanceDueLabel.textColor = .main
+            balanceDueLabel.textColor = .gray500
             balanceDueContentLabel.textColor = .gray450
             balanceDueImage.image = UIImage.CheckList.walletItem
-            backgroundColor = .main100
+            backgroundColor = .white
             // 잔금 기한 날짜 상세 Label
             balanceDueContentLabel.snp.updateConstraints {
                 $0.trailing.equalToSuperview().offset(-24)
