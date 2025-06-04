@@ -7,17 +7,18 @@
 
 import UIKit
 import SkeletonView
+import RxSwift
+import SnapKit
+import Then
 
 final class ImjangSearchResultViewController: BaseViewController {
-    let searchBar: UISearchBar = {
-        let searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width * 0.82, height: 0))
-        searchBar.placeholder = "집 별명이나 주소를 검색해보세요"
-        searchBar.searchTextField.font = .pretendard(size: 14, weight: .medium)
-        searchBar.searchTextField.borderStyle = .roundedRect
-        searchBar.searchTextField.clipsToBounds = true
-        searchBar.searchTextField.layer.cornerRadius = 15
-        return searchBar
-    }()
+    private let disposeBag = DisposeBag()
+    private let navigationView = SearchNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.searchPlaceHolder = "집 별명이나 주소를 검색해보세요"
+    }
+    
+    private let noteRepository = NoteRepository()
     
     let searchedTableView: UITableView = {
         let tableView = UITableView()
@@ -45,7 +46,7 @@ final class ImjangSearchResultViewController: BaseViewController {
     }()
     
     var searchKeyword  = ""
-    var searchedImjangList: [ListDto] = []
+    var searchedImjangList: [MyImjangResponseDTO] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -85,17 +86,13 @@ final class ImjangSearchResultViewController: BaseViewController {
     @objc private func searchRequest() {
         showSkeletonView()
         if searchKeyword.count > 0 {
-            JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .searchImjang(keyword: searchKeyword)) { [weak self] response, error in
-                if let error = error {
-                    print(error.localizedDescription)
-                    return
+            noteRepository.retrieveNoteList(sort: "UPDATED", keyword: searchKeyword)
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.searchedImjangList = response
+                    self.searchedTableView.reloadData()
                 }
-                
-                guard let response, let result = response.result else { return }
-                guard let self else { return }
-                searchedImjangList = result.limjangList
-                searchedTableView.reloadData()
-            }
+                .disposed(by: disposeBag)
         }
     }
     
@@ -122,36 +119,34 @@ final class ImjangSearchResultViewController: BaseViewController {
         }
     }
     
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        self.view.endEditing(true)
-    }
-    
-    @objc private func popView() {
-        navigationController?.popViewController(animated: true)
-    }
-    
     // 네비게이션 바 디자인
     private func designNavigationBar() {
-        self.navigationItem.hidesSearchBarWhenScrolling = false
-        self.navigationController?.navigationBar.tintColor = .black
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
 
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        let searchTextFieldItem = UIBarButtonItem(customView: searchBar)
-    
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.rightBarButtonItem = searchTextFieldItem
+                case .searchSummit(keyword: let keyword):
+                    if keyword.count < 2 {
+                        self.showAlert(title: "경고", message: "2글자 이상 입력해주세요", actionHandler: nil)
+                        return
+                    }
+                    self.saveSearchKeyword(keyword: keyword)
+                    self.searchKeyword = keyword
+                    self.searchRequest()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func configureHierarchy() {
-        view.addSubview(searchedTableView)
+        view.add(navigationView, searchedTableView)
     }
 
     private func designView() {
         view.backgroundColor = .mainWhite
-        searchBar.text = searchKeyword
-        searchBar.delegate = self
         searchedTableView.delegate = self
         searchedTableView.dataSource = self
         
@@ -160,9 +155,14 @@ final class ImjangSearchResultViewController: BaseViewController {
     }
 
     private func setupConstraints() {
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         searchedTableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(23)
-            $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
@@ -206,7 +206,7 @@ extension ImjangSearchResultViewController: UITableViewDelegate, UITableViewData
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let imjangId = searchedImjangList[indexPath.row].limjangId
+        let imjangId = searchedImjangList[indexPath.row].noteId
         callVersionRequest(imjangId: imjangId) { version in
             if let version = version {
                 self.showImjangNoteVC(imjangId: imjangId, version: version)
@@ -240,25 +240,6 @@ extension ImjangSearchResultViewController: UITableViewDelegate, UITableViewData
                 }
             }
         }
-    }
-}
-
-extension ImjangSearchResultViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let text = searchBar.text!
-        if text.count < 2 {
-            showAlert(title: "경고", message: "2글자 이상 입력해주세요", actionHandler: nil)
-            return
-        }
-        saveSearchKeyword(keyword: text)
-        searchKeyword = text
-        searchRequest()
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        searchedImjangList = []
-        searchedTableView.reloadData()
     }
 }
 

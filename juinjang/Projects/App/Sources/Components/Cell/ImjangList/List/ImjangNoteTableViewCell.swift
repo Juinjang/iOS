@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import Then
+import Kingfisher
 
 final class ImjangNoteTableViewCell: UITableViewCell {
     private let roomThumbnailImageView = UIImageView()
@@ -37,31 +39,21 @@ final class ImjangNoteTableViewCell: UITableViewCell {
     }
     
     // MARK: - configureCell
-    func configureCell(imjangNote: ListDto?) {
+    func configureCell(imjangNote: MyImjangResponseDTO?) {
         guard let imjangNote else { return }
         
-        roomNameLabel.text = imjangNote.nickname
-        let priceTypeString: String
-        switch imjangNote.priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        default:
-            priceTypeString = "" // 값이 없을 경우 공백 처리
-        }
-        setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
+        roomNameLabel.text = imjangNote.name
+        
+        setPriceLabel(model: imjangNote)
        
-        setScore(score: imjangNote.totalAverage)
+        setScore(score: imjangNote.rate ?? "0.0")
         
         addressLabel.text = imjangNote.address
         
         let image = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(image, for: .normal)
         
-        let images = imjangNote.images
+        let images = imjangNote.imageUrl
         if images.isEmpty {
             let image = UIImage.ImjangList.empty
             DispatchQueue.main.async {
@@ -80,23 +72,11 @@ final class ImjangNoteTableViewCell: UITableViewCell {
     }
     
     // 가격 설정
-    private func setPriceLabel(priceList: [String], priceType: String) {
-        switch priceList.count {
-        case 1:
-            let priceString = priceList[0]
-            if priceType.isEmpty {
-                priceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                priceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
-        case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-
-            priceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
-        default:
-            priceLabel.text = "편집을 통해 가격을 설정해주세요."
+    private func setPriceLabel(model: MyImjangResponseDTO) {
+        if let monthlyRent = model.monthlyRent {
+            priceLabel.text = "\(model.priceTypeString) \(monthlyRent.formatToKoreanCurrencyWithZero())"
+        } else {
+            priceLabel.text = "\(model.priceTypeString) \(model.price.formatToKoreanCurrencyWithZero())"
         }
     }
     

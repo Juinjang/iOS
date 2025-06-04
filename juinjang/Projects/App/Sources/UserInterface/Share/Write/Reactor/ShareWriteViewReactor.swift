@@ -18,6 +18,7 @@ final class ShareWriteViewReactor: Reactor {
         case selectedImjangPeriod(ImjangPeriod)
         case editingBuildingName(String)
         case editingReviewContent(String)
+        case uploadButtonDidTap
     }
     
     // MARK: - Mutation
@@ -88,6 +89,8 @@ final class ShareWriteViewReactor: Reactor {
             return .just(.updateBuildingName(text))
         case .editingReviewContent(let text):
             return .just(.updateReviewContent(text))
+        case .uploadButtonDidTap:
+            return .empty()
         }
     }
     

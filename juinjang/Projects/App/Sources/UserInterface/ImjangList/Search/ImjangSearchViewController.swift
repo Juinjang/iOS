@@ -8,19 +8,14 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
 
 final class ImjangSearchViewController: BaseViewController {
-    let searchController = UISearchController(searchResultsController: nil)
-    let searchBar: UISearchBar = {
-        let searchBar = UISearchBar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width * 0.82, height: 0))
-        searchBar.placeholder = "집 별명이나 주소를 검색해보세요"
-        searchBar.searchTextField.font = .pretendard(size: 14, weight: .medium)
-        searchBar.searchTextField.borderStyle = .roundedRect
-        searchBar.searchTextField.clipsToBounds = true
-        searchBar.searchTextField.layer.cornerRadius = 15
-//        searchBar.setImage(UIImage.search, for: .clear, state: .normal)
-        return searchBar
-    }()
+    private let disposeBag = DisposeBag()
+    private let navigationView = SearchNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.searchPlaceHolder = "집 별명이나 주소를 검색해보세요"
+    }
     
     let imjangSearchTableView: UITableView = {
         let tableView = UITableView()
@@ -50,7 +45,6 @@ final class ImjangSearchViewController: BaseViewController {
         super.viewDidLoad()
         designNavigationBar()
         configureHierarchy()
-        hideKeyboardWhenTappedAround()
         setDelegate()
         setupConstraints()
         designView()
@@ -68,44 +62,37 @@ final class ImjangSearchViewController: BaseViewController {
     }
     
     private func setDelegate() {
-        searchBar.delegate = self
         imjangSearchTableView.delegate = self
         imjangSearchTableView.dataSource = self
     }
     
-    private func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-
-    @objc func dismissKeyboard() {
-        searchBar.resignFirstResponder()
-    }
-//    
-//    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?){ searchBar.resignFirstResponder()
-//    }
-    
-    @objc private func popView() {
-        navigationController?.popViewController(animated: true)
-    }
-    
     // 네비게이션 바 디자인
     private func designNavigationBar() {
-        self.navigationItem.hidesSearchBarWhenScrolling = false
-        self.navigationController?.navigationBar.tintColor = .black
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
 
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        let searchTextFieldItem = UIBarButtonItem(customView: searchBar)
-    
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.rightBarButtonItem = searchTextFieldItem
+                case .searchSummit(keyword: let keyword):
+                    let trimmedKeyword = keyword.trimmingCharacters(in: [" "])
+                    if trimmedKeyword.count < 2 {
+                        self.showAlert(title: "경고", message: "2글자 이상 입력해주세요", actionHandler: nil)
+                        return
+                    }
+                    if self.searchedKeywordList.count < 3 {
+                        self.searchedKeywordList.append(trimmedKeyword)
+                    }
+                    self.saveSearchKeyword(keyword: trimmedKeyword)
+                    self.showSearchResultVC(keyword: trimmedKeyword)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func configureHierarchy() {
-        view.addSubview(imjangSearchTableView)
+        view.add(navigationView, imjangSearchTableView)
     }
     
     private func designView() {
@@ -114,8 +101,14 @@ final class ImjangSearchViewController: BaseViewController {
     }
     
     private func setupConstraints() {
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         imjangSearchTableView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
@@ -159,29 +152,6 @@ final class ImjangSearchViewController: BaseViewController {
         }
     }
     
-}
-
-extension ImjangSearchViewController: UISearchBarDelegate {
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        let keyword = searchBar.text!
-        let trimmedKeyword = keyword.trimmingCharacters(in: [" "])
-        if trimmedKeyword.count < 2 {
-            showAlert(title: "경고", message: "2글자 이상 입력해주세요", actionHandler: nil)
-            searchBar.text = ""
-            return
-        }
-        if searchedKeywordList.count < 3 {
-            searchedKeywordList.append(trimmedKeyword)
-        }
-        saveSearchKeyword(keyword: trimmedKeyword)
-        searchBar.text = ""
-        view.endEditing(true)
-        showSearchResultVC(keyword: trimmedKeyword)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-    }
 }
 
 extension ImjangSearchViewController: UITableViewDelegate, UITableViewDataSource {

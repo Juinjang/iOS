@@ -104,7 +104,7 @@ extension ImjangNoteCollectionViewCell {
            let floor = model.floor {
             pyungAndFloorLabel.text = "\(pyung)평 \(floor)층"
         } else {
-            pyungAndFloorLabel.text = "입력 필요"
+            pyungAndFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
         }
     }
     
