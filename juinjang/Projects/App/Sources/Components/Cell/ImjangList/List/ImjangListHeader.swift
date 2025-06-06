@@ -8,114 +8,74 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxRelay
 
 final class ImjangListHeader: UICollectionReusableView {
-    let filterBackgroundView = UIView().then {
-        $0.backgroundColor = .mainWhite
-    }
-    
-    lazy var filterselectBtn: UIButton = {
-        var configuration = UIButton.Configuration.filled()
-        
-        var container = AttributeContainer()
-        container.font = .pretendard(size: 14, weight: .semiBold)
-        configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
-        configuration.baseBackgroundColor = .mainWhite
-        configuration.baseForegroundColor = .gray450
-        configuration.image = UIImage.ImjangList.arrowDown
-        configuration.image?.withTintColor(.gray450)
-        configuration.imagePlacement = .trailing
-        configuration.imagePadding = 6
-        let button = UIButton(configuration: configuration, primaryAction: nil)
-        return button
-    }()
+    let noteFilterDropDownView = DropDownView(filterList: MyNoteFilter.allCases)
     
     let deleteButton = UIButton()
     let shareButton = UIButton()
     let chatBubbleView = ChatBubbleView(text: "나의 임장을 공유할 수 있어요!")
     var menuChildren: [UIMenuElement] = []
-    let filterList = Filter.allCases
-    weak var sendFilterItemDelegate: SendFilterItemDelegate?
+    var disposeBag = DisposeBag()
+    
+    let filterActionRelay = PublishRelay<MyNoteAction>()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        bindAction()
         configureHierarchy()
         configureLayout()
         configureView()
-        setFilterData()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-// MARK: - Configure Cell
-extension ImjangListHeader {
     
-    private func callRequestFiltered(filterItem: Filter) {
-        sendFilterItemDelegate?.sendFilterItem(filter: filterItem)
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
     }
     
-    private func changefilterTitle(_ title: String) {
-        var container = AttributeContainer()
-        container.font = .pretendard(size: 14, weight: .semiBold)
-        filterselectBtn.configuration?.title = title
-        filterselectBtn.configuration?.attributedTitle = AttributedString(title, attributes: container)
+    func bindAction() {
+        noteFilterDropDownView.filterActionRelay
+            .bind(with: self) { owner, action in
+                print("action!!!")
+                owner.filterActionRelay.accept(action as! MyNoteAction)
+            }
+            .disposed(by: disposeBag)
     }
 }
 
 // MARK: - Configure UI
 extension ImjangListHeader {
-    // MARK: - Set Data
-    private func setFilterData() {
-        for filter in filterList {
-            menuChildren.append(UIAction(title: filter.title, state: .off,handler: {  (action: UIAction) in
-                self.changefilterTitle(filter.title)
-                self.callRequestFiltered(filterItem: filter)
-            }))
-        }
-        if #available(iOS 17.0, *) {
-            filterselectBtn.menu = UIMenu(options: .displayAsPalette, preferredElementSize: .small ,children: menuChildren)
-        } else if #available(iOS 16.0, *){
-            filterselectBtn.menu = UIMenu(options: .displayInline, preferredElementSize: .small ,children: menuChildren)
-        } else {
-            filterselectBtn.menu = UIMenu(options: .destructive, children: menuChildren)
-        }
-        
-        filterselectBtn.showsMenuAsPrimaryAction = true
-    }
     
     private func configureHierarchy() {
         add(
-            filterBackgroundView.with(
-                filterselectBtn,
-                deleteButton,
-                shareButton,
-                chatBubbleView
-            )
+            noteFilterDropDownView,
+            deleteButton,
+            shareButton,
+            chatBubbleView
         )
     }
     private func configureLayout() {
-        filterBackgroundView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-            $0.height.equalTo(49)
-        }
         
-        filterselectBtn.snp.makeConstraints {
-            $0.centerY.equalTo(filterBackgroundView)
+        noteFilterDropDownView.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
             $0.leading.equalToSuperview()
         }
         
         deleteButton.snp.makeConstraints {
-            $0.centerY.equalTo(filterBackgroundView)
+            $0.centerY.equalToSuperview()
             $0.trailing.equalToSuperview()
             $0.size.equalTo(22)
         }
         
         shareButton.snp.makeConstraints {
-            $0.centerY.equalTo(filterBackgroundView)
+            $0.centerY.equalToSuperview()
             $0.trailing.equalTo(deleteButton.snp.leading).offset(-18)
             $0.size.equalTo(22)
         }
@@ -149,6 +109,11 @@ extension ImjangListHeader {
         let convertedPoint = chatBubbleView.convert(point, from: self)
         if chatBubbleView.bounds.contains(convertedPoint) {
             return chatBubbleView.hitTest(convertedPoint, with: event)
+        }
+        
+        let convertedPoint2 = noteFilterDropDownView.convert(point, from: self)
+        if let hitView = noteFilterDropDownView.hitTest(convertedPoint2, with: event) {
+            return hitView
         }
 
         return nil

@@ -42,8 +42,8 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func retrieveNoteList(sort: String) -> Single<NoteResultDTO> {
-        return NoteAPI.getNoteList(sort)
+    func retrieveNoteList(sort: String, keyword: String?) -> Single<NoteResultDTO> {
+        return NoteAPI.getNoteList(sort, keyword)
             .request(BaseResponse<NoteResultDTO>.self, networkManager)
             .map { try $0.unwrap() }
     }

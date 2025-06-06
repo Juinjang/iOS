@@ -130,7 +130,6 @@ final class ImjangListView: UIView {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isSkeletonable = true
-        collectionView.clipsToBounds = false
     }
 }
 
@@ -243,7 +242,6 @@ extension ImjangListView {
         
         let section = NSCollectionLayoutSection(group: group)
         
-        section.interGroupSpacing = 8
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 22, bottom: 0, trailing: 22)
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
                     layoutSize: NSCollectionLayoutSize(

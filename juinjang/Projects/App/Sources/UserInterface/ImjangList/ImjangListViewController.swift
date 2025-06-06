@@ -45,7 +45,7 @@ final class ImjangListViewController: BaseViewController {
         }
     }
     
-    private var currentFilter: Filter = .update
+    private var currentFilter: MyNoteFilter = .updated
     
     struct Dependency {
         let noteRepository: NoteRepositoryProtocol
@@ -68,7 +68,7 @@ final class ImjangListViewController: BaseViewController {
         navigationController?.isNavigationBarHidden = true
         bindAction()
         setDelegate()
-        fetchImjangList(sort: .update, setScrap: true)
+        fetchImjangList(sort: .updated, setScrap: true)
         mainView.emptyBackgroundView.isHidden = !imjangList.isEmpty
         mainView.collectionView.isHidden = imjangList.isEmpty
         mainView.newPageButton.addTarget(self, action: #selector(openNewPageVC), for: .touchUpInside)
@@ -96,36 +96,14 @@ final class ImjangListViewController: BaseViewController {
             })
             .disposed(by: disposeBag)
     }
-    
-    // 네비게이션 바 디자인
-//    func designNavigationBar() {
-//        self.navigationItem.title = "\(UserDefaultManager.shared.nickname)님의 임장노트"
-//        self.navigationController?.navigationBar.tintColor = .black
-//
-//        // UIBarButtonItem 생성 및 이미지 설정
-//        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-//        let addButtonItem = UIBarButtonItem(image: UIImage.ImjangNote.add, style: .plain, target: self, action: #selector(openNewPageVC))
-//        let searchButtonItem = UIBarButtonItem(image: UIImage.ImjangList.search, style: .plain, target: self, action: #selector(showSearchVC))
-//
-//        // 네비게이션 아이템에 백 버튼 아이템 설정
-//        self.navigationItem.leftBarButtonItem = backButtonItem
-//        self.navigationItem.rightBarButtonItems = [addButtonItem, searchButtonItem]
-//    }
-}
-
-extension ImjangListViewController: SendFilterItemDelegate {
-    func sendFilterItem(filter: Filter) {
-        currentFilter = filter
-        fetchImjangList(sort: filter)
-    }
 }
 
 // MARK: - request
 extension ImjangListViewController {
-    private func fetchImjangList(sort: Filter = .update, setScrap: Bool = false) {
+    private func fetchImjangList(sort: MyNoteFilter = .updated, setScrap: Bool = false) {
         print(#function)
         showSkeletonView()
-        dependency.noteRepository.retrieveNoteList(sort: sort.sortValue)
+        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: nil)
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)
@@ -148,7 +126,7 @@ extension ImjangListViewController {
     
     @objc private func refreshImjangList() {
         print(#function)
-        dependency.noteRepository.retrieveNoteList(sort: currentFilter.sortValue)
+        dependency.noteRepository.retrieveNoteList(sort: currentFilter.parameterValue, keyword: nil)
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
                 let notes = noteResultDTO.notes
@@ -446,10 +424,26 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                     guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: ImjangListHeader.identifier, for: indexPath) as? ImjangListHeader else {
                         return UICollectionReusableView()
                     }
+                    header.bindAction()
                     header.deleteButton.addTarget(self, action: #selector(showDeleteImjangVC), for: .touchUpInside)
                     header.shareButton.addTarget(self, action: #selector(showShareSelectVC), for: .touchUpInside)
-                    header.sendFilterItemDelegate = self
-                    
+                    header.filterActionRelay
+                        .subscribe(with: self) { owner, action in
+                            print(action)
+                            switch action {
+                            case .updated:
+                                owner.currentFilter = .updated
+                                owner.fetchImjangList(sort: .updated)
+                            case .created:
+                                owner.currentFilter = .created
+                                owner.fetchImjangList(sort: .created)
+                            case .star:
+                                owner.currentFilter = .star
+                                owner.fetchImjangList(sort: .star)
+                            }
+                        }
+                        .disposed(by: header.disposeBag)
+            
                     return header
                 }
             }

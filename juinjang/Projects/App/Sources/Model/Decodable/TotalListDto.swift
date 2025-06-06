@@ -91,6 +91,6 @@ struct NoteDTO: Codable {
     let monthlyRent: String?
     let pyong: Int?
     let floor: String?
-    let address: String
-    let shortAddress: String?
+    let roadAddress: String?
+    let addressDetail: String?
 }

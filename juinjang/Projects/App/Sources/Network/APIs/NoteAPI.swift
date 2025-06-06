@@ -13,7 +13,7 @@ enum NoteAPI: TargetType {
     case getNoteChecklistConditionList(Int)
     case getNoteChecklist(Int)
     case getNoteDetail(Int)
-    case getNoteList(String)
+    case getNoteList(String, String?)
     case postNote(NoteCreateRequestDTO)
     case patchNote(Int, NoteUpdateRequestDTO)
 
@@ -60,7 +60,13 @@ enum NoteAPI: TargetType {
                 .postNote,
                 .patchNote:
             return []
-        case .getNoteList(let sort):
+        case .getNoteList(let sort, let keyword):
+            if let keyword {
+                return [
+                    URLQueryItem(name: "sort", value: sort),
+                    URLQueryItem(name: "keyword", value: keyword)
+                ]
+            }
             return [URLQueryItem(name: "sort", value: sort)]
         }
     }

@@ -65,13 +65,11 @@ extension ImjangNoteCollectionViewCell {
             }
         }
         
-        addressLabel.text = note.address
+        addressLabel.text = note.addressDetail
 
         if let priceType = PriceType(rawValue: note.priceType) {
             setPriceLabel(note: note, priceType: priceType)
         }
-        
-        addressLabel.text = note.address
         
         let image = note.isScraped ? UIImage.bookmarkOn22 : UIImage.bookmarkOff22
         bookMarkButton.setImage(image, for: .normal)
@@ -147,8 +145,7 @@ extension ImjangNoteCollectionViewCell {
     private func configureLayout() {
         roomThumbnailImageView.snp.makeConstraints {        // 방 썸네일 사진
             $0.leading.equalToSuperview()
-            $0.top.equalToSuperview().inset(4)
-            $0.bottom.equalToSuperview().inset(12)
+            $0.centerY.equalToSuperview()
             $0.width.equalTo(144)
             $0.height.equalTo(112)
         }

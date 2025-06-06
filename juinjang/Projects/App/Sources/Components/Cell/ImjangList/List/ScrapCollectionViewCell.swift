@@ -62,7 +62,7 @@ extension ScrapCollectionViewCell {
         setScore(score: note.rate)
         
         roomPriceLabel.text = note.price
-        roomAddressLabel.text = note.address
+        roomAddressLabel.text = note.addressDetail
 
         if let priceType = PriceType(rawValue: note.priceType) {
             setPriceLabel(note: note, priceType: priceType)
