@@ -86,7 +86,13 @@ extension SelectNoteCell {
             setPriceLabel(note: note, priceType: priceType)
         }
         
-        addressLabel.text = note.addressDetail
+        if let roadAddress = note.roadAddress {
+            addressLabel.text = roadAddress
+        } else {
+            if let addressDetail = note.addressDetail {
+                addressLabel.text = addressDetail
+            }
+        }
         
         let image = note.isScraped ? UIImage.bookmarkOn22 : UIImage.bookmarkOff22
         bookMarkButton.setImage(image, for: .normal)

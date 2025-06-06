@@ -42,7 +42,6 @@ final class ImjangListHeader: UICollectionReusableView {
     func bindAction() {
         noteFilterDropDownView.filterActionRelay
             .bind(with: self) { owner, action in
-                print("action!!!")
                 owner.filterActionRelay.accept(action as! MyNoteAction)
             }
             .disposed(by: disposeBag)

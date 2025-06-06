@@ -75,7 +75,13 @@ extension ImjangNoteCollectionViewCell {
             }
         }
         
-        addressLabel.text = note.addressDetail
+        if let roadAddress = note.roadAddress {
+            addressLabel.text = roadAddress
+        } else {
+            if let addressDetail = note.addressDetail {
+                addressLabel.text = addressDetail
+            }
+        }
 
         if let priceType = PriceType(rawValue: note.priceType) {
             setPriceLabel(note: note, priceType: priceType)
