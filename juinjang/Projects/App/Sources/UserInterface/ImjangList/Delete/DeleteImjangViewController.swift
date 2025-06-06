@@ -131,7 +131,7 @@ final class DeleteImjangViewController: BaseViewController {
     }
     
     private func retrieveNoteList() {
-        dependency.noteRepository.retrieveNoteList(sort: Filter.update.sortValue)
+        dependency.noteRepository.retrieveNoteList(sort: Filter.update.sortValue, keyword: nil)
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)

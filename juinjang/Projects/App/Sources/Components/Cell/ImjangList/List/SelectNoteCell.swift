@@ -47,6 +47,7 @@ final class SelectNoteCell: UICollectionViewCell {
         super.prepareForReuse()
         configureCell(note: nil)
         self.roomThumbnailImageView.image = nil
+        setSelectStyle(isSelected: false)
     }
 }
 
@@ -69,13 +70,13 @@ extension SelectNoteCell {
             }
         }
         
-        addressLabel.text = note.address
+        addressLabel.text = note.addressDetail
 
         if let priceType = PriceType(rawValue: note.priceType) {
             setPriceLabel(note: note, priceType: priceType)
         }
         
-        addressLabel.text = note.address
+        addressLabel.text = note.addressDetail
         
         let image = note.isScraped ? UIImage.bookmarkOn22 : UIImage.bookmarkOff22
         bookMarkButton.setImage(image, for: .normal)
@@ -228,6 +229,7 @@ extension SelectNoteCell {
     private func configureView() {
         contentView.backgroundColor = .mainWhite
         contentView.layer.cornerRadius = 10
+        setSelectStyle(isSelected: false)
         
         roomThumbnailImageView.contentMode = .scaleAspectFill
         
