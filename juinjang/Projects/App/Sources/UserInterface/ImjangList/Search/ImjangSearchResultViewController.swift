@@ -16,24 +16,23 @@ final class ImjangSearchResultViewController: BaseViewController {
         $0.leftItem = [.pop]
     }
     
-    let searchedTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.rowHeight = 116
-        tableView.separatorStyle = .none
-        tableView.showsVerticalScrollIndicator = false
-        tableView.backgroundColor = .mainWhite
-        tableView.register(ImjangNoteTableViewCell.self, forCellReuseIdentifier: ImjangNoteTableViewCell.identifier)
-        tableView.isSkeletonable = true
-        return tableView
+    private lazy var collectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+        collectionView.backgroundColor = .white
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(ImjangNoteCollectionViewCell.self)
+        collectionView.register(ImjangSkeletonCollectionViewCell.self, forCellWithReuseIdentifier: ImjangSkeletonCollectionViewCell.identifier)
+        collectionView.isSkeletonable = true
+        return collectionView
     }()
     
-    let emptyImage: UIImageView = {
+    private let emptyImage: UIImageView = {
         let emptyImage = UIImageView()
         emptyImage.image = UIImage.Main.nomaemull
         return emptyImage
     }()
     
-    let emptyLabel: UILabel = {
+    private let emptyLabel: UILabel = {
         let emptyLabel = UILabel()
         emptyLabel.text = "일치하는 매물이 없어요"
         emptyLabel.font = .pretendard(size: 16, weight: .medium)
@@ -42,8 +41,23 @@ final class ImjangSearchResultViewController: BaseViewController {
     }()
     
     var searchKeyword  = ""
-    var searchedImjangList: [ListDto] = []
+    private var searchedImjangList: [NoteDTO] = []
     private var disposeBag = DisposeBag()
+    
+    struct Dependency {
+        let noteRepository: NoteRepositoryProtocol
+    }
+    
+    private let dependency: Dependency
+    
+    init(dependency: Dependency) {
+        self.dependency = dependency
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,10 +93,10 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     private func showSkeletonView() {
         setEmptyView(false)
-        searchedTableView.showAnimatedSkeleton(usingColor: .gray100, transition: .crossDissolve(0.5))
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            self.searchedTableView.stopSkeletonAnimation()
-            self.searchedTableView.hideSkeleton()
+        collectionView.showAnimatedSkeleton(usingColor: .gray100, transition: .crossDissolve(0.5))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            self.collectionView.stopSkeletonAnimation()
+            self.collectionView.hideSkeleton()
             self.setEmptyView(self.searchedImjangList.isEmpty)
         }
     }
@@ -97,17 +111,15 @@ final class ImjangSearchResultViewController: BaseViewController {
     @objc private func searchRequest() {
         showSkeletonView()
         if searchKeyword.count > 0 {
-            JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .searchImjang(keyword: searchKeyword)) { [weak self] response, error in
-                if let error = error {
-                    print(error.localizedDescription)
-                    return
+            dependency.noteRepository.retrieveNoteList(sort: Filter.update.sortValue, keyword: searchKeyword)
+                .asObservable()
+                .subscribe(with: self) { owner, noteResultDTO in
+                    print(noteResultDTO)
+                    let notes = noteResultDTO.notes
+                    owner.searchedImjangList = notes
+                    owner.collectionView.reloadData()
                 }
-                
-                guard let response, let result = response.result else { return }
-                guard let self else { return }
-                searchedImjangList = result.limjangList
-                searchedTableView.reloadData()
-            }
+                .disposed(by: disposeBag)
         }
     }
     
@@ -144,14 +156,14 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     private func configureHierarchy() {
         view.addSubview(navigationView)
-        view.addSubview(searchedTableView)
+        view.addSubview(collectionView)
     }
 
     private func designView() {
         view.backgroundColor = .mainWhite
         navigationView.setSearchTextFieldText(searchKeyword)
-        searchedTableView.delegate = self
-        searchedTableView.dataSource = self
+        collectionView.delegate = self
+        collectionView.dataSource = self
         
         emptyImage.alpha = 0
         emptyLabel.alpha = 0
@@ -162,8 +174,8 @@ final class ImjangSearchResultViewController: BaseViewController {
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
         
-        searchedTableView.snp.makeConstraints {
-            $0.top.equalTo(navigationView.snp.bottom).offset(23)
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom).offset(12)
             $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
@@ -192,23 +204,19 @@ final class ImjangSearchResultViewController: BaseViewController {
     }
 }
 
-extension ImjangSearchResultViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension ImjangSearchResultViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         searchedImjangList.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImjangNoteTableViewCell.identifier, for: indexPath) as! ImjangNoteTableViewCell
-        
-        cell.selectionStyle = .none
-        cell.configureCell(imjangNote: searchedImjangList[indexPath.row])
-        cell.bookMarkButton.tag = indexPath.row
-        
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(ImjangNoteCollectionViewCell.self, for: indexPath)
+        cell.configureCell(note: searchedImjangList[indexPath.item])
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let imjangId = searchedImjangList[indexPath.row].limjangId
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let imjangId = searchedImjangList[indexPath.row].noteId
         callVersionRequest(imjangId: imjangId) { version in
             if let version = version {
                 self.showImjangNoteVC(imjangId: imjangId, version: version)
@@ -217,7 +225,9 @@ extension ImjangSearchResultViewController: UITableViewDelegate, UITableViewData
             }
         }
     }
-    
+}
+
+extension ImjangSearchResultViewController {
     private func callVersionRequest(imjangId: Int, completion: @escaping (Int?) -> Void) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
             if let error = error {
@@ -259,22 +269,58 @@ extension ImjangSearchResultViewController {
     func searchBarCancelButtonClicked() {
         navigationView.setSearchTextFieldText("")
         searchedImjangList = []
-        searchedTableView.reloadData()
+        collectionView.reloadData()
     }
 }
 
 
-extension ImjangSearchResultViewController: SkeletonTableViewDataSource {
+extension ImjangSearchResultViewController: SkeletonCollectionViewDataSource {
     // skeletonView
-    func collectionSkeletonView(_ skeletonView: UITableView, cellIdentifierForRowAt indexPath: IndexPath) -> ReusableCellIdentifier {
-        return ImjangSkeletonTableViewCell.identifier
-    }
-    
-    func collectionSkeletonView(_ skeletonView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 3
     }
     
-    func collectionSkeletonView(_ skeletonView: UITableView, skeletonCellForRowAt indexPath: IndexPath) -> UITableViewCell? {
-        return ImjangSkeletonTableViewCell()
+    func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> ReusableCellIdentifier {
+        return ImjangSkeletonCollectionViewCell.identifier
+    }
+    
+    func collectionSkeletonView(
+        _ skeletonView: UICollectionView,
+        skeletonCellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell? {
+        let identifier = ImjangSkeletonCollectionViewCell.identifier
+        let cell = skeletonView.dequeueReusableCell(
+            withReuseIdentifier: identifier,
+            for: indexPath
+        ) as! ImjangSkeletonCollectionViewCell
+
+        return cell
+    }
+}
+
+extension ImjangSearchResultViewController {
+    func createCollectionViewLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
+            guard let self else { return nil }
+            return selectNoteLayoutSection()
+        }
+    }
+    
+    private func selectNoteLayoutSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(136))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
+        
+        return section
     }
 }
