@@ -8,29 +8,13 @@
 import UIKit
 import SnapKit
 import RxSwift
+import RxRelay
 
 final class SelectMaemullHeader: BaseCollectionReusableView {
-    lazy var filterselectBtn: UIButton = {
-        var configuration = UIButton.Configuration.filled()
-        
-        var container = AttributeContainer()
-        container.font = .pretendard(size: 14, weight: .semiBold)
-        configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
-        configuration.baseBackgroundColor = .mainWhite
-        configuration.baseForegroundColor = .gray450
-        configuration.image = UIImage.ImjangList.arrowDown
-        configuration.image?.withTintColor(.gray450)
-        configuration.imagePlacement = .trailing
-        configuration.imagePadding = 6
-        let button = UIButton(configuration: configuration, primaryAction: nil)
-        return button
-    }()
+    let noteFilterDropDownView = DropDownView(filterList: MyNoteFilter.allCases)
     
-    var menuChildren: [UIMenuElement] = []
-    let filterList = Filter.allCases
-    weak var sendFilterItemDelegate: SendFilterItemDelegate?
-    
-    private var disposeBag = DisposeBag()
+    var disposeBag = DisposeBag()
+    let filterActionRelay = PublishRelay<MyNoteAction>()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -40,33 +24,12 @@ final class SelectMaemullHeader: BaseCollectionReusableView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func callRequestFiltered(filterItem: Filter) {
-        sendFilterItemDelegate?.sendFilterItem(filter: filterItem)
-    }
-    
-    private func changefilterTitle(_ title: String) {
-        var container = AttributeContainer()
-        container.font = .pretendard(size: 14, weight: .semiBold)
-        filterselectBtn.configuration?.title = title
-        filterselectBtn.configuration?.attributedTitle = AttributedString(title, attributes: container)
-    }
-    
-    private func setFilterData() {
-        for filter in filterList {
-            menuChildren.append(UIAction(title: filter.title, state: .off,handler: {  (action: UIAction) in
-                self.changefilterTitle(filter.title)
-                self.callRequestFiltered(filterItem: filter)
-            }))
-        }
-        if #available(iOS 17.0, *) {
-            filterselectBtn.menu = UIMenu(options: .displayAsPalette, preferredElementSize: .small ,children: menuChildren)
-        } else if #available(iOS 16.0, *){
-            filterselectBtn.menu = UIMenu(options: .displayInline, preferredElementSize: .small ,children: menuChildren)
-        } else {
-            filterselectBtn.menu = UIMenu(options: .destructive, children: menuChildren)
-        }
-        
-        filterselectBtn.showsMenuAsPrimaryAction = true
+    func bindAction() {
+        noteFilterDropDownView.filterActionRelay
+            .bind(with: self) { owner, action in
+                owner.filterActionRelay.accept(action as! MyNoteAction)
+            }
+            .disposed(by: disposeBag)
     }
     
     override func prepareForReuse() {
@@ -76,17 +39,32 @@ final class SelectMaemullHeader: BaseCollectionReusableView {
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        add(filterselectBtn)
+        add(noteFilterDropDownView)
     }
     
     override func configureLayout() {
         super.configureLayout()
-        filterselectBtn.snp.makeConstraints { make in
-            
+        noteFilterDropDownView.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.leading.equalToSuperview()
         }
     }
     
     override func configureView() {
         super.configureView()
+    }
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let view = super.hitTest(point, with: event)
+        if view != nil {
+            return view
+        }
+        
+        let convertedPoint = noteFilterDropDownView.convert(point, from: self)
+        if let hitView = noteFilterDropDownView.hitTest(convertedPoint, with: event) {
+            return hitView
+        }
+
+        return nil
     }
 }

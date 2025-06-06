@@ -25,7 +25,6 @@ final class ImjangListHeader: UICollectionReusableView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        bindAction()
         configureHierarchy()
         configureLayout()
         configureView()
