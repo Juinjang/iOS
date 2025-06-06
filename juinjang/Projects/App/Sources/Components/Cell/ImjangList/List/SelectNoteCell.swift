@@ -187,7 +187,7 @@ extension SelectNoteCell {
         coinIcon.snp.makeConstraints {
             $0.size.equalTo(18)
             $0.leading.equalTo(roomNameLabel.snp.trailing).offset(4)
-            $0.trailing.lessThanOrEqualToSuperview()
+            $0.trailing.lessThanOrEqualToSuperview().inset(12)
             $0.centerY.equalTo(roomNameLabel)
         }
         
