@@ -18,6 +18,7 @@ enum NavigationButton {
     case setting
     case record
     case add
+    case close
     
     var image: UIImage {
         switch self {
@@ -31,6 +32,8 @@ enum NavigationButton {
             return .Main.record
         case .add:
             return .ImjangNote.add
+        case .close:
+            return .close
         }
     }
     
@@ -46,6 +49,8 @@ enum NavigationButton {
             return .recordButtonTap
         case .add:
             return .addButtonTap
+        case .close:
+            return .closeButtonTap
         }
     }
 }
@@ -58,6 +63,7 @@ enum NavigationAction: Equatable {
     case settingButtonTap
     case recordButtonTap
     case addButtonTap
+    case closeButtonTap
 }
 
 class DefaultNavigationView: BaseView {

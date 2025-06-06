@@ -4,11 +4,17 @@
 //
 //  Created by 박도연 on 3/23/24.
 //
+
 import UIKit
 import Then
 import SnapKit
+import RxSwift
 
 final class Use3ViewController : BaseViewController {
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "마케팅 동의 및 이벤트 수신"
+        $0.leftItem = [.pop]
+    }
     
     var textView = UIView().then {
         $0.backgroundColor = .clear
@@ -46,22 +52,15 @@ final class Use3ViewController : BaseViewController {
     var line2 = UIView().then {
         $0.backgroundColor = .gray100
     }
-    
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "마케팅 동의 및 이벤트 수신"
-        
-        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapBackButton))
-        closeButtonItem.tintColor = .gray450
-        closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
 
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = closeButtonItem
-    }
+    private var disposeBag = DisposeBag()
     
-    func setConstraint() {
+    private func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
         textView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.left.right.equalToSuperview()
             $0.height.equalTo(104)
         }
@@ -104,18 +103,21 @@ final class Use3ViewController : BaseViewController {
         useButton.addTarget(self, action: #selector(use1), for: .touchUpInside)
     }
     
-    @objc func tapBackButton() {
-        _ = self.navigationController?.popViewController(animated: false)
+    private func tapBackButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     @objc func use1() {
         let vc = MarketingUseViewController()
-        self.navigationController?.pushViewController(vc, animated: false)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        bindAction()
+        
         view.backgroundColor = .mainWhite
         
+        view.addSubview(navigationView)
         view.addSubview(textView)
         textView.addSubview(textLabel)
         
@@ -129,6 +131,17 @@ final class Use3ViewController : BaseViewController {
         
         setConstraint()
         addTarget()
-        designNavigationBar()
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .popButtonTap:
+                    owner.tapBackButton()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }

@@ -7,21 +7,28 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
 
 final class QnAViewController : BaseViewController {
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "자주 묻는 질문"
+        $0.leftItem = [.close]
+    }
+    
     //MARK: - 본문
-    var titleLabel = UILabel().then {
+    private let titleLabel = UILabel().then {
         $0.text = "자주 묻는 질문이란?"
         $0.font = UIFont(name: "Pretendard-Bold", size: 18)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray450
     }
 
-    var describeView = UIView().then {
+    private let describeView = UIView().then {
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .gray100
     }
-    var describeLabel = UILabel().then {
+    
+    private let describeLabel = UILabel().then {
         $0.text = "주인장을 이용하며 생길 수 있는 궁금증을 조금이나마 해소해 드리기 위한 자주 묻는 질문 모음입니다. \n직접 문의 기능은 준비 중이니 양해 부탁드립니다."
         $0.numberOfLines = 0
         let attrString = NSMutableAttributedString(string: $0.text!)
@@ -35,53 +42,46 @@ final class QnAViewController : BaseViewController {
     }
     
     //MARK: - 질문들
-    var questionImageView = UIImageView().then {
+    private let questionImageView = UIImageView().then {
         $0.image = UIImage.Setting.questionLogo
     }
-    var questionLabel = UILabel().then {
+    
+    private let questionLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray500
     }
-    var answerLabel = UILabel().then {
+    private let answerLabel = UILabel().then {
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray500
         $0.numberOfLines = 0
     }
-    var arrowImageView = UIImageView().then {
+    private var arrowImageView = UIImageView().then {
         $0.image = UIImage.Setting.arrow
     }
-    var line = UIView().then {
+    private var line = UIView().then {
         $0.backgroundColor = .gray100
     }
     
-    let tableView = UITableView().then {
+    private let tableView = UITableView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.register(ExpandableTableViewCell.self, forCellReuseIdentifier: ExpandableTableViewCell.id)
     }
     
-    var dataSource = Sections.sections
+    private var dataSource = Sections.sections
+    private var disposeBag = DisposeBag()
     
-//MARK: - 함수
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "자주 묻는 질문"
-        
-        let closeButtonItem = UIBarButtonItem(image: UIImage.X, style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = .gray450
-        closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = closeButtonItem
-    }
-    @objc func tapCloseButton() {
-        _ = self.navigationController?.popViewController(animated: false)
+    private func tapCloseButton() {
+        self.navigationController?.popViewController(animated: false)
     }
     
     func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
         titleLabel.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(36)
+            $0.top.equalTo(navigationView.snp.bottom).offset(36)
             $0.left.equalToSuperview().offset(24)
         }
         describeView.snp.makeConstraints{
@@ -101,7 +101,8 @@ final class QnAViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        designNavigationBar()
+        bindAction()
+        view.addSubview(navigationView)
         view.addSubview(titleLabel)
         view.addSubview(describeView)
         describeView.addSubview(describeLabel)
@@ -113,6 +114,18 @@ final class QnAViewController : BaseViewController {
         
         view.backgroundColor = .mainWhite
         setConstraint()
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .closeButtonTap:
+                    owner.tapCloseButton()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 

@@ -507,7 +507,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             $0.height.equalTo(24)
         }
         useLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(18)
+            $0.centerY.equalTo(useImageView)
             $0.leading.equalTo(useImageView.snp.trailing).offset(8)
         }
         qnaButton.snp.makeConstraints {
@@ -521,7 +521,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             $0.height.equalTo(24)
         }
         qnaLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(18)
+            $0.centerY.equalTo(qnaImageView)
             $0.leading.equalTo(qnaImageView.snp.trailing).offset(8)
         }
         line3.snp.makeConstraints {

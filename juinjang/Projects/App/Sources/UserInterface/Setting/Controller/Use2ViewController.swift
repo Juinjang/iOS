@@ -8,8 +8,13 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
 
 final class Use2ViewController : BaseViewController {
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "주인장 개인정보 처리방침"
+        $0.leftItem = [.pop]
+    }
     
     private let scrollView = UIScrollView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -140,21 +145,12 @@ final class Use2ViewController : BaseViewController {
         $0.textAlignment = .natural
     }
     
-//MARK: - 함수
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "주인장 개인정보 처리방침"
-        
-        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = .gray450
-        closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
+    private var disposeBag = DisposeBag()
 
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = closeButtonItem
+    private func tapCloseButton() {
+        self.navigationController?.popViewController(animated: true)
     }
-    @objc func tapCloseButton() {
-        _ = self.navigationController?.popViewController(animated: false)
-    }
+    
     @objc private func dropdownButtonTapped() {
         isDropdownVisible.toggle()
         
@@ -257,8 +253,11 @@ final class Use2ViewController : BaseViewController {
     }
     
     func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(20)
+            $0.top.equalTo(navigationView.snp.bottom).offset(20)
             $0.left.right.equalToSuperview().inset(24)
             $0.bottom.equalTo(dropdownButton.snp.top).offset(-16)
         }
@@ -355,8 +354,9 @@ final class Use2ViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        designNavigationBar()
+        bindAction()
         updateContent(forVersion: "이용약관 버전 1.1.0 (시행일 2025.01.12)")
+        view.addSubview(navigationView)
         view.addSubview(scrollView)
         view.addSubview(dropdownButton)
         dropdownButton.addSubview(dropdownImageView)
@@ -384,6 +384,18 @@ final class Use2ViewController : BaseViewController {
 
         view.backgroundColor = .mainWhite
         setConstraint()
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .popButtonTap:
+                    owner.tapCloseButton()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
