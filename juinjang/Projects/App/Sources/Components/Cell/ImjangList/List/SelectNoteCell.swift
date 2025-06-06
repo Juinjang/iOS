@@ -127,23 +127,11 @@ extension SelectNoteCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
-            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
-        
-        if resultScore == 0.0 {
-            setScoreStyle()
-        } else {
-            setScoreStyle(empty: false)
-        }
-    }
-    
-    func setScoreStyle(empty: Bool = true) {
-        starIcon.tintColor = empty ? .null : .main
-        scoreLabel.textColor = empty ? .null : .main
     }
     
     func setSelectStyle(isSelected: Bool) {
@@ -257,6 +245,7 @@ extension SelectNoteCell {
         addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 13, weight: .medium))
         
         starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
+        starIcon.tintColor = .main
         
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
         
