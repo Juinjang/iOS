@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView where T.RawValue == String {
+final class DropDownView<T: FilterType & RawRepresentable>: BaseView where T.RawValue == String {
     private lazy var filterTitleButton = FilterTitleButton(title: filterList[0].title)
     
     // 펼칠 목록(필터 메뉴)을 쌓아둘 스택뷰
@@ -26,7 +26,7 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView w
     private var filterStackViewContentHeight: CGFloat = 0
     private var disposeBag = DisposeBag()
     private var isExpanded = false  // 현재 펼쳐진 상태인지 여부
-    lazy var filterActionRelay = BehaviorRelay<LookAroundFilterActionType>(value: filterList[0].action)
+    lazy var filterActionRelay = BehaviorRelay<FilterActionType>(value: filterList[0].action)
     private var filterList: [T]
     
     init(filterList: [T]) {
@@ -188,7 +188,7 @@ final class DropDownView<T: LookAroundFilterType & RawRepresentable>: BaseView w
     }
     
     private func subscribeTapFilterButton(_ button: FilterButton,
-                                          filter: LookAroundFilterType) {
+                                          filter: FilterType) {
         button.rx.tap
             .asDriver()
             .drive(with: self) { owner, _ in
