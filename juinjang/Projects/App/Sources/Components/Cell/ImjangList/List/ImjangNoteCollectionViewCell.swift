@@ -43,6 +43,7 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         configureCell(note: nil)
         self.roomThumbnailImageView.image = nil
+        self.roomIcon.image = UIImage.ImjangNote.house
     }
 }
 
@@ -50,9 +51,18 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
 extension ImjangNoteCollectionViewCell {
     func configureCell(note: NoteDTO?) {
         guard let note else { return }
-        
 
         roomNameLabel.text = note.name
+        
+        if let purposeType = PurposeType(rawValue: note.purposeType) {
+            switch purposeType {
+            case .INVESTMENT:
+                roomIcon.image = .coin
+            case .RESIDENTIAL_PURPOSE:
+                roomIcon.image = UIImage.ImjangNote.house
+            }
+        }
+        
         setScore(score: note.rate)
         
         priceLabel.text = note.price
@@ -104,23 +114,11 @@ extension ImjangNoteCollectionViewCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
-            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
-        
-        if resultScore == 0.0 {
-            setScoreStyle()
-        } else {
-            setScoreStyle(empty: false)
-        }
-    }
-    
-    func setScoreStyle(empty: Bool = true) {
-        starIcon.tintColor = empty ? .null : .main
-        scoreLabel.textColor = empty ? .null : .main
     }
 }
 
@@ -228,8 +226,10 @@ extension ImjangNoteCollectionViewCell {
         addressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 13, weight: .medium))
         
         starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
+        starIcon.tintColor = .main
         
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
+        scoreLabel.textColor = .main
         
         bookMarkButton.design(image: UIImage.bookmarkOff22, backgroundColor: .clear)
         

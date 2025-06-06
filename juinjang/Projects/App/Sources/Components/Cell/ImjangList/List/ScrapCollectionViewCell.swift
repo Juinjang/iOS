@@ -49,6 +49,7 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
         totalStackView.subviews.forEach { subview in
             subview.removeFromSuperview()
         }
+        roomIcon.image = UIImage.ImjangNote.house
         setData(note: nil)
     }
 }
@@ -59,6 +60,16 @@ extension ScrapCollectionViewCell {
     func setData(note: NoteDTO?) {
         guard let note else { return }
         roomNameLabel.text = note.name
+        
+        if let purposeType = PurposeType(rawValue: note.purposeType) {
+            switch purposeType {
+            case .INVESTMENT:
+                roomIcon.image = .coin
+            case .RESIDENTIAL_PURPOSE:
+                roomIcon.image = UIImage.ImjangNote.house
+            }
+        }
+        
         setScore(score: note.rate)
         
         roomPriceLabel.text = note.price
@@ -212,24 +223,24 @@ extension ScrapCollectionViewCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
-            setScoreStyle()
+//            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
-        
-        if resultScore == 0.0 {
-            setScoreStyle()
-        } else {
-            setScoreStyle(empty: false)
-        }
+//        
+//        if resultScore == 0.0 {
+//            setScoreStyle()
+//        } else {
+//            setScoreStyle(empty: false)
+//        }
     }
     
-    private func setScoreStyle(empty: Bool = true) {
-        starIcon.tintColor = empty ? .null : .main
-        scoreLabel.textColor = empty ? .null : .main
-    }
+//    private func setScoreStyle(empty: Bool = true) {
+//        starIcon.tintColor = empty ? .null : .main
+//        scoreLabel.textColor = empty ? .null : .main
+//    }
     
     private func setStackViewBackground(propertyType: String, isEmpty: Bool) {
         emptyImage.isHidden = isEmpty ? false : true
@@ -333,7 +344,8 @@ extension ScrapCollectionViewCell {
         roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         
         starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
-        scoreLabel.design(textColor: .null, font: .pretendard(size: 16, weight: .semiBold))
+        starIcon.tintColor = .main
+        scoreLabel.design(textColor: .main, font: .pretendard(size: 16, weight: .semiBold))
         roomAddressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .mainWhite)
     }

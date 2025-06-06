@@ -47,6 +47,7 @@ final class SelectNoteCell: UICollectionViewCell {
         super.prepareForReuse()
         configureCell(note: nil)
         self.roomThumbnailImageView.image = nil
+        coinIcon.image = .coin
         setSelectStyle(isSelected: false)
     }
 }
@@ -55,9 +56,18 @@ final class SelectNoteCell: UICollectionViewCell {
 extension SelectNoteCell {
     func configureCell(note: NoteDTO?) {
         guard let note else { return }
-        
 
         roomNameLabel.text = note.name
+        
+        if let purposeType = PurposeType(rawValue: note.purposeType) {
+            switch purposeType {
+            case .INVESTMENT:
+                coinIcon.image = .coin
+            case .RESIDENTIAL_PURPOSE:
+                coinIcon.image = UIImage.ImjangNote.house
+            }
+        }
+        
         setScore(score: note.rate)
         
         priceLabel.text = note.price
