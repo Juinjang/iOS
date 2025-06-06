@@ -344,8 +344,10 @@ extension ScrapCollectionViewCell {
         roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         
         starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
+        
         starIcon.tintColor = .main
-        scoreLabel.design(textColor: .main, font: .pretendard(size: 16, weight: .semiBold))
+        scoreLabel.fontColor = .main
+        
         roomAddressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .mainWhite)
     }

@@ -31,11 +31,13 @@ final class TopTableViewCell: UITableViewCell {
         $0.backgroundColor = .main
         $0.layer.cornerRadius = 10
     }
+    
     private let myNoteLabel = UILabel().then {
         $0.text = "나의 임장노트"
         $0.textColor = .mainWhite
         $0.font = .pretendard(size: 20, weight: .extraBold)
     }
+    
     private let myNoteImageView = UIImageView().then {
         $0.image = UIImage.Main.threeLogo
     }
@@ -47,15 +49,25 @@ final class TopTableViewCell: UITableViewCell {
         config.background.cornerRadius = 10
         $0.configuration = config
     }
+    private let newPageLabel = UILabel().then {
+        $0.text = "새 페이지 펼치기"
+        $0.textColor = .mainWhite
+        $0.font = .pretendard(size: 20, weight: .extraBold)
+    }
     
     //새 페이지 펼치기
-     let lookAroundButton = UIButton().then {
-         var config = UIButton.Configuration.plain()
-         config.background.image = .Main.lookAround
-         config.background.imageContentMode = .scaleToFill
-         config.background.cornerRadius = 10
-         $0.configuration = config
-     }
+    let lookAroundButton = UIButton().then {
+        var config = UIButton.Configuration.plain()
+        config.background.image = .Main.lookAround
+        config.background.imageContentMode = .scaleToFill
+        config.background.cornerRadius = 10
+        $0.configuration = config
+    }
+    private let lookAroundLabel = UILabel().then {
+        $0.text = "임장노트 둘러보기"
+        $0.textColor = .gray600
+        $0.font = .pretendard(size: 20, weight: .extraBold)
+    }
     
     //MARK: - init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -92,7 +104,9 @@ final class TopTableViewCell: UITableViewCell {
         myNoteButton.addSubview(myNoteImageView)
         
         contentView.addSubview(newPageButton)
+        newPageButton.addSubview(newPageLabel)
         contentView.addSubview(lookAroundButton)
+        lookAroundButton.addSubview(lookAroundLabel)
     }
         
     private func autoLayout() {
@@ -121,6 +135,7 @@ final class TopTableViewCell: UITableViewCell {
             $0.trailing.equalTo(myNoteButton.snp.trailing).offset(-28)
         }
         
+        
         //새 페이지 구현
         newPageButton.snp.makeConstraints{
             $0.top.equalTo(myNoteButton.snp.bottom).offset(16)
@@ -128,12 +143,22 @@ final class TopTableViewCell: UITableViewCell {
             $0.trailing.equalTo(contentView.snp.centerX).offset(-4)
             $0.height.equalTo(136)
         }
+    
+        newPageLabel.snp.makeConstraints{
+            $0.bottom.equalTo(newPageButton.snp.bottom).offset(-14)
+            $0.centerX.equalToSuperview().offset(-4)
+        }
         
         lookAroundButton.snp.makeConstraints { make in
             make.top.equalTo(newPageButton.snp.top)
             make.trailing.equalToSuperview().inset(24)
             make.leading.equalTo(contentView.snp.centerX).offset(4)
             make.height.equalTo(136)
+        }
+        
+        lookAroundLabel.snp.makeConstraints{
+            $0.bottom.equalTo(lookAroundButton.snp.bottom).offset(-14)
+            $0.centerX.equalToSuperview().offset(-4)
         }
     }
 }
