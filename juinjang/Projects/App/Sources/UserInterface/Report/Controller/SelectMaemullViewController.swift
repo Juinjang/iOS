@@ -162,10 +162,14 @@ final class SelectMaemullViewController : BaseViewController {
     }
     
     @objc func searchBtnTap() {
-        let searchVC = CompareSearchViewController(imjangId: imjangId)
+        let searchVC = CompareSearchViewController(
+            dependency: CompareSearchViewController.Dependency(
+                noteRepository: NoteRepository()
+            ),
+            imjangId: imjangId
+        )
         searchVC.delegate = self.delegate as? SendSearchCompareImjangData
         navigationController?.pushViewController(searchVC, animated: true)
-        collectionView.reloadData()
         applyButton.backgroundColor = .null
     }
     
@@ -204,11 +208,11 @@ extension SelectMaemullViewController: UICollectionViewDelegate, UICollectionVie
         let compareImjangId = imjangList[indexPath.row].noteId
         
         guard let cell = collectionView.cellForItem(at: indexPath) as? SelectNoteCell else { return }
-        comparedName = imjangList[indexPath.row].name
         
         if cell.isSelected {
             cell.isClicked = true
             selectedIndex = indexPath.item
+            comparedName = imjangList[indexPath.row].name
             comparedImjangId = compareImjangId
         } else {
             cell.isClicked = false
