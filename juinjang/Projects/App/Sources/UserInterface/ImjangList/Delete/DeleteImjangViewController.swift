@@ -89,25 +89,26 @@ final class DeleteImjangViewController: BaseViewController {
     }
     
     @objc private  func deleteButtonClicked() {
-        let deleteImjangPopupVC = DeleteImjangPopupViewController()
         guard let roomIndex = selectedIndexes.first else { return }
-        deleteImjangPopupVC.selectedRoomName = imjangList[roomIndex].name
-        deleteImjangPopupVC.selectedCount = selectedIndexes.count
-        deleteImjangPopupVC.modalPresentationStyle = .overFullScreen
         
-        deleteImjangPopupVC.completionHandler = { [weak self] in
-            guard let self else { return }
-            let indexs = self.selectedIndexes.sorted(by: <)
-            print(indexs)
-            var ids: [Int] = []
-            for index in indexs {
-                ids.append(self.imjangList[index].noteId)
+        let deleteNoteAlertVC = DeleteNoteAlertViewController(
+            selectedRoomName: imjangList[roomIndex].name,
+            selectedCount: selectedIndexes.count)
+        deleteNoteAlertVC.modalPresentationStyle = .overFullScreen
+        deleteNoteAlertVC.confirmActionRelay
+            .subscribe(with: self) { owner, _ in
+                let indexs = self.selectedIndexes.sorted(by: <)
+                print(indexs)
+                var ids: [Int] = []
+                for index in indexs {
+                    ids.append(self.imjangList[index].noteId)
+                }
+                print(ids)
+                self.deleteRequest(imjangIds: ids)
+                owner.deleteImjangListDelegate?.deleteImjangList(ids)
             }
-            print(ids)
-            self.deleteRequest(imjangIds: ids)
-            deleteImjangListDelegate?.deleteImjangList(ids)
-        }
-        present(deleteImjangPopupVC, animated: false)
+            .disposed(by: deleteNoteAlertVC.disposeBag)
+        present(deleteNoteAlertVC, animated: false)
     }
     
     private func deleteRequest(imjangIds: [Int]) {
