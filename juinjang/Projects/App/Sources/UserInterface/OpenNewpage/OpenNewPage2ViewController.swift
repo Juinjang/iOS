@@ -22,6 +22,10 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     
     var postCodeModel: PostCodeResponseModel? 
     
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "새 페이지 펼치기"
+    }
     
     // -MARK: API 요청
     func createImjang(completionHandler: @escaping (Int?, NetworkError?) -> Void) {
@@ -266,17 +270,20 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print("VersionInfo: \(versionInfo)")
-        print("전달받은 데이터: \(newImjang)")
-        
         view.backgroundColor = .mainWhite
-        
-        self.navigationItem.title = "새 페이지 펼치기"
-        self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage.arrowLeft
-        let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backToPageTapped))
-        navigationItem.leftBarButtonItem = backButton
+        navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    let warningPopup = OpenNewPagePopupViewController()
+                    warningPopup.warningDelegate = self
+                    warningPopup.modalPresentationStyle = .overCurrentContext
+                    self.present(warningPopup, animated: false, completion: nil)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
         
         addressTextField.delegate = self
         addressTextField.isUserInteractionEnabled = false // 사용자 입력 방지
@@ -302,6 +309,7 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     func setupWidgets() {
         // 위젯들을 서브뷰로 추가
         let widgets: [UIView] = [
+            navigationView,
             addressLabel,
             houseNicknameLabel,
             backgroundImageView,
@@ -326,17 +334,17 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     }
     
     func setupLayout() {
-        // 비율
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-        
-        let buttonWidth = screenWidth * 0.8769 // 너비 비율
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(46)
+            $0.horizontalEdges.equalToSuperview()
+        }
         
         // 배경 ImageView
         backgroundImageView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.width.equalTo(view.snp.width)
             $0.height.equalTo(view.snp.height).multipliedBy(0.28)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
         
         // 사람 ImageView
@@ -454,24 +462,18 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         // 이전으로 버튼
         backButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.centerX.equalTo(view.snp.centerX).offset(-116.5)
             $0.leading.equalTo(view.snp.leading).offset(24)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-5)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.width.equalTo(108)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         // 다음으로 버튼
         nextButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.width.equalTo(buttonWidth)
-            $0.centerX.equalTo(view.snp.centerX).offset(58.5)
-//            $0.leading.equalTo(backButton.snp.trailing).offset(8)
-            $0.leading.equalTo(backButton.snp.trailing).offset(UIScreen.main.bounds.width * 0.02)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-33)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.leading.equalTo(backButton.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().offset(-24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-
     }
     
     func updateImageViewsFromModel() {

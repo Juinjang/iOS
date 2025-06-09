@@ -184,7 +184,7 @@ extension MyNoteViewReactor {
         let currentNoticeState = currentState.pages.first(where: { $0.category == category })?.isShowingNotice ?? true
         
         return dependency.noteRepository.retrieveMyNotes(
-            param: SharedNoteRequestDTO(
+            param: MyNoteRequestDTO(
                 noteType: category.toRequestType,
                 propertyType: "",
                 priceType: "",

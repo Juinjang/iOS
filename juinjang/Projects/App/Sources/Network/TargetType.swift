@@ -16,6 +16,7 @@ protocol TargetType: URLRequestConvertible {
     var method: HTTPMethod { get }
     var queryItems: [URLQueryItem] { get }
     var parameters: [String: Any]? { get }
+    var bodyData: Data? { get }
     var interceptor: AuthInterceptor? { get }
 }
 
@@ -32,6 +33,10 @@ extension TargetType {
     }
     
     var interceptor: AuthInterceptor? {
+        return nil
+    }
+    
+    var bodyData: Data? {
         return nil
     }
     
@@ -56,8 +61,10 @@ extension TargetType {
         var request = URLRequest(url: url)
         request.httpMethod = method.rawValue
         request.allHTTPHeaderFields = header
-
-        if let parameters = parameters {
+        
+        if let data = bodyData {
+            request.httpBody = data
+        } else if let parameters = parameters {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
         }
 

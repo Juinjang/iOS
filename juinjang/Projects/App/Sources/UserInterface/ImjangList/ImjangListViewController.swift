@@ -18,7 +18,6 @@ protocol DeleteImjangListDelegate: AnyObject {
 }
 
 final class ImjangListViewController: BaseViewController {
-    
     private let mainView = ImjangListView()
     private let deleteButton = UIButton()   // navigationBar 삭제 버튼
     
@@ -33,6 +32,7 @@ final class ImjangListViewController: BaseViewController {
 
         }
     }
+    
     var imjangList: [MyImjangResponseDTO] = [] {
         didSet(oldValue) {
             if !oldValue.isEmpty && imjangList.isEmpty {
@@ -52,7 +52,6 @@ final class ImjangListViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.navigationBar.isHidden = true
         bind()
         setDelegate()
         fetchImjangList(sort: .update, setScrap: true)

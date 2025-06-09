@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import Alamofire
+import RxSwift
 
 struct YourResponseModel: Codable {
     let isSuccess: Bool
@@ -28,9 +29,14 @@ protocol LogoutDelegate: AnyObject {
     func logout()
 }
 
-final class SettingViewController : BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
-    
+final class SettingViewController: BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
     static let id = "SettingViewController"
+    
+    private let disposeBag = DisposeBag()
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "설정"
+    }
     
     //MARK: - 프로필 사진, 닉네임
     var profileImageView = UIImageView().then {
@@ -40,12 +46,13 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.layer.cornerRadius = 33
         $0.clipsToBounds = true
     }
+    
     var editButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.setTitle("수정", for: .normal)
         $0.setTitleColor(.main, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 14)
-    } //수정 버튼 눌렀을 때 갤러리 들어가게
+    } // 수정 버튼 눌렀을 때 갤러리 들어가게
     
     var nicknameLabel = UILabel().then {
         $0.text = "닉네임"
@@ -53,12 +60,14 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray400
     }
+    
     var nickname = UILabel().then {
         $0.text = UserDefaultManager.shared.nickname
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray500
     }
+    
     var nicknameTextField = UITextField().then {
         $0.backgroundColor = .mainWhite
         $0.returnKeyType = .done
@@ -66,21 +75,25 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.text = UserDefaultManager.shared.nickname
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
     }
+    
     var nicknameWarnImageView = UIImageView().then {
         $0.image = UIImage.Setting.warn
     }
+    
     var nicknameWarnLabel = UILabel().then {
         $0.text = "닉네임은 8자 이내로 입력해 주세요."
         $0.font = UIFont(name: "Pretendard-Medium", size: 12)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .main
     }
+    
     var nicknameSameWarnLabel = UILabel().then {
         $0.text = "동일한 닉네임이 존재해요"
         $0.font = UIFont(name: "Pretendard-Medium", size: 12)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .main
     }
+    
     var saveButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.layer.cornerRadius = 10
@@ -88,6 +101,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.backgroundColor = .gray450
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 14)
     }
+    
     var line1 = UIView().then {
         $0.backgroundColor = .stroke
     }
@@ -156,15 +170,19 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.setTitleColor(.main, for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
     }
+    
     var line4 = UIView().then {
         $0.backgroundColor = .gray100
     }
+    
     var backgroundView = UIView().then{
         $0.backgroundColor = .black.withAlphaComponent(0.6)
     }
+    
     var accountDeleteButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
+    
     var accountDeleteLabel = UILabel().then {
         $0.text = "계정 삭제하기"
         $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
@@ -383,23 +401,15 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             }
         }
     }
-
-    private func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "설정"
-        
-        let backButtonItem = UIBarButtonItem(image: UIImage.Setting.arrowRight, style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = .gray450
-        backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem = backButtonItem
-    }
     
     private func setConstraint() {
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         profileImageView.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(28)
+            $0.top.equalTo(navigationView.snp.bottom).offset(28)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(66)
         }
@@ -500,7 +510,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         print("email :\(UserDefaultManager.shared.email)")
         //getUserInfo()
         loadProfileImage()
-        designNavigationBar()
+        view.addSubview(navigationView)
         view.addSubview(profileImageView)
         view.addSubview(editButton)
         
@@ -533,6 +543,16 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         //setUserInfo()
         addTarget()
         setConstraint()
+        
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: false)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 

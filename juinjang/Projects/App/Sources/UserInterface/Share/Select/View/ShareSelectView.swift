@@ -39,7 +39,7 @@ final class ShareSelectView: BaseView {
     fileprivate let emptyView = ShareSelectEmptyView().then {
         $0.isHidden = true
     }
-    fileprivate let nextButton = FilledButton(title: "다음으로")
+    let nextButton = FilledButton(title: "다음으로")
     
     override func configureHierarchy() {
         super.configureHierarchy()

@@ -15,11 +15,12 @@ final class ShareMoreView: BaseCollectionReusableView {
     private let moreButton = MoreButton()
     private var disposeBag = DisposeBag()
     
-    func bind(relay: PublishRelay<Void>) {
+    func bind(relay: PublishRelay<Void>, isHidden: Bool) {
         disposeBag = DisposeBag()
         moreButton.rx.throttleTap
             .bind(to: relay)
             .disposed(by: disposeBag)
+        self.isHidden = isHidden
     }
     
     override func configureHierarchy() {

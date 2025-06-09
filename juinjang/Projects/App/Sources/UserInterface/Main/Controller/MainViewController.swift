@@ -4,14 +4,19 @@ import Then
 import Lottie
 import Alamofire
 import SkeletonView
-//import Common
+import RxSwift
 
 protocol updateNicknameDelegate: AnyObject {
     func updateNickname()
 }
 
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
-    
+    private let disposeBag = DisposeBag()
+    private lazy var navigationView: CenterFlexibleNavigationView = {
+        return CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
+            $0.leftItem = [.setting]
+        }
+    }()
     
 // MARK: - 변수, 상수 설정
     //설정 버튼, 메인 로고, 스피커 버튼
@@ -51,15 +56,24 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         tableView.backgroundColor = .clear
         view.backgroundColor = .mainWhite
         
-        view.addSubview(tableView)
+        view.add(navigationView, tableView)
        
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
-        designNavigationBar()
         setConstraint()
         callMainImjangRequest()
         checkAndUpdateIfNeeded()
         print("메인화면에서 이메일 출력 : \(UserDefaultManager.shared.email)")
+        
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .settingButtonTap:
+                    self.setttingBtnTap()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func checkAndShowTermsPopup() {
@@ -115,27 +129,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         }
     }
     
-    // 네비게이션 바 디자인
-    private func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.titleView = mainLogoImageView
-        
-        // 이미지 로드
-//        let speaker = UIImage.speaker
-//
-//        // UIBarButtonItem 생성 및 이미지 설정
-//        let speakerButtonItem = UIBarButtonItem(image: speaker, style: .plain, target: self, action: nil)
-//        speakerButtonItem.tintColor = ColorStyle.darkGray
-//        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-        
-        let settingButtonItem = UIBarButtonItem(image: UIImage.Main.setting, style: .plain, target: self, action: #selector(setttingBtnTap))
-        settingButtonItem.tintColor = .gray450
-        settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = settingButtonItem
-//        self.navigationItem.rightBarButtonItem = speakerButtonItem
-    }
-    
     private func showImjangNoteVC(imjangId: Int?, version: Int?) {
         guard let imjangId = imjangId, let version = version else { return }
         let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
@@ -159,9 +152,18 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func setConstraint() {
-        //테이블 뷰
-        tableView.snp.makeConstraints {
+        navigationView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
+        mainLogoImageView.snp.makeConstraints {
+            $0.width.equalTo(67)
+            $0.height.equalTo(21)
+        }
+        
+        tableView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.left.right.bottom.equalToSuperview()
         }
     }

@@ -22,7 +22,13 @@ final class ImjangNoteViewController: BaseViewController,
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
     
-    private let navigationView = DefaultNavigationView()
+    private lazy var navigationView: DefaultNavigationView = {
+        return DefaultNavigationView().then {
+            $0.leftItem = [.pop]
+            $0.rightItem = [.text(title: "편집")]
+            $0.titleSize = 18
+        }
+    }()
     
     // 스크롤뷰
     let scrollView = UIScrollView().then {
@@ -65,11 +71,17 @@ final class ImjangNoteViewController: BaseViewController,
     let roomPriceLabel = UILabel()
     
     let roomLocationIcon = UIImageView()
-    let roomAddressLabel = UILabel()
-    let addressStackView = UIStackView()
-    let addressBackgroundView = UIView().then {
+    let roomAddressLabel = UILabel().then {
+        $0.lineBreakMode = .byCharWrapping
+        $0.isUserInteractionEnabled = false
+    }
+    let addressStackView = UIStackView().then {
+        $0.isUserInteractionEnabled = false
+    }
+    let addressBackgroundView = UIButton().then {
         $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
+        $0.isEnabled = false
     }
     
     let showReportLabel = UILabel()
@@ -90,6 +102,8 @@ final class ImjangNoteViewController: BaseViewController,
     private let noteShareConditionView = ImjangNoteShareConditionView()
     
     private let shareCompletedButton = ShareCompletedButton()
+    
+    private let imageBlockView = UIView()
     
     let infoStackView = UIStackView().then {
         $0.axis = .horizontal
@@ -159,7 +173,6 @@ final class ImjangNoteViewController: BaseViewController,
         super.viewDidLoad()
         view.backgroundColor = .mainWhite
         setDelegate()
-        designNavigationBar()
         addSubView()
         setConstraints()
         designViews()
@@ -197,8 +210,27 @@ final class ImjangNoteViewController: BaseViewController,
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .share:
-                    print("Share 버튼 클릭")
+                    let viewController = ShareSelectViewController(reactor: .init(dependency: .init(noteRepository: NoteRepository(), userRepository: UserRepository())))
+                    self.navigationController?.pushViewController(viewController, animated: true)
                 }
+            }
+            .disposed(by: disposeBag)
+        
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.popView()
+                case .textButtonTap:
+                    self.editView()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
+        
+        photoRegisterButton.rx.throttleTap
+            .subscribe(with: self) { (self,_) in
+                self.showImjangImageListVC()
             }
             .disposed(by: disposeBag)
     }
@@ -242,11 +274,44 @@ final class ImjangNoteViewController: BaseViewController,
         self.navigationItem.title = detailDto.buildingName
         roomNameLabel.text = detailDto.buildingName
         setPriceLabel(model: detailDto)
-        roomAddressLabel.text = detailDto.address
+        
+        
+        let fullText = "임장노트 공유를 위해서는 주소를 재입력 해주세요."
+        let underlinedText = "재입력"
+
+        let font = UIFont.pretendard(size: 16, weight: .medium)
+        let textColor = UIColor.gray400
+
+        let attributedString = NSMutableAttributedString(string: fullText, attributes: [
+            .font: font,
+            .foregroundColor: textColor
+        ])
+
+        if let range = fullText.range(of: underlinedText) {
+            let nsRange = NSRange(range, in: fullText)
+            attributedString.addAttribute(.underlineStyle, value: NSUnderlineStyle.single.rawValue, range: nsRange)
+        }
+        
+        if let address = detailDto.roadAddress {
+            roomAddressLabel.text = address
+        } else {
+            roomAddressLabel.attributedText = attributedString
+            roomAddressLabel.numberOfLines = 2
+        }
+        
+        
+        
         modifiedDate.text = detailDto.updatedAt
         images = detailDto.images
         noImageBackgroundView.image = detailDto.propertyTypeImage
         noteDetailInfoView.configure(model: detailDto, relay: clickPyungFloorRelay)
+        navigationView.title = detailDto.buildingName
+        editButton.isHidden = detailDto.isShared
+        photoRegisterButton.isHidden = detailDto.isShared
+        imageBlockView.isHidden = !detailDto.isShared
+        navigationView.rightItem = detailDto.isShared ? [] : [.text(title: "편집")]
+        addressBackgroundView.isEnabled = (detailDto.roadAddress == nil)
+        
         // 버전 설정
         // purposeCode (0: 부동산 투자, 1: 직접 입주)
         if detailDto.propertyType == "VILLA" || detailDto.propertyType == "OFFICE_TEL" {
@@ -262,7 +327,12 @@ final class ImjangNoteViewController: BaseViewController,
         }
         versionInfo?.editCriteria = detailDto.purposeType == "INVESTMENT" ? 0 : 1
         setUpImageUI()
-        adjustLabelHeight()
+        
+        addressBackgroundView.rx.throttleTap
+            .subscribe(with: self) { (self,_) in
+                self.editView()
+            }
+            .disposed(by: disposeBag)
     }
     
     func sendData(imjangId: Int,
@@ -270,7 +340,7 @@ final class ImjangNoteViewController: BaseViewController,
         self.navigationItem.title = model.buildingName
         roomNameLabel.text = model.buildingName
         setPriceLabel(model: model)
-        roomAddressLabel.text = model.address
+        roomAddressLabel.text = model.roadAddress
         modifiedDate.text = model.updatedAt
         
         NotificationCenter.default.post(name: .refreshImjangList, object: nil)
@@ -282,26 +352,12 @@ final class ImjangNoteViewController: BaseViewController,
         self.navigationItem.title = model.buildingName
         roomNameLabel.text = model.buildingName
         setPriceLabel(model: model)
-        roomAddressLabel.text = model.address
+        roomAddressLabel.text = model.roadAddress
         modifiedDate.text = model.updatedAt
         
         NotificationCenter.default.post(name: .refreshImjangList, object: nil)
         NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
         NotificationCenter.default.post(name: .refreshSearchList, object: nil)
-    }
-    
-    private func adjustLabelHeight() {
-        let maxSize = CGSize(width: addressBackgroundView.bounds.width - 30, height: CGFloat.greatestFiniteMagnitude) // 여백 고려
-        let expectedSize = roomAddressLabel.sizeThatFits(maxSize)
-        
-        // 텍스트 길이에 따라 조건적으로 높이 업데이트
-        roomAddressLabel.snp.updateConstraints { make in
-            if expectedSize.height > 30 { // someThreshold는 조건에 맞는 텍스트 높이입니다.
-                make.height.equalTo(42) // 텍스트 높이의 2배로 설정
-            } else {
-                make.height.equalTo(21) // 예상된 텍스트 높이로 설정
-            }
-        }
     }
     
     // 방 가격 설정
@@ -392,23 +448,6 @@ final class ImjangNoteViewController: BaseViewController,
         scrollView.delegate = self
     }
     
-    // 네비게이션 바 디자인
-    private func designNavigationBar() {
-        self.navigationController?.navigationBar.isHidden = false
-        self.navigationItem.title = ""     // TODO: - 나중에 roomName 으로 연결
-        self.navigationController?.navigationBar.tintColor = .black
-        
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        let editButtonItem = UIBarButtonItem(title: "편집", style: .plain, target: self, action: #selector(editView))
-        backButtonItem.tintColor = .gray450
-        editButtonItem.tintColor = .gray450
-        
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.rightBarButtonItem = editButtonItem
-    }
-    
     // 뒤로가기 버튼 클릭했을 때
     @objc private func popView() {
         switch previousVCType {
@@ -458,7 +497,9 @@ final class ImjangNoteViewController: BaseViewController,
     
     // MARK: - addSubView()
     private func addSubView() {
-        [scrollView, editButton.with(editImageView)].forEach {
+        [navigationView,
+         scrollView,
+         editButton.with(editImageView)].forEach {
             view.addSubview($0)
         }
         
@@ -473,7 +514,8 @@ final class ImjangNoteViewController: BaseViewController,
          addressBackgroundView,
          containerView,
          noImageBackgroundView,
-         stackView].forEach {
+         stackView,
+         imageBlockView].forEach {
             contentView.addSubview($0)
         }
         
@@ -723,9 +765,14 @@ final class ImjangNoteViewController: BaseViewController,
         
         view.bringSubviewToFront(editButton)
         
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         // 스크롤뷰
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview().offset(4)
         }
@@ -745,6 +792,10 @@ final class ImjangNoteViewController: BaseViewController,
             $0.top.equalTo(contentView).offset(8)
             $0.leading.equalTo(contentView).offset(24)
             $0.trailing.equalTo(contentView).offset(-24)
+        }
+        
+        imageBlockView.snp.makeConstraints {
+            $0.edges.equalTo(noImageBackgroundView.snp.edges)
         }
         
         // 하우스 아이콘 크기 설정
@@ -811,6 +862,8 @@ final class ImjangNoteViewController: BaseViewController,
             $0.edges.equalToSuperview()
         }
         recordingSegmentedVC.didMove(toParent: self)
+        
+        contentView.bringSubviewToFront(imageBlockView)
     }
     
     
@@ -819,7 +872,13 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     // 스택뷰 설정
-    private func setStackView(_ stackView: UIStackView, label: UILabel, image: UIImageView, axis: NSLayoutConstraint.Axis, distribution: UIStackView.Distribution = .equalSpacing,spacing: CGFloat, isImageRight: Bool){
+    private func setStackView(_ stackView: UIStackView,
+                              label: UILabel,
+                              image: UIImageView,
+                              axis: NSLayoutConstraint.Axis,
+                              distribution: UIStackView.Distribution = .equalSpacing,
+                              spacing: CGFloat,
+                              isImageRight: Bool){
         
         stackView.axis = axis
         stackView.alignment = .center
@@ -867,80 +926,102 @@ final class ImjangNoteViewController: BaseViewController,
     
     // MARK: - API 요청
     private func saveAnswer(completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
-        let token = UserDefaultManager.shared.accessToken
-        print("토큰값 \(token)")
-        
-        // 저장된 체크리스트 불러오기
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self,
-                                            api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
-            guard let self = self else { return }
-            guard let checkListResponse = response else { return }
-            
-            var savedQuestionIds = Set<Int>()
-            var uniqueItems = [CheckListAnswer]()
-            
-            // 서버에서 불러온 questionId 목록
-            if let categoryItem = checkListResponse.result {
-                for item in categoryItem {
-                    existingItems[item.questionId] = CheckListAnswer(imjangId: imjangId, questionId: item.questionId, answer: item.answer, isSelected: true)
+        noteRepository.retrieveCheckList(noteID: imjangId)
+            .asObservable()
+            .subscribe(with: self) { (self, checkListResponse) in
+                
+                var savedQuestionIds = Set<Int>()
+                var uniqueItems = [CheckListAnswer]()
+                
+                // 서버에서 불러온 questionId 목록
+                for item in checkListResponse {
+                    self.existingItems[item.questionId] = CheckListAnswer(
+                        imjangId: self.imjangId,
+                        questionId: item.questionId,
+                        answer: item.answer,
+                        isSelected: true
+                    )
                 }
-            }
-            
-            // 최근에 추가된 항목만 유지하고 중복된 항목 제거
-            for item in checkListItems {
-                if !savedQuestionIds.contains(item.questionId) {
-                    savedQuestionIds.insert(item.questionId)
-                    uniqueItems.append(item) // 중복 제거 후 새로운 값 추가
-                } else if let index = uniqueItems.firstIndex(where: { $0.questionId == item.questionId }) {
-                    uniqueItems[index] = item // 기존의 항목이 있다면 새로운 값으로 변경
+                
+                // 최근에 추가된 항목만 유지하고 중복된 항목 제거
+                for item in self.checkListItems {
+                    if !savedQuestionIds.contains(item.questionId) {
+                        savedQuestionIds.insert(item.questionId)
+                        uniqueItems.append(.init(imjangId: self.imjangId,
+                                                 questionId: item.questionId,
+                                                 answer: item.answer,
+                                                 isSelected: true)) // 중복 제거 후 새로운 값 추가
+                    } else if let index = uniqueItems.firstIndex(where: { $0.questionId == item.questionId }) {
+                        uniqueItems[index] = .init(imjangId: self.imjangId,
+                                                   questionId: item.questionId,
+                                                   answer: item.answer,
+                                                   isSelected: true) // 기존의 항목이 있다면 새로운 값으로 변경
+                    }
                 }
-            }
-            
-            self.checkListItems = uniqueItems
-            
-            // 유효한 값만 필터링
-            let validCheckListItems = checkListItems.filter { item in
-                if let answer = item.answer as? String {
-                    return !answer.isEmpty && answer != "NaN"
+                
+                self.checkListItems = uniqueItems
+                
+                // 유효한 값만 필터링
+                let validCheckListItems = self.checkListItems.filter { item in
+                    if let answer = item.answer as? String {
+                        return !answer.isEmpty && answer != "NaN"
+                    } else {
+                        return item.answer != nil // 문자열이 아니라면 값이 존재하는지 확인
+                    }
+                }
+                
+                print("----- 체크리스트 저장할 항목 -----")
+                for checkListItem in validCheckListItems {
+                    print(checkListItem)
+                }
+                
+                if self.existingItems.isEmpty {
+                    self.saveChecklist(
+                        items: validCheckListItems.map {
+                            .init(
+                                imjangId: self.imjangId,
+                                questionId: $0.questionId,
+                                answer: $0.answer,
+                                isSelected: true
+                            )
+                        },
+                        completion: completion
+                    )
                 } else {
-                    return item.answer != nil // 문자열이 아니라면 값이 존재하는지 확인
+                    self.modifyChecklist(items: validCheckListItems.map {
+                        .init(
+                            imjangId: self.imjangId,
+                            questionId: $0.questionId,
+                            answer: $0.answer,
+                            isSelected: true
+                        )
+                    }, completion: completion)
                 }
+                
+                amplitude.track(
+                    event: BaseEvent(eventType: AmpliEventName.button_clicked.rawValue,
+                                     eventProperties: [
+                    AmpliEventProp.floating_button.rawValue: "true"
+                ]))
+                
             }
-            
-            print("----- 체크리스트 저장할 항목 -----")
-            for checkListItem in validCheckListItems {
-                print(checkListItem)
-            }
-            
-            if existingItems.isEmpty {
-                saveChecklist(items: validCheckListItems, token: token, completion: completion)
-            } else {
-                modifyChecklist(items: validCheckListItems, token: token, completion: completion)
-            }
-            
-            amplitude.track(event: BaseEvent(eventType: AmpliEventName.button_clicked.rawValue, eventProperties: [
-                AmpliEventProp.floating_button.rawValue: "true"
-            ]))
-            
-            
-        }
+            .disposed(by: disposeBag)
     }
     
     // 체크리스트 저장
-    private func saveChecklist(items: [CheckListAnswer], token: String, completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
-        self.requestChecklist(with: .post, items: items, action: "create", token: token, completion: completion)
+    private func saveChecklist(items: [CheckListAnswer],
+                               completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
+        self.requestChecklist(items: items, completion: completion)
     }
     
     // 체크리스트 수정
-    private func modifyChecklist(items: [CheckListAnswer], token: String, completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
-        self.requestChecklist(with: .post, items: items, action: "update", token: token, completion: completion)
+    private func modifyChecklist(items: [CheckListAnswer],
+                                 completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
+        self.requestChecklist(items: items, completion: completion)
     }
     
     // 체크리스트 API
-    private func requestChecklist(with method: HTTPMethod,
-                                  items: [CheckListAnswer],
-                                  action: String,
-                                  token: String,
+    private func requestChecklist(items: [CheckListAnswer],
                                   completion: @escaping (DetailDto?, ReportDTO?) -> Void) {
         guard !items.isEmpty else {
             print("값이 선택되지 않았습니다.")
@@ -948,100 +1029,28 @@ final class ImjangNoteViewController: BaseViewController,
             return
         }
         
-        let parameters = items.map { item -> [String: Any?] in
-            var answerValue: Any? = item.answer
-            if let answer = item.answer as? String, answer == "NaN" || answer.isEmpty {
-                answerValue = NSNull()
+        noteRepository.createCheckList(
+            noteID: imjangId,
+            params: items.map {
+                CheckListRequestDto(questionId: $0.questionId, answer: $0.answer)
             }
-            return [
-                "action": action,
-                "questionId": item.questionId,
-                "answer": answerValue
-            ]
-        }
-        
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: parameters, options: [])
-            
-            if let jsonString = String(data: jsonData, encoding: .utf8) {
-                print("JSON Data: \(jsonString)")
-            }
-            
-            var request: URLRequest
-            let api = JuinjangAPI.saveChecklist(imjangId: imjangId)
-            request = URLRequest(url: api.endpoint)
-            request.httpMethod = api.method.rawValue
-            request.headers = api.header
-            request.httpBody = jsonData
-            
-            AF.request(request)
-                .responseJSON { response in
-                    switch response.result {
-                    case .success(let value):
-                        print("체크리스트 \(action == "create" ? "저장" : "수정") 처리 성공")
-                        print(value)
-                        
-                        if let json = value as? [String: Any],
-                           let result = json["result"] as? [String: Any],
-                           let reportData = result["reportDto"] as? [String: Any],
-                           let limjangData = reportData["limjangDto"] as? [String: Any],
-                           let reportDTOData = reportData["reportDTO"] as? [String: Any] {
-                            let reportDto = self.createReportDTO(from: reportData)
-                            let detailDto = self.createDetailDto(from: reportData)
-                            completion(detailDto, reportDto)
-                            NotificationCenter.default.post(name: .refreshImjangList, object: nil)
-                            NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
-                            NotificationCenter.default.post(name: .refreshSearchList, object: nil)
-                        }
-                        
-                        self.requestShareConditions()
-                        
-                    case .failure(let error):
-                        print("체크리스트 \(action == "create" ? "저장" : "수정") 처리 실패")
-                        if let data = response.data,
-                           let errorMessage = String(data: data, encoding: .utf8) {
-                            print("서버 응답 에러 메시지: \(errorMessage)")
-                        } else {
-                            print("에러: \(error.localizedDescription)")
-                        }
-                        completion(nil, nil)
-                    }
-                }
-        } catch {
-            print("encoding 에러: \(error)")
-            completion(nil, nil)
-        }
-    }
-    
-    private func createReportDTO(from data: [String: Any]) -> ReportDTO {
-        let reportDTOData = data["reportDTO"] as? [String: Any] ?? [:]
-        return ReportDTO(
-            reportId: reportDTOData["reportId"] as? Int ?? 0,
-            indoorKeyWord: reportDTOData["indoorKeyWord"] as? String ?? "",
-            publicSpaceKeyWord: reportDTOData["publicSpaceKeyWord"] as? String ?? "",
-            locationConditionsWord: reportDTOData["locationConditionsWord"] as? String ?? "",
-            indoorRate: reportDTOData["indoorRate"] as? Float ?? 0,
-            publicSpaceRate: reportDTOData["publicSpaceRate"] as? Float ?? 0,
-            locationConditionsRate: reportDTOData["locationConditionsRate"] as? Float ?? 0,
-            totalRate: reportDTOData["totalRate"] as? Float ?? 0
         )
-    }
-    
-    private func createDetailDto(from data: [String: Any]) -> DetailDto {
-        let limjangData = data["limjangDto"] as? [String: Any] ?? [:]
-        return DetailDto(
-            limjangId: limjangData["limjangId"] as? Int ?? 0,
-            checkListVersion: limjangData["checkListVersion"] as? String ?? "",
-            images: limjangData["images"] as? [String] ?? [],
-            purposeCode: limjangData["purposeCode"] as? Int ?? 0,
-            nickname: limjangData["nickname"] as? String ?? "",
-            priceType: limjangData["priceType"] as? Int ?? 0,
-            priceList: limjangData["priceList"] as? [String] ?? [],
-            address: limjangData["address"] as? String ?? "",
-            addressDetail: limjangData["addressDetail"] as? String ?? "",
-            createdAt: limjangData["createdAt"] as? String ?? "",
-            updatedAt: limjangData["updatedAt"] as? String ?? ""
-        )
+        .asObservable()
+        .subscribe(
+            with: self,
+            onNext: { (self, response) in
+                completion(response.reportDto.limjangDto, response.reportDto.reportDTO)
+                
+                NotificationCenter.default.post(name: .refreshImjangList, object: nil)
+                NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
+                NotificationCenter.default.post(name: .refreshSearchList, object: nil)
+                
+                self.requestShareConditions()
+            },
+            onError: { (self, error) in
+                completion(nil,nil)
+            })
+        .disposed(by: disposeBag)
     }
     
     // 수정 버튼 클릭
