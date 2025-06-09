@@ -1,11 +1,11 @@
 //
-//  NoteRequestDTO.swift
+//  MyNoteRequestDTO.swift
 //  juinjang
 //
 //  Created by KimDongWoo on 5/12/25.
 //
 
-struct SharedNoteRequestDTO: Encodable {
+struct MyNoteRequestDTO: Encodable {
     let noteType: String
     let propertyType: String
     let priceType: String

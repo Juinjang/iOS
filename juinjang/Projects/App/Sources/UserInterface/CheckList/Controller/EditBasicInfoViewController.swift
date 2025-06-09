@@ -8,8 +8,14 @@
 import UIKit
 import Alamofire
 import RxSwift
+import SnapKit
+import Then
 
 final class EditBasicInfoViewController: BaseViewController {
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "정보 수정하기"
+    }
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
     var transactionModel = TransactionModel()
@@ -24,6 +30,8 @@ final class EditBasicInfoViewController: BaseViewController {
     var priceDetailLabel2: UILabel?
     
     var delegate: SendEditData?
+    
+    var postModel: PostCodeResponseModel?
     
     let contentView = UIView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -52,6 +60,18 @@ final class EditBasicInfoViewController: BaseViewController {
     lazy var addressLabel = UILabel().then {
         configureLabel($0, text: "주소")
     }
+    
+    private let pyungLabel = DSLabel(.title).then {
+        $0.fontSize = 18
+        $0.fontColor = .gray600
+        $0.text = "층수·평수"
+    }
+    
+    private let floorAndPyungBaseView = UIView().then {
+        $0.backgroundColor = .gray100
+    }
+    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeHolder: "00")
+    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeHolder: "000")
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")
@@ -259,54 +279,54 @@ final class EditBasicInfoViewController: BaseViewController {
     // -MARK: API 요청
     private func getImjang() {
         guard let imjangId = imjangId else { return }
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<DetailDto>.self, api: .detailImjang(imjangId: imjangId)) { detailDto, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
+        
+        noteRepository
+            .retrieveNoteDetail(noteID: imjangId)
+            .subscribe(with: self) { (self, response) in
+                self.setData(detailDto: response)
             }
-            
-            guard let result = detailDto else { return }
-            if let detailDto = result.result {
-                print(detailDto)
-                self.setData(detailDto: detailDto)
-            }
-        }
+            .disposed(by: disposeBag)
     }
     
     func modifyImjang(completionHandler: @escaping (NetworkError?) -> Void) {
         guard let imjangId = imjangId else { return }
+            
+        let parameter = NoteUpdateRequestDTO(
+            priceType: "MARKET_PRICE",
+            price: mergedPriceString(threeDigit: threeDigitPriceField.text,
+                                     fourDigit: fourDigitPriceField.text),
+            monthlyRent: nil,
+            roadAddress: addressTextField.text ?? "",
+            addressDetail: addressDetailTextField.text ?? "",
+            bcode: postModel?.bcode ?? "",
+            nickname: houseNicknameTextField.text ?? "",
+            floor: floorTextField.text ?? "",
+            pyong: Int(pyungTextField.text ?? "") ?? 0,
+            sido: postModel?.sido,
+            sigungu: postModel?.sigungu,
+            bname1: postModel?.bname1,
+            bname2: postModel?.bname2
+        )
         
-        
-        let url = JuinjangAPI.modifyImjang(imjangId: imjangId).endpoint
-        
-        // threeDigitPriceField와 fourDigitPriceField의 값을 합쳐서 selectedPrice에 저장
-        let threeDisitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
-        let fourDisitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-        let priceList = [String(threeDisitPrice * 100000000 + fourDisitPrice * 10000)]
-        
-        let parameter: Parameters = [
-            "limjangId": imjangId,
-            "priceType": 3,
-            "priceList": priceList,
-            "address": addressTextField.text ?? "",
-            "addressDetail": addressDetailTextField.text ?? "",
-            "nickname": houseNicknameTextField.text ?? ""
-        ]
-        
-        print(parameter)
-        
-        JuinjangAPIManager.shared.postData(type: BaseResponse<String>.self, api: .modifyImjang(imjangId: imjangId), parameter: parameter) { response, error in
-            if error == nil {
-                guard let response else {
-                    print("Modify Imjang Response Is Empty")
-                    return
+        noteRepository
+            .updateImjang(noteID: imjangId, param: parameter)
+            .subscribe(
+                with: self,
+                onCompleted: { _ in
+                    completionHandler(nil)
+                }, onError: { (self, error) in
+                    completionHandler(error as? NetworkError)
                 }
-                completionHandler(nil)
-            } else {
-                print("Modify Imjang Request Error")
-                completionHandler(error)
-            }
-        }
+            )
+            .disposed(by: disposeBag)
+    }
+    
+    private func mergedPriceString(threeDigit: String?, fourDigit: String?) -> String {
+        let hundredMillion = Int(threeDigit?.trimmingCharacters(in: .whitespaces) ?? "") ?? 0  // 억
+        let tenThousand = Int(fourDigit?.trimmingCharacters(in: .whitespaces) ?? "") ?? 0     // 만원
+
+        let totalPrice = hundredMillion * 100_000_000 + tenThousand * 10_000
+        return String(totalPrice)
     }
 
     override func viewDidLoad() {
@@ -320,11 +340,15 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     
     private func setNavigationBar() {
-        self.navigationItem.title = "정보 수정하기"
-        self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage.arrowLeft
-        let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backToPageTapped))
-        navigationItem.leftBarButtonItem = backButton
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self,action) in
+                switch action {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func setDelegate() {
@@ -332,32 +356,25 @@ final class EditBasicInfoViewController: BaseViewController {
         houseNicknameTextField.delegate = self
         threeDigitPriceField.delegate = self
         fourDigitPriceField.delegate = self
+        pyungTextField.delegate = self
+        floorTextField.delegate = self
     }
     
-    private func setData(detailDto: DetailDto) {
-        addressTextField.text = detailDto.address
-        addressDetailTextField.text = detailDto.addressDetail
-        houseNicknameTextField.text = detailDto.nickname
-        setPriceLabel(priceList: detailDto.priceList)
+    private func setData(detailDto: NoteDetailModel) {
+        addressTextField.text = detailDto.roadAddress ?? ""
+        addressDetailTextField.text = detailDto.addressDetail ?? ""
+        houseNicknameTextField.text = detailDto.buildingName
+        floorTextField.text = detailDto.floor ?? ""
+        pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
+        setPriceLabel(model: detailDto)
+        checkNextButtonActivation()
     }
     
-    private func setPriceLabel(priceList: [String]) {
-        guard !priceList.isEmpty else { return }
+    private func setPriceLabel(model: NoteDetailModel) {
+        let (units, remainder) = model.price.twoSplitAmount()
         
-        let priceString = priceList[0]
-        let (units, remainder) = priceString.twoSplitAmount()
-        print("\(units)억 \(remainder)만원")
-        if units == "0" {
-            threeDigitPriceField.text = ""
-        } else {
-            threeDigitPriceField.text = units
-        }
-        
-        if remainder != "0" {
-            fourDigitPriceField.text = remainder
-        } else {
-            fourDigitPriceField.text = ""
-        }
+        threeDigitPriceField.text = units == "0" ? "" : units
+        fourDigitPriceField.text = remainder == "0" ? "" : remainder
         
         // 텍스트 필드 너비 설정
         let padding: CGFloat = 20
@@ -386,11 +403,17 @@ final class EditBasicInfoViewController: BaseViewController {
     
     private func setupWidgets() {
         // 위젯들을 서브뷰로 추가
-        [addressLabel,
+        [navigationView,
+         addressLabel,
          houseNicknameLabel,
          addressTextField,
          searchAddressButton,
          addressDetailTextField,
+         pyungLabel,
+         floorAndPyungBaseView.with(
+            pyungTextField,
+            floorTextField
+         ),
          explanationLabel,
          houseNicknameTextField,
          priceLabel,
@@ -401,9 +424,14 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     
     private func setupLayout() {
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         // 주소 Label
         addressLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top).offset(40)
+            $0.top.equalTo(navigationView.snp.bottom).offset(40)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
@@ -433,10 +461,32 @@ final class EditBasicInfoViewController: BaseViewController {
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
             $0.top.equalTo(searchAddressButton.snp.bottom).offset(8)
         }
+        
+        // 층수 평수
+        pyungLabel.snp.makeConstraints {
+            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        floorAndPyungBaseView.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(10)
+            $0.height.equalTo(40)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
+        floorTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        pyungTextField.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.left.equalTo(floorTextField.snp.right).offset(24)
+        }
 
         // 집 별명 Label
         houseNicknameLabel.snp.makeConstraints {
-            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.top.equalTo(floorAndPyungBaseView.snp.bottom).offset(40)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
@@ -539,12 +589,7 @@ final class EditBasicInfoViewController: BaseViewController {
         present(KakaoZipCodeVC, animated: true)
     }
     
-    @objc private func backToPageTapped(_ sender: UIButton) {
-        navigationController?.popViewController(animated: true)
-    }
-    
     @objc private func nextButtonTapped(_ sender: UIButton) {
-
         modifyImjang { [weak self] error in
             if let error = error {
                 print(error.localizedDescription)
@@ -563,21 +608,23 @@ final class EditBasicInfoViewController: BaseViewController {
             formatter.dateFormat = "yy.MM.dd"
             let updatedAt = formatter.string(from: now)
             
-            delegate?.sendData(imjangId: imjangId,
-                               model: .init(
-                                purposeType: "",
-                                propertyType: "",
-                                priceType: "",
-                                buildingName: houseNicknameTextField.text ?? "",
-                                images: [],
-                                address: (addressTextField.text ?? "") + (addressDetailTextField.text ?? ""),
-                                price: String(threeDisitPrice * 100000000 + fourDisitPrice * 10000),
-                                monthlyRent: "",
-                                updatedAt: updatedAt,
-                                floor: "",
-                                pyong: 0,
-                                isShared: false
-                               )
+            delegate?.sendData(
+                imjangId: imjangId,
+                model: .init(
+                    isShared: false,
+                    purposeType: "",
+                    propertyType: "",
+                    priceType: "",
+                    buildingName: houseNicknameTextField.text ?? "",
+                    images: [],
+                    roadAddress: addressTextField.text ?? "",
+                    addressDetail: addressDetailTextField.text ?? "",
+                    price: String(threeDisitPrice * 100000000 + fourDisitPrice * 10000),
+                    monthlyRent: "",
+                    updatedAt: updatedAt,
+                    floor: "",
+                    pyong: 0
+                )
             )
             
             self.navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
@@ -594,15 +641,19 @@ final class EditBasicInfoViewController: BaseViewController {
         let threeDigitPriceFieldEmpty = threeDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let fourDigitPriceFieldEmpty = fourDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
+        let floorFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        let pyungFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        
         // 가격이 0으로 시작하지 않는지 확인
         let threeDigitPriceDoesNotStartWithZero = threeDigitPriceField.text?.first != "0"
         let fourDigitPriceDoesNotStartWithZero = fourDigitPriceField.text?.first != "0"
         
         let threeDigitPriceFieldState = !threeDigitPriceFieldEmpty && threeDigitPriceDoesNotStartWithZero
         let fourDigitPriceFieldState = !fourDigitPriceFieldEmpty && fourDigitPriceDoesNotStartWithZero
+        let pyungAndFloorState = floorFieldEmpty && pyungFieldEmpty
 
         // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && (threeDigitPriceFieldState || fourDigitPriceFieldState)
+        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && (threeDigitPriceFieldState || fourDigitPriceFieldState) && pyungAndFloorState
         
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
         if allTextFieldsFilled {

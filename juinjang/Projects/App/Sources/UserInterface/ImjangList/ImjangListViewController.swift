@@ -18,7 +18,6 @@ protocol DeleteImjangListDelegate: AnyObject {
 }
 
 final class ImjangListViewController: BaseViewController {
-    
     private let mainView = ImjangListView()
     private let deleteButton = UIButton()   // navigationBar 삭제 버튼
     
@@ -109,11 +108,13 @@ extension ImjangListViewController {
     private func fetchImjangList(sort: MyNoteFilter = .updated, setScrap: Bool = false) {
         print(#function)
         showSkeletonView()
-        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: "")
+        dependency
+            .noteRepository
+            .retrieveNoteList(sort: sort.parameterValue, keyword: "")
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)
-                let notes = noteResultDTO.notes
+                let notes = noteResultDTO
                 self.imjangList = notes
                 self.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
                 self.mainView.collectionView.reloadData()
@@ -132,17 +133,19 @@ extension ImjangListViewController {
     @objc private func refreshImjangList() {
         print(#function)
         
-        dependency.noteRepository.retrieveNoteList(
-            sort: currentFilter.parameterValue,
-            keyword: ""
-        )
-        .asObservable()
-        .subscribe(with: self) { (self, response) in
-            self.imjangList = response
-            self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
-            self.mainView.collectionView.reloadData()
-        }
-        .disposed(by: disposeBag)
+        dependency
+            .noteRepository
+            .retrieveNoteList(
+                sort: currentFilter.parameterValue,
+                keyword: ""
+            )
+            .asObservable()
+            .subscribe(with: self) { (self, response) in
+                self.imjangList = response
+                self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
+                self.mainView.collectionView.reloadData()
+            }
+            .disposed(by: disposeBag)
     }
     
     // 스크랩 리스트 설정

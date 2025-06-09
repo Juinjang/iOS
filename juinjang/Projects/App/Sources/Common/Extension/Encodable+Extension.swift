@@ -57,4 +57,13 @@ extension Encodable {
             return nil
         }
     }
+    
+    func toArray() -> Data? {
+        do {
+            return try JSONEncoder().encode(self)
+        } catch {
+            print("❌ toArray Error: \(error)")
+            return nil
+        }
+    }
 }

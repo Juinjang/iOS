@@ -71,8 +71,10 @@ extension KakaoZipCodeViewController: WKScriptMessageHandler {
                 openNewPage2VC.postCodeModel = model
             } else if let editBasicInfoVC = navigationController.topViewController as? EditBasicInfoViewController {
                 editBasicInfoVC.addressTextField.text = model?.address
+                editBasicInfoVC.postModel = model
             } else if let editBasicInfoDetailVC = navigationController.topViewController as? EditBasicInfoDetailViewController {
                 editBasicInfoDetailVC.addressTextField.text = model?.address
+                editBasicInfoDetailVC.postModel = model
             }
         }
         

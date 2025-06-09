@@ -117,7 +117,7 @@ final class ImjangSearchResultViewController: BaseViewController {
                 .asObservable()
                 .subscribe(with: self) { owner, noteResultDTO in
                     print(noteResultDTO)
-                    let notes = noteResultDTO.notes
+                    let notes = noteResultDTO
                     owner.searchedImjangList = notes
                     owner.collectionView.reloadData()
                 }

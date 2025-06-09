@@ -26,6 +26,7 @@ final class ShareSelectViewReactor: Reactor {
         case updateIsLastPage(Bool)
         case addSectionItems(section: ShareSelectSection,
                              item: [ShareSelectBaseCellItem])
+        case updateMoreButton(count: Int)
     }
     
     // MARK: - State
@@ -36,6 +37,7 @@ final class ShareSelectViewReactor: Reactor {
         var isActivatedNextButton: Bool
         var selectItem: ShareSelectCellItem?
         var isLastPage: Bool?
+        var isMoreButtonHidden: Bool = true
     }
     
     struct Dependency {
@@ -54,6 +56,7 @@ final class ShareSelectViewReactor: Reactor {
     )
     
     private let dependency: Dependency
+    private var currentPageCount: Int = 0
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -92,6 +95,12 @@ final class ShareSelectViewReactor: Reactor {
             var existingItems = newState.sectionItems[section] ?? []
             existingItems.append(contentsOf: items)
             newState.sectionItems[section] = existingItems
+        case .updateMoreButton(count: let count):
+            if count > 10 {
+                newState.isMoreButtonHidden = false
+            } else {
+                newState.isMoreButtonHidden = true
+            }
         }
         return newState
     }
@@ -126,7 +135,19 @@ extension ShareSelectViewReactor {
     private func createInitialSections() -> Observable<Mutation> {
         return dependency
             .noteRepository
-            .retrieveShareableNoteList()
+            .retrieveShareableNoteList(
+                param: ShareableNoteRequestDTO(
+                    sort: nil,
+                    propertyType: nil,
+                    priceType: nil,
+                    keyword: nil,
+                    pageable: .init(
+                        page: 0,
+                        size: 10,
+                        sort: ["createdAt,desc"]
+                    )
+                )
+            )
             .asObservable()
             .flatMap { models -> Observable<Mutation> in
                 if models.isEmpty {
@@ -151,7 +172,8 @@ extension ShareSelectViewReactor {
                         .just(.updateSectionItems(
                             section: .select,
                             item: self.createSectionItems(section: .select, models: models)
-                        ))
+                        )),
+                        .just(.updateMoreButton(count: models.count))
                     )
                 }
             }
@@ -160,11 +182,25 @@ extension ShareSelectViewReactor {
     private func fetchMoreSelectModel() -> Observable<Mutation> {
         return dependency
             .noteRepository
-            .retrieveShareableNoteList()
+            .retrieveShareableNoteList(
+                param: ShareableNoteRequestDTO(
+                    sort: nil,
+                    propertyType: nil,
+                    priceType: nil,
+                    keyword: nil,
+                    pageable: .init(
+                        page: self.currentPageCount,
+                        size: 10,
+                        sort: ["createdAt,desc"]
+                    )
+                )
+            )
             .asObservable()
             .flatMap { models -> Observable<Mutation> in
                 let pageSize = 10
                 let isLastPage = models.count < pageSize || models.isEmpty
+                
+                self.currentPageCount += 1
                 
                 return .concat(
                     .just(.updateIsLastPage(isLastPage)),

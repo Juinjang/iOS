@@ -7,9 +7,9 @@
 
 struct NoteShareRequestDTO: Encodable {
     let buildingName: String
-    let isPhotoShared: Bool
+    let isImageShared: Bool
     let year: Int
     let month: Int
-    let period: Int
+    let period: String
     let review: String
 }

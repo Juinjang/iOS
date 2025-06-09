@@ -9,12 +9,13 @@ import Foundation
 import Alamofire
 
 enum NoteAPI: TargetType {
-    case getShareableNoteList
+    case getShareableNoteList(ShareableNoteRequestDTO)
     case getNoteChecklistConditionList(Int)
     case getNoteChecklist(Int)
     case getNoteDetail(Int)
     case getNoteList(sort: String, keyword: String)
     case postNote(NoteCreateRequestDTO)
+    case postCheckList(Int, [CheckListRequestDto])
     case patchNote(Int, NoteUpdateRequestDTO)
 
     var path: String {
@@ -24,13 +25,15 @@ enum NoteAPI: TargetType {
         case .getNoteChecklistConditionList(let noteID):
             return "v2/users/notes/\(noteID)/checklist-condition"
         case .getNoteChecklist(let noteID):
-            return "v2/note/\(noteID)/checklist"
+            return "v2/checklist/\(noteID)"
         case .getNoteDetail(let noteID):
             return "v2/users/notes/\(noteID)"
         case .getNoteList:
             return "v2/users/notes"
         case .postNote:
             return "v2/users/notes"
+        case .postCheckList(let noteID, _):
+            return "v2/checklist/\(noteID)"
         case .patchNote(let noteID,_):
             return "v2/users/notes/\(noteID)"
         }
@@ -44,7 +47,8 @@ enum NoteAPI: TargetType {
                 .getNoteDetail,
                 .getNoteList:
             return .get
-        case .postNote:
+        case .postNote,
+                .postCheckList:
             return .post
         case .patchNote:
             return .patch
@@ -53,16 +57,18 @@ enum NoteAPI: TargetType {
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getShareableNoteList,
-                .getNoteChecklistConditionList,
+        case .getNoteChecklistConditionList,
                 .getNoteChecklist,
                 .getNoteDetail,
                 .postNote,
+                .postCheckList,
                 .patchNote:
             return []
         case let .getNoteList(sort, keyword):
             return [URLQueryItem(name: "sort", value: sort),
                     URLQueryItem(name: "keyword", value: keyword)]
+        case .getShareableNoteList(let param as Encodable):
+            return param.toQueryItems()
         }
     }
 
@@ -77,8 +83,20 @@ enum NoteAPI: TargetType {
         case .postNote(let param as Encodable),
                 .patchNote(_, let param as Encodable):
             return param.toDictionary()
+        default:
+            return nil
         }
     }
+    
+    var bodyData: Data? {
+        switch self {
+        case .postCheckList(_, let params as Encodable):
+            return params.toArray()
+        default:
+            return nil
+        }
+    }
+    
     
     var interceptor: AuthInterceptor? {
         return AuthInterceptor()

@@ -10,12 +10,15 @@ import SnapKit
 import Alamofire
 import RealmSwift
 import AmplitudeSwift
+import RxSwift
 
 protocol CheckListDelegate {
     func didSavedCheckListItems(_ items: [CheckListAnswer])
 }
 
 final class CheckListViewController: BaseViewController {
+    private let disposeBag = DisposeBag()
+    private let noteRepository = NoteRepository()
     
     // 체크리스트 정보
     var version: Int
@@ -186,21 +189,13 @@ final class CheckListViewController: BaseViewController {
     
     // -MARK: API 요청(체크리스트 조회)
     private func showCheckList(completion: @escaping () -> Void) {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self,
-                                            api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                completion()
-                return
-            }
-            
-            guard let response = response else { return }
-            guard let self else { return }
-            // 이미 추가된 questionId를 추적하기 위한 Set
-            var addedQuestionIds = Set<Int>()
-            
-            if let categoryItem = response.result {
-                for item in categoryItem {
+        noteRepository.retrieveCheckList(noteID: imjangId)
+            .asObservable()
+            .subscribe(with: self) { (self, response) in
+                // 이미 추가된 questionId를 추적하기 위한 Set
+                var addedQuestionIds = Set<Int>()
+                
+                for item in response {
                     // 이미 추가된 questionId인 경우
                     if addedQuestionIds.contains(item.questionId) {
                         continue
@@ -212,20 +207,24 @@ final class CheckListViewController: BaseViewController {
                                                           answer: item.answer,
                                                           isSelected: true)
                     
-                    savedCheckListItems.append(checkListAnswer)
-                    checkListItems.append(checkListAnswer)
+                    self.savedCheckListItems.append(checkListAnswer)
+                    self.checkListItems.append(checkListAnswer)
                     
                     // 추가된 questionId를 Set에 추가
                     addedQuestionIds.insert(item.questionId)
                 }
+                
+                print("------저장된 체크리스트 조회------")
+                for checkListItem in self.checkListItems {
+                    print(checkListItem)
+                }
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("CheckListItemsUpdated"),
+                    object: self.checkListItems
+                )
+                completion()
             }
-            print("------저장된 체크리스트 조회------")
-            for checkListItem in checkListItems {
-                print(checkListItem)
-            }
-            NotificationCenter.default.post(name: NSNotification.Name("CheckListItemsUpdated"), object: checkListItems)
-            completion()
-        }
+            .disposed(by: disposeBag)
     }
     
     // 키보드 내리기

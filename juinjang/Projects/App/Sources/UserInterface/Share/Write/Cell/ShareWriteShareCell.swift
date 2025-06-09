@@ -72,14 +72,14 @@ final class ShareWriteShareCell: BaseCollectionViewCell {
         guard let priceType = PriceType(rawValue: item.priceType)?.title else { return }
         
         tumbnailImageView.kf.setImage(
-            with: URL(string: item.imageUrl),
+            with: URL(string: item.imageUrl ?? ""),
             placeholder: PropertyType(rawValue: item.propertyType)?.image
         )
         buildingNameLabel.text = item.name
         priceLabel.text = "\(priceType) \(item.price.formattedKoreanCurrency)"
         pyungLabel.text = "\(item.pyong)평 \(item.floor)층"
         addressLabel.text = item.shortAddress
-        starRateLabel.text = "\(item.rate ?? 0.0)"
+        starRateLabel.text = String(format: "%.1f", Double(item.rate ?? "0.0") ?? 0.0)
         bookmarkButton.isSelected = item.isScraped
     }
     

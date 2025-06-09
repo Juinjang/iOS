@@ -19,8 +19,10 @@ enum NavigationButton {
     case record
     case add
     case close
+    case trash
+    case text(title: String)
     
-    var image: UIImage {
+    var image: UIImage? {
         switch self {
         case .pop:
             return .arrowLeft
@@ -34,6 +36,10 @@ enum NavigationButton {
             return .ImjangNote.add
         case .close:
             return .close
+        case .trash:
+            return .trash
+        case .text:
+            return nil
         }
     }
     
@@ -51,6 +57,10 @@ enum NavigationButton {
             return .addButtonTap
         case .close:
             return .closeButtonTap
+        case .trash:
+            return .trashButtonTap
+        case .text:
+            return .textButtonTap
         }
     }
 }
@@ -64,6 +74,8 @@ enum NavigationAction: Equatable {
     case recordButtonTap
     case addButtonTap
     case closeButtonTap
+    case textButtonTap
+    case trashButtonTap
 }
 
 class DefaultNavigationView: BaseView {
@@ -81,7 +93,13 @@ class DefaultNavigationView: BaseView {
     
     var titleColor: UIColor? {
         didSet {
-            self.titleLabel.textColor = self.titleColor
+            self.titleLabel.fontColor = self.titleColor ?? .gray600
+        }
+    }
+    
+    var titleSize: CGFloat? {
+        didSet {
+            self.titleLabel.fontSize = self.titleSize ?? 16
         }
     }
     
@@ -158,19 +176,38 @@ class DefaultNavigationView: BaseView {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         items?.forEach { item in
-            let button = ImageButton(normalImage: item.image).then {
-                $0.tintColor = .gray450
-                $0.snp.makeConstraints {
-                    $0.width.height.equalTo(24)
+            switch item {
+            case let .text(title):
+                let button = UIButton().then {
+                    $0.setTitle(title, for: .normal)
+                    $0.setTitleColor(.gray400, for: .normal)
+                    $0.titleLabel?.font = UIFont.pretendard(size: 14, weight: .semiBold)
+                    
+                    $0.rx.tap
+                        .withUnretained(self)
+                        .subscribe(onNext: { (self, _) in
+                            self.itemActionRelay.accept(item.action)
+                        })
+                        .disposed(by: self.disposeBag)
                 }
-                $0.rx.tap
-                    .withUnretained(self)
-                    .subscribe(onNext: { (self, _) in
-                        self.itemActionRelay.accept(item.action)
-                    })
-                    .disposed(by: self.disposeBag)
+                
+                stackView.addArrangedSubview(button)
+                
+            default:
+                let button = ImageButton(normalImage: item.image).then {
+                    $0.tintColor = .gray450
+                    $0.snp.makeConstraints {
+                        $0.width.height.equalTo(24)
+                    }
+                    $0.rx.tap
+                        .withUnretained(self)
+                        .subscribe(onNext: { (self, _) in
+                            self.itemActionRelay.accept(item.action)
+                        })
+                        .disposed(by: self.disposeBag)
+                }
+                stackView.addArrangedSubview(button)
             }
-            stackView.addArrangedSubview(button)
         }
     }
 }

@@ -31,6 +31,7 @@ final class ShareWriteViewReactor: Reactor {
         case updateImjangPeriod(ImjangPeriod)
         case updateBuildingName(String)
         case updateReviewContent(String)
+        case updateShowCompletedView
     }
     
     // MARK: - State
@@ -43,6 +44,7 @@ final class ShareWriteViewReactor: Reactor {
         var selectImjangPeriod: ImjangPeriod?
         var reviewContentText: String = ""
         var isActivatedUploadButton: Bool = false
+        var isShowCompletedView: Bool? = nil
         
         mutating func evaluateUploadButtonState() {
             isActivatedUploadButton =
@@ -56,6 +58,7 @@ final class ShareWriteViewReactor: Reactor {
         let selectedModel: ShareSelectModel
         let noteRepository: NoteRepositoryProtocol
         let userRepository: UserRepositoryProtocol
+        let sharedNoteRepository: SharedNoteRepositoryProtocol
     }
     
     let initialState: State = .init()
@@ -69,13 +72,13 @@ final class ShareWriteViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            let isEmpty = dependency.selectedModel.imageUrl.isEmpty
+            let isEmpty = dependency.selectedModel.imageUrl?.isEmpty
             return .concat(
                 fetchUserNickname(),
                 createSection(type: .notice),
                 createSection(type: .share),
                 createSection(type: .building),
-                isEmpty ? .empty() : createSection(type: .photo),
+                (isEmpty ?? true) ? .empty() : createSection(type: .photo),
                 createSection(type: .period),
                 createSection(type: .review)
             )
@@ -90,7 +93,7 @@ final class ShareWriteViewReactor: Reactor {
         case .editingReviewContent(let text):
             return .just(.updateReviewContent(text))
         case .uploadButtonDidTap:
-            return .empty()
+            return createShareableNote()
         }
     }
     
@@ -117,6 +120,8 @@ final class ShareWriteViewReactor: Reactor {
         case .updateReviewContent(let text):
             newState.reviewContentText = text
             newState.evaluateUploadButtonState()
+        case .updateShowCompletedView:
+            newState.isShowCompletedView = true
         }
         
         return newState
@@ -125,6 +130,23 @@ final class ShareWriteViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension ShareWriteViewReactor {
+    private func createShareableNote() -> Observable<Mutation> {
+        return dependency
+            .sharedNoteRepository
+            .createSharedNote(
+                noteID: self.dependency.selectedModel.noteId,
+                param: .init(
+                    buildingName: self.currentState.buildingName,
+                    isImageShared: self.currentState.isPublic,
+                    year: Int(self.currentState.selectImjangPeriod?.year ?? "0") ?? 0,
+                    month: Int(self.currentState.selectImjangPeriod?.month ?? "0") ?? 0,
+                    period: self.currentState.selectImjangPeriod?.phase ?? "",
+                    review: self.currentState.reviewContentText
+                )
+            )
+            .andThen(.just(.updateShowCompletedView))
+    }
+    
     private func fetchUserNickname() -> Observable<Mutation> {
         return dependency
             .userRepository
@@ -227,5 +249,12 @@ extension ShareWriteViewReactor {
         newState.selectImjangPeriod = period
         newState.sectionItems[.period] = [updatedItem]
         return newState
+    }
+}
+
+// MARK: - ViewController
+extension ShareWriteViewReactor {
+    func getShareSelectModel() -> ShareSelectModel {
+        return self.dependency.selectedModel
     }
 }

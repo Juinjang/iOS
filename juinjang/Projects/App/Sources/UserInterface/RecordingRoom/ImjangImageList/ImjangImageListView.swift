@@ -6,21 +6,14 @@
 //
 
 import UIKit
+import SnapKit
+import Then
 
 final class ImjangImageListView: BaseView {
-    // 네비게이션바
-    let backButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
-        button.setImage(UIImage.arrowLeft, for: .normal)
-    }
-    
-    let deleteImageButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
-        button.setImage(UIImage.trash, for: .normal)
-        button.tintColor = .gray450
-    }
-    
-    let addImageButtonItem = UIButton(frame: CGRect(x: 0, y: 0, width: 24, height: 24)).then { button in
-        button.setImage(UIImage.ImjangNote.add, for: .normal)
-        button.tintColor = .gray450
+    let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.rightItem = [.trash, .add]
+        $0.title = "사진 목록"
     }
     
     // 이미지 없을 때 표시할 컴포넌트들
@@ -35,6 +28,7 @@ final class ImjangImageListView: BaseView {
     lazy var deleteImageButton = UIButton()
     
     override func configureHierarchy() {
+        addSubview(navigationView)
         addSubview(noImageBackgroundView)
         addSubview(imageCollectionView)
         noImageBackgroundView.addSubview(noImageStackView)
@@ -44,12 +38,19 @@ final class ImjangImageListView: BaseView {
     }
     
     override func configureLayout() {
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         imageCollectionView.snp.makeConstraints {
-            $0.verticalEdges.equalTo(safeAreaLayoutGuide).inset(16)
+            $0.top.equalTo(navigationView.snp.bottom).offset(16)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-16)
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
         noImageBackgroundView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
         
         noImageStackView.snp.makeConstraints {
@@ -87,13 +88,11 @@ extension ImjangImageListView {
     func setEmptyLayout(_ isEmpty: Bool) {
         imageCollectionView.isHidden = isEmpty ? true : false
         noImageBackgroundView.isHidden = isEmpty ? false : true
-        deleteImageButtonItem.tintColor = isEmpty ? .null : .gray450
-        deleteImageButtonItem.isEnabled = !isEmpty
+        navigationView.rightItem = isEmpty ? [.add] : [.trash, .add]
     }
     
     func setNavigationBarButtonHidden(_ isHidden: Bool) {
-        deleteImageButtonItem.isHidden = isHidden
-        addImageButtonItem.isHidden = isHidden
+        navigationView.rightItem = isHidden ? [] : [.trash, .add]
     }
     
     func updateDeleteUI(_ isRemoveMode: Bool) {
@@ -124,7 +123,7 @@ extension ImjangImageListView {
             }
             
             imageCollectionView.snp.remakeConstraints { make in
-                make.top.equalTo(safeAreaLayoutGuide).inset(16)
+                make.top.equalTo(navigationView.snp.bottom).offset(16)
                 make.horizontalEdges.equalToSuperview().inset(24)
                 make.bottom.equalTo(deleteBackgroundView.snp.top)
             }
@@ -136,7 +135,8 @@ extension ImjangImageListView {
             }
             
             imageCollectionView.snp.remakeConstraints { make in
-                make.verticalEdges.equalTo(safeAreaLayoutGuide).inset(16)
+                make.top.equalTo(navigationView.snp.bottom).offset(16)
+                make.bottom.equalTo(safeAreaLayoutGuide).inset(16)
                 make.horizontalEdges.equalToSuperview().inset(24)
             }
             
@@ -145,7 +145,6 @@ extension ImjangImageListView {
     }
     
     func setIsSelectedIndexsEmptyUI(isEmpty: Bool) {
-        deleteImageButton.isEnabled = !isEmpty
-        deleteImageButton.backgroundColor = isEmpty ? .null : .gray500
+        navigationView.rightItem = isEmpty ? [] : [.trash, .add]
     }
 }

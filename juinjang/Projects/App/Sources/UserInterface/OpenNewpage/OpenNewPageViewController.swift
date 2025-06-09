@@ -1202,9 +1202,6 @@ final class OpenNewPageViewController: BaseViewController {
             nickname: ""  // 다음 뷰에서 사용할 값
         )
         newPageViewController.newImjang = newImjang
-        print("Selected Purpose Button Image: \(transactionModel.selectedPurposeButtonImage)")
-        print("Selected Property Type Button Image: \(transactionModel.selectedPropertyTypeButtonImage)")
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.pushViewController(newPageViewController, animated: true)
     }
     

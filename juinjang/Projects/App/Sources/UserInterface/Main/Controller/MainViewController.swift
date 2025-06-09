@@ -49,11 +49,20 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
        
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
-  
         setConstraint()
         callMainImjangRequest()
         checkAndUpdateIfNeeded()
         print("메인화면에서 이메일 출력 : \(UserDefaultManager.shared.email)")
+        
+        navigationView.itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .settingButtonTap:
+                    self.setttingBtnTap()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindAction() {

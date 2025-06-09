@@ -9,10 +9,12 @@ import UIKit
 import SnapKit
 import PhotosUI
 import Kingfisher
+import RxSwift
 
 final class ImjangImageListViewController: BaseViewController {
     private let mainView = ImjangImageListView()
     private let imagePicker = UIImagePickerController()
+    private let disposeBag = DisposeBag()
     
     private var imageList: [ImageDto] = [] {
         didSet {
@@ -24,10 +26,8 @@ final class ImjangImageListViewController: BaseViewController {
     private var selectedIndexs: Set<Int> = [] {
         didSet {
             if isDeleteMode {
-                navigationItem.title = "삭제할 사진 선택(\(selectedIndexs.count))"
+                mainView.navigationView.title = "삭제할 사진 선택(\(selectedIndexs.count))"
             }
-            
-            mainView.setIsSelectedIndexsEmptyUI(isEmpty: selectedIndexs.isEmpty)
         }
     }
     var imjangId: Int? = nil
@@ -38,7 +38,7 @@ final class ImjangImageListViewController: BaseViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        designNavigationBar()
+        bindNavigationBar()
         checkImage()
         configureCollectionView()
         callFetchImageRequest()
@@ -157,24 +157,22 @@ final class ImjangImageListViewController: BaseViewController {
         mainView.imageCollectionView.collectionViewLayout = layout
     }
     
-    // 네비게이션 바 디자인
-    func designNavigationBar() {
-        self.navigationItem.title = "사진 목록"     // TODO: - 나중에 roomName 으로 연결
-        self.navigationController?.navigationBar.tintColor = .black
-        self.navigationItem.hidesBackButton = true
-        
-        mainView.backButtonItem.addTarget(self, action: #selector(popView), for: .touchUpInside)
-//        mainView.deleteImageButton.addTarget(self, action: #selector(deleteImages), for: .touchUpInside)
-        mainView.deleteImageButtonItem.addTarget(self, action: #selector(deleteImageButtonTapped), for: .touchUpInside)
-        mainView.addImageButtonItem.addTarget(self, action: #selector(addImage), for: .touchUpInside)
-        
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: mainView.backButtonItem)
-        self.navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(customView: mainView.addImageButtonItem),
-            UIBarButtonItem(customView: mainView.deleteImageButtonItem)
-        ]
+    func bindNavigationBar() {
+        mainView.navigationView
+            .itemActionRelay
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    self.popView()
+                case .trashButtonTap:
+                    self.deleteImageButtonTapped()
+                case .addButtonTap:
+                    self.addImage()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     // 선택된 이미지 삭제 요청
@@ -214,7 +212,7 @@ final class ImjangImageListViewController: BaseViewController {
         
         isDeleteMode = true
         mainView.setNavigationBarButtonHidden(true)
-        navigationItem.title = "삭제할 사진 선택(0)"
+        mainView.navigationView.title = "삭제할 사진 선택(0)"
         
         mainView.imageCollectionView.addGestureRecognizer(panGesture)
         
@@ -252,7 +250,7 @@ final class ImjangImageListViewController: BaseViewController {
     private func setDeleteModeUIHidden() {
         mainView.updateDeleteUI(false)
         isDeleteMode = false
-        navigationItem.title = "사진 목록"
+        mainView.navigationView.title = "사진 목록"
         mainView.imageCollectionView.removeGestureRecognizer(panGesture)
         mainView.imageCollectionView.reloadData()
     }
@@ -357,6 +355,7 @@ extension ImjangImageListViewController: PHPickerViewControllerDelegate {
                     print("이미지 가져오기 실패")
                 }
             }
+            
             group.notify(queue: .main) {
                 self.callAddImageRequest(images: images)
             }
