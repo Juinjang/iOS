@@ -31,7 +31,11 @@ final class EditBasicInfoViewController: BaseViewController {
     
     var delegate: SendEditData?
     
-    var postModel: PostCodeResponseModel?
+    var postModel: PostCodeResponseModel? {
+        didSet {
+            checkNextButtonActivation()
+        }
+    }
     
     let contentView = UIView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -290,26 +294,37 @@ final class EditBasicInfoViewController: BaseViewController {
     
     func modifyImjang(completionHandler: @escaping (NetworkError?) -> Void) {
         guard let imjangId = imjangId else { return }
-            
-        let parameter = NoteUpdateRequestDTO(
-            priceType: "MARKET_PRICE",
-            price: mergedPriceString(threeDigit: threeDigitPriceField.text,
-                                     fourDigit: fourDigitPriceField.text),
-            monthlyRent: nil,
-            roadAddress: addressTextField.text ?? "",
-            addressDetail: addressDetailTextField.text ?? "",
-            bcode: postModel?.bcode ?? "",
-            nickname: houseNicknameTextField.text ?? "",
-            floor: floorTextField.text ?? "",
-            pyong: Int(pyungTextField.text ?? "") ?? 0,
-            sido: postModel?.sido,
-            sigungu: postModel?.sigungu,
-            bname1: postModel?.bname1,
-            bname2: postModel?.bname2
+        
+        let price = mergedPriceString(
+            threeDigit: threeDigitPriceField.text,
+            fourDigit: fourDigitPriceField.text
         )
+
+        let roadAddress = addressTextField.text ?? ""
+        let addressDetail = addressDetailTextField.text ?? ""
+        let nickname = houseNicknameTextField.text ?? ""
+        let floor = floorTextField.text ?? ""
+        let pyong = Int(pyungTextField.text ?? "") ?? 0
         
         noteRepository
-            .updateImjang(noteID: imjangId, param: parameter)
+            .updateImjang(
+                noteID: imjangId,
+                param: .init(
+                    priceType: "MARKET_PRICE",
+                    price: price,
+                    monthlyRent: nil,
+                    roadAddress: roadAddress,
+                    addressDetail: addressDetail,
+                    bcode: postModel?.bcode ?? "",
+                    nickname: nickname,
+                    floor: floor,
+                    pyong: pyong,
+                    sido: postModel?.sido,
+                    sigungu: postModel?.sigungu,
+                    bname1: postModel?.bname1,
+                    bname2: postModel?.bname2
+                )
+            )
             .subscribe(
                 with: self,
                 onCompleted: { _ in
@@ -638,7 +653,6 @@ final class EditBasicInfoViewController: BaseViewController {
         let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
         // 필드가 비어있는지 확인
-        let threeDigitPriceFieldEmpty = threeDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let fourDigitPriceFieldEmpty = fourDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
         let floorFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
@@ -648,12 +662,11 @@ final class EditBasicInfoViewController: BaseViewController {
         let threeDigitPriceDoesNotStartWithZero = threeDigitPriceField.text?.first != "0"
         let fourDigitPriceDoesNotStartWithZero = fourDigitPriceField.text?.first != "0"
         
-        let threeDigitPriceFieldState = !threeDigitPriceFieldEmpty && threeDigitPriceDoesNotStartWithZero
         let fourDigitPriceFieldState = !fourDigitPriceFieldEmpty && fourDigitPriceDoesNotStartWithZero
-        let pyungAndFloorState = floorFieldEmpty && pyungFieldEmpty
+        let pyungAndFloorState = !floorFieldEmpty && !pyungFieldEmpty
 
         // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && (threeDigitPriceFieldState || fourDigitPriceFieldState) && pyungAndFloorState
+        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && fourDigitPriceFieldState && pyungAndFloorState
         
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
         if allTextFieldsFilled {
