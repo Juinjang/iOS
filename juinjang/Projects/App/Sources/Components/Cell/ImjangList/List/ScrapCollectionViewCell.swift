@@ -21,32 +21,15 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
     let emptyBackgroundView = UIView().then {
         $0.backgroundColor = .stroke2
     }
-    let emptyImage = UIImageView().then {
-        $0.image = UIImage.Main.gallery
-        $0.contentMode = .scaleAspectFit
-    }
+    let emptyImage = UIImageView()
     
-    // 방 이름 레이블
-    let roomNameStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.distribution = .equalSpacing
-        $0.spacing = 4
-    }
-    let roomNameLabel = UILabel()
+    let roomNameLabel = DSLabel(.h3)
     let roomIcon = UIImageView()
     
-    
-    let starStackView = UIStackView().then {
-        $0.axis = .horizontal
-        $0.alignment = .center
-        $0.distribution = .equalSpacing
-        $0.spacing = 2
-    }
     let starIcon = UIImageView()
-    let scoreLabel = UILabel()
+    let scoreLabel = DSLabel(.title)
     
-    let roomPriceLabel = UILabel()
+    let roomPriceLabel = DSLabel(.title)
     let roomAddressLabel = UILabel()
     let bookMarkButton = UIButton()
     
@@ -66,48 +49,59 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
         totalStackView.subviews.forEach { subview in
             subview.removeFromSuperview()
         }
-        setData(imjangNote: nil)
+        roomIcon.image = UIImage.ImjangNote.house
+        setData(note: nil)
     }
 }
     
 // MARK: - Configure Cell
 extension ScrapCollectionViewCell {
     
-    func setData(imjangNote: ListDto?) {
-        guard let imjangNote else { return }
-        roomNameLabel.text = imjangNote.nickname
-        setScore(score: imjangNote.totalAverage)
-        let priceTypeString: String
-        switch imjangNote.priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        case 3:
-            priceTypeString = "실거래가"
-        default:
-            priceTypeString = "" // 값이 없을 경우 공백 처리
+    func setData(note: NoteDTO?) {
+        guard let note else { return }
+        roomNameLabel.text = note.name
+        
+        if let purposeType = PurposeType(rawValue: note.purposeType) {
+            switch purposeType {
+            case .INVESTMENT:
+                roomIcon.image = .coin
+            case .RESIDENTIAL_PURPOSE:
+                roomIcon.image = UIImage.ImjangNote.house
+            }
         }
-        setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
-        roomAddressLabel.text = imjangNote.address
-        let bookmarkImage = imjangNote.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
+        
+        setScore(score: note.rate)
+        
+        roomPriceLabel.text = note.price
+        
+        if let roadAddress = note.roadAddress {
+            roomAddressLabel.text = roadAddress
+        } else {
+            if let addressDetail = note.addressDetail {
+                roomAddressLabel.text = addressDetail
+            }
+        }
+
+        if let priceType = PriceType(rawValue: note.priceType) {
+            setPriceLabel(note: note, priceType: priceType)
+        }
+        
+        let bookmarkImage = note.isScraped ? UIImage.ImjangList.bookmarkSelected : UIImage.ImjangList.bookmark
         bookMarkButton.setImage(bookmarkImage, for: .normal)
         
-        let images = imjangNote.images
+        let images = note.imageUrl
         switch images.count {
         case 0:
-            setStackViewBackground(isEmpty: true)
+            setStackViewBackground(propertyType: note.propertyType, isEmpty: true)
         case 1:
             setImage1(image: images[0])
-            setStackViewBackground(isEmpty: false)
+            setStackViewBackground(propertyType: note.propertyType, isEmpty: false)
         case 2:
             setImage2(images: images)
-            setStackViewBackground(isEmpty: false)
+            setStackViewBackground(propertyType: note.propertyType, isEmpty: false)
         case 3...:
             setImage3(images: images)
-            setStackViewBackground(isEmpty: false)
+            setStackViewBackground(propertyType: note.propertyType, isEmpty: false)
         default:
             print("알 수 없는 오류 발생")
         }
@@ -224,55 +218,44 @@ extension ScrapCollectionViewCell {
         }
     }
     
-    private func setPriceLabel(priceList: [String], priceType: String) {
-        switch priceList.count {
-        case 1:
-            let priceString = priceList[0]
-            print(priceString.formatToKoreanCurrencyWithZero())
-            if priceType.isEmpty {
-                roomPriceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                roomPriceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
-        case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-            roomPriceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
-        default:
-            roomPriceLabel.text = "편집을 통해 가격을 설정해주세요."
+    private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            roomPriceLabel.text = "\(priceType.title) \( note.price.formatToKoreanCurrencyWithZero())"
+        case .MONTHLY_RENT:
+            roomPriceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero()) / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
     }
     
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
-            setScoreStyle()
+//            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
-        
-        if resultScore == 0.0 {
-            setScoreStyle()
-        } else {
-            setScoreStyle(empty: false)
-        }
+//        
+//        if resultScore == 0.0 {
+//            setScoreStyle()
+//        } else {
+//            setScoreStyle(empty: false)
+//        }
     }
     
-    private func setScoreStyle(empty: Bool = true) {
-        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
-        scoreLabel.textColor = empty ? .null : .main
-    }
+//    private func setScoreStyle(empty: Bool = true) {
+//        starIcon.tintColor = empty ? .null : .main
+//        scoreLabel.textColor = empty ? .null : .main
+//    }
     
-    private func setStackViewBackground(isEmpty: Bool) {
+    private func setStackViewBackground(propertyType: String, isEmpty: Bool) {
         emptyImage.isHidden = isEmpty ? false : true
         if isEmpty {
-            totalStackView.addSubview(emptyImage)
-            emptyImage.snp.makeConstraints {
-                $0.center.equalTo(totalStackView)
-                $0.size.equalTo(50)
+            totalStackView.addArrangedSubview(emptyImage)
+            
+            if let propertyType = PropertyType(rawValue: propertyType) {
+                emptyImage.image = propertyType.detailImage
             }
         }
         totalStackView.backgroundColor = isEmpty ? .stroke2 : .mainWhite
@@ -283,17 +266,16 @@ extension ScrapCollectionViewCell {
 // MARK: - Configure UI
 extension ScrapCollectionViewCell {
     private func configureHierarchy() {
-        [totalStackView, roomNameStackView, starStackView, roomPriceLabel, roomAddressLabel, bookMarkButton].forEach {
-            contentView.addSubview($0)
-        }
-        
-        [roomNameLabel, roomIcon].forEach {
-            roomNameStackView.addArrangedSubview($0)
-        }
-        
-        [starIcon, scoreLabel].forEach {
-            starStackView.addArrangedSubview($0)
-        }
+        contentView.add(
+            totalStackView,
+            roomNameLabel,
+            roomIcon,
+            scoreLabel,
+            starIcon,
+            roomPriceLabel,
+            roomAddressLabel,
+            bookMarkButton
+        )
     }
     
     private func configureLayout() {
@@ -303,7 +285,7 @@ extension ScrapCollectionViewCell {
             $0.height.equalTo(117)
         }
         
-        roomNameStackView.snp.makeConstraints {
+        roomNameLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(12)
             $0.top.equalTo(totalStackView.snp.bottom).offset(8)
             $0.height.equalTo(24)
@@ -311,19 +293,26 @@ extension ScrapCollectionViewCell {
         
         roomIcon.snp.makeConstraints {
             $0.size.equalTo(18)
+            $0.centerY.equalTo(roomNameLabel)
+            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(2)
+            $0.trailing.lessThanOrEqualTo(starIcon.snp.leading).offset(-2)
         }
         
-        starStackView.snp.makeConstraints {
-            $0.verticalEdges.equalTo(roomNameStackView)
+        scoreLabel.snp.makeConstraints {
+            $0.top.equalTo(totalStackView.snp.bottom).offset(8)
             $0.trailing.equalToSuperview().inset(12)
+            $0.height.equalTo(23)
         }
+        
         starIcon.snp.makeConstraints {
             $0.size.equalTo(16)
+            $0.centerY.equalTo(scoreLabel)
+            $0.trailing.equalTo(scoreLabel.snp.leading).offset(-2)
         }
         
         roomPriceLabel.snp.makeConstraints {
             $0.horizontalEdges.equalTo(totalStackView)
-            $0.top.equalTo(roomNameStackView.snp.bottom)
+            $0.top.equalTo(roomNameLabel.snp.bottom)
             $0.height.equalTo(23)
         }
         
@@ -339,7 +328,8 @@ extension ScrapCollectionViewCell {
         }
     }
     
-    override func draw(_ rect: CGRect) {
+    override func layoutSubviews() {
+        super.layoutSubviews()
         totalStackView.layer.cornerRadius = 5
     }
     
@@ -347,7 +337,7 @@ extension ScrapCollectionViewCell {
         contentView.backgroundColor = .mainWhite
         
         contentView.layer.borderColor = UIColor.stroke.cgColor
-        contentView.layer.borderWidth = 1.5
+        contentView.layer.borderWidth = 1
         contentView.layer.cornerRadius = 10
         contentView.layer.masksToBounds = true
         
@@ -360,9 +350,11 @@ extension ScrapCollectionViewCell {
         roomNameLabel.design(text: "", font: .pretendard(size: 18, weight: .bold))
         roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
         
-        starIcon.design(image: UIImage.starEmpty, contentMode: .scaleAspectFit)
-        scoreLabel.design(textColor: .null, font: .pretendard(size: 16, weight: .semiBold))
-        roomPriceLabel.design(text: "", font: .pretendard(size: 16, weight: .semiBold))
+        starIcon.design(image: UIImage.starRounded.withRenderingMode(.alwaysTemplate), contentMode: .scaleAspectFit)
+        
+        starIcon.tintColor = .main
+        scoreLabel.fontColor = .main
+        
         roomAddressLabel.design(text: "", textColor: .gray400, font: .pretendard(size: 14, weight: .medium))
         bookMarkButton.design(image: UIImage.ImjangList.bookmark, backgroundColor: .mainWhite)
     }

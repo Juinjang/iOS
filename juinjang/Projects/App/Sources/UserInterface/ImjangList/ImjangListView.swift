@@ -14,6 +14,12 @@ enum Section: Int, CaseIterable {
 }
 
 final class ImjangListView: UIView {
+    let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "\(UserDefaultManager.shared.nickname)님의 임장노트"
+        $0.rightItem = [.search, .add]
+    }
+    
     // 임장 노트가 존재하지 않을 때의 뷰
     let emptyBackgroundView = UIView()
     private let emptyLogoImageView = UIImageView()
@@ -39,9 +45,15 @@ final class ImjangListView: UIView {
             emptyBackgroundView.addSubview($0)
         }
         addSubview(collectionView)
+        addSubview(navigationView)
     }
     
     private func configureLayout() {
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         emptyBackgroundView.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
@@ -67,7 +79,8 @@ final class ImjangListView: UIView {
         }
         
         collectionView.snp.makeConstraints { make in
-            make.edges.equalTo(safeAreaLayoutGuide)
+            make.top.equalTo(navigationView.snp.bottom)
+            make.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide)
         }
     }
     
@@ -94,6 +107,7 @@ final class ImjangListView: UIView {
                              backgroundColor: .gray500,
                              cornerRadius: 10)
         
+        collectionView.backgroundColor = .mainWhite
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.register(
             ImjangNoteCollectionViewCell.self,
@@ -116,7 +130,6 @@ final class ImjangListView: UIView {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isSkeletonable = true
-        collectionView.clipsToBounds = false
     }
 }
 
@@ -224,17 +237,16 @@ extension ImjangListView {
         
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .absolute(106))
+            heightDimension: .absolute(136))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        group.contentInsets = NSDirectionalEdgeInsets(top: 5, leading: 24, bottom: 0, trailing: 24)
         
         let section = NSCollectionLayoutSection(group: group)
         
-        section.interGroupSpacing = 8
-        
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 22, bottom: 0, trailing: 22)
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                                       heightDimension: .absolute(49)),
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1.0),
+                        heightDimension: .absolute(49)),
                     elementKind: UICollectionView.elementKindSectionHeader,
                     alignment: .top
                 )

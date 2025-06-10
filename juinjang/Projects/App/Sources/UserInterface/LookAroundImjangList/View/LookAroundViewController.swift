@@ -29,6 +29,7 @@ final class LookAroundViewController: BaseViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
         reactor?.action.onNext(.viewDidLoad)
     }
 
@@ -55,13 +56,18 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     private func popVewController() {
-        print(#function)
         navigationController?.popViewController(animated: true)
     }
     
     private func showSearchLookAroundImjangVC() {
-        print(#function)
-        // TODO: show SearchLookAroundImjangVC
+        let searchLookAroundVC = LookAroundSearchViewController(
+            reactor: LookAroundSearchReactor(
+                dependency: LookAroundSearchReactor.Dependency(
+                    lookAroundRepository: MockLookAroundRepository()
+                )
+            )
+        )
+        navigationController?.pushViewController(searchLookAroundVC, animated: true)
     }
 }
 

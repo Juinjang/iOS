@@ -13,7 +13,7 @@ final class FilterButton: UIButton {
     private var padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     private var disposeBag = DisposeBag()
     
-    init(filterType: LookAroundFilterType) {
+    init(filterType: FilterType) {
         super.init(frame: .zero)
         configureView(filterType: filterType)
     }
@@ -22,7 +22,7 @@ final class FilterButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func configureView(filterType: LookAroundFilterType) {
+    private func configureView(filterType: FilterType) {
         let title = filterType.rawValue
         setTitle(title, for: .normal)
         titleLabel?.setAttribute(text: title, color: .gray300, font: .pretendard(size: 14, weight: .medium), lineHeight: 19)

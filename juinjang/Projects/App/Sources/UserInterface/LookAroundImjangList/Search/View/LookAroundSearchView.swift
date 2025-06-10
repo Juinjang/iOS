@@ -184,7 +184,7 @@ extension LookAroundSearchView {
     
     private func createImjangCountSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                              heightDimension: .absolute(24))
+                                              heightDimension: .absolute(40))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
 
         let groupSize = itemSize

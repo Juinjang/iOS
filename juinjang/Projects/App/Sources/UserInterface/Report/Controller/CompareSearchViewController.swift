@@ -1,84 +1,106 @@
 
 import UIKit
-import Pageboy
 import Toast
+import SnapKit
+import RxSwift
 
 protocol SendSearchCompareImjangData{
     func sendData(isSelected: Bool, compareImjangId: Int,  compareImjangName: String)
 }
 
 final class CompareSearchViewController: BaseViewController {
-    
-    var delegate: SendSearchCompareImjangData?
-    
-    var searchBar = UISearchBar().then{
-        $0.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width * 0.82, height: 0)
-        $0.placeholder = "집 별명이나 주소를 검색해보세요"
-        $0.searchTextField.font = .pretendard(size: 14, weight: .medium)
-        $0.searchTextField.borderStyle = .roundedRect
-        $0.searchTextField.clipsToBounds = true
-        $0.searchTextField.layer.cornerRadius = 15
+    private let navigationView = SearchNavigationView().then {
+        $0.searchPlaceHolder = "건물명이나 주소를 검색해 보세요."
+        $0.leftItem = [.pop]
     }
     
-    let searchedTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.rowHeight = 116
-        tableView.separatorStyle = .none
-        tableView.showsVerticalScrollIndicator = false
-        tableView.isHidden = true
-        tableView.register(ReportImjangListTableViewCell.self, forCellReuseIdentifier: ReportImjangListTableViewCell.identifier)
-        return tableView
+    private lazy var collectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+        collectionView.backgroundColor = .white
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(SelectNoteCell.self)
+        return collectionView
     }()
     
-    let logoImageView = UIImageView().then {
+    private let emptyImageView = UIImageView().then {
         $0.image = UIImage.Main.nomaemull
     }
     
-    let mentLabel = UILabel().then {
-        $0.text = "일치하는 매물이 없습니다."
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 14)
-        $0.textColor = .gray400
+    private let emptyLabel = UILabel().then {
+        $0.text = "일치하는 매물이 없어요"
+        $0.font = .pretendard(size: 16, weight: .semiBold)
+        $0.textColor = .gray300
     }
     
-    var applyBtn = UIButton().then{
+    private let buttonBackgroundView = UIView().then {
+        $0.backgroundColor = .mainWhite
+    }
+    
+    private let applyButton = UIButton().then{
         $0.backgroundColor = .null
         $0.layer.cornerRadius = 10
         $0.setTitle("적용하기", for: .normal)
-        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
         $0.setTitleColor(.mainWhite, for: .normal)
         $0.isHidden = true
     }
     
     var searchKeyword  = ""
-    var searchedImjangList: [ListDto] = []
-    var imjangList: [ListDto] = []
+    var searchedImjangList: [NoteDTO] = []
+    var imjangList: [NoteDTO] = []
     var imjangId: Int
     var comparedImjangId : Int = 0
     var comparedName : String = ""
-    var scoreStates: [UIButton: Bool] = [:]
     
-    // 네비게이션 바 디자인
-    private func designNavigationBar() {
-        self.navigationItem.hidesSearchBarWhenScrolling = false
-        self.navigationController?.navigationBar.tintColor = .black
-
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(popView))
-        backButtonItem.tintColor = .gray450
-        backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
+    private var selectedIndex: Int? {
+        didSet {
+            setApplyButtonEnabled(isEnabled: selectedIndex != nil)
+        }
+    }
     
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.titleView = searchBar
+    var delegate: SendSearchCompareImjangData?
+    private var disposeBag = DisposeBag()
+    
+    struct Dependency {
+        let noteRepository: NoteRepositoryProtocol
+    }
+    
+    private let dependency: Dependency
+    
+    init(dependency: Dependency, imjangId: Int) {
+        self.dependency = dependency
+        self.imjangId = imjangId
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        retrieveNoteList(excludingId: imjangId)
+        
+        view.backgroundColor = .mainWhite
+        collectionView.delegate = self
+        collectionView.dataSource = self
+        
+        applyButton.addTarget(self, action: #selector(applyButtonTapped), for: .touchUpInside)
+        configureHierarchy()
+        setupConstraints()
+        bindAction()
     }
     
     @objc private func popView() {
         navigationController?.popViewController(animated: true)
     }
     
-    @objc private func applyBtnTap(_ sender: UIButton) {
-        let moveTo = scoreStates[sender] ?? false
-        if moveTo {
+    @objc private func applyButtonTapped(_ sender: UIButton) {
+        guard let selectedIndex else { return }
+        let compareNote = imjangList[selectedIndex]
+        let canApply = compareNote.rate != "0.0" && compareNote.rate != nil
+    
+        if canApply {
             delegate?.sendData(isSelected: true, compareImjangId: comparedImjangId, compareImjangName: comparedName)
             
             if let navigationController = self.navigationController {
@@ -92,177 +114,202 @@ final class CompareSearchViewController: BaseViewController {
         }
     }
     
-    @objc private func textFieldDidChange(_ sender: Any?) {
+    private func setApplyButtonEnabled(isEnabled: Bool) {
+        applyButton.backgroundColor = isEnabled ? .gray500 : .null
+        applyButton.isEnabled = isEnabled
+    }
+    
+    private func bindAction() {
+        navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
+                case .searchSummit(let keyword):
+                    self.searchBarSearchButtonClicked(searchKeyword: keyword)
+                case .searchActive(let isActive):
+                    if !isActive {
+                        self.searchBarCancelButtonClicked()
+                    }
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func searchBarCancelButtonClicked() {
+        navigationView.setSearchTextFieldText("")
+        searchedImjangList = []
+        collectionView.reloadData()
+        collectionView.isHidden = true
+        applyButton.isHidden = true
+    }
+    
+    private func searchBarSearchButtonClicked(searchKeyword: String) {
+        print(searchKeyword)
         searchedImjangList.removeAll()
-        searchedTableView.reloadData()
-        if searchBar.searchTextField.text == "" {
-            searchedTableView.isHidden = true
-            applyBtn.isHidden = true
+        selectedIndex = nil
+        collectionView.reloadData()
+        if searchKeyword.isEmpty {
+            setEmptyUI(isEmpty: true)
         } else {
-            searchedTableView.isHidden = true
-            applyBtn.isHidden = true
-            searchKeyword = searchBar.text!
+            setEmptyUI(isEmpty: true)
             for item in imjangList {
-                if item.nickname.contains(searchKeyword) || item.address.contains(searchKeyword) {
+                if item.name.contains(searchKeyword) {
                     searchedImjangList.append(item)
-                    searchedTableView.isHidden = false
-                    applyBtn.isHidden = false
+                    setEmptyUI(isEmpty: false)
+                } else {
+                    if let address = item.roadAddress {
+                        if address.contains(searchKeyword) {
+                            searchedImjangList.append(item)
+                            setEmptyUI(isEmpty: false)
+                        }
+                    }
                 }
             }
-            searchedTableView.reloadData()
+            collectionView.reloadData()
         }
     }
     
-    private func callRequest(sort: Filter = .update, setScrap: Bool = false, excludingId: Int? = nil) {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: sort.sortValue)) { response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
-            }
-            
-            guard let response = response else { return }
-            guard let result = response.result else { return }
-            
-            let filteredList = result.limjangList.filter { item in
-                if let excludingId = excludingId {
-                    return item.limjangId != excludingId
+    private func retrieveNoteList(sort: MyNoteFilter = .updated, excludingId: Int) {
+        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: nil)
+            .asObservable()
+            .subscribe(with: self) { owner, noteResultDTO in
+                let notes = noteResultDTO.notes
+                let filteredList = notes.filter { item in
+                    return item.noteId != excludingId
                 }
-                return true
+                owner.imjangList = filteredList
+                owner.setEmptyUI(isEmpty: true)
             }
-            
-            self.imjangList = filteredList
-            self.setEmptyUI(isEmpty: self.imjangList.isEmpty)
-            self.searchedTableView.reloadData()
-        }
+            .disposed(by: disposeBag)
     }
+    
     private func setEmptyUI(isEmpty: Bool) {
-        //emptyBackgroundView.isHidden = isEmpty ? false : true
-        searchedTableView.isHidden = isEmpty ? true : false
+        collectionView.isHidden = isEmpty
+        applyButton.isHidden = isEmpty
     }
     
-    private func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.contentInset = UIEdgeInsets(
+            top: 0,
+            left: 0,
+            bottom: buttonBackgroundView.frame.height,
+            right: 0
+        )
     }
-
-    @objc private func dismissKeyboard() {
-        searchBar.resignFirstResponder()
+    
+    private func configureHierarchy() {
+        view.add(
+            navigationView,
+            emptyImageView,
+            emptyLabel,
+            collectionView,
+            buttonBackgroundView.with(applyButton)
+        )
     }
     
     private func setupConstraints() {
-        searchedTableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(23)
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom).offset(23)
             $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-        logoImageView.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(243)
+        
+        emptyImageView.snp.makeConstraints{
+            $0.centerY.equalToSuperview().offset(-65)
             $0.centerX.equalToSuperview()
         }
-        mentLabel.snp.makeConstraints{
-            $0.top.equalTo(logoImageView.snp.bottom).offset(37.17)
+        
+        emptyLabel.snp.makeConstraints{
+            $0.top.equalTo(emptyImageView.snp.bottom).offset(37.17)
             $0.centerX.equalToSuperview()
         }
-        applyBtn.snp.makeConstraints{
+        
+        buttonBackgroundView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.height.equalTo(100)
+        }
+        
+        applyButton.snp.makeConstraints{
             $0.bottom.equalToSuperview().inset(33)
-            $0.left.right.equalToSuperview().inset(24)
+            $0.horizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(52)
         }
     }
-    
-    init(imjangId: Int) {
-        self.imjangId = imjangId
-        super.init()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        callRequest(setScrap: true, excludingId: imjangId)
-        designNavigationBar()
-        
-        view.backgroundColor = .mainWhite
-        searchBar.delegate = self
-        searchedTableView.delegate = self
-        searchedTableView.dataSource = self
-        
-        view.addSubview(logoImageView)
-        view.addSubview(mentLabel)
-        view.addSubview(searchedTableView)
-        view.addSubview(applyBtn)
-        applyBtn.addTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
-        searchBar.searchTextField.addTarget(self, action: #selector(CompareSearchViewController.textFieldDidChange(_:)), for: .editingChanged)
-        
-        setupConstraints()
-        hideKeyboardWhenTappedAround()
-    }
 }
 
-extension CompareSearchViewController: UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        searchedImjangList.count
+extension CompareSearchViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return searchedImjangList.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ReportImjangListTableViewCell.identifier, for: indexPath) as! ReportImjangListTableViewCell
-        
-        cell.selectionStyle = .none
-        cell.configureCell(imjangNote: searchedImjangList[indexPath.row])
-        print(searchedImjangList)
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(SelectNoteCell.self, for: indexPath)
+      
+        cell.configureCell(note: searchedImjangList[indexPath.row])
+        if let selectedIndex {
+            if selectedIndex == indexPath.row {
+                cell.isClicked = true
+            }
+        }
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let compareImjangId = searchedImjangList[indexPath.row].noteId
         
-        let compareImjangId = searchedImjangList[indexPath.row].limjangId
-        comparedImjangId = compareImjangId
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectNoteCell else { return }
         
-        let cell = tableView.cellForRow(at: indexPath) as! ReportImjangListTableViewCell
-        comparedName = cell.roomNameLabel.text ?? "error"
-        
-        if cell.isSelect == false {
-            cell.isSelect = true
-            cell.contentView.backgroundColor = .main100
-            cell.contentView.layer.borderColor = UIColor.main.cgColor
-            print("id : \(compareImjangId)")
-            applyBtn.backgroundColor = .gray500
-            if let score = cell.scoreLabel.text {
-                let moveTo = (score != "0.0")
-                scoreStates[applyBtn] = moveTo
-            }
-            applyBtn.addTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
-        }
-        else {
-            cell.isSelect = false
-            cell.contentView.backgroundColor = .mainWhite
-            cell.contentView.layer.borderColor = UIColor.stroke.cgColor
-            applyBtn.backgroundColor = .null
-            applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
+        if cell.isSelected {
+            cell.isClicked = true
+            selectedIndex = indexPath.item
+            comparedName = searchedImjangList[indexPath.row].name
+            comparedImjangId = compareImjangId
+        } else {
+            cell.isClicked = false
+            setApplyButtonEnabled(isEnabled: false)
         }
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! ReportImjangListTableViewCell
-        cell.isSelect = false
-        cell.contentView.backgroundColor = .mainWhite
-        cell.contentView.layer.borderColor = UIColor.stroke.cgColor
-        applyBtn.backgroundColor = .null
-        applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectNoteCell else { return }
+        
+        cell.isClicked = false
+        setApplyButtonEnabled(isEnabled: false)
+    }
+}
+
+extension CompareSearchViewController {
+    func createCollectionViewLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
+            guard let self else { return nil }
+            return selectNoteLayoutSection()
+        }
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 116
+    private func selectNoteLayoutSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(136))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.interGroupSpacing = 8
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
+        
+        return section
     }
 }
-
-extension CompareSearchViewController: UISearchBarDelegate {
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text = ""
-        searchBar.resignFirstResponder()
-    }
-}
-
-

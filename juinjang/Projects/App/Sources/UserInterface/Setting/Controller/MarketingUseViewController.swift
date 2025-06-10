@@ -4,12 +4,19 @@
 //
 //  Created by 박도연 on 3/30/24.
 //
+
 import UIKit
 import Then
 import SnapKit
+import RxSwift
 
 final class MarketingUseViewController : BaseViewController {
-   private let scrollView = UIScrollView().then {
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "마케팅 활용동의"
+        $0.leftItem = [.pop]
+    }
+    
+    private let scrollView = UIScrollView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.isScrollEnabled = true
         $0.indicatorStyle = .black
@@ -73,25 +80,18 @@ final class MarketingUseViewController : BaseViewController {
         $0.textAlignment = .justified
     }
     
-//MARK: - 함수
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "마케팅 활용동의"
-        
-        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = .gray450
-        closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = closeButtonItem
-    }
-    @objc func tapCloseButton() {
-        _ = self.navigationController?.popViewController(animated: false)
+    private var disposeBag = DisposeBag()
+    
+    private func tapCloseButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
     func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(46)
+            $0.top.equalTo(navigationView.snp.bottom).offset(46)
             $0.left.right.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(33)
         }
@@ -135,8 +135,8 @@ final class MarketingUseViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        designNavigationBar()
-        
+        bindAction()
+        view.addSubview(navigationView)
         view.addSubview(scrollView)
         scrollView.addSubview(contentLabel2)
         scrollView.addSubview(contentLabel3)
@@ -155,6 +155,18 @@ final class MarketingUseViewController : BaseViewController {
        
         view.backgroundColor = .mainWhite
         setConstraint()
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .popButtonTap:
+                    owner.tapCloseButton()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 

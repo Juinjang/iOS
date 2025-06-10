@@ -52,7 +52,7 @@ extension UILabel {
     
     
     func setAttribute(text: String?,
-                      color: UIColor = .gray500,
+                      color: UIColor = .gray600,
                       font: UIFont? = .pretendard(size: 14, weight: .regular),
                       lineHeight: CGFloat = 30,
                       charSpacing: CGFloat = -0.02,

@@ -8,9 +8,15 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
 
 final class Use1ViewController : BaseViewController {
-   private let scrollView = UIScrollView().then {
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "주인장 이용약관"
+        $0.leftItem = [.pop]
+    }
+    
+    private let scrollView = UIScrollView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.isScrollEnabled = true
         $0.indicatorStyle = .black
@@ -128,25 +134,19 @@ final class Use1ViewController : BaseViewController {
         $0.textAlignment = .natural
     }
     
-//MARK: - 함수
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "주인장 이용약관"
-        
-        let closeButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(tapCloseButton))
-        closeButtonItem.tintColor = .gray450
-        closeButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = closeButtonItem
-    }
-    @objc func tapCloseButton() {
-        _ = self.navigationController?.popViewController(animated: false)
+    private var disposeBag = DisposeBag()
+    
+    private func tapCloseButton() {
+        self.navigationController?.popViewController(animated: true)
     }
     
-    func setConstraint() {
+    private func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(46)
+            $0.top.equalTo(navigationView.snp.bottom).offset(46)
             $0.left.right.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(33)
         }
@@ -239,8 +239,8 @@ final class Use1ViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        designNavigationBar()
-        
+        bindAction()
+        view.addSubview(navigationView)
         view.addSubview(scrollView)
         scrollView.addSubview(contentLabel1)
         //scrollView.addSubview(contentLabel2)
@@ -259,6 +259,7 @@ final class Use1ViewController : BaseViewController {
         scrollView.addSubview(contentLabel15)
         scrollView.addSubview(contentLabel16)
         scrollView.addSubview(contentLabel17)
+        
         contentLabel3.asFont(targetString: "제 1조(목적)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         contentLabel4.asFont(targetString: "제 2조(용어의 정리)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         contentLabel5.asFont(targetString: "제 3조(약관 등의 명시와 설명 및 개정)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
@@ -276,6 +277,18 @@ final class Use1ViewController : BaseViewController {
         contentLabel17.asFont(targetString: "제 15조(기타)", font: UIFont(name: "Pretendard-Medium", size: 14) ?? .systemFont(ofSize: 14))
         view.backgroundColor = .mainWhite
         setConstraint()
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .popButtonTap:
+                    owner.tapCloseButton()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 

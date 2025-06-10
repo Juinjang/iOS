@@ -8,187 +8,65 @@ import UIKit
 import Then
 import SnapKit
 import Alamofire
+import RxSwift
 
 protocol SendCompareImjangData{
     func sendData(isSelected: Bool, compareImjangId: Int,  compareImjangName: String)
 }
 
 final class SelectMaemullViewController : BaseViewController {
-    
-    var delegate: SendCompareImjangData?
-    var scoreStates: [UIButton: Bool] = [:]
-    
-    var contentView = UIView().then {
-        $0.backgroundColor = .mainWhite
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "비교할 매물 고르기"
+        $0.rightItem = [.search]
     }
     
-    lazy var filterselectBtn: UIButton = {
-        var configuration = UIButton.Configuration.filled()
-        var container = AttributeContainer()
-        container.font = .pretendard(size: 14, weight: .semiBold)
-        configuration.attributedTitle = AttributedString(filterList[0].title, attributes: container)
-        configuration.baseBackgroundColor = .mainWhite
-        configuration.baseForegroundColor = .gray450
-        configuration.image = UIImage.ImjangList.arrowDown
-        configuration.image?.withTintColor(.gray450)
-        configuration.imagePlacement = .trailing
-        configuration.imagePadding = 6
-        let button = UIButton(configuration: configuration, primaryAction: nil)
-        return button
+    private lazy var collectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+        collectionView.backgroundColor = .white
+        collectionView.showsVerticalScrollIndicator = false
+        collectionView.register(SelectNoteCell.self)
+        collectionView.register(SelectMaemullHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader)
+        return collectionView
     }()
     
-    var menuChildren: [UIMenuElement] = []
-    lazy var filterList = Filter.allCases
-    var imjangList: [ListDto] = []
-    var imjangId: Int
-    var comparedImjangId : Int = 0
-    var comparedName : String = ""
-    
-    let tableView = UITableView().then {
-        $0.estimatedRowHeight = UITableView.automaticDimension
-        $0.separatorStyle = .none
-        $0.showsVerticalScrollIndicator = false
-        $0.backgroundColor = .mainWhite
-        $0.contentInset = UIEdgeInsets.init(top: 5, left: 0, bottom: 0, right: 0)
-        $0.register(ReportImjangListTableViewCell.self, forCellReuseIdentifier: ReportImjangListTableViewCell.identifier)
-    }
-    
-    var btnBackGroundView = UIView().then{
+    private let btnBackGroundView = UIView().then{
         $0.backgroundColor = .mainWhite
     }
     
-    var applyBtn = UIButton().then{
+    private let applyButton = UIButton().then{
         $0.backgroundColor = .null
         $0.layer.cornerRadius = 10
         $0.setTitle("적용하기", for: .normal)
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.setTitleColor(.mainWhite, for: .normal)
-        
+        $0.isEnabled = false
     }
     
-    func setFilterData() {
-        for filter in filterList {
-            menuChildren.append(UIAction(title: filter.title, state: .off,handler: { [weak self] (action: UIAction) in
-                guard let self else { return }
-                self.changefilterTitle(filter.title)
-//                NotificationCenter.default.post(name: .imjangListFilterTapped, object: nil, userInfo: ["title":filter.title])
-                callRequest(sort: filter, excludingId: imjangId)
-            }))
-        }
-        if #available(iOS 17.0, *) {
-            filterselectBtn.menu = UIMenu(options: .displayAsPalette, preferredElementSize: .small ,children: menuChildren)
-        } else if #available(iOS 16.0, *){
-            filterselectBtn.menu = UIMenu(options: .displayInline, preferredElementSize: .small ,children: menuChildren)
-        } else {
-            filterselectBtn.menu = UIMenu(options: .destructive, children: menuChildren)
-        }
-        
-        
-        filterselectBtn.showsMenuAsPrimaryAction = true
+    struct Dependency {
+        let noteRepository: NoteRepositoryProtocol
     }
     
-    func changefilterTitle(_ title: String) {
-        var container = AttributeContainer()
-        container.font = .pretendard(size: 14, weight: .semiBold)
-        filterselectBtn.configuration?.title = title
-        filterselectBtn.configuration?.attributedTitle = AttributedString(title, attributes: container)
-    }
+    private let dependency: Dependency
     
-    func callRequest(sort: Filter = .update, setScrap: Bool = false, excludingId: Int? = nil) {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: sort.sortValue)) { response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                return
-            }
-            
-            guard let response = response else { return }
-            guard let result = response.result else { return }
-            
-            let filteredList = result.limjangList.filter { item in
-                if let excludingId = excludingId {
-                    return item.limjangId != excludingId
-                }
-                return true
-            }
-            
-            self.imjangList = filteredList
-            self.setEmptyUI(isEmpty: self.imjangList.isEmpty)
-            self.tableView.reloadData()
+    private var disposeBag = DisposeBag()
+    
+    private var menuChildren: [UIMenuElement] = []
+    private lazy var filterList = Filter.allCases
+    private var imjangList: [NoteDTO] = []
+    var imjangId: Int
+    var comparedImjangId : Int = 0
+    private var comparedName : String = ""
+    var delegate: SendCompareImjangData?
+    
+    private var selectedIndex: Int? {
+        didSet {
+            setApplyButtonEnabled(isEnabled: selectedIndex != nil)
         }
     }
     
-    func setEmptyUI(isEmpty: Bool) {
-        //emptyBackgroundView.isHidden = isEmpty ? false : true
-        tableView.isHidden = isEmpty ? true : false
-    }
-    
-    func setConstraint() {
-        btnBackGroundView.snp.makeConstraints{
-            $0.bottom.equalToSuperview()
-            $0.left.right.equalToSuperview()
-            $0.height.equalTo(97)
-        }
-        applyBtn.snp.makeConstraints{
-            $0.bottom.equalToSuperview().inset(33)
-            $0.left.right.equalToSuperview().inset(24)
-            $0.height.equalTo(52)
-        }
-        contentView.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide)
-            $0.left.right.equalToSuperview()
-            $0.height.equalTo(63)
-        }
-        filterselectBtn.snp.makeConstraints{
-            $0.top.equalToSuperview().offset(32)
-            $0.left.equalToSuperview().offset(20)
-            $0.height.equalTo(19)
-        }
-        tableView.snp.makeConstraints{
-            $0.top.equalTo(contentView.snp.bottom)
-            $0.left.right.equalToSuperview()
-            $0.bottom.equalTo(btnBackGroundView.snp.top)
-        }
-    }
-    
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "비교할 매물 고르기"
-        
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = .gray450
-        backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-        
-        let searchButtonItem = UIBarButtonItem(image: UIImage.ImjangList.search, style: .plain, target: self, action: #selector(searchBtnTap))
-        searchButtonItem.tintColor = .gray450
-        searchButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-        
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.rightBarButtonItem = searchButtonItem
-    }
-    
-    @objc func backBtnTap() {
-        self.navigationController?.popViewController(animated: true)
-    }
-    @objc func searchBtnTap() {
-        let searchVC = CompareSearchViewController(imjangId: imjangId)
-        searchVC.delegate = self.delegate as? SendSearchCompareImjangData
-        navigationController?.pushViewController(searchVC, animated: true)
-        tableView.reloadData()
-        applyBtn.backgroundColor = .null
-    }
-    @objc func applyBtnTap(_ sender: UIButton) {
-        let moveTo = scoreStates[sender] ?? false
-        if moveTo {
-            delegate?.sendData(isSelected: true, compareImjangId: comparedImjangId, compareImjangName: comparedName)
-            self.navigationController?.popViewController(animated: true)
-        } else {
-            self.view.makeToast("미평가된 매물은 비교하기 어려워요 :(", duration: 1.0)
-        }
-    }
-    
-    init(imjangId: Int) {
+    init(dependency: Dependency, imjangId: Int) {
+        self.dependency = dependency
         self.imjangId = imjangId
         super.init()
     }
@@ -199,78 +77,214 @@ final class SelectMaemullViewController : BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        designNavigationBar()
-        callRequest(setScrap: true, excludingId: imjangId)
-        tableView.delegate = self
-        tableView.dataSource = self
+        navigationController?.isNavigationBarHidden = true
+        bindAction()
+        retrieveNoteList(excludingId: imjangId)
+        collectionView.delegate = self
+        collectionView.dataSource = self
         view.backgroundColor = .mainWhite
-        
-        view.addSubview(contentView)
-        contentView.addSubview(filterselectBtn)
-        view.addSubview(tableView)
+        configureHierarchy()
+        setConstraint()
+        applyButton.addTarget(self, action: #selector(applyButtonTapped), for: .touchUpInside)
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .bind(with: self, onNext: { owner, action in
+                switch action {
+                case .popButtonTap: owner.backBtnTap()
+                case .searchButtonTap: owner.searchBtnTap()
+                default: break
+                }
+            })
+            .disposed(by: disposeBag)
+    }
+    
+    private func setApplyButtonEnabled(isEnabled: Bool) {
+        applyButton.backgroundColor = isEnabled ? .gray500 : .null
+        applyButton.isEnabled = isEnabled
+    }
+    
+    private func retrieveNoteList(sort: MyNoteFilter = .updated, excludingId: Int) {
+        print(#function)
+        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: nil)
+            .asObservable()
+            .subscribe(with: self) { owner, noteResultDTO in
+                let notes = noteResultDTO.notes
+                let filteredList = notes.filter { item in
+                    return item.noteId != excludingId
+                }
+                owner.imjangList = filteredList
+                owner.setEmptyUI(isEmpty: self.imjangList.isEmpty)
+                owner.collectionView.reloadData()
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    func setEmptyUI(isEmpty: Bool) {
+        collectionView.isHidden = isEmpty ? true : false
+    }
+    
+    private func configureHierarchy() {
+        view.addSubview(navigationView)
+        view.addSubview(collectionView)
         
         view.addSubview(btnBackGroundView)
-        btnBackGroundView.addSubview(applyBtn)
-        setFilterData()
-        setConstraint()
+        btnBackGroundView.addSubview(applyButton)
+    }
+    
+    private func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        btnBackGroundView.snp.makeConstraints{
+            $0.bottom.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(97)
+        }
+        
+        applyButton.snp.makeConstraints{
+            $0.bottom.equalToSuperview().inset(33)
+            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.height.equalTo(52)
+        }
+        
+        collectionView.snp.makeConstraints{
+            $0.top.equalTo(navigationView.snp.bottom).offset(12)
+            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.equalTo(btnBackGroundView.snp.top)
+        }
+    }
+    
+    @objc func backBtnTap() {
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc func searchBtnTap() {
+        let searchVC = CompareSearchViewController(
+            dependency: CompareSearchViewController.Dependency(
+                noteRepository: NoteRepository()
+            ),
+            imjangId: imjangId
+        )
+        searchVC.delegate = self.delegate as? SendSearchCompareImjangData
+        navigationController?.pushViewController(searchVC, animated: true)
+        applyButton.backgroundColor = .null
+    }
+    
+    @objc func applyButtonTapped(_ sender: UIButton) {
+        print(#function)
+        guard let selectedIndex else { return }
+        let compareNote = imjangList[selectedIndex]
+        let canApply = compareNote.rate != "0.0" && compareNote.rate != nil
+        if canApply {
+            delegate?.sendData(isSelected: true, compareImjangId: comparedImjangId, compareImjangName: comparedName)
+            self.navigationController?.popViewController(animated: true)
+        } else {
+            self.view.makeToast("미평가된 매물은 비교하기 어려워요 :(", duration: 1.0)
+        }
     }
 }
 
-extension SelectMaemullViewController: UITableViewDelegate, UITableViewDataSource {
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension SelectMaemullViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return imjangList.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ReportImjangListTableViewCell.identifier, for: indexPath) as! ReportImjangListTableViewCell
-        cell.selectionStyle = .none
-        cell.contentView.backgroundColor = .mainWhite
-        cell.configureCell(imjangNote: imjangList[indexPath.row])
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(SelectNoteCell.self, for: indexPath)
+      
+        cell.configureCell(note: imjangList[indexPath.row])
+        if let selectedIndex {
+            if selectedIndex == indexPath.row {
+                cell.isClicked = true
+            }
+        }
         return cell
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let compareImjangId = imjangList[indexPath.row].limjangId
-        comparedImjangId = compareImjangId
-        print("Row deselected at indexPath: \(compareImjangId)")
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let compareImjangId = imjangList[indexPath.row].noteId
         
-        let cell = tableView.cellForRow(at: indexPath) as! ReportImjangListTableViewCell
-        comparedName = cell.roomNameLabel.text ?? "error"
-        if cell.isSelect == false {
-            cell.isSelect = true
-            cell.contentView.backgroundColor = .main100
-            cell.contentView.layer.borderColor = UIColor.main.cgColor
-            applyBtn.backgroundColor = .gray500
-            if let score = cell.scoreLabel.text {
-                let moveTo = (score != "0.0")
-                scoreStates[applyBtn] = moveTo
-            }
-            applyBtn.addTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
-        }
-        else {
-            cell.isSelect = false
-            cell.contentView.backgroundColor = .mainWhite
-            cell.contentView.layer.borderColor = UIColor.stroke.cgColor
-            applyBtn.backgroundColor = .null
-            applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectNoteCell else { return }
+        
+        if cell.isSelected {
+            cell.isClicked = true
+            selectedIndex = indexPath.item
+            comparedName = imjangList[indexPath.row].name
+            comparedImjangId = compareImjangId
+        } else {
+            cell.isClicked = false
+            setApplyButtonEnabled(isEnabled: false)
         }
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! ReportImjangListTableViewCell
-        cell.isSelect = false
-        cell.contentView.backgroundColor = .mainWhite
-        cell.contentView.layer.borderColor = UIColor.stroke.cgColor
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let cell = collectionView.cellForItem(at: indexPath) as? SelectNoteCell else { return }
         
-        applyBtn.backgroundColor = .null
-        applyBtn.removeTarget(self, action: #selector(applyBtnTap), for: .touchUpInside)
+        cell.isClicked = false
+        setApplyButtonEnabled(isEnabled: false)
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 116
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        if kind == UICollectionView.elementKindSectionHeader {
+            let header = collectionView.dequeueReusableSupplementaryView(SelectMaemullHeader.self, ofKind: UICollectionView.elementKindSectionHeader, for: indexPath)
+            header.bindAction()
+            header.filterActionRelay
+                .subscribe(with: self) { owner, action in
+                    print(action)
+                    switch action {
+                    case .updated:
+                        owner.retrieveNoteList(sort: .updated, excludingId: owner.imjangId)
+                    case .created:
+                        owner.retrieveNoteList(sort: .created, excludingId: owner.imjangId)
+                    case .star:
+                        owner.retrieveNoteList(sort: .star, excludingId: owner.imjangId)
+                    }
+                }
+                .disposed(by: header.disposeBag)
+            
+            return header
+        }
+        return UICollectionReusableView()
     }
-
 }
 
-
+extension SelectMaemullViewController {
+    func createCollectionViewLayout() -> UICollectionViewCompositionalLayout {
+        return UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
+            guard let self else { return nil }
+            return selectNoteLayoutSection()
+        }
+    }
+    
+    private func selectNoteLayoutSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let groupSize = NSCollectionLayoutSize(
+            widthDimension: .fractionalWidth(1.0),
+            heightDimension: .absolute(136))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        
+        section.interGroupSpacing = 8
+        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 24, bottom: 0, trailing: 24)
+        let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
+                    layoutSize: NSCollectionLayoutSize(
+                        widthDimension: .fractionalWidth(1.0),
+                        heightDimension: .absolute(50)),
+                    elementKind: UICollectionView.elementKindSectionHeader,
+                    alignment: .top
+                )
+        sectionHeader.pinToVisibleBounds = true
+        sectionHeader.zIndex = 2
+        section.boundarySupplementaryItems = [sectionHeader]
+        
+        return section
+    }
+}

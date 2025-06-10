@@ -18,7 +18,7 @@ final class BottomTableViewCell: UITableViewCell{
     let collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 18, bottom: 0, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 0)
         let cv = UICollectionView(frame: .zero, collectionViewLayout: layout)
         cv.backgroundColor = .clear
         cv.showsHorizontalScrollIndicator = false
@@ -87,7 +87,7 @@ final class BottomTableViewCell: UITableViewCell{
         //최근 본 임장 있을 때
         collectionView.snp.makeConstraints{
             $0.top.equalTo(recentImjangLabel.snp.bottom).offset(15)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(204)
         }
     }

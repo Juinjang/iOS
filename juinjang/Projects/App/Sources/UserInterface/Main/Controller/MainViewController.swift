@@ -4,17 +4,17 @@ import Then
 import Lottie
 import Alamofire
 import SkeletonView
-//import Common
+import RxSwift
 
 protocol updateNicknameDelegate: AnyObject {
     func updateNickname()
 }
 
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
+    private lazy var navigationView = CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
+        $0.leftItem = [.setting]
+    }
     
-    
-// MARK: - 변수, 상수 설정
-    //설정 버튼, 메인 로고, 스피커 버튼
     private var mainLogoImageView = UIImageView().then {
         $0.image = UIImage.Main.logo
     }
@@ -27,24 +27,15 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private var mainImjangList: [LimjangDto] = []
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // 화면 전환 이벤트 로깅
-//        AnalyticsManager.log(event: MainViewEvent(
-//                name: .enter_main_view,
-//                parameters: ["MainScreen": "MainViewController"])
-//        )
-    }
+    private var disposeBag = DisposeBag()
     
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
-    
         super.viewDidLoad()
+        navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
-    
+        bindAction()
+        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
@@ -52,15 +43,30 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         tableView.backgroundColor = .clear
         view.backgroundColor = .mainWhite
         
-        view.addSubview(tableView)
+        view.add(
+            navigationView,
+            tableView
+        )
        
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
-        designNavigationBar()
+  
         setConstraint()
         callMainImjangRequest()
         checkAndUpdateIfNeeded()
         print("메인화면에서 이메일 출력 : \(UserDefaultManager.shared.email)")
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .settingButtonTap:
+                    owner.setttingBtnTap()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func checkAndShowTermsPopup() {
@@ -75,7 +81,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func callMainImjangRequest() {
-        
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
                                             api: .mainImjang) { response, error in
             if let error = error {
@@ -116,27 +121,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         }
     }
     
-    // 네비게이션 바 디자인
-    private func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.titleView = mainLogoImageView
-        
-        // 이미지 로드
-//        let speaker = UIImage.speaker
-//
-//        // UIBarButtonItem 생성 및 이미지 설정
-//        let speakerButtonItem = UIBarButtonItem(image: speaker, style: .plain, target: self, action: nil)
-//        speakerButtonItem.tintColor = ColorStyle.darkGray
-//        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-        
-        let settingButtonItem = UIBarButtonItem(image: UIImage.Main.setting, style: .plain, target: self, action: #selector(setttingBtnTap))
-        settingButtonItem.tintColor = .gray450
-        settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = settingButtonItem
-//        self.navigationItem.rightBarButtonItem = speakerButtonItem
-    }
-    
     private func showImjangNoteVC(imjangId: Int?, version: Int?) {
         guard let imjangId = imjangId, let version = version else { return }
         let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
@@ -144,25 +128,37 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         imjangNoteVC.previousVCType = .main
         navigationController?.pushViewController(imjangNoteVC, animated: true)
     }
-    @objc private func newImjangBtnTap() {
+    
+    @objc private func newPageButtonTapped() {
         let vc = OpenNewPageViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    @objc private func myImjangBtnTap() {
-        let vc = ImjangListViewController()
+    
+    @objc private func myNoteButtonTapped() {
+        let vc = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
         vc.deleteImjangListDelegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }
-    @objc private func setttingBtnTap() {
+    
+    @objc private func lookAroundButtonTapped() {
+        let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(repository: MockLookAroundRepository()))
+        lookAroundVC.navigationController?.isNavigationBarHidden = true
+        self.navigationController?.pushViewController(lookAroundVC, animated: true)
+    }
+    
+    private func setttingBtnTap() {
         let vc = SettingViewController()
         vc.updateNicknameDelegate = self
-        self.navigationController?.pushViewController(vc, animated: false)
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     private func setConstraint() {
-        //테이블 뷰
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         tableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.left.right.bottom.equalToSuperview()
         }
     }
@@ -192,8 +188,9 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             cell.selectionStyle = .none
             cell.backgroundColor = .clear
             
-            cell.newImjangButton.addTarget(self, action: #selector(newImjangBtnTap), for: .touchUpInside)
-            cell.myNoteButton.addTarget(self, action: #selector(myImjangBtnTap), for: .touchUpInside)
+            cell.newPageButton.addTarget(self, action: #selector(newPageButtonTapped), for: .touchUpInside)
+            cell.myNoteButton.addTarget(self, action: #selector(myNoteButtonTapped), for: .touchUpInside)
+            cell.lookAroundButton.addTarget(self, action: #selector(lookAroundButtonTapped), for: .touchUpInside)
             return cell
         }
         else {

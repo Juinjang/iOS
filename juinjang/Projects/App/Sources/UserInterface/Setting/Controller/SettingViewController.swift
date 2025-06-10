@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import Alamofire
+import RxSwift
 
 struct YourResponseModel: Codable {
     let isSuccess: Bool
@@ -29,8 +30,12 @@ protocol LogoutDelegate: AnyObject {
 }
 
 final class SettingViewController : BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
-    
     static let id = "SettingViewController"
+    
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "설정"
+        $0.leftItem = [.pop]
+    }
     
     //MARK: - 프로필 사진, 닉네임
     var profileImageView = UIImageView().then {
@@ -173,6 +178,32 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     weak var updateNicknameDelegate: updateNicknameDelegate?
+    private var disposeBag = DisposeBag()
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .mainWhite
+        
+        loadProfileImage()
+        logoutButton.contentHorizontalAlignment = .left
+
+        bindAction()
+        addTarget()
+        configureHierarchy()
+        setConstraint()
+    }
+    
+    private func bindAction() {
+        navigationView.itemActionRelay
+            .subscribe(with: self) { owner, action in
+                switch action {
+                case .popButtonTap:
+                    owner.backBtnTap()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
+    }
     
     //MARK: - 함수
     func addTarget() {
@@ -383,23 +414,48 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             }
         }
     }
-
-    private func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "설정"
+    
+    private func configureHierarchy() {
+        view.add(
+            navigationView,
+            profileImageView,
+            editButton,
+            nicknameLabel,
+            nickname,
+            saveButton,
+            line1,
+            logInfoLabel,
+            logImageView,
+            logInfoMailLabel,
+            line2,
+            useButton,
+            qnaButton,
+            line3,
+            logoutButton,
+            line4,
+            accountDeleteButton
+        )
         
-        let backButtonItem = UIBarButtonItem(image: UIImage.Setting.arrowRight, style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = .gray450
-        backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.hidesBackButton = true
-        self.navigationItem.rightBarButtonItem = backButtonItem
+        useButton.add(
+            useImageView,
+            useLabel
+        )
+        
+        qnaButton.add(
+            qnaImageView,
+            qnaLabel
+        )
+        
+        accountDeleteButton.add(accountDeleteLabel)
     }
     
     private func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         profileImageView.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(28)
+            $0.top.equalTo(navigationView.snp.bottom).offset(28)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(66)
         }
@@ -410,129 +466,89 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         }
         nicknameLabel.snp.makeConstraints{
             $0.top.equalTo(editButton.snp.bottom).offset(28)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
         }
         nickname.snp.makeConstraints{
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(10)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
         }
         saveButton.snp.makeConstraints{
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(5)
-            $0.right.equalToSuperview().inset(21)
+            $0.trailing.equalToSuperview().inset(21)
             $0.height.equalTo(29)
             $0.width.equalTo(64)
         }
         logInfoLabel.snp.makeConstraints {
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(79)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
         }
         logImageView.snp.makeConstraints{
             $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
             $0.height.width.equalTo(20)
         }
         logInfoMailLabel.snp.makeConstraints{
             $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
-            $0.left.equalTo(logImageView.snp.right).offset(8)
+            $0.leading.equalTo(logImageView.snp.trailing).offset(8)
         }
         line2.snp.makeConstraints {
             $0.top.equalTo(logInfoMailLabel.snp.bottom).offset(28)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(4)
         }
         useButton.snp.makeConstraints {
             $0.top.equalTo(line2.snp.bottom).offset(10)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
         useImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(18)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
             $0.height.equalTo(24)
         }
         useLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(18)
-            $0.left.equalTo(useImageView.snp.right).offset(8)
+            $0.centerY.equalTo(useImageView)
+            $0.leading.equalTo(useImageView.snp.trailing).offset(8)
         }
         qnaButton.snp.makeConstraints {
             $0.top.equalTo(useButton.snp.bottom)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
         qnaImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(18)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
             $0.height.equalTo(24)
         }
         qnaLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(18)
-            $0.left.equalTo(qnaImageView.snp.right).offset(8)
+            $0.centerY.equalTo(qnaImageView)
+            $0.leading.equalTo(qnaImageView.snp.trailing).offset(8)
         }
         line3.snp.makeConstraints {
             $0.top.equalTo(qnaImageView.snp.bottom).offset(28)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(4)
         }
         logoutButton.snp.makeConstraints {
             $0.top.equalTo(line3.snp.bottom).offset(25)
-            $0.left.right.equalToSuperview().inset(24)
+            $0.horizontalEdges.equalToSuperview().inset(24)
             $0.height.equalTo(23)
         }
         line4.snp.makeConstraints {
             $0.top.equalTo(logoutButton.snp.bottom).offset(25)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(4)
         }
         accountDeleteButton.snp.makeConstraints {
             $0.top.equalTo(line4.snp.bottom).offset(10)
-            $0.left.right.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
         accountDeleteLabel.snp.makeConstraints {
             $0.top.equalToSuperview().offset(15)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
             $0.height.equalTo(23)
         }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        print("email :\(UserDefaultManager.shared.email)")
-        //getUserInfo()
-        loadProfileImage()
-        designNavigationBar()
-        view.addSubview(profileImageView)
-        view.addSubview(editButton)
-        
-        view.addSubview(nicknameLabel)
-        view.addSubview(nickname)
-        view.addSubview(saveButton)
-        view.addSubview(line1)
-        view.addSubview(logInfoLabel)
-        view.addSubview(logImageView)
-        view.addSubview(logInfoMailLabel)
-        view.addSubview(line2)
-        
-        view.addSubview(useButton)
-        useButton.addSubview(useImageView)
-        useButton.addSubview(useLabel)
-        
-        view.addSubview(qnaButton)
-        qnaButton.addSubview(qnaImageView)
-        qnaButton.addSubview(qnaLabel)
-        view.addSubview(line3)
-        
-        view.addSubview(logoutButton)
-        logoutButton.contentHorizontalAlignment = .left
-        view.addSubview(line4)
-        
-        view.addSubview(accountDeleteButton)
-        accountDeleteButton.addSubview(accountDeleteLabel)
-        
-        view.backgroundColor = .mainWhite
-        //setUserInfo()
-        addTarget()
-        setConstraint()
     }
 }
 

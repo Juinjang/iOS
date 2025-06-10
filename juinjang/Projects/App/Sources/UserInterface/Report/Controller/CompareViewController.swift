@@ -529,7 +529,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
             self.present(popupViewController, animated: false)
         } else {
             // 매물이 있을 때 `SelectMaemullViewController`로 이동
-            let vc = SelectMaemullViewController(imjangId: self.imjangId)
+            let vc = SelectMaemullViewController(dependency: SelectMaemullViewController.Dependency(noteRepository: NoteRepository()), imjangId: self.imjangId)
             vc.delegate = self
             self.navigationController?.pushViewController(vc, animated: true)
         }

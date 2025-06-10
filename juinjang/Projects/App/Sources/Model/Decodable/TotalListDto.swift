@@ -58,7 +58,7 @@ struct LimjangDto: Codable {
     let nickname: String
     let price: String
     let totalAverage: String?    // 체크리스트 생선 전일 경우 값은 nil
-    let address: String
+    let address: String?
 }
 
 struct LimjangDTO: Codable {
@@ -74,4 +74,23 @@ struct LimjangDTO: Codable {
     let updatedAt: String
 }
 
+struct NoteResultDTO: Codable {
+    let notes: [NoteDTO]
+}
 
+struct NoteDTO: Codable {
+    let noteId: Int
+    let purposeType: String
+    let propertyType: String
+    let priceType: String
+    let name: String
+    let imageUrl: [String]
+    var isScraped: Bool
+    let rate: String?
+    let price: String
+    let monthlyRent: String?
+    let pyong: Int?
+    let floor: String?
+    let roadAddress: String?
+    let addressDetail: String?
+}

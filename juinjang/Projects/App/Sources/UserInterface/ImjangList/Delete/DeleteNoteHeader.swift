@@ -1,5 +1,5 @@
 //
-//  DeleteImjangTableHeaderView.swift
+//  DeleteNoteHeader.swift
 //  juinjang
 //
 //  Created by 조유진 on 1/31/24.
@@ -7,12 +7,12 @@
 
 import UIKit
 
-final class DeleteImjangTableHeaderView: UITableViewHeaderFooterView {
+final class DeleteNoteHeader: UICollectionReusableView {
     let selectedCountLabel = UILabel()
     let removeAllCheckButton = UIButton()
-
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
         configureHierarchy()
         configureLayout()
         configureView()
@@ -24,25 +24,25 @@ final class DeleteImjangTableHeaderView: UITableViewHeaderFooterView {
     }
     
     private func configureHierarchy() {
-        contentView.addSubview(selectedCountLabel)
-        contentView.addSubview(removeAllCheckButton)
+        addSubview(selectedCountLabel)
+        addSubview(removeAllCheckButton)
     }
     
     private func configureLayout() {
         selectedCountLabel.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.leading.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview()
             $0.height.equalTo(20)
         }
         
         removeAllCheckButton.snp.makeConstraints {
             $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(40)
+            $0.trailing.equalToSuperview().inset(16)
         }
     }
     
     private func configureView() {
-        contentView.backgroundColor = .mainWhite
+        backgroundColor = .mainWhite
         selectedCountLabel.design(text: "0개 선택됨",
                                   textColor: .gray400,
                                   font: .pretendard(size: 14, weight: .medium))

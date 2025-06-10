@@ -1,18 +1,18 @@
 //
-//  ImjangNoteCollectionViewCell.swift
+//  SelectNoteCell.swift
 //  juinjang
 //
-//  Created by 조유진 on 2/19/24.
+//  Created by 조유진 on 5/31/25.
 //
 
 import UIKit
 import Then
 import SnapKit
 
-final class ImjangNoteCollectionViewCell: UICollectionViewCell {
+final class SelectNoteCell: UICollectionViewCell {
     private let roomThumbnailImageView = UIImageView()
     private let roomNameLabel = UILabel()
-    private let roomIcon = UIImageView()
+    private let coinIcon = UIImageView()
     
     private let priceLabel = DSLabel(.body)
     private let pyongFloorLabel = DSLabel(.reguler).then {
@@ -26,7 +26,11 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     
     let bookMarkButton = UIButton()
     
-    private let seperatorView = UIView()
+    var isClicked = false {
+        didSet {
+            setSelectStyle(isSelected: isClicked)
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -43,12 +47,13 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         configureCell(note: nil)
         self.roomThumbnailImageView.image = nil
-        self.roomIcon.image = UIImage.ImjangNote.house
+        coinIcon.image = .coin
+        setSelectStyle(isSelected: false)
     }
 }
 
 // MARK: - Configure Cell
-extension ImjangNoteCollectionViewCell {
+extension SelectNoteCell {
     func configureCell(note: NoteDTO?) {
         guard let note else { return }
 
@@ -57,9 +62,9 @@ extension ImjangNoteCollectionViewCell {
         if let purposeType = PurposeType(rawValue: note.purposeType) {
             switch purposeType {
             case .INVESTMENT:
-                roomIcon.image = .coin
+                coinIcon.image = .coin
             case .RESIDENTIAL_PURPOSE:
-                roomIcon.image = UIImage.ImjangNote.house
+                coinIcon.image = UIImage.ImjangNote.house
             }
         }
         
@@ -75,16 +80,18 @@ extension ImjangNoteCollectionViewCell {
             }
         }
         
+        addressLabel.text = note.addressDetail
+
+        if let priceType = PriceType(rawValue: note.priceType) {
+            setPriceLabel(note: note, priceType: priceType)
+        }
+        
         if let roadAddress = note.roadAddress {
             addressLabel.text = roadAddress
         } else {
             if let addressDetail = note.addressDetail {
                 addressLabel.text = addressDetail
             }
-        }
-
-        if let priceType = PriceType(rawValue: note.priceType) {
-            setPriceLabel(note: note, priceType: priceType)
         }
         
         let image = note.isScraped ? UIImage.bookmarkOn22 : UIImage.bookmarkOff22
@@ -126,30 +133,41 @@ extension ImjangNoteCollectionViewCell {
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
     }
+    
+    func setSelectStyle(isSelected: Bool) {
+        if isSelected {
+            contentView.layer.borderColor = UIColor.main.cgColor
+            contentView.layer.borderWidth = 1
+            contentView.backgroundColor = .bg2
+        } else {
+            contentView.layer.borderColor = UIColor.stroke.cgColor
+            contentView.layer.borderWidth = 1
+            contentView.backgroundColor = .mainWhite
+        }
+    }
 }
 
 // MARK: - Configure UI
-extension ImjangNoteCollectionViewCell {
+extension SelectNoteCell {
     
     private func configureHierarchy() {
         contentView.add(
             roomThumbnailImageView,
             roomNameLabel,
-            roomIcon,
+            coinIcon,
             priceLabel,
             pyongFloorLabel,
             addressLabel,
             scoreLabel,
             starIcon,
-            bookMarkButton,
-            seperatorView
+            bookMarkButton
         )
     }
     
     private func configureLayout() {
         roomThumbnailImageView.snp.makeConstraints {        // 방 썸네일 사진
-            $0.leading.equalToSuperview()
-            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview().inset(12)
+            $0.verticalEdges.equalToSuperview().inset(12)
             $0.width.equalTo(144)
             $0.height.equalTo(112)
         }
@@ -160,10 +178,10 @@ extension ImjangNoteCollectionViewCell {
             $0.height.equalTo(23)
         }
         
-        roomIcon.snp.makeConstraints {
+        coinIcon.snp.makeConstraints {
             $0.size.equalTo(18)
             $0.leading.equalTo(roomNameLabel.snp.trailing).offset(4)
-            $0.trailing.lessThanOrEqualToSuperview()
+            $0.trailing.lessThanOrEqualToSuperview().inset(12)
             $0.centerY.equalTo(roomNameLabel)
         }
         
@@ -189,8 +207,7 @@ extension ImjangNoteCollectionViewCell {
         }
     
         bookMarkButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(13)
-            $0.trailing.equalToSuperview()
+            $0.bottom.trailing.equalToSuperview().inset(13)
             $0.size.equalTo(22)
         }
         
@@ -205,12 +222,6 @@ extension ImjangNoteCollectionViewCell {
             $0.leading.equalTo(roomNameLabel.snp.leading)
             $0.centerY.equalTo(scoreLabel.snp.centerY)
         }
-        
-        seperatorView.snp.makeConstraints {
-            $0.height.equalTo(1)
-            $0.horizontalEdges.equalToSuperview()
-            $0.bottom.equalToSuperview()
-        }
     }
     
     override func layoutSubviews() {
@@ -221,10 +232,12 @@ extension ImjangNoteCollectionViewCell {
     
     private func configureView() {
         contentView.backgroundColor = .mainWhite
+        contentView.layer.cornerRadius = 10
+        setSelectStyle(isSelected: false)
         
         roomThumbnailImageView.contentMode = .scaleAspectFill
         
-        roomIcon.design(image: UIImage.ImjangNote.house, contentMode: .scaleAspectFit)
+        coinIcon.design(image: UIImage.coin, contentMode: .scaleAspectFit)
         roomNameLabel.design(text:"", font: .pretendard(size: 16, weight: .bold))
         
         priceLabel.fontColor = .gray450
@@ -235,10 +248,8 @@ extension ImjangNoteCollectionViewCell {
         starIcon.tintColor = .main
         
         scoreLabel.design(text:"", textColor: .main, font: .pretendard(size: 14, weight: .semiBold))
-        scoreLabel.textColor = .main
         
         bookMarkButton.design(image: UIImage.bookmarkOff22, backgroundColor: .clear)
-        
-        seperatorView.backgroundColor = .stroke
+        bookMarkButton.isUserInteractionEnabled = false
     }
 }

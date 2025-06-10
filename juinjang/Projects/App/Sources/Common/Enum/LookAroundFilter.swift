@@ -5,16 +5,16 @@
 //  Created by 조유진 on 3/13/25.
 //
 
-protocol LookAroundFilterType {
+protocol FilterType {
     var rawValue: String { get }
     var title: String { get }
-    var action: LookAroundFilterActionType { get }
+    var action: FilterActionType { get }
 }
-protocol LookAroundFilterActionType {
+protocol FilterActionType {
     
 }
 
-enum SortFilter: String, CaseIterable, LookAroundFilterType {
+enum SortFilter: String, CaseIterable, FilterType {
     case popular = "인기순"
     case lateset = "최신순"
     
@@ -22,7 +22,7 @@ enum SortFilter: String, CaseIterable, LookAroundFilterType {
         return self.rawValue
     }
     
-    var action: LookAroundFilterActionType {
+    var action: FilterActionType {
         switch self {
         case .popular: SortAction.purchaseAction
         case .lateset: SortAction.latestAction
@@ -30,7 +30,7 @@ enum SortFilter: String, CaseIterable, LookAroundFilterType {
     }
 }
 
-enum TransactionTypeFilter: String, CaseIterable, LookAroundFilterType {
+enum TransactionTypeFilter: String, CaseIterable, FilterType {
     case total = "전체"
     case monthlyRent = "월세"
     case lease = "전세"
@@ -43,7 +43,7 @@ enum TransactionTypeFilter: String, CaseIterable, LookAroundFilterType {
         }
     }
     
-    var action: LookAroundFilterActionType {
+    var action: FilterActionType {
         switch self {
         case .total: TransactionTypeAction.totalTransaction
         case .monthlyRent: TransactionTypeAction.monthlyRent
@@ -53,7 +53,7 @@ enum TransactionTypeFilter: String, CaseIterable, LookAroundFilterType {
     }
 }
 
-enum SaleTypeFilter: String, CaseIterable, LookAroundFilterType {
+enum SaleTypeFilter: String, CaseIterable, FilterType {
     case totalSale = "전체"
     case officetel = "오피스텔"
     case apartment = "아파트"
@@ -67,7 +67,7 @@ enum SaleTypeFilter: String, CaseIterable, LookAroundFilterType {
         }
     }
     
-    var action: LookAroundFilterActionType {
+    var action: FilterActionType {
         switch self {
         case .totalSale: SaleTypeAction.totalSale
         case .officetel: SaleTypeAction.officetel
@@ -78,12 +78,44 @@ enum SaleTypeFilter: String, CaseIterable, LookAroundFilterType {
     }
 }
 
-enum SortAction: LookAroundFilterActionType {
+enum MyNoteFilter: String, CaseIterable, FilterType {
+    case updated = "업데이트순"
+    case star = "별점순"
+    case created = "등록순"
+    
+    var title: String {
+        return self.rawValue
+    }
+    
+    var action: FilterActionType {
+        switch self {
+        case .updated: MyNoteAction.updated
+        case .star: MyNoteAction.star
+        case .created: MyNoteAction.created
+        }
+    }
+    
+    var parameterValue: String {
+        switch self {
+        case .updated: "UPDATED"
+        case .star: "STAR"
+        case .created: "CREATED"
+        }
+    }
+}
+
+enum MyNoteAction: FilterActionType {
+    case updated
+    case created
+    case star
+}
+
+enum SortAction: FilterActionType {
     case latestAction
     case purchaseAction
 }
 
-enum TransactionTypeAction: LookAroundFilterActionType {
+enum TransactionTypeAction: FilterActionType {
     case totalTransaction
     case monthlyRent
     case lease
@@ -103,7 +135,7 @@ enum TransactionTypeAction: LookAroundFilterActionType {
     }
 }
 
-enum SaleTypeAction: LookAroundFilterActionType {
+enum SaleTypeAction: FilterActionType {
     case totalSale
     case officetel
     case apartment
