@@ -15,6 +15,7 @@ final class ImjangDetailViewReactor: Reactor {
         case noteOpenButtonDidTap
         case expandImageButtonDidTap(index: Int)
         case likeButtonDidTap
+        case screenRecordingChanged(isRecording: Bool)
     }
     
     enum Mutation {
@@ -26,6 +27,7 @@ final class ImjangDetailViewReactor: Reactor {
         case updateIsBuyerInInfoSection(Bool)
         case updateIsShowNotBuyerAlert(Bool)
         case updateIsLikedInInfoSection
+        case updateIsShowCaptureAlert(Bool)
     }
     
     struct State {
@@ -36,6 +38,7 @@ final class ImjangDetailViewReactor: Reactor {
         var isBuyer: Bool
         var isShowPencilAlert: Bool
         var isShowNotBuyerAlert: Bool
+        var isShowCaptureAlert: Bool?
     }
         
     struct Dependency {
@@ -56,7 +59,8 @@ final class ImjangDetailViewReactor: Reactor {
             isOneRoom: false,
             isBuyer: false,
             isShowPencilAlert: false,
-            isShowNotBuyerAlert: false
+            isShowNotBuyerAlert: false,
+            isShowCaptureAlert: nil
         )
     }
     
@@ -108,6 +112,10 @@ final class ImjangDetailViewReactor: Reactor {
             return .just(
                 .updateIsLikedInInfoSection
             )
+        case let .screenRecordingChanged(isRecording):
+            return isRecording
+            ? .just(.updateIsShowCaptureAlert(!(self.currentState.isShowCaptureAlert ?? true)))
+            : .empty()
         }
     }
     
@@ -130,6 +138,8 @@ final class ImjangDetailViewReactor: Reactor {
             newState.isShowNotBuyerAlert = bool
         case .updateIsLikedInInfoSection:
             newState = toggleLikedInInfoSection(newState)
+        case .updateIsShowCaptureAlert(let bool):
+            newState.isShowCaptureAlert = bool
         }
         return newState
     }

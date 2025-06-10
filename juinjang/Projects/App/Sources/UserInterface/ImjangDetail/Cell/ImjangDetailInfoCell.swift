@@ -36,6 +36,7 @@ final class ImjangDetailInfoCell: BaseCollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         imageContentView.prepareForReuse()
+        buildingDetailInfoView.prepareForReuse()
     }
     
     override func configureView() {

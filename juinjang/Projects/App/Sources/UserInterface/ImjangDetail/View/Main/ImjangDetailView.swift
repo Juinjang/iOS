@@ -182,8 +182,8 @@ extension Reactive where Base: ImjangDetailView {
     }
     
     var isTopButtonVisible: Binder<Bool> {
-        return Binder(base) { view, visible in
-            if visible {
+        return Binder(base) { view, bool in
+            if bool {
                 view.topFloatingButton.isHidden = false
                 view.topFloatingButton.alpha = 0
                 UIView.animate(withDuration: 0.25) {
@@ -209,6 +209,12 @@ extension Reactive where Base: ImjangDetailView {
         return Binder(base) { view, bool in
             view.isBuyer = bool
             view.detailCollectionView.reloadData()
+        }
+    }
+    
+    var isCaptured: Binder<Bool> {
+        return Binder(base) { view, bool in
+            
         }
     }
 }

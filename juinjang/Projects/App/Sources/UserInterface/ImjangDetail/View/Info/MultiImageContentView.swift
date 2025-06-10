@@ -43,9 +43,6 @@ final class MultiImageContentView: BaseView {
     
     func configure(for model: ImjangDetailInfoModel,
                    relay: PublishRelay<ImjangDetailInfoCellEvent>) {
-        disposeBag = DisposeBag()
-        prepareForReuse()
-        
         model.isBuyer
         ? applyImageLayoutForBuyer(for: model)
         : applyImageLayout(for: model)
@@ -97,6 +94,8 @@ final class MultiImageContentView: BaseView {
     }
     
     func prepareForReuse() {
+        disposeBag = DisposeBag()
+        
         [mainImageButton,
          secondImageButton,
          thirdImageButton].forEach {
