@@ -16,6 +16,7 @@ enum MyNotePageEventType: Equatable {
     case noticeCloseButtonTap
     case filterItemTap(TransactionTypeAction?, SaleTypeAction?)
     case shareButtonTap
+    case stopShareButtonTap
     case cellEvent(MyNoteCellEventType)
 }
 
@@ -40,6 +41,10 @@ final class MyNotePageCell: UICollectionViewCell {
     
     private let noticeView = MyNoteNoticeView()
     private let filterView = MyNoteDropDownView()
+    private let stopShareButton = UIButton().then {
+        $0.setImage(.trash, for: .normal)
+        $0.isHidden = true
+    }
     private let emptyView = MyNoteEmptyView()
     private lazy var innerCollectionView: UICollectionView = {
         return UICollectionView(frame: .zero,
@@ -71,13 +76,16 @@ final class MyNotePageCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        contentView.bringSubviewToFront(filterView)
+        [filterView, stopShareButton].forEach {
+            contentView.bringSubviewToFront($0)
+        }
     }
     
     private func setupUI() {
         contentView.add([
             noticeView,
             filterView,
+            stopShareButton,
             innerCollectionView,
             emptyView
         ])
@@ -92,8 +100,14 @@ final class MyNotePageCell: UICollectionViewCell {
         
         filterView.snp.makeConstraints {
             $0.top.equalTo(noticeView.snp.bottom)
-            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.left.equalToSuperview().offset(24)
             $0.height.equalTo(51)
+        }
+        
+        stopShareButton.snp.makeConstraints {
+            $0.size.equalTo(22)
+            $0.centerY.equalTo(filterView.snp.centerY)
+            $0.right.equalToSuperview().inset(24)
         }
         
         innerCollectionView.snp.makeConstraints {
@@ -113,6 +127,7 @@ final class MyNotePageCell: UICollectionViewCell {
         disposeBag = DisposeBag()
         noticeView.configure(page.category, relay: closeButtonRelay)
         filterView.configure(page.transactionType, page.saleType)
+        stopShareButton.isHidden = page.items.isEmpty || page.category != .share
         emptyView.configure(text: createEmptyViewText(category: page.category),
                             isShowButton: page.category == .share,
                             buttonTitle: "노트 공유하러 가기")
@@ -148,6 +163,11 @@ final class MyNotePageCell: UICollectionViewCell {
             .subscribe(with: self) { (self, action) in
                 relay.accept(.filterItemTap(nil, action))
             }
+            .disposed(by: disposeBag)
+        
+        stopShareButton.rx.throttleTap
+            .map { MyNotePageEventType.stopShareButtonTap }
+            .bind(to: relay)
             .disposed(by: disposeBag)
         
         emptyView.filledButtonRelay

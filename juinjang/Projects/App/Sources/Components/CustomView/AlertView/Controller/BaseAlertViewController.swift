@@ -13,7 +13,6 @@ enum AlertButtonType: Equatable {
     case confirm(title: String, width: CGFloat?)
     case cancel(title: String, width: CGFloat?)
     case custom(view: UIView)
-
     var title: String {
         switch self {
         case .cancel(title: let title, _):
@@ -57,9 +56,10 @@ class BaseAlertViewController: UIViewController {
     lazy var mainView: BaseAlertView = {
         return BaseAlertView()
     }()
-
+        
     init(height: CGFloat,
          isShowDismissButton: Bool = false,
+         isBackgroundDismissEnabled: Bool = false,
          contentViews: [UIView],
          buttons: [AlertButtonType]) {
         super.init(nibName: nil, bundle: nil)
@@ -81,16 +81,16 @@ class BaseAlertViewController: UIViewController {
         modalTransitionStyle = .crossDissolve
         bind()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         configureContentHierarchy()
         configureContentLayout()
     }
-
+    
     func configureContentHierarchy() {}
     func configureContentLayout() {}
-
+    
     private func bind() {
         mainView
             .dismissButton.rx.throttleTap
@@ -98,7 +98,7 @@ class BaseAlertViewController: UIViewController {
                 self.dismiss(animated: true)
             }
             .disposed(by: disposeBag)
-
+        
         mainView
             .eventRelay
             .subscribe(with: self) { (self, event) in

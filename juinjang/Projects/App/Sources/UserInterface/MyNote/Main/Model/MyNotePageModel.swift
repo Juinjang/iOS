@@ -7,12 +7,20 @@
 
 import RxDataSources
 
-struct MyNotePageModel {
+struct MyNotePageModel: Equatable {
     var category: MyNoteCategoryType
     var isShowingNotice: Bool
     var transactionType: TransactionTypeFilter
     var saleType: SaleTypeFilter
     var items: [MyNoteCellModel]
+    
+    static func == (lhs: MyNotePageModel, rhs: MyNotePageModel) -> Bool {
+        return lhs.category == rhs.category &&
+        lhs.isShowingNotice == rhs.isShowingNotice &&
+        lhs.transactionType == rhs.transactionType &&
+        lhs.saleType == rhs.saleType &&
+        lhs.items == rhs.items
+    }
 }
 
 extension MyNotePageModel: AnimatableSectionModelType {

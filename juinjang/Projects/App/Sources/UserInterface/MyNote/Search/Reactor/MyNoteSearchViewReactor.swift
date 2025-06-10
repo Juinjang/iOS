@@ -33,7 +33,7 @@ final class MyNoteSearchViewReactor: Reactor {
     
     // MARK: - Dependencies
     struct Dependency {
-        let myNoteRepository: MyNoteRepositoryProtocol
+        let noteRepository: SharedNoteRepositoryProtocol
     }
     
     let dependency: Dependency
@@ -48,8 +48,16 @@ final class MyNoteSearchViewReactor: Reactor {
         case .searchSummitButtonTapped(let keyword):
             return .concat([
                 .just(.setLoading(true)),
-                dependency.myNoteRepository
-                    .fetchMyNotes(keyword: keyword)
+                dependency.noteRepository
+                    .retrieveMyNotes(
+                        param: .init(
+                            noteType: "",
+                            propertyType: "",
+                            priceType: "",
+                            keyword: keyword
+                        )
+                    )
+                    .asObservable()
                     .map { notes in
                         return .setList(notes.map { MyNoteCellModel(model: $0) })
                     },

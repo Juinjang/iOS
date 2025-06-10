@@ -33,36 +33,34 @@ final class MyNoteCell: UICollectionViewCell {
     
     private let buildingInfoBaseView = UIView()
     
-    private let buildingNameLabel = UILabel().then {
-        $0.textColor = .gray600
-        $0.font = .pretendard(size: 16, weight: .bold)
-        $0.lineBreakMode = .byTruncatingTail
-        $0.numberOfLines = 1
+    private let buildingNameLabel = DSLabel(.title).then {
+        $0.fontColor = .gray600
+        $0.fontWeight = .bold
     }
 
-    private let purchaseLabel = UILabel().then {
+    private let purchaseLabel = DSLabel(.body).then {
         $0.backgroundColor = .point.withAlphaComponent(0.1)
         $0.layer.cornerRadius = 4
         $0.layer.masksToBounds = true
         $0.text = "소장"
-        $0.textAlignment = .center
-        $0.textColor = .point
-        $0.font = .pretendard(size: 12, weight: .medium)
+        $0.fontAlignment = .center
+        $0.fontColor = .point
+        $0.fontSize = 12
     }
     
-    private let priceLabel = UILabel().then {
-        $0.font = .pretendard(size: 16, weight: .medium)
-        $0.textColor = .gray450
+    private let priceLabel = DSLabel(.body).then {
+        $0.fontColor = .gray450
+        $0.fontSize = 16
     }
     
-    private let spaceInfoLabel = UILabel().then {
-        $0.font = .pretendard(size: 14, weight: .medium)
-        $0.textColor = .gray400
+    private let spaceInfoLabel = DSLabel(.body).then {
+        $0.fontColor = .gray400
+        $0.fontSize = 14
     }
     
-    private let addressLabel = UILabel().then {
-        $0.font = .pretendard(size: 13, weight: .medium)
-        $0.textColor = .gray400
+    private let addressLabel = DSLabel(.body).then {
+        $0.fontSize = 13
+        $0.fontColor = .gray400
     }
     
     private let metaInfoView = MyNoteMetaInfoView().then {
@@ -113,7 +111,7 @@ final class MyNoteCell: UICollectionViewCell {
               relay: PublishRelay<MyNoteCellEventType>) {
         thumbnailImageView.kf.setImage(
             with: URL(string: model.imageUrl),
-            placeholder: UIImage.randomCardPlaceholderImage
+            placeholder: PropertyType(rawValue: model.propertyType)?.image
         )
         rateLabel.rateNumber = model.rate
         likeButton.isSelected = model.isLike
@@ -123,6 +121,7 @@ final class MyNoteCell: UICollectionViewCell {
         spaceInfoLabel.text = "\(model.pyong)평 \(model.floor)"
         addressLabel.text = "\(model.address)"
         metaInfoView.configure(.init(model))
+        configureStopShareLayout(model)
         
         likeButton.rx.throttleTap
             .map { MyNoteCellEventType.likeButtonTap(id: model.sharedNoteId) }
@@ -223,5 +222,39 @@ final class MyNoteCell: UICollectionViewCell {
             $0.bottom.equalToSuperview()
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
+    }
+}
+
+// MARK: - StopShare Layout Update
+extension MyNoteCell {
+    private func configureStopShareLayout(_ model: MyNoteCellModel) {
+        if model.isStopShare {
+            separatorView.isHidden = true
+            layer.masksToBounds = true
+            layer.cornerRadius = 10
+            
+            thumbnailImageView.snp.remakeConstraints {
+                $0.width.equalTo(144)
+                $0.height.equalTo(112)
+                $0.left.equalToSuperview().offset(12)
+                $0.centerY.equalToSuperview()
+            }
+            
+            model.isSelected ? updateStopShareSelectedView() : updateStopShareDefaultView()
+        }
+    }
+    
+    private func updateStopShareDefaultView() {
+        backgroundColor = .mainWhite
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.stroke.cgColor
+        layer.cornerRadius = 12
+    }
+    
+    private func updateStopShareSelectedView() {
+        backgroundColor = .bg2
+        layer.borderWidth = 1
+        layer.borderColor = UIColor.main.cgColor
+        layer.cornerRadius = 12
     }
 }

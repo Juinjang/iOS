@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import SnapKit
+import Then
 
 final class ImjangListHeader: UICollectionReusableView {
     let filterBackgroundView = UIView().then {
@@ -29,6 +31,8 @@ final class ImjangListHeader: UICollectionReusableView {
     }()
     
     let deleteButton = UIButton()
+    let shareButton = UIButton()
+    let chatBubbleView = ChatBubbleView(text: "나의 임장을 공유할 수 있어요!")
     var menuChildren: [UIMenuElement] = []
     let filterList = Filter.allCases
     weak var sendFilterItemDelegate: SendFilterItemDelegate?
@@ -84,28 +88,69 @@ extension ImjangListHeader {
     }
     
     private func configureHierarchy() {
-        addSubview(filterBackgroundView)
-        filterBackgroundView.addSubview(filterselectBtn)
-        filterBackgroundView.addSubview(deleteButton)
+        add(
+            filterBackgroundView.with(
+                filterselectBtn,
+                deleteButton,
+                shareButton,
+                chatBubbleView
+            )
+        )
     }
     private func configureLayout() {
         filterBackgroundView.snp.makeConstraints {
             $0.edges.equalToSuperview()
             $0.height.equalTo(49)
         }
+        
         filterselectBtn.snp.makeConstraints {
             $0.centerY.equalTo(filterBackgroundView)
             $0.leading.equalToSuperview().offset(16)
         }
+        
         deleteButton.snp.makeConstraints {
             $0.centerY.equalTo(filterBackgroundView)
             $0.trailing.equalToSuperview().inset(24)
             $0.size.equalTo(22)
         }
+        
+        shareButton.snp.makeConstraints {
+            $0.centerY.equalTo(filterBackgroundView)
+            $0.right.equalTo(deleteButton.snp.left).offset(-18)
+            $0.size.equalTo(22)
+        }
+        
+        chatBubbleView.snp.makeConstraints {
+            $0.height.equalTo(34)
+            $0.width.equalTo(174)
+            $0.right.equalTo(shareButton.snp.right)
+            $0.bottom.equalTo(shareButton.snp.top).offset(-2)
+        }
     }
     
     private func configureView() {
         backgroundColor = .mainWhite
+        clipsToBounds = false
         deleteButton.design(image: UIImage.trash, backgroundColor: .clear)
+        shareButton.design(image: UIImage.share, backgroundColor: .clear)
+        chatBubbleView.isHidden = !(UserDefaultManager.shared.isShowShareAlert ?? true)
+        chatBubbleView.onDismiss = { [weak chatBubbleView] in
+            UserDefaultManager.shared.isShowShareAlert = false
+            chatBubbleView?.isHidden = true
+        }
+    }
+    
+    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        let view = super.hitTest(point, with: event)
+        if view != nil {
+            return view
+        }
+
+        let convertedPoint = chatBubbleView.convert(point, from: self)
+        if chatBubbleView.bounds.contains(convertedPoint) {
+            return chatBubbleView.hitTest(convertedPoint, with: event)
+        }
+
+        return nil
     }
 }

@@ -14,6 +14,7 @@ final class UserDefaultManager {
     
     enum UDKey: String, CaseIterable {
         case searchKeywords
+        case lookAroundSearchKeywords
         case accessToken
         case refreshToken
         case nickname
@@ -26,6 +27,7 @@ final class UserDefaultManager {
         case kakaoTargetId
         case appleAuthCode
         case agreeVersion
+        case isShowShareAlert
     }
     
     let ud = UserDefaults.standard
@@ -33,6 +35,11 @@ final class UserDefaultManager {
     var searchKeywords: [String] {
         get { ud.array(forKey: UDKey.searchKeywords.rawValue) as? [String] ?? [] }
         set { ud.set(newValue, forKey: UDKey.searchKeywords.rawValue) }
+    }
+    
+    var lookAroundSearchKeywords: [String] {
+        get { ud.array(forKey: UDKey.lookAroundSearchKeywords.rawValue) as? [String] ?? [] }
+        set { ud.set(newValue, forKey: UDKey.lookAroundSearchKeywords.rawValue) }
     }
     
     var accessToken: String {
@@ -99,6 +106,11 @@ final class UserDefaultManager {
     var agreeVersion: String {
         get { ud.string(forKey: UDKey.agreeVersion.rawValue) ?? "" }
         set { ud.set(newValue, forKey: UDKey.agreeVersion.rawValue) }
+    }
+    
+    var isShowShareAlert: Bool? {
+        get { ud.object(forKey: UDKey.isShowShareAlert.rawValue) as? Bool }
+        set { ud.set(newValue, forKey: UDKey.isShowShareAlert.rawValue) }
     }
     
     func removeUserInfo() {

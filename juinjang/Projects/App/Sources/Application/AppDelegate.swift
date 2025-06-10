@@ -21,6 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         IQKeyboardManager.shared.enable = true
         KakaoSDK.initSDK(appKey: APIKey.kakaoSDKKey)
         FirebaseApp.configure()
+        FirebaseConfiguration.shared.setLoggerLevel(.min)
+
         return true
     }
 
