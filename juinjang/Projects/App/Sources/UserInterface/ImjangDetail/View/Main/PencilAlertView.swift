@@ -140,8 +140,8 @@ fileprivate final class NoteOpenView: BaseView {
 
 
 fileprivate final class MyPencilView: BaseView {
-    private let itemView = PencilItemView()
-    private let needItemView = PencilItemView()
+    private let itemView = PencilCountView()
+    private let needItemView = PencilCountView()
     
     func configure(count: Int,
                    needCount: Int) {
@@ -176,7 +176,7 @@ fileprivate final class MyPencilView: BaseView {
     }
 }
 
-fileprivate final class PencilItemView: UIView {
+fileprivate final class PencilCountView: UIView {
     private let textLabel = DSLabel(.body).then {
         $0.fontColor = .gray450
     }

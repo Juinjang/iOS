@@ -8,6 +8,7 @@
 import UIKit
 import ReactorKit
 import RxDataSources
+import RxRelay
 
 final class LookAroundViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
@@ -18,9 +19,12 @@ final class LookAroundViewController: BaseViewController, View {
         return dataSource
     }()
     
+    private let cellEventRelay = PublishRelay<LookAroundCellEventType>()
+    
     init(reactor: LookAroundReactor) {
         super.init()
         self.reactor = reactor
+        bindCellEvent()
     }
     
     required init?(coder: NSCoder) {
@@ -55,6 +59,45 @@ final class LookAroundViewController: BaseViewController, View {
             .disposed(by: disposeBag)
     }
     
+    private func bindCellEvent() {
+        cellEventRelay
+            .compactMap { $0.tappedContent }
+            .bind(with: self) { owner, content in
+                owner.handleContentTapped(content: content)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func handleContentTapped(content: LookAroundContent) {
+        switch content {
+        case .pencilShop: showPencilShopVC()
+        case .myNote: showMyNoteVC()
+        }
+    }
+    
+    private func showPencilShopVC() {
+        let pencilShopVC = PencilShopViewController(
+            reactor: PencilShopReactor(
+                dependency: PencilShopReactor.Dependency(
+                    inAppPurchaseService: InAppPurchaseService(buyPencilRepository: MockVerifyTransactionRepository()),
+                    pencilShopRepository: PencilShopRepository()
+                )
+            )
+        )
+        navigationController?.pushViewController(pencilShopVC, animated: true)
+    }
+
+    private func showMyNoteVC() {
+        let myNoteVC = MyNoteViewController(
+            reactor: MyNoteViewReactor(
+                dependency: MyNoteViewReactor.Dependency(
+                    noteRepository: SharedNoteRepository()
+                )
+            )
+        )
+        navigationController?.pushViewController(myNoteVC, animated: true)
+    }
+    
     private func popVewController() {
         navigationController?.popViewController(animated: true)
     }
@@ -73,11 +116,12 @@ final class LookAroundViewController: BaseViewController, View {
 
 extension LookAroundViewController {
     private func configureCollectionViewDataSource() -> RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData> {
-        return RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData>(configureCell: { dataSource, collectionView, indexPath, lookAroundImjangData in
+        return RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData>(configureCell: { [weak self] dataSource, collectionView, indexPath, lookAroundImjangData in
+            guard let self else { return UICollectionViewCell() }
             switch dataSource[indexPath] {
             case .contentsSection(let content):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundContentCell.identifier, for: indexPath) as? LookAroundContentCell else { return UICollectionViewCell() }
-                cell.configureCell(content: content)
+                cell.configureCell(content: content, relay: cellEventRelay)
                 return cell
                 
             case .selectAreaSection(let selectArea):

@@ -15,6 +15,6 @@ struct MyNoteMetaInfoModel {
         self.imageUrl = model.imageUrl
         self.nickname = model.onwerNickname
         self.createDate = model.monthAge.monthAgoString
-        self.viewCount = model.viewCount.convertHitsString()
+        self.viewCount = model.viewCount.viewCountString
     }
 }
