@@ -6,6 +6,9 @@
 //
 
 import UIKit
+import RxRelay
+import RxSwift
+import RxCocoa
 
 final class LookAroundContentCell: BaseCollectionViewCell {
     private let iconImageView = UIImageView().then {
@@ -15,14 +18,24 @@ final class LookAroundContentCell: BaseCollectionViewCell {
     
     private let titleLabel = UILabel()
     
+    private var disposeBag = DisposeBag()
+    
     override func prepareForReuse() {
         super.prepareForReuse()
         iconImageView.image = nil
+        disposeBag = DisposeBag()
     }
     
-    func configureCell(content: LookAroundContent) {
+    func configureCell(content: LookAroundContent,
+                       relay: PublishRelay<String>) {
         iconImageView.image = content.iconImage
         titleLabel.setAttribute(text: content.title, color: .gray600, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
+        
+        contentView.rx.tapGesture
+            .bind(onNext: { _ in
+                relay.accept(content.title)
+            })
+            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {

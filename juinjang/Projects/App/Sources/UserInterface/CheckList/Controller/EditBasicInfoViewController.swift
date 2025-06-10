@@ -659,7 +659,6 @@ final class EditBasicInfoViewController: BaseViewController {
         let pyungFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
         // 가격이 0으로 시작하지 않는지 확인
-        let threeDigitPriceDoesNotStartWithZero = threeDigitPriceField.text?.first != "0"
         let fourDigitPriceDoesNotStartWithZero = fourDigitPriceField.text?.first != "0"
         
         let fourDigitPriceFieldState = !fourDigitPriceFieldEmpty && fourDigitPriceDoesNotStartWithZero

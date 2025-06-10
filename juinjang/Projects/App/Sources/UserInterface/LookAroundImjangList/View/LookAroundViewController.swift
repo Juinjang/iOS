@@ -8,6 +8,7 @@
 import UIKit
 import ReactorKit
 import RxDataSources
+import RxRelay
 
 final class LookAroundViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
@@ -17,6 +18,8 @@ final class LookAroundViewController: BaseViewController, View {
         let dataSource = configureCollectionViewDataSource()
         return dataSource
     }()
+    
+    private let contentTapRelay = PublishRelay<String>()
     
     init(reactor: LookAroundReactor) {
         super.init()
@@ -37,7 +40,6 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     func bind(reactor: LookAroundReactor) {
-        
         mainView.navigationView.itemActionRelay
             .bind(with: self, onNext: { owner, action in
                 switch action {
@@ -51,6 +53,28 @@ final class LookAroundViewController: BaseViewController, View {
         reactor.state
             .compactMap { $0.sectionOfLookAroundImjangData }
             .bind(to: mainView.collectionView.rx.items(dataSource: dataSource))
+            .disposed(by: disposeBag)
+        
+        contentTapRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case "마이노트":
+                    self.navigationController?.pushViewController(
+                        MyNoteViewController(
+                            reactor: .init(
+                                dependency: .init(
+                                    noteRepository: SharedNoteRepository()
+                                )
+                            )
+                        ),
+                        animated: true
+                    )
+                case "연필상점":
+                    break
+                    
+                default: break
+                }
+            }
             .disposed(by: disposeBag)
     }
     
@@ -71,7 +95,7 @@ extension LookAroundViewController {
             switch dataSource[indexPath] {
             case .contentsSection(let content):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundContentCell.identifier, for: indexPath) as? LookAroundContentCell else { return UICollectionViewCell() }
-                cell.configureCell(content: content)
+                cell.configureCell(content: content, relay: self.contentTapRelay)
                 return cell
                 
             case .selectAreaSection(let selectArea):

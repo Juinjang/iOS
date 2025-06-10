@@ -25,6 +25,31 @@ extension Reactive where Base: UIButton {
     }
 }
 
+extension Reactive where Base: UIView {
+    var tapGesture: Observable<UITapGestureRecognizer> {
+        return Observable.create { [weak base] observer in
+            guard let view = base else {
+                observer.onCompleted()
+                return Disposables.create()
+            }
+
+            let tapGesture = UITapGestureRecognizer()
+            view.isUserInteractionEnabled = true
+            view.addGestureRecognizer(tapGesture)
+
+            let target = tapGesture.rx.event
+                .bind(onNext: { gesture in
+                    observer.onNext(gesture)
+                })
+
+            return Disposables.create {
+                view.removeGestureRecognizer(tapGesture)
+                target.dispose()
+            }
+        }
+    }
+}
+
 extension Observable where Element == Void {
     func withHaptic(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) -> Observable<Void> {
             return self.do(onNext: {
