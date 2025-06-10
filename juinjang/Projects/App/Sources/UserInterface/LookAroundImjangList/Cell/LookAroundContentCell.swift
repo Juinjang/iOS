@@ -6,6 +6,22 @@
 //
 
 import UIKit
+import SnapKit
+import RxSwift
+import RxRelay
+
+enum LookAroundCellEventType: Equatable {
+    case cellContentTap(content: LookAroundContent)
+}
+
+extension LookAroundCellEventType {
+    var tappedContent: LookAroundContent? {
+        if case let .cellContentTap(content) = self {
+            return content
+        }
+        return nil
+    }
+}
 
 final class LookAroundContentCell: BaseCollectionViewCell {
     private let iconImageView = UIImageView().then {
@@ -14,20 +30,31 @@ final class LookAroundContentCell: BaseCollectionViewCell {
     }
     
     private let titleLabel = UILabel()
+    let cellTapButton = UIButton().then {
+        $0.backgroundColor = .clear
+    }
+ 
+    var disposeBag = DisposeBag()
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        disposeBag = DisposeBag()
         iconImageView.image = nil
     }
     
-    func configureCell(content: LookAroundContent) {
+    func configureCell(content: LookAroundContent, relay: PublishRelay<LookAroundCellEventType>) {
         iconImageView.image = content.iconImage
         titleLabel.setAttribute(text: content.title, color: .gray600, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
+        
+        cellTapButton.rx.tap
+            .map { LookAroundCellEventType.cellContentTap(content: content) }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {
-        [iconImageView, titleLabel].forEach {
-            addSubview($0)
+        [iconImageView, titleLabel, cellTapButton].forEach {
+            contentView.addSubview($0)
         }
     }
     
@@ -42,6 +69,10 @@ final class LookAroundContentCell: BaseCollectionViewCell {
             make.bottom.equalToSuperview().inset(12)
             make.leading.equalToSuperview().inset(10)
             make.trailing.lessThanOrEqualToSuperview().inset(10)
+        }
+        
+        cellTapButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
     }
     
