@@ -31,7 +31,6 @@ final class TopTableViewCell: UITableViewCell {
         $0.backgroundColor = .main
         $0.layer.cornerRadius = 10
     }
-    
     private let myNoteLabel = UILabel().then {
         $0.text = "나의 임장노트"
         $0.textColor = .mainWhite

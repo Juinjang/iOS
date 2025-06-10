@@ -20,8 +20,8 @@ struct MyImjangResponseDTO: Codable {
     let monthlyRent: String?
     let pyong: Int?
     let floor: String?
-    let address: String
-    let shortAddress: String
+    let address: String?
+    let shortAddress: String?
 }
 
 extension MyImjangResponseDTO {
