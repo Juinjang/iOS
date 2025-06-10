@@ -34,7 +34,9 @@ final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
     var disposeBag = DisposeBag()
     var scrollSelectedRelay = PublishRelay<Int>()
     var buttonTapSelectedRelay = PublishRelay<Int>()
-
+    
+    private var newDotView: NewDotView?
+    
     init(titles: [String],
          horizontalInset: CGFloat = 39,
          initialIndex: Int = 0) {
@@ -91,6 +93,30 @@ final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
         
         if initialLayoutCount == 2 {
             setupInitialUnderlineFrame()
+        }
+    }
+    
+    func showNewDotView() {
+        for (index, button) in stackView.subviews.enumerated() {
+            if index == 1 && newDotView == nil {
+                newDotView = NewDotView()
+                
+                if let newDotView {
+                    button.addSubview(newDotView)
+                    newDotView.snp.makeConstraints { make in
+                        make.leading.equalTo(button.snp.trailing).offset(2)
+                        make.bottom.equalTo(button.snp.top).offset(10)
+                        make.size.equalTo(6)
+                    }
+                }
+            }
+        }
+    }
+    
+    func hideNewDotView() {
+        if let newDotView {
+            newDotView.removeFromSuperview()
+            self.newDotView = nil
         }
     }
     

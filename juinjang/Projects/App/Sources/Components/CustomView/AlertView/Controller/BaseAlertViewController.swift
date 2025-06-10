@@ -13,18 +13,17 @@ enum AlertButtonType: Equatable {
     case confirm(title: String, width: CGFloat?)
     case cancel(title: String, width: CGFloat?)
     case custom(view: UIView)
-    
     var title: String {
         switch self {
         case .cancel(title: let title, _):
             return title
         case .confirm(title: let title, _):
             return title
-        default: 
+        default:
             return ""
         }
     }
-    
+
     var event: AlertEventType {
         switch self {
         case .confirm(_,_):
@@ -35,11 +34,11 @@ enum AlertButtonType: Equatable {
             return .confirm
         }
     }
-    
+
     static func confirm(title: String) -> AlertButtonType {
         return .confirm(title: title, width: nil)
     }
-    
+
     static func cancel(title: String) -> AlertButtonType {
         return .cancel(title: title, width: nil)
     }
@@ -70,13 +69,12 @@ class BaseAlertViewController: UIViewController {
         mainView.setButtons(with: buttons)
         mainView.addContainerSubviews(contentViews)
         mainView.setDismissButtonVisible(isShowDismissButton)
-        mainView.setBackgroundDismissEnabled(isBackgroundDismissEnabled)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func loadView() {
         view = mainView
         modalPresentationStyle = .overFullScreen

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>consumable.pencil12</key>
+	<string>900</string>
+	<key>consumable.pencil16</key>
+	<string>1200</string>
+	<key>consumable.pencil20</key>
+	<string>1500</string>
+	<key>consumable.pencil24</key>
+	<string>2000</string>
+	<key>consumable.pencil28</key>
+	<string>2800</string>
+	<key>consumable.pencil32</key>
+	<string>3600</string>
+	<key>consumable.pencil36</key>
+	<string>4000</string>
+</dict>
+</plist>

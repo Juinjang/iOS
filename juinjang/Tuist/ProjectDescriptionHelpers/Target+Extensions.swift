@@ -8,7 +8,7 @@ extension Target {
         product: Product,
         productName: String? = nil,
         bundleId: String = "com.juinjangteam",
-        deploymentTargets: DeploymentTargets? = .iOS("15.0"),
+        deploymentTargets: DeploymentTargets? = .iOS("16.0"),
         infoPlist: InfoPlist? = .extendingDefault(with: [
             "CFBundleLocalizations": ["ko", "en"],
             "CFBundleAllowMixedLocalizations": "YES"

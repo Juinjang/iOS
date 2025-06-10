@@ -17,7 +17,7 @@ extension Int {
         return "\(self)개월 전"
     }
 
-    func convertHitsString() -> String {
+    var viewCountString: String {
         return self > 999 ? "999+" : "\(self)"
     }
 }
