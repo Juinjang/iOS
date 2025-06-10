@@ -15,7 +15,7 @@ protocol PencilShopRepositoryProtocol {
     func fetchUsedPencilList() -> RxSwift.Observable<[UsedPencilModel]> 
 }
 
-final class PencilShopRepository {
+final class PencilShopRepository: PencilShopRepositoryProtocol {
     func fetchObtainedPencilList() -> RxSwift.Observable<[ObtainedPencilModel]> {
         return .just(.mock)
     }

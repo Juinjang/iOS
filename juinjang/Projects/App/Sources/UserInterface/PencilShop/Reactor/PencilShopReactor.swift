@@ -13,7 +13,7 @@ final class PencilShopReactor: Reactor {
     var initialState = State()
     
     struct Dependency {
-        let storeKitService: InAppPurchaseService
+        let inAppPurchaseService: InAppPurchaseService
         let pencilShopRepository: PencilShopRepositoryProtocol
     }
     
@@ -85,7 +85,7 @@ extension PencilShopReactor {
         switch category {
         case .buying:
             if !currentState.products.isEmpty { return .empty() }
-            return dependency.storeKitService.requestProductList()
+            return dependency.inAppPurchaseService.requestProductList()
                 .map { .setProductList($0) }
                 .asObservable()
                 
@@ -123,7 +123,7 @@ extension PencilShopReactor {
 
 extension PencilShopReactor {
     private func buyProduct(product: Product) -> Observable<Mutation> {
-        dependency.storeKitService.requestPurchase(product: product)
+        dependency.inAppPurchaseService.requestPurchase(product: product)
             .asObservable()
             .flatMap { result -> Observable<Mutation> in
                 guard let result else {
@@ -137,7 +137,7 @@ extension PencilShopReactor {
     }
     
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-        let transactionMutation = dependency.storeKitService.transactionCompleted
+        let transactionMutation = dependency.inAppPurchaseService.transactionCompleted
             .map { Mutation.purchaseCompleted($0) }
 
         return Observable.merge(mutation, transactionMutation)

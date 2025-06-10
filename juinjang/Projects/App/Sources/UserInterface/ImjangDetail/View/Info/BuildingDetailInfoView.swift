@@ -72,7 +72,7 @@ final class BuildingDetailInfoView: BaseView {
         summaryInfoLabel.text = model.addressShort
         secondSummaryInfoLabel.text = PropertyType(rawValue: model.propertyType)?.title
         likeButton.isSelected = model.isLiked
-        likeCountLabel.text = "\(model.likedCount.convertHitsString())"
+        likeCountLabel.text = "\(model.likedCount.viewCountString)"
         priceLabel.text = "\(priceType) \(model.price.formattedKoreanCurrency)"
         addressContentLabel.text = model.address
         sharedDateLabel.text = "\(model.period) · 조회 \(model.viewCount)"

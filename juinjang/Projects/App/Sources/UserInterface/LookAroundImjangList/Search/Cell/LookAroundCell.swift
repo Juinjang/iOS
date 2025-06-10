@@ -289,7 +289,7 @@ extension LookAroundCell {
     }
 
     private func setHits(_ hits: Int) {
-        let hitsText = hits.convertHitsString()
+        let hitsText = hits.viewCountString
         hitsLabel.setAttribute(text: hitsText, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 16)
     }
 
