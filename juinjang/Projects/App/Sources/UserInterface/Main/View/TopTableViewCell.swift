@@ -36,7 +36,6 @@ final class TopTableViewCell: UITableViewCell {
         $0.textColor = .mainWhite
         $0.font = .pretendard(size: 20, weight: .extraBold)
     }
-    
     private let myNoteImageView = UIImageView().then {
         $0.image = UIImage.Main.threeLogo
     }

@@ -50,7 +50,6 @@ final class ImjangListView: UIView {
             emptyBackgroundView.addSubview($0)
         }
         addSubview(collectionView)
-        addSubview(navigationView)
         self.bringSubviewToFront(navigationView)
     }
     
@@ -83,6 +82,7 @@ final class ImjangListView: UIView {
             $0.centerX.equalTo(emptyBackgroundView)
             $0.top.equalTo(emptyMessageLabel.snp.bottom).offset(36)
         }
+        
         collectionView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom)
             $0.horizontalEdges.bottom.equalToSuperview()
@@ -244,7 +244,7 @@ extension ImjangListView {
         let groupSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(136))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])        
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
         let section = NSCollectionLayoutSection(group: group)
         
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 22, bottom: 0, trailing: 22)

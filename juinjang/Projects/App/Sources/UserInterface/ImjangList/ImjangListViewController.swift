@@ -83,7 +83,7 @@ final class ImjangListViewController: BaseViewController {
         mainView.collectionView.delegate = self
         mainView.collectionView.dataSource = self
     }
-        
+    
     func bind() {
         mainView.navigationView
             .itemActionRelay

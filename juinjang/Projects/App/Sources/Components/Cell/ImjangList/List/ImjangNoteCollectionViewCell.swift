@@ -27,7 +27,6 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     let scoreLabel = UILabel()
     let starStackView = UIStackView()
     let bookMarkButton = UIButton()
-    
     private let baseLineView = UIView().then {
         $0.backgroundColor = .stroke
     }
