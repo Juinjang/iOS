@@ -106,13 +106,11 @@ final class PencilItemView: UIView {
     }
     
     private func productPrice(productId: String) -> String {
-        print(productId)
-        guard let path = Bundle.main.path(forResource: "Products", ofType: "plist"),
-              let plist = FileManager.default.contents(atPath: path),
-              let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
-              return ""
+        guard let infoDict = Bundle.main.infoDictionary,
+              let products = infoDict["Products"] as? [String: String] else {
+            return ""
         }
-        return data[productId] ?? ""
+        return products[productId] ?? ""
     }
     
     private func formatNumber(_ numberString: String) -> String {

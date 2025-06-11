@@ -31,9 +31,7 @@ final class InAppPurchaseService {
     }
     
     static func loadProductIdList() -> [String: String] {
-        guard let products = Bundle.main.object(forInfoDictionaryKey: "Products") as? [String: String] else {
-            return [:]
-        }
+        guard let products = Bundle.main.object(forInfoDictionaryKey: "Products") as? [String: String] else { return [:] }
         return products
     }
     
