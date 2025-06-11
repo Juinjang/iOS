@@ -35,7 +35,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
         bindAction()
-        
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
@@ -50,7 +49,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
        
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
-  
+        designNavigationBar()
         setConstraint()
         callMainImjangRequest()
         checkAndUpdateIfNeeded()
@@ -121,6 +120,27 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         }
     }
     
+    // 네비게이션 바 디자인
+    private func designNavigationBar() {
+        self.navigationController?.navigationBar.tintColor = .black
+        navigationItem.titleView = mainLogoImageView
+        
+        // 이미지 로드
+//        let speaker = UIImage.speaker
+//
+//        // UIBarButtonItem 생성 및 이미지 설정
+//        let speakerButtonItem = UIBarButtonItem(image: speaker, style: .plain, target: self, action: nil)
+//        speakerButtonItem.tintColor = ColorStyle.darkGray
+//        speakerButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 12)
+        
+        let settingButtonItem = UIBarButtonItem(image: UIImage.Main.setting, style: .plain, target: self, action: #selector(setttingBtnTap))
+        settingButtonItem.tintColor = .gray450
+        settingButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 0)
+        // 네비게이션 아이템에 백 버튼 아이템 설정
+        self.navigationItem.leftBarButtonItem = settingButtonItem
+//        self.navigationItem.rightBarButtonItem = speakerButtonItem
+    }
+    
     private func showImjangNoteVC(imjangId: Int?, version: Int?) {
         guard let imjangId = imjangId, let version = version else { return }
         let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
@@ -146,7 +166,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         self.navigationController?.pushViewController(lookAroundVC, animated: true)
     }
     
-    private func setttingBtnTap() {
+    @objc private func setttingBtnTap() {
         let vc = SettingViewController()
         vc.updateNicknameDelegate = self
         self.navigationController?.pushViewController(vc, animated: true)
@@ -158,7 +178,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         }
         
         tableView.snp.makeConstraints {
-            $0.top.equalTo(navigationView.snp.bottom)
+            $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.left.right.bottom.equalToSuperview()
         }
     }

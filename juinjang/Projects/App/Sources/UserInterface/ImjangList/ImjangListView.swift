@@ -7,6 +7,8 @@
 
 import UIKit
 import SkeletonView
+import SnapKit
+import Then
 
 enum Section: Int, CaseIterable {
     case scrap
@@ -16,8 +18,8 @@ enum Section: Int, CaseIterable {
 final class ImjangListView: UIView {
     let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
-        $0.title = "\(UserDefaultManager.shared.nickname)님의 임장노트"
         $0.rightItem = [.search, .add]
+        $0.title = "\(UserDefaultManager.shared.nickname)님의 임장노트"
     }
     
     // 임장 노트가 존재하지 않을 때의 뷰
@@ -40,12 +42,15 @@ final class ImjangListView: UIView {
     }
     
     private func configureHierarchy() {
-        addSubview(emptyBackgroundView)
-        [emptyLogoImageView, emptyMessageLabel, newPageButton].forEach {
+        add(navigationView,
+            emptyBackgroundView)
+        [emptyLogoImageView,
+         emptyMessageLabel,
+         newPageButton].forEach {
             emptyBackgroundView.addSubview($0)
         }
         addSubview(collectionView)
-        addSubview(navigationView)
+        self.bringSubviewToFront(navigationView)
     }
     
     private func configureLayout() {
@@ -78,9 +83,9 @@ final class ImjangListView: UIView {
             $0.top.equalTo(emptyMessageLabel.snp.bottom).offset(36)
         }
         
-        collectionView.snp.makeConstraints { make in
-            make.top.equalTo(navigationView.snp.bottom)
-            make.horizontalEdges.bottom.equalTo(safeAreaLayoutGuide)
+        collectionView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
@@ -130,6 +135,7 @@ final class ImjangListView: UIView {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isSkeletonable = true
+        collectionView.clipsToBounds = true
     }
 }
 
@@ -159,7 +165,7 @@ extension ImjangListView {
         
         // 레이아웃 설정
         let configuration = UICollectionViewCompositionalLayoutConfiguration()
-        configuration.interSectionSpacing = 16
+        configuration.interSectionSpacing = 12
         layout.configuration = configuration
         
         return layout
@@ -177,7 +183,7 @@ extension ImjangListView {
             heightDimension: .absolute(252))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
-        group.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 0)
+        group.contentInsets = NSDirectionalEdgeInsets(top: 16, leading: 0, bottom: 12, trailing: 0)
         
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 8
@@ -217,7 +223,7 @@ extension ImjangListView {
         
         let headerSize = NSCollectionLayoutSize(
             widthDimension: .fractionalWidth(1.0),
-            heightDimension: .estimated(114)
+            heightDimension: .estimated(126)
         )
         let header = NSCollectionLayoutBoundarySupplementaryItem(
             layoutSize: headerSize,
@@ -239,7 +245,6 @@ extension ImjangListView {
             widthDimension: .fractionalWidth(1.0),
             heightDimension: .absolute(136))
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
-        
         let section = NSCollectionLayoutSection(group: group)
         
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 22, bottom: 0, trailing: 22)
@@ -250,7 +255,7 @@ extension ImjangListView {
                     elementKind: UICollectionView.elementKindSectionHeader,
                     alignment: .top
                 )
-        sectionHeader.pinToVisibleBounds = true
+        sectionHeader.pinToVisibleBounds = false
         sectionHeader.zIndex = 2
         section.boundarySupplementaryItems = [sectionHeader]
         

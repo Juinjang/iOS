@@ -10,12 +10,15 @@ import SnapKit
 import Alamofire
 import RealmSwift
 import AmplitudeSwift
+import RxSwift
 
 protocol CheckListDelegate {
     func didSavedCheckListItems(_ items: [CheckListAnswer])
 }
 
 final class CheckListViewController: BaseViewController {
+    private let disposeBag = DisposeBag()
+    private let noteRepository = NoteRepository()
     
     // 체크리스트 정보
     var version: Int
@@ -43,6 +46,7 @@ final class CheckListViewController: BaseViewController {
         $0.showsVerticalScrollIndicator = false
         $0.isScrollEnabled = false
         $0.frame.size.height = $0.contentSize.height
+        $0.backgroundColor = .gray100
     }
     
     override func viewDidLoad() {
@@ -185,21 +189,13 @@ final class CheckListViewController: BaseViewController {
     
     // -MARK: API 요청(체크리스트 조회)
     private func showCheckList(completion: @escaping () -> Void) {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<[QuestionAnswerDto]>.self,
-                                            api: .showChecklist(imjangId: imjangId)) { [weak self] response, error in
-            if let error = error {
-                print(error.localizedDescription)
-                completion()
-                return
-            }
-            
-            guard let response = response else { return }
-            guard let self else { return }
-            // 이미 추가된 questionId를 추적하기 위한 Set
-            var addedQuestionIds = Set<Int>()
-            
-            if let categoryItem = response.result {
-                for item in categoryItem {
+        noteRepository.retrieveCheckList(noteID: imjangId)
+            .asObservable()
+            .subscribe(with: self) { (self, response) in
+                // 이미 추가된 questionId를 추적하기 위한 Set
+                var addedQuestionIds = Set<Int>()
+                
+                for item in response {
                     // 이미 추가된 questionId인 경우
                     if addedQuestionIds.contains(item.questionId) {
                         continue
@@ -211,20 +207,24 @@ final class CheckListViewController: BaseViewController {
                                                           answer: item.answer,
                                                           isSelected: true)
                     
-                    savedCheckListItems.append(checkListAnswer)
-                    checkListItems.append(checkListAnswer)
+                    self.savedCheckListItems.append(checkListAnswer)
+                    self.checkListItems.append(checkListAnswer)
                     
                     // 추가된 questionId를 Set에 추가
                     addedQuestionIds.insert(item.questionId)
                 }
+                
+                print("------저장된 체크리스트 조회------")
+                for checkListItem in self.checkListItems {
+                    print(checkListItem)
+                }
+                NotificationCenter.default.post(
+                    name: NSNotification.Name("CheckListItemsUpdated"),
+                    object: self.checkListItems
+                )
+                completion()
             }
-            print("------저장된 체크리스트 조회------")
-            for checkListItem in checkListItems {
-                print(checkListItem)
-            }
-            NotificationCenter.default.post(name: NSNotification.Name("CheckListItemsUpdated"), object: checkListItems)
-            completion()
-        }
+            .disposed(by: disposeBag)
     }
     
     // 키보드 내리기
@@ -321,7 +321,7 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
                 let cell: CategoryItemTableViewCell = tableView.dequeueReusableCell(withIdentifier: CategoryItemTableViewCell.identifier, for: indexPath) as! CategoryItemTableViewCell
                 let items = self.checkListCategories[indexPath.section - 1]
                 cell.configure(category: items)
-                let arrowImage = items.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandItems
+                let arrowImage = items.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandGray
                 cell.expandButton.setImage(arrowImage, for: .normal)
                 
                 return cell
@@ -648,9 +648,14 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard indexPath.row != 0 else {
-            // 카테고리 셀의 높이
-            return 63
+        if indexPath.row == 0 {
+            // section 0이고, 편집 모드가 아닐 경우 (NotEnteredCalendar 셀)
+            if indexPath.section == 0 && !isEditMode {
+                return 52
+            } else {
+                // 나머지 카테고리 셀
+                return 63
+            }
         }
         
         let adjustedSection = isEditMode ? indexPath.section - 1 : indexPath.section

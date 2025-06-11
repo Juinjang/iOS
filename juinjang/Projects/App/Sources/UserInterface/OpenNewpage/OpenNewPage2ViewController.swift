@@ -10,11 +10,22 @@ import Then
 import SnapKit
 import Alamofire
 import AmplitudeSwift
+import RxSwift
 
 final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelegate {
     var newImjang: PostDto?
     var versionInfo: VersionInfo?
     var imjangId: Int? = nil
+    
+    private let repository = NoteRepository()
+    private let disposeBag = DisposeBag()
+    
+    var postCodeModel: PostCodeResponseModel? 
+    
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "새 페이지 펼치기"
+    }
     
     // -MARK: API 요청
     func createImjang(completionHandler: @escaping (Int?, NetworkError?) -> Void) {
@@ -34,29 +45,32 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         )
         
         // 이전 뷰 컨트롤러에서 가져온 값들을 parameters에 할당
-        let parameters: Parameters = [
-            "purposeType": newImjang.purposeType,
-            "propertyType": newImjang.propertyType,
-            "priceType": newImjang.priceType,
-            "price": newImjang.price,
-            "address": address,
-            "nickname": nickname,
-            "addressDetail": addressDetailTextField.text?.isEmpty == false ? addressDetailTextField.text! : NSNull()
-        ]
+        let parameter = NoteCreateRequestDTO(
+            purposeType: newImjang.purposeTypeToString,
+            propertyType: newImjang.propertyTypeToString,
+            priceType: newImjang.priceTypeToString,
+            price: newImjang.price,
+            monthlyRent: newImjang.monthlyRent,
+            roadAddress: postCodeModel?.address ?? "",
+            addressDetail: (addressDetailTextField.text?.isEmpty == false) ? addressDetailTextField.text : nil,
+            bcode: postCodeModel?.bcode ?? "",
+            nickname: nickname,
+            floor: floorTextField.text ?? "",
+            pyong: Int(pyungTextField.text ?? "") ?? 0,
+            sido: postCodeModel?.sido ?? "",
+            sigungu: postCodeModel?.sigungu ?? "",
+            bname1: postCodeModel?.bname1 ?? "",
+            bname2: postCodeModel?.bname2 ?? ""
+        )
         
-        JuinjangAPIManager.shared.postData(type: BaseResponse<PostResponseDto>.self, api: .createImjang, parameter: parameters) { [weak self] response, error in
-            guard let self else { return }
-            if error == nil {
-                guard let response, let result = response.result else {
-                    print("createImjang Response is Empty")
-                    return
-                }
-                imjangId = result.limjangId
-                completionHandler(imjangId, nil)
-            } else {
-                completionHandler(nil, error)
+        repository.createNote(
+            param: parameter
+        ).asObservable()
+            .subscribe(with: self) { (self, responseModel) in
+                self.imjangId = responseModel.noteId
+                completionHandler(responseModel.noteId, nil)
             }
-        }
+            .disposed(by: disposeBag)
     }
     
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건
@@ -116,13 +130,29 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     lazy var addressLabel = UILabel().then {
         configureLabel($0, text: "주소")
     }
+    
+    private let pyungLabel = DSLabel(.title).then {
+        $0.fontColor = .gray600
+        $0.fontSize = 18
+        $0.text = "층수·평수"
+    }
+    
+    private let floorTextField = RoundedPriceTextField(
+        unitType: .floor,
+        placeHolder: "00"
+    )
+    
+    private let pyungTextField = RoundedPriceTextField(
+        unitType: .pyung,
+        placeHolder: "000"
+    )
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")
     }
     
     lazy var explanationLabel = UILabel().then {
-        let attributedString = NSMutableAttributedString(string: "※ 별명은 리스트 구분을 위해 쓰여요.")
+        let attributedString = NSMutableAttributedString(string: "※ 별명은 나에게만 보여요.")
         attributedString.addAttribute(NSAttributedString.Key.kern, value: -0.3, range: NSRange(location: 0, length: attributedString.length)) // 글자 간격 설정
 
         let customFont = UIFont(name: "Pretendard-Medium", size: 14) ?? UIFont.systemFont(ofSize: 14)
@@ -240,20 +270,25 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print("VersionInfo: \(versionInfo)")
-        print("전달받은 데이터: \(newImjang)")
-        
         view.backgroundColor = .mainWhite
-        
-        self.navigationItem.title = "새 페이지 펼치기"
-        self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage.arrowLeft
-        let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backToPageTapped))
-        navigationItem.leftBarButtonItem = backButton
+        navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    let warningPopup = OpenNewPagePopupViewController()
+                    warningPopup.warningDelegate = self
+                    warningPopup.modalPresentationStyle = .overCurrentContext
+                    self.present(warningPopup, animated: false, completion: nil)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
         
         addressTextField.delegate = self
         addressTextField.isUserInteractionEnabled = false // 사용자 입력 방지
+        pyungTextField.delegate = self
+        floorTextField.delegate = self
         houseNicknameTextField.delegate = self
         updateImageViewsFromModel()
         setupWidgets()
@@ -274,6 +309,7 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     func setupWidgets() {
         // 위젯들을 서브뷰로 추가
         let widgets: [UIView] = [
+            navigationView,
             addressLabel,
             houseNicknameLabel,
             backgroundImageView,
@@ -286,6 +322,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             addressTextField,
             searchAddressButton,
             addressDetailTextField,
+            pyungLabel,
+            floorTextField,
+            pyungTextField,
             explanationLabel,
             houseNicknameTextField,
             backButton,
@@ -295,17 +334,17 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     }
     
     func setupLayout() {
-        // 비율
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-        
-        let buttonWidth = screenWidth * 0.8769 // 너비 비율
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.height.equalTo(46)
+            $0.horizontalEdges.equalToSuperview()
+        }
         
         // 배경 ImageView
         backgroundImageView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.width.equalTo(view.snp.width)
             $0.height.equalTo(view.snp.height).multipliedBy(0.28)
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
         
         // 사람 ImageView
@@ -378,10 +417,29 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
             $0.top.equalTo(searchAddressButton.snp.bottom).offset(8)
         }
+        
+        
+        // 층수 평수 Label
+        
+        pyungLabel.snp.makeConstraints {
+            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        floorTextField.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(16)
+            $0.left.equalToSuperview().offset(24)
+        }
+        
+        pyungTextField.snp.makeConstraints {
+            $0.top.equalTo(pyungLabel.snp.bottom).offset(16)
+            $0.left.equalTo(floorTextField.snp.right).offset(24)
+        }
+        
 
         // 집 별명 Label
         houseNicknameLabel.snp.makeConstraints {
-            $0.top.equalTo(addressDetailTextField.snp.bottom).offset(40)
+            $0.top.equalTo(floorTextField.snp.bottom).offset(40)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
@@ -404,24 +462,18 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         // 이전으로 버튼
         backButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.centerX.equalTo(view.snp.centerX).offset(-116.5)
             $0.leading.equalTo(view.snp.leading).offset(24)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-5)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.width.equalTo(108)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         // 다음으로 버튼
         nextButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.width.equalTo(buttonWidth)
-            $0.centerX.equalTo(view.snp.centerX).offset(58.5)
-//            $0.leading.equalTo(backButton.snp.trailing).offset(8)
-            $0.leading.equalTo(backButton.snp.trailing).offset(UIScreen.main.bounds.width * 0.02)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-33)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.leading.equalTo(backButton.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().offset(-24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-
     }
     
     func updateImageViewsFromModel() {
@@ -458,9 +510,12 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
         // 필드가 비어있거나 공백만으로 구성되어 있는지 확인
         let addressTextFieldEmpty = addressTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        
+        let floorTextFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        let pyungTextFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
 
         // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty
+        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && !floorTextFieldEmpty && !pyungTextFieldEmpty
         
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
         if allTextFieldsFilled {
@@ -567,7 +622,9 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
 
 
 extension OpenNewPage2ViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         // 백 스페이스 실행 가능하도록
         if let char = string.cString(using: String.Encoding.utf8) {
             let isBackSpace = strcmp(char, "\\b")

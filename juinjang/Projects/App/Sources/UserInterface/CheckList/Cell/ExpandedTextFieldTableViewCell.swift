@@ -94,17 +94,20 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
         }
     }
     
-    func savedConfigure(with imjangId: Int, with answer: String, at indexPath: IndexPath) {
+    func savedConfigure(with imjangId: Int,
+                        with answer: String,
+                        at indexPath: IndexPath) {
         questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
         
         answerTextField.text = answer
-        answerTextField.backgroundColor = .main150
+        answerTextField.backgroundColor = .mainWhite
     }
     
     // 보기 모드
-    func viewModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
+    func viewModeConfigure(with questionDto: CheckListItem,
+                           at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
         contentLabel.textColor = .null
         backgroundColor = .gray100
@@ -115,7 +118,8 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     }
       
     // 수정 모드
-    func editModeConfigure(with questionDto: CheckListItem, at indexPath: IndexPath) {
+    func editModeConfigure(with questionDto: CheckListItem,
+                           at indexPath: IndexPath) {
         contentLabel.text = questionDto.question
         contentLabel.textColor = .gray500
         backgroundColor = .mainWhite
@@ -130,7 +134,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
         backgroundColor = .mainWhite
         
         answerTextField.text = answer
-        answerTextField.backgroundColor = .main100
+        answerTextField.backgroundColor = .mainWhite
         
         updateTextFieldWidth()
     }
@@ -139,7 +143,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
     func savedEditModeConfigure(with answer: String, at indexPath: IndexPath) {
         questionImage.image = UIImage.CheckList.questionSelected
         contentLabel.textColor = .gray500
-        backgroundColor = .main150
+        backgroundColor = .mainWhite
         
         // 답변 TextField 설정
         answerTextField.text = answer
@@ -175,7 +179,6 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
         guard textField.text!.count < 20 else { return false }
         
         textField.becomeFirstResponder()
-        backgroundColor = .main150
         questionImage.image = UIImage.CheckList.questionSelected
         updateTextFieldWidthConstraint(for: textField, constant: 342, shouldRemoveLeadingConstraint: false)
     
@@ -185,7 +188,6 @@ extension ExpandedTextFieldTableViewCell: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
         if let text = textField.text, !text.isEmpty {
             // 텍스트 필드가 비어 있지 않은 경우
-            backgroundColor = .main150
             questionImage.image = UIImage.CheckList.questionSelected
             textField.backgroundColor = .mainWhite
             inputAnswer = textField.text ?? ""

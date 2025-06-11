@@ -21,6 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         let mainViewController = SplashViewController()
         mainViewController.reactor = SplashViewReactor()
+        mainViewController.navigationController?.navigationBar.isHidden = true
         window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
         

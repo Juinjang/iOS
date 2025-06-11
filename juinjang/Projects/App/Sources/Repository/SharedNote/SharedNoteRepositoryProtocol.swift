@@ -8,7 +8,7 @@
 import RxSwift
 
 protocol SharedNoteRepositoryProtocol {
-    func retrieveMyNotes(param: SharedNoteRequestDTO) -> Single<[MyNoteModel]>
+    func retrieveMyNotes(param: MyNoteRequestDTO) -> Single<[MyNoteModel]>
     func retrieveExploreNotes(param: ExploreNoteRequestDTO) -> Single<ExploreNoteResponseDTO>
     func retrieveNoteDetail(noteID id: Int) -> Single<ImjangDetailInfoModel>
     func retrieveNoteDetailReport(noteId id: Int) -> Single<ImjangDetailReportModel>

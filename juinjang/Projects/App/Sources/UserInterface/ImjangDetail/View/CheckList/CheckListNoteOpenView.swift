@@ -45,8 +45,8 @@ final class CheckListNoteOpenView: UICollectionReusableView {
             .subscribe(with: self) { owner, model in
                 if let model = model {
                     owner.infoView.configure(for: model)
-                    owner.contentLabel.text = "연필을 \(model.requiredPencils)개를 사용하면\n모든 내용을 확인하고 소장할 수 있어요."
-                    owner.noteOpenButton.configure(count: model.requiredPencils)
+                    owner.contentLabel.text = "연필을 \(model.requiredPencils ?? 0)개를 사용하면\n모든 내용을 확인하고 소장할 수 있어요."
+                    owner.noteOpenButton.configure(count: model.requiredPencils ?? 0)
                 }
             }
             .disposed(by: disposeBag)

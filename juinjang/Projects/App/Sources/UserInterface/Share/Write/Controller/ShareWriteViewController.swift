@@ -86,6 +86,18 @@ final class ShareWriteViewController: BaseViewController, View {
             .distinctUntilChanged()
             .bind(to: mainView.rx.configureVisibleSections)
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowCompletedView)
+            .compactMap { $0 }
+            .observe(on: MainScheduler.instance)
+            .subscribe(with: self) { (self,_) in
+                self.present(
+                    self.createShareCompletedView(),
+                    animated: true
+                )
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindEvent() {
@@ -94,6 +106,12 @@ final class ShareWriteViewController: BaseViewController, View {
         mainView.navigationView
             .itemActionRelay
             .map { Reactor.Action.didTapNavigationButton($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        mainView.uploadButton
+            .rx.throttleTap
+            .map { Reactor.Action.uploadButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
@@ -127,6 +145,38 @@ final class ShareWriteViewController: BaseViewController, View {
             .map { Reactor.Action.editingReviewContent($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+    }
+    
+    private func createShareCompletedView() -> UIViewController {
+        return ShareCompletedView().then {
+            $0.eventRelay
+                .subscribe(with: self) { (self, event) in
+                    switch event {
+                    case .cancel:
+                        print("임장 둘러보기로 이동")
+                    case .confirm:
+                        
+                        if let noteId = self.reactor?.getShareSelectModel().noteId,
+                           let title = self.reactor?.getShareSelectModel().name {
+                            
+                            self.navigationController?.pushViewController(
+                                ImjangDetailViewController(
+                                    reactor: .init(
+                                        dependency: .init(
+                                            id: noteId,
+                                            title: title,
+                                            repository: SharedNoteRepository()
+                                        )
+                                    )
+                                ),
+                                animated: true
+                            )
+                        }
+                    }
+                }
+                .disposed(by: self.disposeBag)
+        }
     }
 }
 

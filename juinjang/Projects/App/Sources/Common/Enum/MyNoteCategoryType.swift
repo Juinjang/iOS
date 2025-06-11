@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 5/14/25.
 //
 
-enum MyNoteCategoryType: Int, CaseIterable {
+enum MyNoteCategoryType: Int, CaseIterable, Equatable {
     case share = 0
     case own = 1
     case like = 2

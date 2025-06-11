@@ -28,7 +28,7 @@ final class ShareWriteNoticeCell: BaseCollectionViewCell {
         $0.fontColor = .gray500
         $0.fontSize = 14
         $0.fontAlignment = .left
-        $0.text = "임장노트를 공유하면 받을 수 있는 연필"
+        $0.text = "공유했던 임장노트는 리워드 지급이 되지 않아요"
     }
     
     private let pencilCountLabel = DSLabel(.title).then {

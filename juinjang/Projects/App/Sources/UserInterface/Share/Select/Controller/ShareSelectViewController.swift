@@ -103,6 +103,29 @@ final class ShareSelectViewController: BaseViewController, View {
                 }
             }
             .disposed(by: disposeBag)
+        
+        mainView
+            .nextButton.rx.throttleTap
+            .subscribe(with: self) { (self, _) in
+                if let selectedCellItem = self.reactor?.currentState.selectItem {
+                    let viewController = ShareWriteViewController(
+                        reactor: .init(
+                            dependecy: .init(
+                                selectedModel: selectedCellItem.model,
+                                noteRepository: NoteRepository(),
+                                userRepository: UserRepository(),
+                                sharedNoteRepository: SharedNoteRepository()
+                            )
+                        )
+                    )
+                    
+                    self.navigationController?.pushViewController(
+                        viewController,
+                        animated: true
+                    )
+                }
+            }
+            .disposed(by: disposeBag)
     }
 }
 
@@ -135,7 +158,10 @@ extension ShareSelectViewController {
                         ofKind: kind,
                         for: indexPath
                     ).then {
-                        $0.bind(relay: self.moreButtonTapRelay)
+                        $0.bind(
+                            relay: self.moreButtonTapRelay,
+                            isHidden: self.reactor?.currentState.isMoreButtonHidden ?? true
+                        )
                     }
                 default:
                     return nil

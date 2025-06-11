@@ -149,7 +149,7 @@ final class ReportViewController : BaseViewController {
             priceTypeString = "" // 값이 없을 경우 공백 처리
         }
         setPriceLabel(priceList: detailDto.priceList, priceType: priceTypeString)
-        addressLabel.text = "\(detailDto.address) \(detailDto.addressDetail ?? "")"
+        addressLabel.text = "\(detailDto.address ?? "") \(detailDto.addressDetail ?? "")"
         addressLabel.numberOfLines = 0
         
         tabViewController.compareVC.compareLabel1.text = detailDto.nickname

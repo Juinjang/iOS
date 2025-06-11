@@ -42,7 +42,6 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     func bind(reactor: LookAroundReactor) {
-        
         mainView.navigationView.itemActionRelay
             .bind(with: self, onNext: { owner, action in
                 switch action {
@@ -121,7 +120,7 @@ extension LookAroundViewController {
             switch dataSource[indexPath] {
             case .contentsSection(let content):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundContentCell.identifier, for: indexPath) as? LookAroundContentCell else { return UICollectionViewCell() }
-                cell.configureCell(content: content, relay: cellEventRelay)
+                cell.configureCell(content: content, relay: self.cellEventRelay)
                 return cell
                 
             case .selectAreaSection(let selectArea):

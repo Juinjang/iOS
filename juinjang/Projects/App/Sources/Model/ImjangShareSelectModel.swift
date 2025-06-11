@@ -11,13 +11,13 @@ struct ShareSelectModel: Codable {
     let propertyType: String
     let priceType: String
     let name: String
-    let imageUrl: String
+    let imageUrl: String?
     let isScraped: Bool
-    let rate: Double?
+    let rate: String?
     let price: String
     let monthlyRent: String?
     let pyong: Int
     let floor: String
     let shortAddress: String
-    let rewardPencil: Int
+    let rewardPencil: Int?
 }

@@ -9,6 +9,7 @@ import UIKit
 import Then
 import SnapKit
 import AmplitudeSwift
+import RxSwift
 
 final class OpenNewPageViewController: BaseViewController {
     
@@ -42,7 +43,8 @@ final class OpenNewPageViewController: BaseViewController {
     var selectedPurposeType: Int?
     var selectedPropertyType: Int?
     var selectedPriceType: Int = 3 // 기본값 실거래가로 설정
-    var selectedPrice: [String] = []
+    var selectedPrice: String = ""
+    var selectedMonthlyRent: String = ""
     
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건
     
@@ -297,16 +299,29 @@ final class OpenNewPageViewController: BaseViewController {
         $0.titleLabel?.lineBreakMode = .byTruncatingTail
     }
     
+    private let disposeBag = DisposeBag()
+    
+    private let navigationView = DefaultNavigationView().then {
+        $0.leftItem = [.pop]
+        $0.title = "새 페이지 펼치기"
+    }
+    
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .mainWhite
-        self.navigationItem.title = "새 페이지 펼치기"
-        self.navigationController?.navigationBar.tintColor = .black
-        self.navigationItem.hidesBackButton = true
-        let backButtonImage = UIImage.arrowLeft
-        let backButton = UIBarButtonItem(image: backButtonImage, style: .plain,target: self, action: #selector(backButtonTapped))
-        navigationItem.leftBarButtonItem = backButton
+        
+        navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, event) in
+                switch event {
+                case .popButtonTap:
+                    self.backButtonTapped()
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
+        
         if UIScreen.main.bounds.height <= 667 { // 아이폰 SE(3rd generation) 기준으로 스크린이 작으면
             // 스크롤뷰 사용
             setupScrollView()
@@ -335,7 +350,7 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     func setupScrollView() {
-        view.addSubview(scrollView)
+        view.add(navigationView, scrollView)
         scrollView.addSubview(contentView)
         // 위젯들을 서브뷰로 추가
         [purposeLabel,
@@ -352,6 +367,8 @@ final class OpenNewPageViewController: BaseViewController {
         nextButtonContainerView.addSubview(nextButton)
         setupScrollLayout()
         setButton()
+        
+        view.bringSubviewToFront(navigationView)
     }
     
     func setupWidgets() {
@@ -380,9 +397,14 @@ final class OpenNewPageViewController: BaseViewController {
         let buttonWidth = screenWidth * 0.8769 // 너비 비율
         let buttonHeight = screenHeight * 0.07 // 높이 비율
         
+        navigationView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview()
+        }
+        
         // 위젯에 관한 Auto Layout 설정
         scrollView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(view.snp.width)
 //            $0.height.equalTo(view.snp.height).multipliedBy(0.75)
@@ -1136,12 +1158,12 @@ final class OpenNewPageViewController: BaseViewController {
         // threeDigitPriceField와 fourDigitPriceField의 값을 합쳐서 selectedPrice에 저장
         let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
         let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-        selectedPrice = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)]
+        selectedPrice = String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)
 
         // fourDigitMonthlyRentField의 값이 있다면 추가
         if let monthlyRentValue = fourDigitMonthlyRentField.text, !monthlyRentValue.isEmpty {
             if let monthlyRent = Int(monthlyRentValue) {
-                selectedPrice.append(String(monthlyRent * 10000))
+                self.selectedMonthlyRent = String(monthlyRent * 10000)
             }
         }
         
@@ -1173,14 +1195,13 @@ final class OpenNewPageViewController: BaseViewController {
             propertyType: selectedPropertyType!,
             priceType: selectedPriceType,
             price: selectedPrice,
-            address: "",  // 다음 뷰에서 사용할 값
+            monthlyRent: selectedMonthlyRent,
+            address: "",
+            roadAddress: "",  // 다음 뷰에서 사용할 값
             addressDetail: "",  // 다음 뷰에서 사용할 값
             nickname: ""  // 다음 뷰에서 사용할 값
         )
         newPageViewController.newImjang = newImjang
-        print("Selected Purpose Button Image: \(transactionModel.selectedPurposeButtonImage)")
-        print("Selected Property Type Button Image: \(transactionModel.selectedPropertyTypeButtonImage)")
-        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
         navigationController?.pushViewController(newPageViewController, animated: true)
     }
     

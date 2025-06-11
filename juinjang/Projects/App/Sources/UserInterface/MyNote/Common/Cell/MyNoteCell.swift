@@ -110,15 +110,15 @@ final class MyNoteCell: UICollectionViewCell {
     func bind(_ model: MyNoteCellModel,
               relay: PublishRelay<MyNoteCellEventType>) {
         thumbnailImageView.kf.setImage(
-            with: URL(string: model.imageUrl),
+            with: URL(string: model.imageUrl ?? ""),
             placeholder: PropertyType(rawValue: model.propertyType)?.image
         )
         rateLabel.rateNumber = model.rate
         likeButton.isSelected = model.isLike
-        buildingNameLabel.text = model.bulidingName
+        buildingNameLabel.text = model.buildingName
         purchaseLabel.isHidden = !model.isPurchase
-        priceLabel.text = "\(model.type) \(model.price)"
-        spaceInfoLabel.text = "\(model.pyong)평 \(model.floor)"
+        priceLabel.text = "\(model.priceType.priceTypeToViewText) \(model.price.formattedKoreanCurrency)"
+        spaceInfoLabel.text = "\(model.pyong ?? 0)평 \(model.floor ?? "")층"
         addressLabel.text = "\(model.address)"
         metaInfoView.configure(.init(model))
         configureStopShareLayout(model)

@@ -111,11 +111,13 @@ final class ImjangSearchResultViewController: BaseViewController {
     @objc private func searchRequest() {
         showSkeletonView()
         if searchKeyword.count > 0 {
-            dependency.noteRepository.retrieveNoteList(sort: Filter.update.sortValue, keyword: searchKeyword)
+            dependency
+                .noteRepository
+                .retrieveNoteList(sort: Filter.update.sortValue, keyword: searchKeyword)
                 .asObservable()
                 .subscribe(with: self) { owner, noteResultDTO in
                     print(noteResultDTO)
-                    let notes = noteResultDTO.notes
+                    let notes = noteResultDTO
                     owner.searchedImjangList = notes
                     owner.collectionView.reloadData()
                 }
@@ -272,7 +274,6 @@ extension ImjangSearchResultViewController {
         collectionView.reloadData()
     }
 }
-
 
 extension ImjangSearchResultViewController: SkeletonCollectionViewDataSource {
     // skeletonView

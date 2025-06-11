@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 enum SharedNoteAPI: TargetType {
-    case getMyNoteList(SharedNoteRequestDTO)
+    case getMyNoteList(MyNoteRequestDTO)
     case getExploreNoteList(ExploreNoteRequestDTO)
     case getNoteDetail(Int)
     case getNoteDetailReport(Int)
@@ -36,7 +36,7 @@ enum SharedNoteAPI: TargetType {
         case .postLikeNote(let noteID):
             return "v2/shared-notes/\(noteID)/likes"
         case .postSharedNote(let noteID, _):
-            return "v2/shared-notes/\(noteID)"
+            return "v2/\(noteID)"
         case .postPurchaseNote(let noteID):
             return "v2/shared-notes/\(noteID)/purchase"
         case .postNoteReport:

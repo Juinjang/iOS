@@ -18,8 +18,15 @@ final class NoteRepository: NoteRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func retrieveShareableNoteList() -> Single<[ShareSelectModel]> {
-        return NoteAPI.getShareableNoteList
+    func retrieveNoteList(sort: String,
+                          keyword: String) -> Single<[NoteDTO]> {
+        return NoteAPI.getNoteList(sort: sort, keyword: keyword)
+            .request(BaseResponse<NoteListDTO<NoteDTO>>.self, networkManager)
+            .map { try $0.unwrap().notes }
+    }
+    
+    func retrieveShareableNoteList(param: ShareableNoteRequestDTO) -> Single<[ShareSelectModel]> {
+        return NoteAPI.getShareableNoteList(param)
             .request(BaseResponse<NoteListDTO<ShareSelectModel>>.self, networkManager)
             .map { try $0.unwrap().notes }
     }
@@ -30,10 +37,10 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerModel]> {
+    func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerDTO]> {
         return NoteAPI.getNoteChecklist(id)
-            .request(BaseResponse<CheckListAnswerDTO>.self, networkManager)
-            .map { try $0.unwrap().checkListAnswerList }
+            .request(BaseResponse<[CheckListAnswerDTO]>.self, networkManager)
+            .map { try $0.unwrap() }
     }
     
     func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetailModel> {
@@ -42,16 +49,16 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func retrieveNoteList(sort: String, keyword: String?) -> Single<NoteResultDTO> {
-        return NoteAPI.getNoteList(sort, keyword)
-            .request(BaseResponse<NoteResultDTO>.self, networkManager)
+    func createNote(param: NoteCreateRequestDTO) -> Single<PostNoteResponseModel> {
+        return NoteAPI.postNote(param)
+            .request(BaseResponse<PostNoteResponseModel>.self, networkManager)
             .map { try $0.unwrap() }
     }
     
-    func createNote(param: NoteCreateRequestDTO) -> Completable {
-        return NoteAPI.postNote(param)
-            .request(NoResultResponse.self, networkManager)
-            .asCompletable()
+    func createCheckList(noteID id: Int, params: [CheckListRequestDto]) -> Single<CheckListReportResult> {
+        return NoteAPI.postCheckList(id, params)
+            .request(BaseResponse<CheckListReportResult>.self, networkManager)
+            .map { try $0.unwrap() }
     }
     
     func updateImjang(noteID id: Int,

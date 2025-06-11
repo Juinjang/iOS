@@ -15,7 +15,7 @@ struct DetailDto: Codable {
     let nickname: String
     let priceType: Int
     let priceList: [String] // 월세일 경우 보증금, 월세 순
-    let address: String
+    let address: String?
     let addressDetail: String?
     let createdAt: String
     let updatedAt: String

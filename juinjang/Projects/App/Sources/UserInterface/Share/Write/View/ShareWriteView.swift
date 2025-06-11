@@ -37,10 +37,10 @@ final class ShareWriteView: BaseView {
         $0.fontSize = 13
         $0.fontColor = .gray400
         $0.fontAlignment = .center
-        $0.text = "공유 후에는 체크리스트 수정이 제한돼요"
+        $0.text = "공유 후에는 임장노트를 수정할 수 없어요."
     }
     
-    fileprivate let uploadButton = FilledButton(title: "업로드하기")
+    let uploadButton = FilledButton(title: "업로드하기")
     
     override func configureView() {
         super.configureView()

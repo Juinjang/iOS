@@ -116,7 +116,18 @@ final class MyNoteViewController: BaseViewController, View {
         pageCellEventRelay
             .compactMap { $0.cellTapId }
             .subscribe(with: self) { (self, id) in
-                print("cell Selected \(id)")
+                guard let reactor = self.reactor else { return }
+                self.navigationController?.pushViewController(
+                    ImjangDetailViewController(
+                        reactor: .init(
+                            dependency: .init(
+                                id: id,
+                                title: reactor.getNoteTitle(noteID: id),
+                                repository: SharedNoteRepository()
+                            )
+                        )
+                    ), animated: true
+                )
             }
             .disposed(by: disposeBag)
         

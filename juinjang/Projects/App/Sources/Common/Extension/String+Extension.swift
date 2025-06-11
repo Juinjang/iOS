@@ -59,7 +59,6 @@ extension String {
         guard let isoDate = dateFormatter.date(from: target) else {
             return ""
         }
-//        let myFormatter = DateFormatter()
         dateFormatter.dateFormat = "yy.MM.dd"
         let dateString = dateFormatter.string(from: isoDate)
         return dateString
@@ -146,6 +145,21 @@ extension String {
     var yearWithUnit: String {
         guard let intValue = Int(self) else { return self }
         return "\(intValue)년"
+    }
+    
+    var to1f: Double {
+        guard let doubleValue = Double(self) else { return 0.0 }
+        return Double(String(format: "%.1f", doubleValue)) ?? 0.0
+    }
+    
+    var priceTypeToViewText: String {
+        switch self {
+        case "MARKET_PRICE": return "시세"
+        case "SALE": return "매매"
+        case "PULL_RENT": return "전세"
+        case "MONTHLY_RENT": return "월세"
+        default: return self
+        }
     }
 }
 

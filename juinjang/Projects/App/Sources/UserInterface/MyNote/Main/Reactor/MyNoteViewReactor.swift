@@ -147,13 +147,17 @@ extension MyNoteViewReactor {
                     transactionType: transactionTypeAction,
                     saleType: saleTypeAction
                 )
-            ).delay(.milliseconds(180), scheduler: MainScheduler.instance)
+            ).delay(
+                .milliseconds(180),
+                scheduler: MainScheduler.instance
+            )
             
         case .noticeCloseButtonTap:
             return .just(.hideNotice)
             
         case .cellEvent(let event):
             return handleMyNoteCellEvent(event)
+            
         default:
             return .empty()
         }
@@ -184,7 +188,7 @@ extension MyNoteViewReactor {
         let currentNoticeState = currentState.pages.first(where: { $0.category == category })?.isShowingNotice ?? true
         
         return dependency.noteRepository.retrieveMyNotes(
-            param: SharedNoteRequestDTO(
+            param: MyNoteRequestDTO(
                 noteType: category.toRequestType,
                 propertyType: "",
                 priceType: "",
@@ -271,5 +275,15 @@ extension MyNoteViewReactor {
             }
             return updatedPage
         }
+    }
+}
+
+extension MyNoteViewReactor {
+    func getNoteTitle(noteID: Int) -> String {
+        return self.currentState.pages.first {
+            $0.category == self.currentState.categoryState
+        }?.items.first {
+            $0.sharedNoteId == noteID
+        }?.buildingName ?? ""
     }
 }

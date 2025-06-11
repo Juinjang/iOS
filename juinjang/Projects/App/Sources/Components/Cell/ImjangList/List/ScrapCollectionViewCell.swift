@@ -56,7 +56,6 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
     
 // MARK: - Configure Cell
 extension ScrapCollectionViewCell {
-    
     func setData(note: NoteDTO?) {
         guard let note else { return }
         roomNameLabel.text = note.name
@@ -236,18 +235,7 @@ extension ScrapCollectionViewCell {
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
-//        
-//        if resultScore == 0.0 {
-//            setScoreStyle()
-//        } else {
-//            setScoreStyle(empty: false)
-//        }
     }
-    
-//    private func setScoreStyle(empty: Bool = true) {
-//        starIcon.tintColor = empty ? .null : .main
-//        scoreLabel.textColor = empty ? .null : .main
-//    }
     
     private func setStackViewBackground(propertyType: String, isEmpty: Bool) {
         emptyImage.isHidden = isEmpty ? false : true

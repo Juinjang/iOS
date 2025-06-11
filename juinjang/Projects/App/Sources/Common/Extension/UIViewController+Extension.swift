@@ -13,6 +13,7 @@ extension UIViewController {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
         let sceneDelegate = windowScene.delegate as? SceneDelegate
         let vc = isNav ? UINavigationController(rootViewController: viewController) : viewController
+        vc.navigationController?.navigationBar.isHidden = true
         sceneDelegate?.window?.rootViewController = vc
         sceneDelegate?.window?.makeKey()
     }
