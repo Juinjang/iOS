@@ -176,7 +176,7 @@ extension Reactive where Base: ImjangDetailView {
     var updateLayoutBasedOnInfoSection: Binder<[ImjangDetailSection: [ImjangDetailBaseCellItem]]> {
         return Binder(base) { view, sectionItems in
             guard let infoItem = sectionItems.infoItem() else { return }
-            view.infoCellHeight = infoItem.model.buyerCount < 10 ? CGFloat(612) : CGFloat(654)
+            view.infoCellHeight = (infoItem.model.buyerCount ?? 0) < 10 ? CGFloat(612) : CGFloat(654)
             view.reviewCellHeight = infoItem.model.isBuyer ? CGFloat(615) : CGFloat(223)
         }
     }

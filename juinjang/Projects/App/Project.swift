@@ -40,7 +40,7 @@ let project = Project(
             bundleId: "com.juinjangteam.juinjang",
             infoPlist: .file(path: .plist.appInfo),
             sources: ["Sources/**"],
-            resources: ["Resources/**"],
+            resources: ["Resources/**", "Sources/Manager/InAppPurchase/Products.storekit"],
             entitlements: .file(path: .relativeToRoot("Projects/App/Entitlements/juinjang.entitlements")),
             dependencies: appDependencies,
             settings: .settings(
@@ -66,7 +66,7 @@ let project = Project(
             bundleId: "com.juinjangteam.juinjang",
             infoPlist: .file(path: .plist.appInfoDev),
             sources: ["Sources/**"],
-            resources: ["Resources/**"],
+            resources: ["Resources/**", "Sources/Manager/InAppPurchase/Products.storekit"],
             entitlements: .file(path: .relativeToRoot("Projects/App/Entitlements/juinjang.entitlements")),
             dependencies: appDependencies,
             settings: .settings(

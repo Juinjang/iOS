@@ -31,12 +31,10 @@ final class InAppPurchaseService {
     }
     
     static func loadProductIdList() -> [String: String] {
-        guard let path = Bundle.main.path(forResource: "Products", ofType: "plist"),
-              let plist = FileManager.default.contents(atPath: path),
-              let data = try? PropertyListSerialization.propertyList(from: plist, format: nil) as? [String: String] else {
+        guard let products = Bundle.main.object(forInfoDictionaryKey: "Products") as? [String: String] else {
             return [:]
         }
-        return data
+        return products
     }
     
     private func requestProducts() async throws -> [Product] {

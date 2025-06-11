@@ -26,7 +26,7 @@ final class ImjangDetailInfoCell: BaseCollectionViewCell {
     
     func bind(_ infoModel: ImjangDetailInfoModel,
               relay: PublishRelay<ImjangDetailInfoCellEvent>) {
-        bannerView.configure(for: infoModel.buyerCount)
+        bannerView.configure(for: infoModel.buyerCount ?? 0)
         imageContentView.configure(for: infoModel, relay: relay)
         buildingDetailInfoView.configure(for: infoModel, relay: relay)
         buildingInfoView.configure(for: infoModel)
@@ -91,7 +91,7 @@ final class ImjangDetailInfoCell: BaseCollectionViewCell {
     }
     
     private func configureLayoutForCount(for model: ImjangDetailInfoModel) {
-        if model.buyerCount < 10 {
+        if (model.buyerCount ?? 0) < 10 {
             imageContentView.snp.remakeConstraints {
                 $0.top.equalToSuperview().offset(8)
                 $0.height.equalTo(heightKeepingAspectRatio())

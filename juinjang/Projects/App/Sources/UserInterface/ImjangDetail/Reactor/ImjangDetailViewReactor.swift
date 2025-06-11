@@ -137,7 +137,7 @@ final class ImjangDetailViewReactor: Reactor {
         case .updateIsShowNotBuyerAlert(let bool):
             newState.isShowNotBuyerAlert = bool
         case .updateIsLikedInInfoSection:
-            newState = toggleLikedInInfoSection(newState)
+            break
         case .updateIsShowCaptureAlert(let bool):
             newState.isShowCaptureAlert = bool
         }
@@ -165,7 +165,9 @@ extension ImjangDetailViewReactor {
                     return Observable.from([
                         .updateItem(section: .info, item: [item]),
                         .updateIsBuyer(model.isBuyer),
-                        .updateIsOneRoom(model.isOneRoom)
+                        .updateIsOneRoom(
+                            model.propertyType == "VILLA" || model.propertyType == "OFFICE_TEL"
+                        )
                     ])
                 }
         case .report:
@@ -305,30 +307,6 @@ extension ImjangDetailViewReactor {
         
         var updatedModel = infoItem.model
         updatedModel.isBuyer = isBuyer
-        
-        let updatedItem = ImjangDetailBaseCellItem.info(
-            ImjangDetailInfoCellItem(
-                id: infoItem.id,
-                model: updatedModel
-            )
-        )
-        
-        newState.sectionItems[.info] = [updatedItem]
-        
-        return newState
-    }
-    
-    private func toggleLikedInInfoSection(_ state: State) -> State {
-        var newState = state
-        guard case let .info(infoItem) = newState.sectionItems[.info]?.first else {
-            return state
-        }
-
-        var updatedModel = infoItem.model
-        updatedModel.isLiked.toggle()
-        updatedModel.isLiked
-        ? (updatedModel.likedCount += 1)
-        : (updatedModel.likedCount -= 1)
         
         let updatedItem = ImjangDetailBaseCellItem.info(
             ImjangDetailInfoCellItem(

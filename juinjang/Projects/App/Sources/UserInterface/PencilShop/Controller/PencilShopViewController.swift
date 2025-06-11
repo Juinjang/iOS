@@ -90,7 +90,8 @@ final class PencilShopViewController: BaseViewController, View {
     
     func bindViewEvent() {
         mainView
-            .navigationEventRelay
+            .navigationView
+            .itemActionRelay
             .withUnretained(self)
             .subscribe { (self, action) in
                 switch action {

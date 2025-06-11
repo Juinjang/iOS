@@ -31,7 +31,7 @@ extension PencilShopCategoryType {
 final class PencilShopView: BaseView {
     private var disposeBag = DisposeBag()
 
-    private let navigationView = DefaultNavigationView().then {
+    let navigationView = DefaultNavigationView().then {
         $0.title = "연필상점"
         $0.leftItem = [.pop]
     }
@@ -60,7 +60,6 @@ final class PencilShopView: BaseView {
     
     private var pages: [UIView] = []
     
-    let navigationEventRelay = PublishRelay<NavigationAction>()
     let buyingView = BuyingView()
     let obtainedView = ObtainedPencilView()
     let purchasedView = PurchasedPencilView()

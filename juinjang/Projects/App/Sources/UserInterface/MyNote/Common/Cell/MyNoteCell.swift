@@ -117,8 +117,8 @@ final class MyNoteCell: UICollectionViewCell {
         likeButton.isSelected = model.isLike
         buildingNameLabel.text = model.buildingName
         purchaseLabel.isHidden = !model.isPurchase
-        priceLabel.text = "\(model.priceType.priceTypeToViewText) \(model.price)"
-        spaceInfoLabel.text = "\(model.pyong ?? 0)평 \(model.floor ?? "")"
+        priceLabel.text = "\(model.priceType.priceTypeToViewText) \(model.price.formattedKoreanCurrency)"
+        spaceInfoLabel.text = "\(model.pyong ?? 0)평 \(model.floor ?? "")층"
         addressLabel.text = "\(model.address)"
         metaInfoView.configure(.init(model))
         configureStopShareLayout(model)

@@ -29,8 +29,8 @@ final class UserInfoView: BaseView {
     }
     
     func configure(for model: ImjangDetailInfoModel) {
-        profileImageView.kf.setImage(with: URL(string: model.owerProfileUrl))
-        nicknameLabel.text = model.owerNickname
+        profileImageView.kf.setImage(with: URL(string: model.ownerProfileUrl ?? ""))
+        nicknameLabel.text = model.ownerNickname
         introductionLabel.text = model.ownerProfileBio
     }
     

@@ -48,9 +48,9 @@ final class BuildingInfoView: BaseView {
             label.text = text
         }
         
-        zip(["\(model.bulidingName)",
+        zip(["\(model.buildingName)",
              "\(model.floor)층",
-             "\(model.pyung)평"],
+             "\(model.pyong)평"],
             infoContentStackViewSubViews).forEach { text, label in
             label.text = text
         }
