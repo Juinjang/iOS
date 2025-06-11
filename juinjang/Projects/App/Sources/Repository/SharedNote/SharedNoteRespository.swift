@@ -19,8 +19,8 @@ final class SharedNoteRepository: SharedNoteRepositoryProtocol {
     
     func retrieveMyNotes(param: MyNoteRequestDTO) -> Single<[MyNoteModel]> {
         return SharedNoteAPI.getMyNoteList(param)
-            .request(BaseResponse<[MyNoteModel]>.self, networkManager)
-            .map { try $0.unwrap() }
+            .request(BaseResponse<NoteListDTO<MyNoteModel>>.self, networkManager)
+            .map { try $0.unwrap().notes }
     }
     
     func retrieveExploreNotes(param: ExploreNoteRequestDTO) -> Single<ExploreNoteResponseDTO> {

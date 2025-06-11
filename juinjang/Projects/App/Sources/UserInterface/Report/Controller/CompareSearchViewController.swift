@@ -173,10 +173,10 @@ final class CompareSearchViewController: BaseViewController {
     }
     
     private func retrieveNoteList(sort: MyNoteFilter = .updated, excludingId: Int) {
-        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: nil)
+        dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: "")
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
-                let notes = noteResultDTO.notes
+                let notes = noteResultDTO
                 let filteredList = notes.filter { item in
                     return item.noteId != excludingId
                 }

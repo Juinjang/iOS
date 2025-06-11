@@ -7,19 +7,20 @@
 
 struct MyNoteModel: Codable {
     let sharedNoteId: Int
-    let bulidingName: String
-    let imageUrl: String
+    let buildingName: String
+    let imageUrl: String?
     let isPurchase: Bool
-    var isLike: Bool
-    let rate: Double
-    let type: String
+    var isLiked: Bool
+    let rate: String
     let price: String
-    let pyong: Int
-    let floor: String
+    let monthlyRent: String?
+    let pyong: Int?
+    let floor: String?
     let address: String
-    let onwerImageUrl: String
-    let onwerNickname: String
-    let monthAge: Int
+    let ownerImageUrl: String?
+    let ownerNickname: String
+    let timeAge: String
     let viewCount: Int
-    var propertyType: String
+    let propertyType: String
+    let priceType: String
 }
