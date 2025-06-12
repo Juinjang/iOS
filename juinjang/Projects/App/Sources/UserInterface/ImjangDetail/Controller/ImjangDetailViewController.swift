@@ -137,6 +137,17 @@ final class ImjangDetailViewController: BaseViewController, View {
             .map { Reactor.Action.noteOpenButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        mainView.navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
+                default: break
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindViewEvent() {

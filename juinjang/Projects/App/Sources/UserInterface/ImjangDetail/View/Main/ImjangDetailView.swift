@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 
 final class ImjangDetailView: BaseView {
-    fileprivate let navigationView = DefaultNavigationView().then {
+    let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
     }
     
