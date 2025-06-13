@@ -16,6 +16,8 @@ final class ImjangDetailViewReactor: Reactor {
         case expandImageButtonDidTap(index: Int)
         case likeButtonDidTap
         case screenRecordingChanged(isRecording: Bool)
+        case reportReasonDidSelected(ReportReason)
+        case reportButtonDidTap
     }
     
     enum Mutation {
@@ -28,6 +30,8 @@ final class ImjangDetailViewReactor: Reactor {
         case updateIsShowNotBuyerAlert(Bool)
         case updateIsLikedInInfoSection
         case updateIsShowCaptureAlert(Bool)
+        case updateReportReason(ReportReason)
+        case updateIsShowReportCompletedView
     }
     
     struct State {
@@ -39,6 +43,8 @@ final class ImjangDetailViewReactor: Reactor {
         var isShowPencilAlert: Bool
         var isShowNotBuyerAlert: Bool
         var isShowCaptureAlert: Bool?
+        var reportReason: ReportReason?
+        var isShowReportCompletedView: Bool?
     }
         
     struct Dependency {
@@ -116,6 +122,10 @@ final class ImjangDetailViewReactor: Reactor {
             return isRecording
             ? .just(.updateIsShowCaptureAlert(!(self.currentState.isShowCaptureAlert ?? true)))
             : .empty()
+        case .reportReasonDidSelected(let reason):
+            return .just(.updateReportReason(reason))
+        case .reportButtonDidTap:
+            return createReport(reason: self.currentState.reportReason!)
         }
     }
     
@@ -140,6 +150,10 @@ final class ImjangDetailViewReactor: Reactor {
             break
         case .updateIsShowCaptureAlert(let bool):
             newState.isShowCaptureAlert = bool
+        case .updateReportReason(let reason):
+            newState.reportReason = reason
+        case .updateIsShowReportCompletedView:
+            newState.isShowReportCompletedView = !(state.isShowReportCompletedView ?? false)
         }
         return newState
     }
@@ -147,6 +161,19 @@ final class ImjangDetailViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension ImjangDetailViewReactor {
+    private func createReport(reason: ReportReason) -> Observable<Mutation> {
+        dependency.repository
+            .createNoteReport(
+                param: .init(
+                    sharedNoteId: self.dependency.id,
+                    type: reason.rawValue
+                )
+            )
+            .andThen(Single.just(Mutation.updateIsShowReportCompletedView))
+            .asObservable()
+            .catch { _ in Observable.empty() }
+    }
+    
     private func createSection(for section: ImjangDetailSection) -> Observable<Mutation> {
         let repository = dependency.repository
         let request: Observable<[ImjangDetailBaseCellItem]>

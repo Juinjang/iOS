@@ -118,6 +118,15 @@ final class ImjangDetailViewController: BaseViewController, View {
                 self.showCaptureAlert()
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowReportCompletedView)
+            .observe(on: MainScheduler.instance)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, _) in
+                self.present(ReportCompletedAlertView(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindView() {
@@ -145,7 +154,20 @@ final class ImjangDetailViewController: BaseViewController, View {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
                 case .reportButtonTap:
-                    self.present(ReportSelectAlertView(), animated: true)
+                    self.present(ReportSelectAlertView().then { view in
+                        view.reportEventRelay
+                            .subscribe(with: self) { (self, event) in
+                                switch event {
+                                case .updateSelectType(let reason):
+                                    self.reactor?.action.onNext(.reportReasonDidSelected(reason))
+                                case .reportButtonTap:
+                                    view.dismiss(animated: true) {
+                                        self.reactor?.action.onNext(.reportButtonDidTap)
+                                    }
+                                }
+                            }
+                            .disposed(by: self.disposeBag)
+                    }, animated: true)
                 default: break
                 }
             }
