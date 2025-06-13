@@ -28,7 +28,7 @@ final class ImjangDetailViewReactor: Reactor {
         case updateIsShowPencilAlert(Bool)
         case updateIsBuyerInInfoSection(Bool)
         case updateIsShowNotBuyerAlert(Bool)
-        case updateIsLikedInInfoSection
+        case updateIsLikedInInfoSection(isLiked: Bool, likedCount: Int)
         case updateIsShowCaptureAlert(Bool)
         case updateReportReason(ReportReason)
         case updateIsShowReportCompletedView
@@ -99,6 +99,8 @@ final class ImjangDetailViewReactor: Reactor {
                 }
             ))
         case .noteOpenButtonDidTap:
+            
+            // MARK: - API 연동 작업 필요
             return .concat(
                 .just(.updateIsBuyer(true)),
                 .just(.updateIsBuyerInInfoSection(true)),
@@ -115,9 +117,7 @@ final class ImjangDetailViewReactor: Reactor {
                 ? .empty()
                 : .just(.updateIsShowNotBuyerAlert(!self.currentState.isShowNotBuyerAlert))
         case .likeButtonDidTap:
-            return .just(
-                .updateIsLikedInInfoSection
-            )
+            return likeButtonDidTap()
         case let .screenRecordingChanged(isRecording):
             return isRecording
             ? .just(.updateIsShowCaptureAlert(!(self.currentState.isShowCaptureAlert ?? true)))
@@ -146,8 +146,8 @@ final class ImjangDetailViewReactor: Reactor {
             newState = updateBuyerInInfoSection(newState, isBuyer: bool)
         case .updateIsShowNotBuyerAlert(let bool):
             newState.isShowNotBuyerAlert = bool
-        case .updateIsLikedInInfoSection:
-            break
+        case let .updateIsLikedInInfoSection(isLiked, likedCount):
+            newState = updateLikeInInfoSection(newState, isLiked: isLiked, likedCount: likedCount)
         case .updateIsShowCaptureAlert(let bool):
             newState.isShowCaptureAlert = bool
         case .updateReportReason(let reason):
@@ -161,6 +161,26 @@ final class ImjangDetailViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension ImjangDetailViewReactor {
+    private func likeButtonDidTap() -> Observable<Mutation> {
+        guard let item = self.currentState.sectionItems[.info]?.first as? ImjangDetailBaseCellItem else {
+            return .empty()
+        }
+        
+        guard case let .info(infoModel) = item else {
+            return .empty()
+        }
+        
+        let isLiked = infoModel.model.isLiked
+        
+        let observable: Observable<NoteLikeDTO> = isLiked
+        ? dependency.repository.deleteNoteLike(noteID: self.dependency.id).asObservable()
+        : dependency.repository.createNoteLike(noteID: self.dependency.id).asObservable()
+        
+        return observable.map { response in
+            Mutation.updateIsLikedInInfoSection(isLiked: !isLiked, likedCount: response.count)
+        }
+    }
+    
     private func createReport(reason: ReportReason) -> Observable<Mutation> {
         dependency.repository
             .createNoteReport(
@@ -334,6 +354,30 @@ extension ImjangDetailViewReactor {
         
         var updatedModel = infoItem.model
         updatedModel.isBuyer = isBuyer
+        
+        let updatedItem = ImjangDetailBaseCellItem.info(
+            ImjangDetailInfoCellItem(
+                id: infoItem.id,
+                model: updatedModel
+            )
+        )
+        
+        newState.sectionItems[.info] = [updatedItem]
+        
+        return newState
+    }
+    
+    private func updateLikeInInfoSection(_ state: State,
+                                         isLiked: Bool,
+                                         likedCount: Int) -> State {
+        var newState = state
+        guard case let .info(infoItem) = newState.sectionItems[.info]?.first else {
+            return state
+        }
+        
+        var updatedModel = infoItem.model
+        updatedModel.likedCount = likedCount
+        updatedModel.isLiked = isLiked
         
         let updatedItem = ImjangDetailBaseCellItem.info(
             ImjangDetailInfoCellItem(
