@@ -37,8 +37,8 @@ final class SharedNoteRepository: SharedNoteRepositoryProtocol {
     
     func retrieveNoteDetailReport(noteId id: Int) -> Single<ImjangDetailReportModel> {
         return SharedNoteAPI.getNoteDetailReport(id)
-            .request(BaseResponse<ImjangDetailReportModel>.self, networkManager)
-            .map { try $0.unwrap() }
+            .request(BaseResponse<NoteDetailReportDTO>.self, networkManager)
+            .map { try $0.unwrap().reportDTO }
     }
     
     func retrieveNoteDetailCheckList(noteId id: Int) -> Single<ImjangDetailCheckListDTO> {

@@ -13,6 +13,7 @@ import RxSwift
 final class ImjangDetailView: BaseView {
     let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
+        $0.rightItem = [.report]
     }
     
     fileprivate var infoCellHeight: CGFloat = 0

@@ -144,6 +144,8 @@ final class ImjangDetailViewController: BaseViewController, View {
                 switch action {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
+                case .reportButtonTap:
+                    self.present(ReportSelectAlertView(), animated: true)
                 default: break
                 }
             }
@@ -168,9 +170,6 @@ final class ImjangDetailViewController: BaseViewController, View {
                     reactor.action.onNext(.expandImageButtonDidTap(index: index))
                 case .likeButtonTap:
                     reactor.action.onNext(.likeButtonDidTap)
-                case .reportButtonTap:
-                    // report Alert 뷰 띄우기
-                    print("신고 버튼 클릭 됨")
                 }
             }
             .disposed(by: disposeBag)

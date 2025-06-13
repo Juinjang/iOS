@@ -13,4 +13,14 @@ struct ImjangDetailReportModel: Codable {
     let publicSpaceRate: Double
     let locationConditionsRate: Double
     let totalRate: Double
+    
+    enum CodingKeys: String, CodingKey {
+        case indoorKeyword = "indoorKeyWord"
+        case publicSpaceKeyword = "publicSpaceKeyWord"
+        case locationConditionsKeyword = "locationConditionsWord"
+        case indoorRate
+        case publicSpaceRate
+        case locationConditionsRate
+        case totalRate
+    }
 }
