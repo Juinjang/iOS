@@ -21,8 +21,8 @@ final class UserRepository: UserRepositoryProtocol {
         return .just(userDefault.nickname)
     }
     
-    func retrieveProfileIntroduction() -> Single<ProfileModel> {
-        return UserAPI.getProfileIntroduction
+    func retrieveProfileInfo() -> Single<ProfileModel> {
+        return UserAPI.getProfileInfo
             .request(BaseResponse<ProfileModel>.self, networkManager)
             .map { try $0.unwrap() }
     }

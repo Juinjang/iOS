@@ -7,8 +7,8 @@
 
 struct ProfileModel: Codable {
     let nickname: String
-    let introduction: String
+    let introduction: String?
     let email: String
-    let image: String
+    let image: String?
     let provider: String
 }

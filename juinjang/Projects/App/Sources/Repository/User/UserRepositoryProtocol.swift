@@ -9,6 +9,6 @@ import RxSwift
 
 protocol UserRepositoryProtocol {
     func retrieveUserNickname() -> Single<String>
-    func retrieveProfileIntroduction() -> Single<ProfileModel>
+    func retrieveProfileInfo() -> Single<ProfileModel>
     func updateProfileIntroduction(text: String) -> Completable
 }
