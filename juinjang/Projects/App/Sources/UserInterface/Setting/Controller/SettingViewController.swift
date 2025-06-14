@@ -195,6 +195,12 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                 }
             }
             .disposed(by: disposeBag)
+        
+        pencilShopButton.rx.throttleTap
+            .subscribe(with: self) { owner, action in
+                owner.showPencilShopVC()
+            }
+            .disposed(by: disposeBag)
     }
     
     //MARK: - 함수
@@ -205,8 +211,21 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         useButton.addTarget(self, action: #selector(showUseSelectVC), for: .touchUpInside)
         qnaButton.addTarget(self, action: #selector(showQnAVC), for: .touchUpInside)
         logoutButton.addTarget(self, action: #selector(logoutButtonTap), for: .touchUpInside)
-        accountDeleteButton.addTarget(self, action: #selector(showAccountDeleteVC), for: .touchUpInside)
+        withdrawalButton.addTarget(self, action: #selector(showAccountDeleteVC), for: .touchUpInside)
     }
+    
+    private func showPencilShopVC() {
+        let pencilShopVC = PencilShopViewController(
+            reactor: PencilShopReactor(
+                dependency: PencilShopReactor.Dependency(
+                    inAppPurchaseService: InAppPurchaseService(buyPencilRepository: MockVerifyTransactionRepository()),
+                    pencilShopRepository: PencilShopRepository()
+                )
+            )
+        )
+        navigationController?.pushViewController(pencilShopVC, animated: true)
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             profileImageView.image = pickedImage
