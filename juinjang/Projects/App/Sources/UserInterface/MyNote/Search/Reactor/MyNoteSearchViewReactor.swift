@@ -51,9 +51,9 @@ final class MyNoteSearchViewReactor: Reactor {
                 dependency.noteRepository
                     .retrieveMyNotes(
                         param: .init(
-                            noteType: "",
-                            propertyType: "",
-                            priceType: "",
+                            noteType: "SHARED",
+                            propertyType: nil,
+                            priceType: nil,
                             keyword: keyword
                         )
                     )

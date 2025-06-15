@@ -69,8 +69,19 @@ final class MyNoteSearchViewController: BaseViewController, View {
             .cellEventRelay
             .subscribe(with: self) { (self, event) in
                 switch event {
-                case .cellTap(id: let noteId):
-                    break
+                case .cellTap(id: let noteId, title: let title):
+                    self.navigationController?.pushViewController(
+                        ImjangDetailViewController(
+                            reactor: .init(
+                                dependency: .init(
+                                    id: noteId,
+                                    title: title,
+                                    repository: SharedNoteRepository()
+                                )
+                            )
+                        ),
+                        animated: true
+                    )
                 case .likeButtonTap(id: let noteId):
                     break
                 }
