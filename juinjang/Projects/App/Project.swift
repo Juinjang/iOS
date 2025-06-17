@@ -81,7 +81,7 @@ let project = Project(
                 ],
                 configurations: [
                     .debug(name: .debug, xcconfig: debugConfig),
-                    .release(name: .release, xcconfig: debugConfig)
+                    .release(name: .release, xcconfig: debugConfig)	
                 ])
         )
     ],

@@ -156,10 +156,8 @@ final class ShareWriteViewController: BaseViewController, View {
                     case .cancel:
                         print("임장 둘러보기로 이동")
                     case .confirm:
-                        
                         if let noteId = self.reactor?.getShareSelectModel().noteId,
                            let title = self.reactor?.getShareSelectModel().name {
-                            
                             self.navigationController?.pushViewController(
                                 ImjangDetailViewController(
                                     reactor: .init(
