@@ -99,19 +99,7 @@ final class ImjangDetailViewReactor: Reactor {
                 }
             ))
         case .noteOpenButtonDidTap:
-            
-            // MARK: - API 연동 작업 필요
-            return .concat(
-                .just(.updateIsBuyer(true)),
-                .just(.updateIsBuyerInInfoSection(true)),
-                .deferred { [weak self] in
-                    guard let self = self else { return .empty() }
-                    return .concat(
-                        createSection(for: .checkList),
-                        createSection(for: .review)
-                    )
-                }
-            )
+            return handlePurchase()
         case .expandImageButtonDidTap(index: _):
             return self.currentState.isBuyer
                 ? .empty()
@@ -161,6 +149,22 @@ final class ImjangDetailViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension ImjangDetailViewReactor {
+    private func handlePurchase() -> Observable<Mutation> {
+        return dependency.repository
+            .purchaseNote(noteID: dependency.id)
+            .asObservable()
+            .flatMap { [weak self] _ -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
+                
+                return .concat([
+                    .just(.updateIsBuyer(true)),
+                    .just(.updateIsBuyerInInfoSection(true)),
+                    self.createSection(for: .checkList),
+                    self.createSection(for: .review)
+                ])
+            }
+    }
+    
     private func likeButtonDidTap() -> Observable<Mutation> {
         guard let item = self.currentState.sectionItems[.info]?.first as? ImjangDetailBaseCellItem else {
             return .empty()
@@ -232,7 +236,7 @@ extension ImjangDetailViewReactor {
             return repository.retrieveNoteDetailCheckList(noteId: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
-                    let items = model.checkListAnswers.map {
+                    let items = model.checklistAnswers.map {
                         ImjangDetailCheckListCellItem(id: UUID().uuidString, model: $0)
                     }
                     
@@ -255,8 +259,8 @@ extension ImjangDetailViewReactor {
                             section: .review,
                             item: [ImjangDetailBaseCellItem.review(
                                 .init(id: UUID().uuidString,
-                                      model: .init(rate: model.totalRate,
-                                                   review: model.review))
+                                      model: .init(rate: model.totalRate ?? 0.0,
+                                                   review: model.review ?? ""))
                             )]
                         ))
                         : .empty()
@@ -276,7 +280,7 @@ extension ImjangDetailViewReactor {
             .map { response in
                 return .updateItem(
                     section: .checkList,
-                    item: response.checkListAnswers.map { model in
+                    item: response.checklistAnswers.prefix(5).map { model in
                         ImjangDetailBaseCellItem.checkList(
                             ImjangDetailCheckListCellItem(
                                 id: UUID().uuidString,

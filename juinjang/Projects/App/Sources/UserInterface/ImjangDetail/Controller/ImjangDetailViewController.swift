@@ -234,7 +234,7 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
                 guard let isBuyer = self.reactor?.currentState.isBuyer,
                       let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailCheckListCell.self, for: indexPath)
-                cell.bind(item.model, isOneRoom: isOneRoom, isBuyer: isBuyer)
+                cell.bind(item.model, isOneRoom: isOneRoom)
                 return cell
             case .review(let item):
                 let cell = collectionView.dequeueReusableCell(ImjangDetailReviewCell.self, for: indexPath)
