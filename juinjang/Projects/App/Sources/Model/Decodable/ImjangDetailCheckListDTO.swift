@@ -6,7 +6,7 @@
 //
 
 struct ImjangDetailCheckListDTO: Codable {
-    let checkListAnswerList: [ImjangDetailCheckListModel]
+    let checkListAnswers: [ImjangDetailCheckListModel]
     let review: String
     let totalRate: Double
 }

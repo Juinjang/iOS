@@ -232,7 +232,7 @@ extension ImjangDetailViewReactor {
             return repository.retrieveNoteDetailCheckList(noteId: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
-                    let items = model.checkListAnswerList.map {
+                    let items = model.checkListAnswers.map {
                         ImjangDetailCheckListCellItem(id: UUID().uuidString, model: $0)
                     }
                     
@@ -269,78 +269,23 @@ extension ImjangDetailViewReactor {
     }
     
     private func createCheckListHolderSection() -> Observable<Mutation> {
-        return Observable.just(
-            .updateItem(
-                section: .checkList,
-                item: [
-                    ImjangDetailBaseCellItem.checkList(
-                        ImjangDetailCheckListCellItem(
-                            id: UUID().uuidString,
-                            model: .init(
-                                answerId: 0,
-                                questionId: 3,
-                                category: "LOCATION_CONDITION",
-                                limjangId: 0,
-                                answer: "5",
-                                answerType: "SCORE"
+        return dependency
+            .repository
+            .retrieveNoteDetailCheckList(noteId: dependency.id)
+            .asObservable()
+            .map { response in
+                return .updateItem(
+                    section: .checkList,
+                    item: response.checkListAnswers.map { model in
+                        ImjangDetailBaseCellItem.checkList(
+                            ImjangDetailCheckListCellItem(
+                                id: UUID().uuidString,
+                                model: model
                             )
                         )
-                    ),
-                    ImjangDetailBaseCellItem.checkList(
-                        ImjangDetailCheckListCellItem(
-                            id: UUID().uuidString,
-                            model: .init(
-                                answerId: 1,
-                                questionId: 4,
-                                category: "LOCATION_CONDITION",
-                                limjangId: 0,
-                                answer: "6호선",
-                                answerType: "DROPDOWN"
-                            )
-                        )
-                    ),
-                    ImjangDetailBaseCellItem.checkList(
-                        ImjangDetailCheckListCellItem(
-                            id: UUID().uuidString,
-                            model: .init(
-                                answerId: 2,
-                                questionId: 20,
-                                category: "LOCATION_CONDITION",
-                                limjangId: 0,
-                                answer: "2023년",
-                                answerType: "DROPDOWN"
-                            )
-                        )
-                    ),
-                    ImjangDetailBaseCellItem.checkList(
-                        ImjangDetailCheckListCellItem(
-                            id: UUID().uuidString,
-                            model: .init(
-                                answerId: 3,
-                                questionId: 11,
-                                category: "LOCATION_CONDITION",
-                                limjangId: 0,
-                                answer: "3",
-                                answerType: "SCORE"
-                            )
-                        )
-                    ),
-                    ImjangDetailBaseCellItem.checkList(
-                        ImjangDetailCheckListCellItem(
-                            id: UUID().uuidString,
-                            model: .init(
-                                answerId: 4,
-                                questionId: 14,
-                                category: "LOCATION_CONDITION",
-                                limjangId: 0,
-                                answer: "남향",
-                                answerType: "DROPDOWN"
-                            )
-                        )
-                    )
-                ]
-            )
-        )
+                    }
+                )
+            }
     }
 }
 

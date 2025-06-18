@@ -63,7 +63,7 @@ let project = Project(
         .make(
             name: "juinjang-dev",
             product: .app,
-            bundleId: "com.juinjangteam.juinjang.dev",
+            bundleId: "com.juinjangteam.juinjang",
             infoPlist: .file(path: .plist.appInfoDev),
             sources: ["Sources/**"],
             resources: ["Resources/**", "Sources/Manager/InAppPurchase/Products.storekit"],
