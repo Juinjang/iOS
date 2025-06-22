@@ -14,19 +14,17 @@ final class MyNoteViewReactor: Reactor {
         case pageCellEventOccurred(event: MyNotePageEventType)
         case alertEventOccurred(event: AlertEventType)
     }
-
+    
     enum Mutation {
         case setCategoryState(Int)
         case setPage(MyNotePageModel)
         case appendNotes(notes: [MyNoteModel])
         case hideNotice
-        case updateFilter(transactionType: TransactionTypeAction?,
-                          saleType: SaleTypeAction?)
         case showAlreadyLikedNotice(id: Int)
         case setLikeTrue(id: Int)
         case resetAlert
     }
-
+    
     struct State {
         var categoryState: MyNoteCategoryType = .share
         var sharePageState = NotesPageState()
@@ -68,7 +66,7 @@ final class MyNoteViewReactor: Reactor {
         var limit: Int = 20
         var isLastPage: Bool = false
     }
-
+    
     let initialState: State = State()
     let dependency: Dependency
     
@@ -90,7 +88,7 @@ final class MyNoteViewReactor: Reactor {
             return .just(.resetAlert)
         }
     }
-
+    
     // MARK: - Reduce
     func reduce(state: State,
                 mutation: Mutation) -> State {
@@ -105,11 +103,6 @@ final class MyNoteViewReactor: Reactor {
             appendNotes(&state, notes: notes)
         case .hideNotice:
             hideNotice(&state)
-        case .updateFilter(transactionType: let transactionType,
-                           saleType: let saleType):
-            updateFilter(&state,
-                         transactionType: transactionType,
-                         saleType: saleType)
         case .showAlreadyLikedNotice(let id):
             state.alreadyLikedNoteId = id
         case .setLikeTrue(id: let id):
@@ -119,6 +112,16 @@ final class MyNoteViewReactor: Reactor {
         }
         
         return state
+    }
+    
+    private func getFinalFilter() -> (TransactionTypeAction, SaleTypeAction) {
+        guard let page = currentState.pages.first(where: { $0.category == currentState.categoryState }) else {
+            return (.totalTransaction, .totalSale)
+        }
+        
+        let tx = page.transactionType.action as? TransactionTypeAction ?? .totalTransaction
+        let sale = page.saleType.action as? SaleTypeAction ?? .totalSale
+        return (tx, sale)
     }
 }
 
@@ -141,15 +144,9 @@ extension MyNoteViewReactor {
         switch event {
         case .filterItemTap(let transactionTypeAction,
                             let saleTypeAction):
-            // Reload with Filter Items 추가 예정
-            return .just(
-                .updateFilter(
-                    transactionType: transactionTypeAction,
-                    saleType: saleTypeAction
-                )
-            ).delay(
-                .milliseconds(180),
-                scheduler: MainScheduler.instance
+            return handleFilterChange(
+                transactionType: transactionTypeAction,
+                saleType: saleTypeAction
             )
             
         case .noticeCloseButtonTap:
@@ -215,6 +212,50 @@ extension MyNoteViewReactor {
             return currentState.likePageState
         }
     }
+    
+    private func handleFilterChange(
+        transactionType: TransactionTypeAction?,
+        saleType: SaleTypeAction?
+    ) -> Observable<Mutation> {
+        return .deferred { [weak self] in
+            guard let self = self else { return .empty() }
+            var tempState = self.currentState
+            let (tx, sale) = self.updateFilter(&tempState,
+                                               transactionType: transactionType,
+                                               saleType: saleType)
+            return self.fetchFilterNoteList(transaction: tx, sale: sale)
+        }
+    }
+    
+    private func fetchFilterNoteList(
+        transaction: TransactionTypeAction?,
+        sale: SaleTypeAction?
+    ) -> Observable<Mutation> {
+        let transactionType = transaction ?? .totalTransaction
+        let saleType = sale ?? .totalSale
+        let currentNoticeState = currentState.pages.first(where: { $0.category == currentState.categoryState })?.isShowingNotice ?? true
+        
+        return dependency
+            .noteRepository
+            .retrieveMyNotes(
+                param: .init(
+                    noteType: currentState.categoryState.toRequestType,
+                    propertyType: saleType.toRequestType,
+                    priceType: transactionType.toRequestType,
+                    keyword: ""
+                )
+            )
+            .asObservable()
+            .map { notes in
+                return .setPage(
+                    .init(category: self.currentState.categoryState,
+                          isShowingNotice: currentNoticeState,
+                          transactionType: transactionType.filter,
+                          saleType: saleType.filter,
+                          items: notes.map { .init(model: $0) })
+                )
+            }
+    }
 }
 
 // MARK: - Reduce Methods
@@ -246,21 +287,35 @@ extension MyNoteViewReactor {
         state.pages[index].isShowingNotice = false
     }
     
-    private func updateFilter(_ state: inout State,
-                              transactionType: TransactionTypeAction?,
-                              saleType: SaleTypeAction?) {
+    private func updateFilter(
+        _ state: inout State,
+        transactionType: TransactionTypeAction?,
+        saleType: SaleTypeAction?
+    ) -> (TransactionTypeAction, SaleTypeAction) {
+        var finalTransactionType: TransactionTypeAction = .totalTransaction
+        var finalSaleType: SaleTypeAction = .totalSale
+        
         state.pages = state.pages.map { page in
             guard page.category == state.categoryState else { return page }
             var updatedPage = page
             
-            if let transactionType = transactionType {
-                updatedPage.transactionType = transactionType.filter
-            }
-            if let saleType = saleType {
-                updatedPage.saleType = saleType.filter
-            }
+            let currentTransaction = updatedPage.transactionType.action as? TransactionTypeAction
+            let currentSale = updatedPage.saleType.action as? SaleTypeAction
+            
+            let newTransaction = transactionType ?? currentTransaction ?? .totalTransaction
+            let newSale = saleType ?? currentSale ?? .totalSale
+            
+            updatedPage.transactionType = newTransaction.filter
+            updatedPage.saleType = newSale.filter
+            
+            // 최종 값 설정
+            finalTransactionType = newTransaction
+            finalSaleType = newSale
+            
             return updatedPage
         }
+        
+        return (finalTransactionType, finalSaleType)
     }
     
     private func setLikeTrue(_ state: inout State, id: Int) {
