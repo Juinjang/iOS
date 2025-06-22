@@ -25,13 +25,15 @@ final class ImjangDetailViewReactor: Reactor {
         case updateAllCheckListItems(items: [ImjangDetailCheckListCellItem])
         case updateIsOneRoom(Bool)
         case updateIsBuyer(Bool)
-        case updateIsShowPencilAlert(Bool)
+        case updateIsShowPencilAlert
         case updateIsBuyerInInfoSection(Bool)
-        case updateIsShowNotBuyerAlert(Bool)
+        case updateIsShowNotBuyerAlert
         case updateIsLikedInInfoSection(isLiked: Bool, likedCount: Int)
-        case updateIsShowCaptureAlert(Bool)
+        case updateIsShowCaptureAlert
         case updateReportReason(ReportReason)
         case updateIsShowReportCompletedView
+        case updateOwnPencilCount(Int)
+        case updateRequiredPencilCount(Int)
     }
     
     struct State {
@@ -45,6 +47,8 @@ final class ImjangDetailViewReactor: Reactor {
         var isShowCaptureAlert: Bool?
         var reportReason: ReportReason?
         var isShowReportCompletedView: Bool?
+        var ownPencilCount: Int = 0
+        var requiredPencilCount: Int = 0
     }
         
     struct Dependency {
@@ -81,7 +85,7 @@ final class ImjangDetailViewReactor: Reactor {
                     return .concat(
                         self.currentState.isBuyer
                         ? .empty()
-                        : .just(.updateIsShowPencilAlert(true)),
+                        : .just(.updateIsShowPencilAlert),
                         
                         self.currentState.isBuyer
                         ? self.createSection(for: .checkList)
@@ -103,12 +107,12 @@ final class ImjangDetailViewReactor: Reactor {
         case .expandImageButtonDidTap(index: _):
             return self.currentState.isBuyer
                 ? .empty()
-                : .just(.updateIsShowNotBuyerAlert(!self.currentState.isShowNotBuyerAlert))
+                : .just(.updateIsShowNotBuyerAlert)
         case .likeButtonDidTap:
             return likeButtonDidTap()
         case let .screenRecordingChanged(isRecording):
             return isRecording
-            ? .just(.updateIsShowCaptureAlert(!(self.currentState.isShowCaptureAlert ?? true)))
+            ? .just(.updateIsShowCaptureAlert)
             : .empty()
         case .reportReasonDidSelected(let reason):
             return .just(.updateReportReason(reason))
@@ -128,20 +132,24 @@ final class ImjangDetailViewReactor: Reactor {
             newState.isOneRoom = bool
         case .updateIsBuyer(let bool):
             newState.isBuyer = bool
-        case .updateIsShowPencilAlert(let bool):
-            newState.isShowPencilAlert = bool
+        case .updateIsShowPencilAlert:
+            newState.isShowPencilAlert.toggle()
         case .updateIsBuyerInInfoSection(let bool):
             newState = updateBuyerInInfoSection(newState, isBuyer: bool)
-        case .updateIsShowNotBuyerAlert(let bool):
-            newState.isShowNotBuyerAlert = bool
+        case .updateIsShowNotBuyerAlert:
+            newState.isShowNotBuyerAlert.toggle()
         case let .updateIsLikedInInfoSection(isLiked, likedCount):
             newState = updateLikeInInfoSection(newState, isLiked: isLiked, likedCount: likedCount)
-        case .updateIsShowCaptureAlert(let bool):
-            newState.isShowCaptureAlert = bool
+        case .updateIsShowCaptureAlert:
+            newState.isShowCaptureAlert.toggle()
         case .updateReportReason(let reason):
             newState.reportReason = reason
         case .updateIsShowReportCompletedView:
-            newState.isShowReportCompletedView = !(state.isShowReportCompletedView ?? false)
+            newState.isShowReportCompletedView.toggle()
+        case .updateOwnPencilCount(let count):
+            newState.ownPencilCount = count
+        case .updateRequiredPencilCount(let count):
+            newState.requiredPencilCount = count
         }
         return newState
     }
@@ -162,6 +170,9 @@ extension ImjangDetailViewReactor {
                     self.createSection(for: .checkList),
                     self.createSection(for: .review)
                 ])
+            }
+            .catch { _ -> Observable<Mutation> in
+                return .just(.updateIsShowPencilAlert)
             }
     }
     
@@ -214,6 +225,8 @@ extension ImjangDetailViewReactor {
                         )
                     )
                     return Observable.from([
+                        // 내 보유 연필 API 등록 예정
+                        .updateRequiredPencilCount(model.requiredPencils ?? 0),
                         .updateItem(section: .info, item: [item]),
                         .updateIsBuyer(model.isBuyer),
                         .updateIsOneRoom(

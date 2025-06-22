@@ -82,10 +82,11 @@ final class ImjangDetailViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .distinctUntilChanged()
             .subscribe(with: self) { (self, bool) in
+                guard let reactor = self.reactor else { return }
                 if bool {
                     self.present(
                         PencilAlertView(
-                            title: "판교푸르지오월드마크",
+                            title: reactor.dependency.title,
                             pencilCount: 0,
                             needPencilCount: 3
                         ),
