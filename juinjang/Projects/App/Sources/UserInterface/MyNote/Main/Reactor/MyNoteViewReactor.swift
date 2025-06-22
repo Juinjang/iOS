@@ -12,7 +12,7 @@ final class MyNoteViewReactor: Reactor {
         case viewDidLoad
         case categoryButtonDidTap(Int)
         case pageCellEventOccurred(event: MyNotePageEventType)
-        case alertEventOccurred(event: AlertEventType)
+        case alertEventOccurred(event: AlertEventType, noteID: Int)
     }
     
     enum Mutation {
@@ -21,7 +21,7 @@ final class MyNoteViewReactor: Reactor {
         case appendNotes(notes: [MyNoteModel])
         case hideNotice
         case showAlreadyLikedNotice(id: Int)
-        case setLikeTrue(id: Int)
+        case setLikeUpdate(id: Int)
         case resetAlert
     }
     
@@ -83,9 +83,8 @@ final class MyNoteViewReactor: Reactor {
             return handleCategoryChange(index: index)
         case .pageCellEventOccurred(event: let event):
             return handlePageCellEvent(event)
-        case .alertEventOccurred(event: let event):
-            // like API Call
-            return .just(.resetAlert)
+        case let .alertEventOccurred(event, id):
+            return (event == .confirm) ? cancelNoteLike(noteID: id) : .empty()
         }
     }
     
@@ -105,28 +104,30 @@ final class MyNoteViewReactor: Reactor {
             hideNotice(&state)
         case .showAlreadyLikedNotice(let id):
             state.alreadyLikedNoteId = id
-        case .setLikeTrue(id: let id):
-            setLikeTrue(&state, id: id)
+        case .setLikeUpdate(id: let id):
+            setLikeUpdate(&state, id: id)
         case .resetAlert:
             state.alreadyLikedNoteId = nil
         }
         
         return state
     }
-    
-    private func getFinalFilter() -> (TransactionTypeAction, SaleTypeAction) {
-        guard let page = currentState.pages.first(where: { $0.category == currentState.categoryState }) else {
-            return (.totalTransaction, .totalSale)
-        }
-        
-        let tx = page.transactionType.action as? TransactionTypeAction ?? .totalTransaction
-        let sale = page.saleType.action as? SaleTypeAction ?? .totalSale
-        return (tx, sale)
-    }
 }
 
 // MARK: - Mutate Methods
 extension MyNoteViewReactor {
+    private func cancelNoteLike(noteID id: Int) -> Observable<Mutation> {
+        return dependency.noteRepository
+            .deleteNoteLike(noteID: id)
+            .asObservable()
+            .flatMap { _ in
+                return Observable.concat([
+                    .just(.resetAlert),
+                    .just(.setLikeUpdate(id: id))
+                ])
+            }
+    }
+    
     private func handleCategoryChange(index: Int) -> Observable<Mutation> {
         let category = MyNoteCategoryType(rawValue: index) ?? .share
         
@@ -163,7 +164,6 @@ extension MyNoteViewReactor {
     private func handleMyNoteCellEvent(_ event: MyNoteCellEventType) -> Observable<Mutation> {
         switch event {
         case .likeButtonTap(let id):
-            
             let category = currentState.categoryState
             let currentPage = currentState.pages[category.rawValue]
             
@@ -171,7 +171,12 @@ extension MyNoteViewReactor {
                 if item.isLike {
                     return .just(.showAlreadyLikedNotice(id: id))
                 } else {
-                    return .just(.setLikeTrue(id: id))
+                    return dependency.noteRepository
+                        .createNoteLike(noteID: id)
+                        .asObservable()
+                        .map { _ in
+                            return .setLikeUpdate(id: id)
+                        }
                 }
             }
             
@@ -318,14 +323,14 @@ extension MyNoteViewReactor {
         return (finalTransactionType, finalSaleType)
     }
     
-    private func setLikeTrue(_ state: inout State, id: Int) {
+    private func setLikeUpdate(_ state: inout State, id: Int) {
         state.pages = state.pages.map { page in
             guard page.category == state.categoryState else { return page }
             var updatedPage = page
             updatedPage.items = page.items.map { item in
                 guard item.sharedNoteId == id else { return item }
                 var updated = item
-                updated.isLike = true
+                updated.isLike.toggle()
                 return updated
             }
             return updatedPage
