@@ -161,6 +161,23 @@ extension String {
         default: return self
         }
     }
+    
+    var pencilQuantity: Int {
+        let pattern = "\\d+"                          
+        let regex = try! NSRegularExpression(pattern: pattern)
+
+        if let match = regex.firstMatch(
+                in: self,
+                options: [],
+                range: NSRange(self.startIndex..., in: self)
+            ) {
+            let range = Range(match.range, in: self)!
+            let digits = String(self[range])
+            let number = Int(digits)
+            return number ?? 0
+        }
+        return 0
+    }
 }
 
 private extension NumberFormatter {
