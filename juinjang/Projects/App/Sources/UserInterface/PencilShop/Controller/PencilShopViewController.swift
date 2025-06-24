@@ -80,6 +80,7 @@ final class PencilShopViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.purchaseResult }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, purchasePencilDTO in
                 guard let purchasePencilDTO else { return }

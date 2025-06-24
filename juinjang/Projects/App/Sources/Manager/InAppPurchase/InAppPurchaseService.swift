@@ -61,7 +61,7 @@ final class InAppPurchaseService {
         products.sorted(by: { return $0.displayName < $1.displayName })
     }
 
-    func purchase(_ product: Product) async throws -> PurchasePencilDTO? {
+    func purchase(_ product: Product, completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
         let myToken = UUID()
         let result = try await product.purchase(options: [.appAccountToken(myToken)])
 
@@ -80,32 +80,21 @@ final class InAppPurchaseService {
                 )
                 
                 dump(purchasePencilRequest)
-                var purchasePencilResponseDTO: PurchasePencilDTO?
                 
                 // 서버 검증
                 pencilShopRepository.purchasePencil(parameter: purchasePencilRequest)
                     .asObservable()
                     .subscribe(with: self) { owner, purchasePencilDTO in
-                        purchasePencilResponseDTO = purchasePencilDTO
+                        completionHandler(purchasePencilDTO)
                     }
                     .disposed(by: disposeBag)
 
                 await transaction.finish()
-                return purchasePencilResponseDTO
-//                if verifyResult.isSuccess {
-//                    await transaction.finish()
-//                    return verifyResult
-//                } else {
-//                    await transaction.finish()
-//                    return nil
-//                }
-                
-
             } catch {
-                return nil
+                completionHandler(nil)
             }
-        case .userCancelled, .pending: return nil
-        default: return nil
+        case .userCancelled, .pending: completionHandler(nil)
+        default: completionHandler(nil)
         }
     }
     
@@ -127,19 +116,14 @@ final class InAppPurchaseService {
                             playTime: Int(PlayTimeTracker.shared.getPlayTime())
                         )
                         
-                        var purchasePencilResponseDTO: PurchasePencilDTO?
-                        
                         // 서버 검증
                         pencilShopRepository.purchasePencil(parameter: purchasePencilRequest)
                             .asObservable()
                             .subscribe(with: self) { owner, purchasePencilDTO in
-                                purchasePencilResponseDTO = purchasePencilDTO
+                                owner.completedPurchasePencilDTO.onNext(purchasePencilDTO)
                             }
                             .disposed(by: disposeBag)
-
                         await transaction.finish()
-                        completedPurchasePencilDTO.onNext(purchasePencilResponseDTO)
-
                     }
                 } catch {
                     print("🚫 트랜잭션 서명 검증 실패")
@@ -185,8 +169,9 @@ extension InAppPurchaseService {
             let task = Task.detached { [weak self] in
                 guard let self else { return }
                 do {
-                    let verifyResult = try await purchase(product)
-                    single(.success((verifyResult)))
+                    try await purchase(product) { purchasePencilDTO in
+                        single(.success((purchasePencilDTO)))
+                    }
                 } catch {
                     single(.failure(error))
                 }
