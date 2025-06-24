@@ -18,6 +18,7 @@ final class ImjangDetailViewReactor: Reactor {
         case screenRecordingChanged(isRecording: Bool)
         case reportReasonDidSelected(ReportReason)
         case reportButtonDidTap
+        case purchaseButtonDidTap
     }
     
     enum Mutation {
@@ -103,7 +104,7 @@ final class ImjangDetailViewReactor: Reactor {
                 }
             ))
         case .noteOpenButtonDidTap:
-            return handlePurchase()
+            return .just(.updateIsShowPencilAlert)
         case .expandImageButtonDidTap(index: _):
             return self.currentState.isBuyer
                 ? .empty()
@@ -118,6 +119,8 @@ final class ImjangDetailViewReactor: Reactor {
             return .just(.updateReportReason(reason))
         case .reportButtonDidTap:
             return createReport(reason: self.currentState.reportReason!)
+        case .purchaseButtonDidTap:
+            return handlePurchase()
         }
     }
     
@@ -139,7 +142,9 @@ final class ImjangDetailViewReactor: Reactor {
         case .updateIsShowNotBuyerAlert:
             newState.isShowNotBuyerAlert.toggle()
         case let .updateIsLikedInInfoSection(isLiked, likedCount):
-            newState = updateLikeInInfoSection(newState, isLiked: isLiked, likedCount: likedCount)
+            newState = updateLikeInInfoSection(newState,
+                                               isLiked: isLiked,
+                                               likedCount: likedCount)
         case .updateIsShowCaptureAlert:
             newState.isShowCaptureAlert.toggle()
         case .updateReportReason(let reason):

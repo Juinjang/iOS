@@ -84,12 +84,24 @@ final class ImjangDetailViewController: BaseViewController, View {
             .subscribe(with: self) { (self, bool) in
                 guard let reactor = self.reactor else { return }
                 if bool {
+                    let alertView = PencilAlertView(
+                        title: reactor.dependency.title,
+                        pencilCount: 0,
+                        needPencilCount: 3
+                    ).then {
+                        $0.eventRelay
+                            .subscribe(with: self) { (self, event) in
+                                switch event {
+                                case .confirm:
+                                    reactor.action.onNext(.purchaseButtonDidTap)
+                                default: break
+                                }
+                            }
+                            .disposed(by: self.disposeBag)
+                    }
+                    
                     self.present(
-                        PencilAlertView(
-                            title: reactor.dependency.title,
-                            pencilCount: 0,
-                            needPencilCount: 3
-                        ),
+                        alertView,
                         animated: true
                     )
                 }

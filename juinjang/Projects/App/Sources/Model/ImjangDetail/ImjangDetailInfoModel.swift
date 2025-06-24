@@ -9,9 +9,9 @@ struct ImjangDetailInfoModel: Codable {
     var isBuyer: Bool
     let isImageShared: Bool
     let requiredPencils: Int?
-    let imageCount: Int
-    let checkedCount: Int
-    let reviewLength: Int
+    let imageCount: Int?
+    let checkedCount: Int?
+    let reviewLength: Int?
     let buildingName: String
     let limjangPurpose: String
     let propertyType: String
