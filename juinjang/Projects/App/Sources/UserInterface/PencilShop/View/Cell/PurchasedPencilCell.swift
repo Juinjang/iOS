@@ -20,9 +20,9 @@ final class PurchasedPencilCell: BaseCollectionViewCell {
         dashedBorder.removeFromSuperlayer()
     }
     
-    func configureCell(purchasedPencil: PurchasedPencilModel) {
+    func configureCell(purchasedPencil: PurchasedPencilDTO) {
         dateLabel.setAttribute(
-            text: String.dateToString(target: purchasedPencil.createdAt),
+            text: String.dateToString(target: purchasedPencil.purchasedAt),
             color: .gray300,
             font: .pretendard(size: 14, weight: .medium),
             lineHeight: 20,
