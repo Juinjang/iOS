@@ -51,6 +51,16 @@ final class PencilShopViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
+            .compactMap { $0.isTotalRead }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, isTotalReadDTO in
+                !isTotalReadDTO.isTotalRead ?
+                owner.mainView.segmentedView.showNewDotView() :
+                owner.mainView.segmentedView.hideNewDotView()
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .compactMap { $0.products }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)

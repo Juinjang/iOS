@@ -32,6 +32,7 @@ final class PencilShopReactor: Reactor {
     
     enum Mutation {
         case setPencilTotalBalance(PencilBalanceDTO)
+        case setIsTotalRead(IsTotalReadAcquiredPencilDTO)
         case setProductList([Product])
         case setObtainedList([AcquiredPencilDTO])
         case setPurchasedList([PurchasedPencilDTO])
@@ -42,6 +43,7 @@ final class PencilShopReactor: Reactor {
     
     struct State {
         var pencilTotalBalance: PencilBalanceDTO?
+        var isTotalRead: IsTotalReadAcquiredPencilDTO?
         var products: [Product] = []
         var obtainedSections: [ObtainedSectionModel] = []
         var purchasedSections: [PurchasedSectionModel] = []
@@ -55,6 +57,7 @@ final class PencilShopReactor: Reactor {
         case .viewDidLoad:
             return .concat([
                 retrievePencilTotalBalance(),
+                retrieveIsTotalRead(),
                 handleCategoryTapped(index: PencilShopCategoryType.buying.rawValue)
             ])
         case .categoryButtonDidTap(let index):
@@ -69,6 +72,8 @@ final class PencilShopReactor: Reactor {
         switch mutation {
         case .setPencilTotalBalance(let pencilTotalBalance):
             state.pencilTotalBalance = pencilTotalBalance
+        case .setIsTotalRead(let isTotalReadDTO):
+            state.isTotalRead = isTotalReadDTO
         case .setProductList(let array):
             state.products = array
         case .setObtainedList(let array):
@@ -92,6 +97,14 @@ extension PencilShopReactor {
             .asObservable()
             .flatMap { totalBalanceDTO -> Observable<Mutation> in
                 return .just(.setPencilTotalBalance(totalBalanceDTO))
+            }
+    }
+    
+    private func retrieveIsTotalRead() -> Observable<Mutation> {
+        return dependency.pencilShopRepository.retrieveIsTotalReadAcquiredPencil()
+            .asObservable()
+            .flatMap { isTotalReadDTO -> Observable<Mutation> in
+                return .just(.setIsTotalRead(isTotalReadDTO))
             }
     }
     
