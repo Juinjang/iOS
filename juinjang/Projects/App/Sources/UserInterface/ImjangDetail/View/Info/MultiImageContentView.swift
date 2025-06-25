@@ -207,6 +207,11 @@ extension MultiImageContentView {
 extension MultiImageContentView {
     private func configureImageSectionForBuyer(for model: ImjangDetailInfoModel) {
         switch model.imageCount {
+        case nil:
+            mainImageButton.setImage(
+                urlString: "",
+                placeholder: PropertyType(rawValue: model.propertyType)?.detailImage
+            )
         case 0, 1:
             if let firstImageUrlString = model.images.first {
                 mainImageButton.isHiddenExpandButton = false
@@ -253,7 +258,7 @@ extension MultiImageContentView {
         checkCountView.isHidden = true
         imageCountView.isHidden = true
         switch model.imageCount {
-        case 0, 1:
+        case nil, 0, 1:
             setupBuyerLayoutForSingleImage()
         case 2:
             setupBuyerLayoutForTwoImages()

@@ -56,7 +56,10 @@ final class BuyingView: BaseView {
         add(scrollView)
         scrollView.add(contentView)
         
-        [pencilShopGuideView, pencilInfoView, pencilItemStackView, pencilUsageGuideView].forEach {
+        [pencilShopGuideView,
+         pencilInfoView,
+         pencilItemStackView,
+         pencilUsageGuideView].forEach {
             contentView.addSubview($0)
         }
     }

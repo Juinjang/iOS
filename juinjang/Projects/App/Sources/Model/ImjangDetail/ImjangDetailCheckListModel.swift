@@ -8,8 +8,8 @@
 struct ImjangDetailCheckListModel: Codable {
     let answerId: Int
     let questionId: Int
-    let category: String
-    let limjangId: Int
-    let answer: String
-    let answerType: String
+    let category: String?
+    let limjangId: Int?
+    let answer: String?
+    let answerType: String?
 }

@@ -23,6 +23,7 @@ final class ShareCompletedView: BaseAlertViewController {
     init() {
         super.init(
             height: 277,
+            isBackgroundDismissEnabled: true,
             contentViews: [baseView],
             buttons: [.cancel(title: "다른 노트 구경가기", width: 179),
                       .confirm(title: "확인하기")]

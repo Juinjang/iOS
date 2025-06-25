@@ -29,7 +29,7 @@ extension MyNotePageEventType {
     }
     
     var cellTapId: Int? {
-        if case let .cellEvent(.cellTap(id)) = self {
+        if case let .cellEvent(.cellTap(id, _)) = self {
             return id
         }
         return nil

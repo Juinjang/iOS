@@ -30,9 +30,9 @@ enum SharedNoteAPI: TargetType {
         case .getNoteDetail(let noteId):
             return "v2/shared-notes/\(noteId)"
         case .getNoteDetailReport(let noteId):
-            return "v2/notes/\(noteId)/report"
+            return "v2/shared-notes/\(noteId)/report"
         case .getNoteDetailChecklist(let noteId):
-            return "v2/shared-notes/\(noteId)/checklist"
+            return "v2/shared-note/\(noteId)/checklist"
         case .postLikeNote(let noteID):
             return "v2/shared-notes/\(noteID)/likes"
         case .postSharedNote(let noteID, _):

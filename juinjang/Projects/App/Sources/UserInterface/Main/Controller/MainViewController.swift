@@ -178,7 +178,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         }
         
         tableView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
             $0.left.right.bottom.equalToSuperview()
         }
     }
