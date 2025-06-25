@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 
 enum PencilShopAPI: TargetType {
+    case getPencilBalance
     case purchasePencil(PurchasePencilRequestDTO)
     case readPencil(ReadAcquiredPencilRequestDTO)
     case getUsedPencil
@@ -18,6 +19,8 @@ enum PencilShopAPI: TargetType {
 
     var path: String {
         switch self {
+        case .getPencilBalance:
+            "v2/pencil-account/balance"
         case .purchasePencil:
             "v2/pencil/purchase/apple"
         case .readPencil:
@@ -35,7 +38,7 @@ enum PencilShopAPI: TargetType {
 
     var method: HTTPMethod {
         switch self {
-        case .getUsedPencil, .getPurchasedPencil, .getAcquiredPencil, .getIsTotalReadAcquiredPencil:
+        case .getPencilBalance, .getUsedPencil, .getPurchasedPencil, .getAcquiredPencil, .getIsTotalReadAcquiredPencil:
                 .get
         case .purchasePencil:
                 .post

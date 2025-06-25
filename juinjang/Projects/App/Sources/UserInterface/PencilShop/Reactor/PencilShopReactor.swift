@@ -31,6 +31,7 @@ final class PencilShopReactor: Reactor {
     }
     
     enum Mutation {
+        case setPencilTotalBalance(PencilBalanceDTO)
         case setProductList([Product])
         case setObtainedList([AcquiredPencilDTO])
         case setPurchasedList([PurchasedPencilDTO])
@@ -40,6 +41,7 @@ final class PencilShopReactor: Reactor {
     }
     
     struct State {
+        var pencilTotalBalance: PencilBalanceDTO?
         var products: [Product] = []
         var obtainedSections: [ObtainedSectionModel] = []
         var purchasedSections: [PurchasedSectionModel] = []
@@ -51,7 +53,10 @@ final class PencilShopReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return handleCategoryTapped(index: PencilShopCategoryType.buying.rawValue)
+            return .concat([
+                retrievePencilTotalBalance(),
+                handleCategoryTapped(index: PencilShopCategoryType.buying.rawValue)
+            ])
         case .categoryButtonDidTap(let index):
             return handleCategoryTapped(index: index)
         case .priceButtonDidTap(let product):
@@ -62,6 +67,8 @@ final class PencilShopReactor: Reactor {
     func reduce(state: State, mutation: Mutation) -> State {
         var state = state
         switch mutation {
+        case .setPencilTotalBalance(let pencilTotalBalance):
+            state.pencilTotalBalance = pencilTotalBalance
         case .setProductList(let array):
             state.products = array
         case .setObtainedList(let array):
@@ -80,6 +87,14 @@ final class PencilShopReactor: Reactor {
 }
 
 extension PencilShopReactor {
+    private func retrievePencilTotalBalance() -> Observable<Mutation> {
+        return dependency.pencilShopRepository.retrievePencilTotalBalance()
+            .asObservable()
+            .flatMap { totalBalanceDTO -> Observable<Mutation> in
+                return .just(.setPencilTotalBalance(totalBalanceDTO))
+            }
+    }
+    
     private func handleCategoryTapped(index: Int) -> Observable<Mutation> {
         let category = PencilShopCategoryType(rawValue: index) ?? .buying
         

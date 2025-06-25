@@ -61,5 +61,6 @@ final class PencilShopGuideView: UIView {
             lineHeight: 23,
             alignment: .center
         )
+        messageLabel.numberOfLines = 2
     }
 }

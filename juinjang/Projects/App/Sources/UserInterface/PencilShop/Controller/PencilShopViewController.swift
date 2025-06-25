@@ -43,6 +43,14 @@ final class PencilShopViewController: BaseViewController, View {
     
     func bind(reactor: PencilShopReactor) {
         reactor.state
+            .compactMap { $0.pencilTotalBalance }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, pencilBalanceDTO in
+                owner.mainView.buyingView.setPencilCount(count: pencilBalanceDTO.totalBalance)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .compactMap { $0.products }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
@@ -56,7 +64,9 @@ final class PencilShopViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyObtainedSnapshot(sections: sections)
-                owner.mainView.obtainedView.setListEmpty(empty: sections.isEmpty)
+                if let section = sections.first {
+                    owner.mainView.obtainedView.setListEmpty(empty: section.obtainedPencils.isEmpty)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -65,7 +75,9 @@ final class PencilShopViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyPurchasedSnapshot(sections: sections)
-                owner.mainView.purchasedView.setListEmpty(empty: sections.isEmpty)
+                if let section = sections.first {
+                    owner.mainView.purchasedView.setListEmpty(empty: section.purchasedPencils.isEmpty)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -74,7 +86,9 @@ final class PencilShopViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyUsedSnapshot(sections: sections)
-                owner.mainView.usedView.setListEmpty(empty: sections.isEmpty)
+                if let section = sections.first {
+                    owner.mainView.usedView.setListEmpty(empty: section.usedPencils.isEmpty)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -124,9 +138,7 @@ final class PencilShopViewController: BaseViewController, View {
         
         mainView.obtainedView.collectionView.rx.itemSelected
             .subscribe(with: self) { owner, indexPath in
-                if let model = owner.obtainedDataSource.itemIdentifier(for: indexPath) {
-                  print("selected: \(model)")
-                }
+                guard let model = owner.obtainedDataSource.itemIdentifier(for: indexPath) else { return }
             }
             .disposed(by: disposeBag)
     }

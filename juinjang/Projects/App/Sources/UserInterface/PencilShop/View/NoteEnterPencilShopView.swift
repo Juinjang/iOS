@@ -1,19 +1,23 @@
 //
-//  BuyingView.swift
+//  NoteEnterPencilShopView.swift
 //  juinjang
 //
-//  Created by 조유진 on 4/4/25.
+//  Created by 조유진 on 6/17/25.
 //
 
 import UIKit
-import SnapKit
 import RxSwift
 import RxRelay
 import StoreKit
 
-final class BuyingView: BaseView {
-    private let pencilShopGuideView = PencilShopGuideView(message: "연필을 구매해서 다른 임장노트를 구경해보세요!", spacing: 27)
-    private let pencilInfoView = PencilInfoView(infoList: [.pencilYouHave: 0])
+final class NoteEnterPencilShopView: BaseView {
+    let navigationView = DefaultNavigationView().then {
+        $0.title = "연필상점"
+        $0.leftItem = [.pop]
+    }
+    
+    private let pencilShopGuideView = PencilShopGuideView(message: "연필이 부족해요:(\n연필을 구매해서 다른 임장노트를 구경해보세요!", spacing: 16)
+    private let pencilInfoView = PencilInfoView(infoList: [.necessaryPencil: 0, .pencilYouHave: 0, .notEnoughPencil: 0])
     
     private let pencilItemStackView = UIStackView().then {
         $0.axis = .vertical
@@ -33,7 +37,15 @@ final class BuyingView: BaseView {
     private var disposeBag = DisposeBag()
     
     func setPencilCount(count: Int) {
-        pencilInfoView.setPencilShopMyPencilCount(pencilCount: count)
+        pencilInfoView.setNoteEnterMyPencilCount(pencilCount: count)
+    }
+    
+    func setNeededPencilCount(count: Int) {
+        pencilInfoView.setNeededPencilCount(neededPencilCount: count)
+    }
+    
+    func setNotEnoughPencilCount(count: Int) {
+        pencilInfoView.setNotEnoughPencilCount(notEnoughPencilCount: count)
     }
     
     func setProductList(_ products: [Product]) {
@@ -53,19 +65,27 @@ final class BuyingView: BaseView {
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        add(scrollView)
+        add(navigationView, scrollView)
         scrollView.add(contentView)
         
-        [pencilShopGuideView, pencilInfoView, pencilItemStackView, pencilUsageGuideView].forEach {
-            contentView.addSubview($0)
-        }
+        contentView.add(
+            pencilShopGuideView,
+            pencilInfoView,
+            pencilItemStackView,
+            pencilUsageGuideView
+        )
     }
     
     override func configureLayout() {
         super.configureLayout()
         
-        scrollView.snp.makeConstraints { make in
+        navigationView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide)
+            make.horizontalEdges.equalToSuperview()
+        }
+        
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(navigationView.snp.bottom)
             make.horizontalEdges.bottom.equalToSuperview()
         }
         
