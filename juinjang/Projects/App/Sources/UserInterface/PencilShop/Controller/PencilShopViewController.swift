@@ -151,10 +151,24 @@ final class PencilShopViewController: BaseViewController, View {
                 guard let model = owner.obtainedDataSource.itemIdentifier(for: indexPath) else { return }
             }
             .disposed(by: disposeBag)
+        
+        mainView.obtainedView.goMyNoteButtonTapRelay
+            .subscribe(with: self) { owner, _ in
+                owner.goMyNoteVC()
+            }
+            .disposed(by: disposeBag)
     }
 
     override func loadView() {
         view = mainView
+    }
+    
+    private func goMyNoteVC() {
+        guard let presentingVC = self.presentingViewController as? UINavigationController else { return }
+        self.dismiss(animated: true) {
+            presentingVC.popToRootViewController(animated: false)
+            presentingVC.pushViewController(ImjangImageListViewController(), animated: false)
+        }
     }
     
     private func showPurchasedPopupView(response: PurchasePencilDTO) {

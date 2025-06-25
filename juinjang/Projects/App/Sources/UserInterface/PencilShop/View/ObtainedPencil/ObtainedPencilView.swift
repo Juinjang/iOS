@@ -8,6 +8,8 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
+import RxRelay
 
 final class ObtainedPencilView: BaseView {
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: configureCollectionViewLayout())
@@ -16,6 +18,26 @@ final class ObtainedPencilView: BaseView {
     }
     
     private let pencilUsageGuideView = PencilUsageGuideView()
+    
+    let goMyNoteButtonTapRelay = PublishRelay<Void>()
+    private var disposeBag = DisposeBag()
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func bind() {
+        emptyObtainedView.goMyImjangNoteButton.rx.throttleTap
+            .subscribe(with: self) { owner, _ in
+                owner.goMyNoteButtonTapRelay.accept(())
+            }
+            .disposed(by: disposeBag)
+    }
     
     override func configureHierarchy() {
         add(collectionView, emptyObtainedView, pencilUsageGuideView)
