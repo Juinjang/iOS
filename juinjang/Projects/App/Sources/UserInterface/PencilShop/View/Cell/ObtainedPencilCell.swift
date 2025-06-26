@@ -22,7 +22,7 @@ final class ObtainedPencilCell: BaseCollectionViewCell {
         pencilImageView.image = nil
     }
     
-    func configureCell(obtainedPencil: ObtainedPencilModel) {
+    func configureCell(obtainedPencil: AcquiredPencilDTO) {
         dateLabel.setAttribute(
             text: String.dateToString(target: obtainedPencil.createdAt),
             color: .gray300,
@@ -39,14 +39,14 @@ final class ObtainedPencilCell: BaseCollectionViewCell {
         )
         pencilCountLabel.setAttribute(
             text: "+\(obtainedPencil.acquiredQuantity)",
-            color:  obtainedPencil.isRead ? .main : .gray450,
+            color:  obtainedPencil.read ? .main : .gray450,
             font: .pretendard(size: 16, weight: .medium),
             lineHeight: 23,
             charSpacing: -0.02
         )
-        pencilImageView.image =  obtainedPencil.isRead ? .ImjangList.pencil : .ImjangList.pencilGray
+        pencilImageView.image =  obtainedPencil.read ? .ImjangList.pencil : .ImjangList.pencilGray
         
-        contentView.backgroundColor = obtainedPencil.isRead ? .white : .gray100
+        contentView.backgroundColor = obtainedPencil.read ? .white : .gray100
     }
     
     override func configureHierarchy() {

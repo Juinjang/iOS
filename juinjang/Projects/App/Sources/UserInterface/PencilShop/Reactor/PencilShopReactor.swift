@@ -18,6 +18,7 @@ final class PencilShopReactor: Reactor {
     }
     
     private let dependency: Dependency
+    private var disposeBag = DisposeBag()
     
     init(dependency: Dependency) {
         self.dependency = dependency
@@ -30,27 +31,35 @@ final class PencilShopReactor: Reactor {
     }
     
     enum Mutation {
+        case setPencilTotalBalance(PencilBalanceDTO)
+        case setIsTotalRead(IsTotalReadAcquiredPencilDTO)
         case setProductList([Product])
-        case setObtainedList([ObtainedPencilModel])
-        case setPurchasedList([PurchasedPencilModel])
-        case setUsedList([UsedPencilModel])
-        case purchaseCompleted(VerifiyTransactionResponse)
+        case setObtainedList([AcquiredPencilDTO])
+        case setPurchasedList([PurchasedPencilDTO])
+        case setUsedList([UsedPencilDTO])
+        case purchaseCompleted(PurchasePencilDTO?)
         case purchaseFailed(Error)
     }
     
     struct State {
+        var pencilTotalBalance: PencilBalanceDTO?
+        var isTotalRead: IsTotalReadAcquiredPencilDTO?
         var products: [Product] = []
         var obtainedSections: [ObtainedSectionModel] = []
         var purchasedSections: [PurchasedSectionModel] = []
         var usedSections: [UsedSectionModel] = []
-        var purchaseResult: VerifiyTransactionResponse?
+        var purchaseResult: PurchasePencilDTO?
         var error: String?
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return handleCategoryTapped(index: PencilShopCategoryType.buying.rawValue)
+            return .concat([
+                retrievePencilTotalBalance(),
+                retrieveIsTotalRead(),
+                handleCategoryTapped(index: PencilShopCategoryType.buying.rawValue)
+            ])
         case .categoryButtonDidTap(let index):
             return handleCategoryTapped(index: index)
         case .priceButtonDidTap(let product):
@@ -61,6 +70,10 @@ final class PencilShopReactor: Reactor {
     func reduce(state: State, mutation: Mutation) -> State {
         var state = state
         switch mutation {
+        case .setPencilTotalBalance(let pencilTotalBalance):
+            state.pencilTotalBalance = pencilTotalBalance
+        case .setIsTotalRead(let isTotalReadDTO):
+            state.isTotalRead = isTotalReadDTO
         case .setProductList(let array):
             state.products = array
         case .setObtainedList(let array):
@@ -79,6 +92,22 @@ final class PencilShopReactor: Reactor {
 }
 
 extension PencilShopReactor {
+    private func retrievePencilTotalBalance() -> Observable<Mutation> {
+        return dependency.pencilShopRepository.retrievePencilTotalBalance()
+            .asObservable()
+            .flatMap { totalBalanceDTO -> Observable<Mutation> in
+                return .just(.setPencilTotalBalance(totalBalanceDTO))
+            }
+    }
+    
+    private func retrieveIsTotalRead() -> Observable<Mutation> {
+        return dependency.pencilShopRepository.retrieveIsTotalReadAcquiredPencil()
+            .asObservable()
+            .flatMap { isTotalReadDTO -> Observable<Mutation> in
+                return .just(.setIsTotalRead(isTotalReadDTO))
+            }
+    }
+    
     private func handleCategoryTapped(index: Int) -> Observable<Mutation> {
         let category = PencilShopCategoryType(rawValue: index) ?? .buying
         
@@ -90,33 +119,36 @@ extension PencilShopReactor {
                 .asObservable()
                 
         case .obtainedPencil:
-            return dependency.pencilShopRepository.fetchObtainedPencilList()
+            return dependency.pencilShopRepository.retrieveAcquiredPencil()
+                .asObservable()
                 .flatMap { obtainedList -> Observable<Mutation> in
                     return .just(.setObtainedList(obtainedList))
                 }
             
         case .purchasedPencil:
-            return dependency.pencilShopRepository.fetchPurchasedPencilList()
+            return dependency.pencilShopRepository.retrievePurchasedPencil()
+                .asObservable()
                 .flatMap { purchasedList -> Observable<Mutation> in
                     return .just(.setPurchasedList(purchasedList))
                 }
         case .usedPencil:
-            return dependency.pencilShopRepository.fetchUsedPencilList()
+            return dependency.pencilShopRepository.retrieveUsedPencil()
+                .asObservable()
                 .flatMap { usedList -> Observable<Mutation> in
                     return .just(.setUsedList(usedList))
                 }
         }
     }
     
-    private func setObtainedSectionModel(state: inout State, obtainedList: [ObtainedPencilModel]) {
+    private func setObtainedSectionModel(state: inout State, obtainedList: [AcquiredPencilDTO]) {
         state.obtainedSections = [ObtainedSectionModel(section: .main, obtainedPencils: obtainedList)]
     }
     
-    private func setPurchasedSectionModel(state: inout State, purchasedList: [PurchasedPencilModel]) {
-        state.purchasedSections = [PurchasedSectionModel(section: .main, obtainedPencils: purchasedList)]
+    private func setPurchasedSectionModel(state: inout State, purchasedList: [PurchasedPencilDTO]) {
+        state.purchasedSections = [PurchasedSectionModel(section: .main, purchasedPencils: purchasedList)]
     }
     
-    private func setUsedSectionModel(state: inout State, usedList: [UsedPencilModel]) {
+    private func setUsedSectionModel(state: inout State, usedList: [UsedPencilDTO]) {
         state.usedSections = [UsedSectionModel(section: .main, usedPencils: usedList)]
     }
 }
@@ -137,7 +169,7 @@ extension PencilShopReactor {
     }
     
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
-        let transactionMutation = dependency.inAppPurchaseService.transactionCompleted
+        let transactionMutation = dependency.inAppPurchaseService.completedPurchasePencilDTO
             .map { Mutation.purchaseCompleted($0) }
 
         return Observable.merge(mutation, transactionMutation)
@@ -146,7 +178,7 @@ extension PencilShopReactor {
 
 struct ObtainedSectionModel {
     let section: ObtainedPencilSection
-    let obtainedPencils: [ObtainedPencilModel]
+    let obtainedPencils: [AcquiredPencilDTO]
 }
 
 enum ObtainedPencilSection: Hashable {
@@ -156,7 +188,7 @@ enum ObtainedPencilSection: Hashable {
 
 struct PurchasedSectionModel {
     let section: PurchasedPencilSection
-    let obtainedPencils: [PurchasedPencilModel]
+    let purchasedPencils: [PurchasedPencilDTO]
 }
 
 enum PurchasedPencilSection: Hashable {
@@ -165,7 +197,7 @@ enum PurchasedPencilSection: Hashable {
 
 struct UsedSectionModel {
     let section: UsedPencilSection
-    let usedPencils: [UsedPencilModel]
+    let usedPencils: [UsedPencilDTO]
 }
 
 enum UsedPencilSection: Hashable {

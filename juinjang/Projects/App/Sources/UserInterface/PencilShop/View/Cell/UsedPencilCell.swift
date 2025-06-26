@@ -30,7 +30,7 @@ final class UsedPencilCell: BaseCollectionViewCell {
         dashedBorder.removeFromSuperlayer()
     }
     
-    func configureCell(usedPencil: UsedPencilModel) {
+    func configureCell(usedPencil: UsedPencilDTO) {
         dateLabel.setAttribute(
             text: String.dateToString(target: usedPencil.createdAt),
             color: .gray300,
