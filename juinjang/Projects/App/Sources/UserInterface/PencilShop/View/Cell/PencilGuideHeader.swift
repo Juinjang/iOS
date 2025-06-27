@@ -12,25 +12,22 @@ final class PencilGuideHeader: BaseCollectionReusableView {
     private let stackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .center
-        $0.spacing = 1
+        $0.spacing = 4
     }
     private let infoCircleImageView = UIImageView().then {
-        $0.image = .infoCircle
+        let image = UIImage.infoCircle
+            .withRenderingMode(.alwaysTemplate)
+            .withTintColor(.gray300)
+        $0.image = image
         $0.contentMode = .scaleAspectFit
     }
-    private let guideLabel = UILabel().then {
+    private let guideLabel = DSLabel(.body2).then {
+        $0.fontColor = .gray400
         $0.textAlignment = .center
     }
     
     func configureHeader(guideMessage: String) {
-        guideLabel.setAttribute(
-            text: guideMessage,
-            color: .gray300,
-            font: .pretendard(size: 14, weight: .medium),
-            lineHeight: 20,
-            charSpacing: -0.02,
-            alignment: .center
-        )
+        guideLabel.text = guideMessage
     }
     
     override func configureHierarchy() {
