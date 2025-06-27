@@ -126,7 +126,8 @@ final class MyNoteViewController: BaseViewController, View {
                             dependency: .init(
                                 id: id,
                                 title: reactor.getNoteTitle(noteID: id),
-                                repository: SharedNoteRepository()
+                                sharedNoteRepository: SharedNoteRepository(),
+                                pencilShopRepository: PencilShopRepository()
                             )
                         )
                     ), animated: true
