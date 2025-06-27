@@ -164,10 +164,14 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     private func goMyNoteVC() {
-        guard let presentingVC = self.presentingViewController as? UINavigationController else { return }
-        self.dismiss(animated: true) {
-            presentingVC.popToRootViewController(animated: false)
-            presentingVC.pushViewController(ImjangImageListViewController(), animated: false)
+        if let navigationController = self.navigationController {
+            navigationController.popToRootViewController(animated: false)
+            navigationController.pushViewController(
+                ImjangListViewController(
+                    dependency: .init(noteRepository: NoteRepository())
+                ),
+                animated: true
+            )
         }
     }
     
