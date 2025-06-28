@@ -43,7 +43,7 @@ final class ImjangDetailViewReactor: Reactor {
         var allCheckListItems: [ImjangDetailCheckListCellItem]
         var isOneRoom: Bool
         var isBuyer: Bool
-        var isShowPencilAlert: Bool
+        var isShowPencilAlert: Bool?
         var isShowNotBuyerAlert: Bool
         var isShowCaptureAlert: Bool?
         var reportReason: ReportReason?
@@ -70,7 +70,7 @@ final class ImjangDetailViewReactor: Reactor {
             allCheckListItems: [],
             isOneRoom: false,
             isBuyer: false,
-            isShowPencilAlert: false,
+            isShowPencilAlert: nil,
             isShowNotBuyerAlert: false,
             isShowCaptureAlert: nil
         )
@@ -244,7 +244,6 @@ extension ImjangDetailViewReactor {
                         )
                     )
                     return Observable.from([
-                        // 내 보유 연필 API 등록 예정
                         .updateRequiredPencilCount(model.requiredPencils ?? 0),
                         .updateItem(section: .info, item: [item]),
                         .updateIsBuyer(model.isBuyer),
