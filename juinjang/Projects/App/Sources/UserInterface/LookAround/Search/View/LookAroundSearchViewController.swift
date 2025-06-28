@@ -138,9 +138,9 @@ extension LookAroundSearchViewController {
                 cell.configureCell(imjangCount: imjangCount)
                 return cell
 
-            case .imjangListSection(let lookAroundImjang):
+            case .exploreNoteSection(let exploreNote):
                 let cell = collectionView.dequeueReusableCell(LookAroundCell.self, for: indexPath)
-                cell.configureCell(lookAroundImjang)
+                cell.configureCell(exploreNote)
                 return cell
             }
         } , configureSupplementaryView: { dataSource, collectionView, _, indexPath in

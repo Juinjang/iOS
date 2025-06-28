@@ -12,7 +12,7 @@ final class LookAroundSearchReactor: Reactor {
     var initialState = State()
     
     struct Dependency {
-        let lookAroundRepository: LookAroundRepositoryProtocol
+        let sharedNoteRepository: SharedNoteRepositoryProtocol
     }
 
     let dependency: Dependency
@@ -31,10 +31,16 @@ final class LookAroundSearchReactor: Reactor {
     
     enum Mutation {
         case setRecentSearchKeywordList([String])
-        case setSearchResultList(LookAroundImjangResult)
+        case setSearchExploreNotes(ExploreNoteResponseDTO)
     }
     
     struct State {
+        var searchRequest = ExploreNoteRequestDTO(
+            sort: nil,
+            propertyType: nil,
+            priceType: nil,
+            keyword: nil
+        )
         var recentSearchKeywordList: [String] = []
         var searchResultList: [LookAroundSearchResultSectionModel] = []
     }
@@ -50,10 +56,7 @@ final class LookAroundSearchReactor: Reactor {
             let searchKeywordlist = getRecentSearchList()
             return .concat([
                 .just(.setRecentSearchKeywordList(searchKeywordlist)),
-                dependency.lookAroundRepository.fetchLookAroundImjang(keyword: keyword)
-                    .map {
-                        Mutation.setSearchResultList($0)
-                    }
+                retrieveExploreNotes(keyword: keyword)
             ])
             
         case .removeAllKeywordTapped:
@@ -74,23 +77,38 @@ final class LookAroundSearchReactor: Reactor {
         switch mutation {
         case .setRecentSearchKeywordList(let list):
             newState.recentSearchKeywordList = list
-        case .setSearchResultList(let list):
-            let list = getSectionLookAroundImjangDataList(list)
+        case .setSearchExploreNotes(let exploreNoteResponseDTO):
+            let list = getSectionOfExploreNotes(exploreNoteResponseDTO)
             newState.searchResultList = list
         }
         return newState
     }
     
-    private func getSectionLookAroundImjangDataList(_ lookAroundImjangResult: LookAroundImjangResult) -> [LookAroundSearchResultSectionModel] {
-        let imjangListSectionList = lookAroundImjangResult.notes.map {
-            LookAroundSearchResultSectionModel.Row.imjangListSection(lookAroundImjang: $0)
+    private func getSectionOfExploreNotes(_ exploreNoteResponse: ExploreNoteResponseDTO) -> [LookAroundSearchResultSectionModel] {
+        let exploreNotes = exploreNoteResponse.notes.map {
+            LookAroundSearchResultSectionModel.Row.exploreNoteSection(exploreNote: $0)
         }
 
         let sectionOfLookAroundImjangData: [LookAroundSearchResultSectionModel] = [
-            .imjangCountSection(items: [.imjangCountSection(imjangCount: lookAroundImjangResult.totalResults)]),
-            .imjangListSection(header: "", items: imjangListSectionList)
+            .imjangCountSection(items: [
+                .imjangCountSection(imjangCount: exploreNoteResponse.totalResults)
+            ]),
+            .exploreNoteSection(header: "", items: exploreNotes)
         ]
         return sectionOfLookAroundImjangData
+    }
+    
+    private func retrieveExploreNotes(
+        _ request: ExploreNoteRequestDTO = ExploreNoteRequestDTO(),
+        keyword: String
+    ) -> Observable<Mutation> {
+        var request = request
+        request.keyword = keyword
+        return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
+            .asObservable()
+            .flatMap { exploreNoteResponseDTO -> Observable<Mutation> in
+                return .just(.setSearchExploreNotes(exploreNoteResponseDTO))
+            }
     }
     
     private func saveSearchText(_ keyword: String) {

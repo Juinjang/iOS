@@ -9,16 +9,16 @@ struct ExploreNoteRequestDTO: Encodable {
     let code: [String]?
     let page: String
     let size: String
-    let sort: String
-    let propertyType: String?
-    let priceType: String?
-    let keyword: String?
+    var sort: String?
+    var propertyType: String?
+    var priceType: String?
+    var keyword: String?
     
     init(
         code: [String]? = nil,
         page: String = "1",
         size: String = "10",
-        sort: String = "POPULAR",
+        sort: String? = "POPULAR",
         propertyType: String? = nil,
         priceType: String? = nil,
         keyword: String? = nil

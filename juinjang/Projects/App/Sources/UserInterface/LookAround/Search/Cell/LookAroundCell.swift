@@ -88,19 +88,19 @@ final class LookAroundCell: BaseCollectionViewCell {
         $0.backgroundColor = .stroke
     }
 
-    func configureCell(_ lookAroundImjangNote: LookAroundImjangNote) {
-        setImjangImage(lookAroundImjangNote.imageUrl, propertyType: lookAroundImjangNote.propertyType)
-        setScore(lookAroundImjangNote.rate)
-        setRoomName(lookAroundImjangNote.buildingName)
-        setIsPurchase(lookAroundImjangNote.isPurchase)
-        setPrice(lookAroundImjangNote.price, priceType: lookAroundImjangNote.type)
-        setRoomDetail(pyong: lookAroundImjangNote.pyong, floor: lookAroundImjangNote.floor)
-        setRoomAddress(lookAroundImjangNote.address)
-        setProfileImage(lookAroundImjangNote.ownerImageUrl)
-        setOwnerNickname(lookAroundImjangNote.ownerNickname)
-        setUploadedDate(lookAroundImjangNote.monthAge)
-        setHits(lookAroundImjangNote.viewCount)
-        setIsLiked(lookAroundImjangNote.isLiked)
+    func configureCell(_ exploreNote: ExploreNoteModel) {
+        setImjangImage(exploreNote.imageUrl, propertyType: exploreNote.propertyType)
+        setScore(exploreNote.rate)
+        setRoomName(exploreNote.buildingName)
+        setIsPurchase(exploreNote.isPurchase)
+        setPrice(exploreNote.price, priceType: exploreNote.priceType)
+        setRoomDetail(pyong: exploreNote.pyong, floor: exploreNote.floor)
+        setRoomAddress(exploreNote.address)
+        setProfileImage(exploreNote.ownerImageUrl)
+        setOwnerNickname(exploreNote.ownerNickname)
+        setTimeAgoDate(exploreNote.timeAgo)
+        setHits(exploreNote.viewCount)
+        setIsLiked(exploreNote.isLiked)
     }
 
     override func prepareForReuse() {
@@ -232,9 +232,8 @@ extension LookAroundCell {
 }
 
 extension LookAroundCell {
-    private func setScore(_ score: Double) {
-        let scoreString = score.truncateToSingleDecimal().convertTo1fString()
-        scoreLabel.setAttribute(text: scoreString, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
+    private func setScore(_ score: String) {
+        scoreLabel.setAttribute(text: score, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
     }
 
     private func setImjangImage(_ imageUrl: String, propertyType: String) {
@@ -284,8 +283,8 @@ extension LookAroundCell {
         ownerNicknameLabel.setAttribute(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
 
-    private func setUploadedDate(_ uploadedDate: Int) {
-        uploadedDateLabel.setAttribute(text: "\(uploadedDate)개월 전", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
+    private func setTimeAgoDate(_ timeAgo: String) {
+        uploadedDateLabel.setAttribute(text: timeAgo, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
 
     private func setHits(_ hits: Int) {

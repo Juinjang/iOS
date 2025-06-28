@@ -107,7 +107,7 @@ final class LookAroundViewController: BaseViewController, View {
         let searchLookAroundVC = LookAroundSearchViewController(
             reactor: LookAroundSearchReactor(
                 dependency: LookAroundSearchReactor.Dependency(
-                    lookAroundRepository: MockLookAroundRepository()
+                    sharedNoteRepository: SharedNoteRepository()
                 )
             )
         )
