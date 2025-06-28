@@ -15,6 +15,7 @@ final class PencilShopReactor: Reactor {
     struct Dependency {
         let inAppPurchaseService: InAppPurchaseService
         let pencilShopRepository: PencilShopRepositoryProtocol
+        let userRepository: UserRepositoryProtocol
     }
     
     private let dependency: Dependency
@@ -107,7 +108,6 @@ extension PencilShopReactor {
         return dependency.pencilShopRepository.retrieveIsTotalReadAcquiredPencil()
             .asObservable()
             .flatMap { isTotalReadDTO -> Observable<Mutation> in
-                print("@@@", isTotalReadDTO)
                 return .just(.setIsTotalRead(isTotalReadDTO.isTotalRead))
             }
     }
@@ -180,7 +180,15 @@ extension PencilShopReactor {
 
 extension PencilShopReactor {
     private func buyProduct(product: Product) -> Observable<Mutation> {
-        dependency.inAppPurchaseService.requestPurchase(product: product)
+        dependency.userRepository.regenerateAccesstoken()
+            .asObservable()
+            .subscribe(with: self) { owner, refreshDTO in
+                UserDefaultManager.shared.accessToken = refreshDTO.accessToken
+                UserDefaultManager.shared.refreshToken = refreshDTO.refreshToken
+            }
+            .disposed(by: disposeBag)
+        
+        return dependency.inAppPurchaseService.requestPurchase(product: product)
             .asObservable()
             .flatMap { result -> Observable<Mutation> in
                 guard let result else {
@@ -201,7 +209,7 @@ extension PencilShopReactor {
     }
 }
 
-struct AcquiredSectionModel {
+struct AcquiredSectionModel: Hashable {
     let section: AcquiredPencilSection
     let acquiredPencils: [AcquiredPencilDTO]
 }
@@ -210,7 +218,7 @@ enum AcquiredPencilSection: Hashable {
     case main
 }
 
-struct PurchasedSectionModel {
+struct PurchasedSectionModel: Hashable {
     let section: PurchasedPencilSection
     let purchasedPencils: [PurchasedPencilDTO]
 }
@@ -219,7 +227,7 @@ enum PurchasedPencilSection: Hashable {
     case main
 }
 
-struct UsedSectionModel {
+struct UsedSectionModel: Hashable {
     let section: UsedPencilSection
     let usedPencils: [UsedPencilDTO]
 }

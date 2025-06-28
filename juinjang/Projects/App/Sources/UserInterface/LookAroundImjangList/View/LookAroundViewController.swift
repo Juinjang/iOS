@@ -79,7 +79,8 @@ final class LookAroundViewController: BaseViewController, View {
             reactor: PencilShopReactor(
                 dependency: PencilShopReactor.Dependency(
                     inAppPurchaseService: InAppPurchaseService(pencilShopRepository: PencilShopRepository()),
-                    pencilShopRepository: PencilShopRepository()
+                    pencilShopRepository: PencilShopRepository(),
+                    userRepository: UserRepository()
                 )
             )
         )

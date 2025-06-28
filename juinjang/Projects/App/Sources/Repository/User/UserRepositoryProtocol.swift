@@ -11,4 +11,5 @@ protocol UserRepositoryProtocol {
     func retrieveUserNickname() -> Single<String>
     func retrieveProfileIntroduction() -> Single<ProfileModel>
     func updateProfileIntroduction(text: String) -> Completable
+    func regenerateAccesstoken() -> Single<RefreshDto> 
 }

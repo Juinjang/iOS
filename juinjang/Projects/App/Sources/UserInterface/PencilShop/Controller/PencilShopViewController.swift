@@ -71,9 +71,9 @@ final class PencilShopViewController: BaseViewController, View {
 
         reactor.state
             .map { $0.acquiredSections }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
-                print(sections)
                 owner.applyAcquiredSnapshot(sections: sections)
                 if let section = sections.first {
                     owner.mainView.obtainedView.setListEmpty(empty: section.acquiredPencils.isEmpty)
@@ -83,6 +83,7 @@ final class PencilShopViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.purchasedSections }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyPurchasedSnapshot(sections: sections)
@@ -94,6 +95,7 @@ final class PencilShopViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.usedSections }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyUsedSnapshot(sections: sections)
@@ -177,7 +179,6 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     private func showPurchasedPopupView(response: PurchasePencilDTO) {
-        print(#function)
         self.present(
             PurchasePopupViewController(
                 purchasedPencilCount: response.purchaseQuantity,
