@@ -56,6 +56,7 @@ enum UserAPI: TargetType {
                 refreshToken: UserDefaultManager.shared.refreshToken,
                 email: UserDefaultManager.shared.email
             )
+            dump(dto)
             return dto.toDictionary()
         }
     }

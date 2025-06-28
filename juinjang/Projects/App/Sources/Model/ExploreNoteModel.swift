@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 5/17/25.
 //
 
-struct ExploreNoteModel: Codable {
+struct ExploreNoteModel: Codable, Hashable {
     let sharedNoteId: Int
     let propertyType: String
     let priceType: String
@@ -21,7 +21,7 @@ struct ExploreNoteModel: Codable {
     let address: String
     let ownerImageUrl: String
     let ownerNickname: String
-    let timeAge: String
+    let timeAgo: String
     let viewCount: Int
 }
 

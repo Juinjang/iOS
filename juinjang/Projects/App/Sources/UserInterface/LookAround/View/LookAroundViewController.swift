@@ -14,7 +14,7 @@ final class LookAroundViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
     
     private let mainView = LookAroundView()
-    private lazy var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData> = {
+    private lazy var dataSource: RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote> = {
         let dataSource = configureCollectionViewDataSource()
         return dataSource
     }()
@@ -53,7 +53,8 @@ final class LookAroundViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .compactMap { $0.sectionOfLookAroundImjangData }
+            .compactMap { $0.sectionOfExploreNotes }
+            .distinctUntilChanged()
             .bind(to: mainView.collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
     }
@@ -115,8 +116,8 @@ final class LookAroundViewController: BaseViewController, View {
 }
 
 extension LookAroundViewController {
-    private func configureCollectionViewDataSource() -> RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData> {
-        return RxCollectionViewSectionedReloadDataSource<SectionOfLookAroundImjangData>(configureCell: { [weak self] dataSource, collectionView, indexPath, lookAroundImjangData in
+    private func configureCollectionViewDataSource() -> RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote> {
+        return RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote>(configureCell: { [weak self] dataSource, collectionView, indexPath, lookAroundImjangData in
             guard let self else { return UICollectionViewCell() }
             switch dataSource[indexPath] {
             case .contentsSection(let content):
@@ -136,15 +137,15 @@ extension LookAroundViewController {
                 cell.configureCell(imjangCount: imjangCount)
                 return cell
                 
-            case .imjangListSection(let lookAroundImjang):
+            case .exploreNoteSection(let exploreNote):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundImjangCell.identifier, for: indexPath) as? LookAroundImjangCell else { return UICollectionViewCell() }
-                cell.configureCell(lookAroundImjang)
+                cell.configureCell(exploreNote)
                 return cell
             }
         }, configureSupplementaryView: { dataSource, collectionView, string, indexPath in
             let section = dataSource.sectionModels[indexPath.section]
             switch section {
-            case .imjangListSection(_, _):
+            case .exploreNoteSection(_, _):
                 guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: LookAroundFilterHeader.identifier, for: indexPath) as? LookAroundFilterHeader else {
                     return UICollectionReusableView()
                 }
