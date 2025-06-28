@@ -7,10 +7,13 @@
 
 import UIKit
 import ReactorKit
+import Then
 
 final class NoteEnterPencilShopViewController: BaseViewController, View {
     private let mainView = NoteEnterPencilShopView()
     var disposeBag = DisposeBag()
+    
+    var onPurchaseCompleted: ((Bool) -> Void)?
     
     init(reactor: NoteEnterPencilShopReactor) {
         super.init()
@@ -47,12 +50,31 @@ final class NoteEnterPencilShopViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.purchaseResult }
+            .compactMap { $0 }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind(with: self) { owner, purchasePencilDTO in
-                guard let purchasePencilDTO else { return }
-                // notePurchasePopupViewController.present
+            .subscribe(with: self) { (owner, purchasePencilDTO) in
+                guard let reactor = owner.reactor else { return }
+                
                 owner.mainView.setPencilCount(count: purchasePencilDTO.remainQuantity)
+                
+                owner.present(NotePurchasePopupViewController(
+                    buildingName: reactor.dependency.buildingName,
+                    score: reactor.dependency.totalRate,
+                    currentPencilCount: reactor.currentState.pencilTotalBalance?.totalBalance ?? 0,
+                    neededPencilCount: reactor.dependency.needPencilCount
+                ).then {
+                    $0.eventRelay
+                        .bind(onNext: { event in
+                            switch event {
+                            case .confirm:
+                                owner.onPurchaseCompleted?(true)
+                                owner.dismiss(animated: true)
+                            default: break
+                            }
+                        })
+                        .disposed(by: owner.disposeBag)
+                }, animated: true)
             }
             .disposed(by: disposeBag)
         

@@ -43,7 +43,7 @@ final class ImjangDetailViewController: BaseViewController, View {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        reactor?.action.onNext(.viewWillAppear)
     }
     
     func bind(reactor: ImjangDetailViewReactor) {
@@ -108,7 +108,9 @@ final class ImjangDetailViewController: BaseViewController, View {
                                                     pencilShopRepository: .init()
                                                 ),
                                                 pencilShopRepository: PencilShopRepository(),
-                                                needPencilCount: reactor.currentState.requiredPencilCount
+                                                needPencilCount: reactor.currentState.requiredPencilCount,
+                                                buildingName: reactor.currentState.buildingName,
+                                                totalRate: reactor.currentState.totalRate
                                             )
                                         )
                                     ),

@@ -16,9 +16,11 @@ final class NoteEnterPencilShopReactor: Reactor {
         let inAppPurchaseService: InAppPurchaseService
         let pencilShopRepository: PencilShopRepositoryProtocol
         let needPencilCount: Int
+        let buildingName: String
+        let totalRate: Double
     }
     
-    private let dependency: Dependency
+    let dependency: Dependency
     private var disposeBag = DisposeBag()
     
     init(dependency: Dependency) {
