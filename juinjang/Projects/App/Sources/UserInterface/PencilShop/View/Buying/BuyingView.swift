@@ -26,6 +26,8 @@ final class BuyingView: BaseView {
     
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
+        $0.contentInsetAdjustmentBehavior = .never
+        $0.bounces = false
     }
     private let contentView = UIView()
     
@@ -56,12 +58,12 @@ final class BuyingView: BaseView {
         add(scrollView)
         scrollView.add(contentView)
         
-        [pencilShopGuideView,
-         pencilInfoView,
-         pencilItemStackView,
-         pencilUsageGuideView].forEach {
-            contentView.addSubview($0)
-        }
+        contentView.add(
+            pencilShopGuideView,
+            pencilInfoView,
+            pencilItemStackView,
+            pencilUsageGuideView
+        )
     }
     
     override func configureLayout() {
@@ -73,8 +75,11 @@ final class BuyingView: BaseView {
         }
         
         contentView.snp.makeConstraints { make in
-            make.edges.equalTo(scrollView)
-            make.width.equalTo(scrollView)
+            make.top.leading.trailing.equalTo(scrollView.contentLayoutGuide)
+            make.bottom.equalTo(scrollView.contentLayoutGuide)
+            
+            make.width.equalTo(scrollView.frameLayoutGuide)
+            make.height.greaterThanOrEqualTo(scrollView.frameLayoutGuide)
         }
         
         pencilShopGuideView.snp.makeConstraints { make in
@@ -95,7 +100,7 @@ final class BuyingView: BaseView {
 
         pencilUsageGuideView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
-            make.top.equalTo(pencilItemStackView.snp.bottom).offset(164)
+            make.top.greaterThanOrEqualTo(pencilItemStackView.snp.bottom).offset(164)
             make.bottom.equalToSuperview()
         }
     }
