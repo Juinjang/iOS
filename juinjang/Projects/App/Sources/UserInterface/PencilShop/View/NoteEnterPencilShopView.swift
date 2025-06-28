@@ -17,7 +17,13 @@ final class NoteEnterPencilShopView: BaseView {
     }
     
     private let pencilShopGuideView = PencilShopGuideView(message: "연필이 부족해요:(\n연필을 구매해서 다른 임장노트를 구경해보세요!", spacing: 16)
-    private let pencilInfoView = PencilInfoView(infoList: [.necessaryPencil: 0, .pencilYouHave: 0, .notEnoughPencil: 0])
+    private let pencilInfoView = PencilInfoView(
+        infoList: [
+            .necessaryPencil: 0,
+            .pencilYouHave: 0,
+            .notEnoughPencil: 0
+        ]
+    )
     
     private let pencilItemStackView = UIStackView().then {
         $0.axis = .vertical

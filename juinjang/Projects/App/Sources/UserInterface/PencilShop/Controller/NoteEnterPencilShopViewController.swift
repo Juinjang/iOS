@@ -55,6 +55,24 @@ final class NoteEnterPencilShopViewController: BaseViewController, View {
                 owner.mainView.setPencilCount(count: purchasePencilDTO.remainQuantity)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.needPencilCount }
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .subscribe(with: self) { owner, count in
+                owner.mainView.setNeededPencilCount(count: count)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.lackingPencilCount }
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .subscribe(with: self) { owner, count in
+                owner.mainView.setNotEnoughPencilCount(count: count)
+            }
+            .disposed(by: disposeBag)
     }
     
     func bindViewEvent() {

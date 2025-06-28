@@ -68,6 +68,7 @@ final class MyNoteStopShareViewController: BaseViewController, View {
                                     view.dismiss(animated: true) {
                                         self.reactor?.action.onNext(.removeConfirmDidTap)
                                     }
+                                default: break
                                 }
                             }
                             .disposed(by: self.disposeBag)

@@ -177,6 +177,7 @@ final class ShareWriteViewController: BaseViewController, View {
                             ),
                             animated: true
                         )
+                    default: break
                     }
                 }
                 .disposed(by: self.disposeBag)
