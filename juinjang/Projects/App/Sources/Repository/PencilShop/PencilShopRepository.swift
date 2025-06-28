@@ -66,6 +66,7 @@ final class PencilShopRepository: PencilShopRepositoryProtocol {
     }
     
     func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencilDTO> {
+        print(#function)
         return PencilShopAPI.getIsTotalReadAcquiredPencil
             .request(BaseResponse<IsTotalReadAcquiredPencilDTO>.self, networkManager)
             .map { try $0.unwrap() }

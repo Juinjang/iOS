@@ -30,6 +30,8 @@ final class NoteEnterPencilShopView: BaseView {
     
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
+        $0.contentInsetAdjustmentBehavior = .never
+        $0.bounces = false
     }
     private let contentView = UIView()
     

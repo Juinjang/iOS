@@ -28,13 +28,14 @@ final class PencilShopReactor: Reactor {
         case viewDidLoad
         case categoryButtonDidTap(Int)
         case priceButtonDidTap(Product)
+        case acquiredPencilSelected(Int)
     }
     
     enum Mutation {
         case setPencilTotalBalance(PencilBalanceDTO)
-        case setIsTotalRead(IsTotalReadAcquiredPencilDTO)
+        case setIsTotalRead(Bool)
         case setProductList([Product])
-        case setObtainedList([AcquiredPencilDTO])
+        case setAcquiredList([AcquiredPencilDTO])
         case setPurchasedList([PurchasedPencilDTO])
         case setUsedList([UsedPencilDTO])
         case purchaseCompleted(PurchasePencilDTO?)
@@ -43,9 +44,9 @@ final class PencilShopReactor: Reactor {
     
     struct State {
         var pencilTotalBalance: PencilBalanceDTO?
-        var isTotalRead: IsTotalReadAcquiredPencilDTO?
+        var isTotalRead: Bool = false
         var products: [Product] = []
-        var obtainedSections: [ObtainedSectionModel] = []
+        var acquiredSections: [AcquiredSectionModel] = []
         var purchasedSections: [PurchasedSectionModel] = []
         var usedSections: [UsedSectionModel] = []
         var purchaseResult: PurchasePencilDTO?
@@ -64,6 +65,8 @@ final class PencilShopReactor: Reactor {
             return handleCategoryTapped(index: index)
         case .priceButtonDidTap(let product):
             return buyProduct(product: product)
+        case .acquiredPencilSelected(let selectedIndex):
+            return handleAquiredPencilSelected(selectedIndex: selectedIndex)
         }
     }
     
@@ -76,8 +79,8 @@ final class PencilShopReactor: Reactor {
             state.isTotalRead = isTotalReadDTO
         case .setProductList(let array):
             state.products = array
-        case .setObtainedList(let array):
-            setObtainedSectionModel(state: &state, obtainedList: array)
+        case .setAcquiredList(let array):
+            setAcquiredSectionModel(state: &state, acquiredList: array)
         case .setPurchasedList(let array):
             setPurchasedSectionModel(state: &state, purchasedList: array)
         case .setUsedList(let array):
@@ -104,7 +107,8 @@ extension PencilShopReactor {
         return dependency.pencilShopRepository.retrieveIsTotalReadAcquiredPencil()
             .asObservable()
             .flatMap { isTotalReadDTO -> Observable<Mutation> in
-                return .just(.setIsTotalRead(isTotalReadDTO))
+                print("@@@", isTotalReadDTO)
+                return .just(.setIsTotalRead(isTotalReadDTO.isTotalRead))
             }
     }
     
@@ -122,7 +126,7 @@ extension PencilShopReactor {
             return dependency.pencilShopRepository.retrieveAcquiredPencil()
                 .asObservable()
                 .flatMap { obtainedList -> Observable<Mutation> in
-                    return .just(.setObtainedList(obtainedList))
+                    return .just(.setAcquiredList(obtainedList))
                 }
             
         case .purchasedPencil:
@@ -140,8 +144,8 @@ extension PencilShopReactor {
         }
     }
     
-    private func setObtainedSectionModel(state: inout State, obtainedList: [AcquiredPencilDTO]) {
-        state.obtainedSections = [ObtainedSectionModel(section: .main, obtainedPencils: obtainedList)]
+    private func setAcquiredSectionModel(state: inout State, acquiredList: [AcquiredPencilDTO]) {
+        state.acquiredSections = [AcquiredSectionModel(section: .main, acquiredPencils: acquiredList)]
     }
     
     private func setPurchasedSectionModel(state: inout State, purchasedList: [PurchasedPencilDTO]) {
@@ -150,6 +154,27 @@ extension PencilShopReactor {
     
     private func setUsedSectionModel(state: inout State, usedList: [UsedPencilDTO]) {
         state.usedSections = [UsedSectionModel(section: .main, usedPencils: usedList)]
+    }
+    
+    private func handleAquiredPencilSelected(selectedIndex: Int) -> Observable<Mutation> {
+        let sectionModel = currentState.acquiredSections[0]
+        var acquiredPencils = sectionModel.acquiredPencils
+        var selectedAquiredPencil = acquiredPencils[selectedIndex]
+        
+        guard !selectedAquiredPencil.read else { return .empty() }
+        
+        selectedAquiredPencil.read = true
+        acquiredPencils[selectedIndex] = selectedAquiredPencil
+        
+        return dependency.pencilShopRepository.readAcquiredPencil(parameter: ReadAcquiredPencilRequestDTO(acquiredPencilId: selectedAquiredPencil.acquiredPencilId))
+            .asObservable()
+            .flatMap { readAcquiredPencilDTO -> Observable<Mutation> in
+                print("얻은 연필 읽음 처리 완료: \(readAcquiredPencilDTO.isMarked), isTotalRead: \(readAcquiredPencilDTO.isTotalRead)")
+                return .concat([
+                    .just(.setAcquiredList(acquiredPencils)),
+                    .just(.setIsTotalRead(readAcquiredPencilDTO.isTotalRead))
+                ])
+            }
     }
 }
 
@@ -176,15 +201,14 @@ extension PencilShopReactor {
     }
 }
 
-struct ObtainedSectionModel {
-    let section: ObtainedPencilSection
-    let obtainedPencils: [AcquiredPencilDTO]
+struct AcquiredSectionModel {
+    let section: AcquiredPencilSection
+    let acquiredPencils: [AcquiredPencilDTO]
 }
 
-enum ObtainedPencilSection: Hashable {
+enum AcquiredPencilSection: Hashable {
     case main
 }
-
 
 struct PurchasedSectionModel {
     let section: PurchasedPencilSection

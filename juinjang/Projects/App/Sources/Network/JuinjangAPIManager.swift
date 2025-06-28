@@ -80,6 +80,7 @@ final class JuinjangAPIManager {
                     }
 
             } catch {
+                print(error)
                 observer(.failure(error))
             }
 
