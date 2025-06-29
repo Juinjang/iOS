@@ -11,6 +11,7 @@ import Foundation
 final class ImjangDetailViewReactor: Reactor {
     enum Action {
         case viewDidLoad
+        case viewWillAppear
         case checkListCategoryDidTap(index: Int)
         case noteOpenButtonDidTap
         case expandImageButtonDidTap(index: Int)
@@ -33,8 +34,11 @@ final class ImjangDetailViewReactor: Reactor {
         case updateIsShowCaptureAlert
         case updateReportReason(ReportReason)
         case updateIsShowReportCompletedView
-        case updateOwnPencilCount(Int)
+        case updateBalancePencilCount(Int)
         case updateRequiredPencilCount(Int)
+        case updatePurchasePencil(Bool)
+        case updateTotalRate(Double)
+        case updateBuildingName(String)
     }
     
     struct State {
@@ -43,19 +47,23 @@ final class ImjangDetailViewReactor: Reactor {
         var allCheckListItems: [ImjangDetailCheckListCellItem]
         var isOneRoom: Bool
         var isBuyer: Bool
-        var isShowPencilAlert: Bool
+        var isShowPencilAlert: Bool?
         var isShowNotBuyerAlert: Bool
         var isShowCaptureAlert: Bool?
         var reportReason: ReportReason?
         var isShowReportCompletedView: Bool?
-        var ownPencilCount: Int = 0
+        var balancePencilCount: Int = 0
         var requiredPencilCount: Int = 0
+        var didPurchasePencil: Bool = false
+        var totalRate: Double = 0.0
+        var buildingName: String = ""
     }
         
     struct Dependency {
         let id: Int
         let title: String
-        let repository: SharedNoteRepositoryProtocol
+        let sharedNoteRepository: SharedNoteRepositoryProtocol
+        let pencilShopRepository: PencilShopRepositoryProtocol
     }
     
     let initialState: State
@@ -69,7 +77,7 @@ final class ImjangDetailViewReactor: Reactor {
             allCheckListItems: [],
             isOneRoom: false,
             isBuyer: false,
-            isShowPencilAlert: false,
+            isShowPencilAlert: nil,
             isShowNotBuyerAlert: false,
             isShowCaptureAlert: nil
         )
@@ -79,21 +87,18 @@ final class ImjangDetailViewReactor: Reactor {
         switch action {
         case .viewDidLoad:
             return .concat(
-                createSection(for: .info),
-                createSection(for: .report),
-                .deferred { [weak self] in
-                    guard let self = self else { return .empty() }
-                    return .concat(
-                        self.currentState.isBuyer
-                        ? .empty()
-                        : .just(.updateIsShowPencilAlert),
-                        
-                        self.currentState.isBuyer
-                        ? self.createSection(for: .checkList)
-                        : self.createCheckListHolderSection()
-                    )
-                }
+                requestBalancePencilCount(),
+                fetchAllSectionData()
             )
+        case .viewWillAppear:
+            if currentState.didPurchasePencil {
+                return .concat(
+                    fetchAllSectionData(),
+                    .just(.updatePurchasePencil(false))
+                )
+            } else {
+                return .empty()
+            }
         case .checkListCategoryDidTap(index: let index):
             return .just(.updateItem(
                 section: .checkList,
@@ -151,10 +156,16 @@ final class ImjangDetailViewReactor: Reactor {
             newState.reportReason = reason
         case .updateIsShowReportCompletedView:
             newState.isShowReportCompletedView.toggle()
-        case .updateOwnPencilCount(let count):
-            newState.ownPencilCount = count
+        case .updateBalancePencilCount(let count):
+            newState.balancePencilCount = count
         case .updateRequiredPencilCount(let count):
             newState.requiredPencilCount = count
+        case .updatePurchasePencil(let bool):
+            newState.didPurchasePencil = bool
+        case .updateTotalRate(let rate):
+            newState.totalRate = rate
+        case .updateBuildingName(let name):
+            newState.buildingName = name
         }
         return newState
     }
@@ -162,8 +173,38 @@ final class ImjangDetailViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension ImjangDetailViewReactor {
+    private func fetchAllSectionData() -> Observable<Mutation> {
+        return .concat(
+            createSection(for: .info),
+            createSection(for: .report),
+            .deferred { [weak self] in
+                guard let self = self else { return .empty() }
+                return .concat(
+                    self.currentState.isBuyer
+                    ? .empty()
+                    : .just(.updateIsShowPencilAlert),
+                    
+                    self.currentState.isBuyer
+                    ? self.createSection(for: .checkList)
+                    : self.createCheckListHolderSection()
+                )
+            }
+        )
+    }
+    
+    private func requestBalancePencilCount() -> Observable<Mutation> {
+        return dependency
+            .pencilShopRepository
+            .retrievePencilTotalBalance()
+            .asObservable()
+            .map { response in
+                Mutation.updateBalancePencilCount(response.totalBalance)
+            }
+    }
+    
     private func handlePurchase() -> Observable<Mutation> {
-        return dependency.repository
+        return dependency
+            .sharedNoteRepository
             .purchaseNote(noteID: dependency.id)
             .asObservable()
             .flatMap { [weak self] _ -> Observable<Mutation> in
@@ -193,8 +234,8 @@ extension ImjangDetailViewReactor {
         let isLiked = infoModel.model.isLiked
         
         let observable: Observable<NoteLikeDTO> = isLiked
-        ? dependency.repository.deleteNoteLike(noteID: self.dependency.id).asObservable()
-        : dependency.repository.createNoteLike(noteID: self.dependency.id).asObservable()
+        ? dependency.sharedNoteRepository.deleteNoteLike(noteID: self.dependency.id).asObservable()
+        : dependency.sharedNoteRepository.createNoteLike(noteID: self.dependency.id).asObservable()
         
         return observable.map { response in
             Mutation.updateIsLikedInInfoSection(isLiked: !isLiked, likedCount: response.count)
@@ -202,7 +243,7 @@ extension ImjangDetailViewReactor {
     }
     
     private func createReport(reason: ReportReason) -> Observable<Mutation> {
-        dependency.repository
+        dependency.sharedNoteRepository
             .createNoteReport(
                 param: .init(
                     sharedNoteId: self.dependency.id,
@@ -215,12 +256,12 @@ extension ImjangDetailViewReactor {
     }
     
     private func createSection(for section: ImjangDetailSection) -> Observable<Mutation> {
-        let repository = dependency.repository
-        let request: Observable<[ImjangDetailBaseCellItem]>
+        let repository = dependency.sharedNoteRepository
         
         switch section {
         case .info:
-            return repository.retrieveNoteDetail(noteID: self.dependency.id)
+            return repository
+                .retrieveNoteDetail(noteID: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
                     let item = ImjangDetailBaseCellItem.info(
@@ -230,8 +271,8 @@ extension ImjangDetailViewReactor {
                         )
                     )
                     return Observable.from([
-                        // 내 보유 연필 API 등록 예정
                         .updateRequiredPencilCount(model.requiredPencils ?? 0),
+                        .updateBuildingName(model.buildingName),
                         .updateItem(section: .info, item: [item]),
                         .updateIsBuyer(model.isBuyer),
                         .updateIsOneRoom(
@@ -240,18 +281,25 @@ extension ImjangDetailViewReactor {
                     ])
                 }
         case .report:
-            request = repository.retrieveNoteDetailReport(noteId: self.dependency.id)
+            return repository
+                .retrieveNoteDetailReport(noteId: self.dependency.id)
                 .asObservable()
-                .map {
-                    [ImjangDetailBaseCellItem.report(
+                .flatMap { model -> Observable<Mutation> in
+                    let cellItem = ImjangDetailBaseCellItem.report(
                         .init(
                             id: UUID().uuidString,
-                            model: $0
+                            model: model
                         )
-                    )]
+                    )
+                    
+                    return .concat([
+                        .just(.updateItem(section: .report, item: [cellItem])),
+                        .just(.updateTotalRate(model.totalRate))
+                    ])
                 }
         case .checkList:
-            return repository.retrieveNoteDetailCheckList(noteId: self.dependency.id)
+            return repository
+                .retrieveNoteDetailCheckList(noteId: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
                     let items = model.checklistAnswers.map {
@@ -286,13 +334,11 @@ extension ImjangDetailViewReactor {
                 }
         default: return .empty()
         }
-        
-        return request.map { .updateItem(section: section, item: $0) }
     }
     
     private func createCheckListHolderSection() -> Observable<Mutation> {
         return dependency
-            .repository
+            .sharedNoteRepository
             .retrieveNoteDetailCheckList(noteId: dependency.id)
             .asObservable()
             .map { response in

@@ -13,7 +13,7 @@ import StoreKit
 
 final class BuyingView: BaseView {
     private let pencilShopGuideView = PencilShopGuideView(message: "연필을 구매해서 다른 임장노트를 구경해보세요!", spacing: 27)
-    private let pencilInfoView = PencilInfoView(infoList: [.pencilYouHave: 0])
+    private let pencilInfoView = PencilInfoView(infoList: [(.pencilYouHave, 0)])
     
     private let pencilItemStackView = UIStackView().then {
         $0.axis = .vertical

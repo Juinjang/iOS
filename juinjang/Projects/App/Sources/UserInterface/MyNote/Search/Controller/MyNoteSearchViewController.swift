@@ -76,7 +76,8 @@ final class MyNoteSearchViewController: BaseViewController, View {
                                 dependency: .init(
                                     id: noteId,
                                     title: title,
-                                    repository: SharedNoteRepository()
+                                    sharedNoteRepository: SharedNoteRepository(),
+                                    pencilShopRepository: PencilShopRepository()
                                 )
                             )
                         ),

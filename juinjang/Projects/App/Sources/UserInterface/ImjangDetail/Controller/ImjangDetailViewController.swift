@@ -41,6 +41,11 @@ final class ImjangDetailViewController: BaseViewController, View {
         reactor?.action.onNext(.viewDidLoad)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reactor?.action.onNext(.viewWillAppear)
+    }
+    
     func bind(reactor: ImjangDetailViewReactor) {
         reactor.state
             .map(\.title)
@@ -79,32 +84,53 @@ final class ImjangDetailViewController: BaseViewController, View {
         
         reactor.state
             .map(\.isShowPencilAlert)
+            .compactMap { $0 }
             .observe(on: MainScheduler.instance)
-            .distinctUntilChanged()
             .subscribe(with: self) { (self, bool) in
-                guard let reactor = self.reactor else { return }
-                if bool {
-                    let alertView = PencilAlertView(
-                        title: reactor.dependency.title,
-                        pencilCount: 0,
-                        needPencilCount: 3
-                    ).then {
-                        $0.eventRelay
-                            .subscribe(with: self) { (self, event) in
-                                switch event {
-                                case .confirm:
-                                    reactor.action.onNext(.purchaseButtonDidTap)
-                                default: break
-                                }
-                            }
-                            .disposed(by: self.disposeBag)
-                    }
-                    
-                    self.present(
-                        alertView,
-                        animated: true
-                    )
+                guard let reactor = self.reactor else {
+                    return
                 }
+                
+                let alertView = PencilAlertView(
+                    title: reactor.dependency.title,
+                    pencilCount: reactor.currentState.balancePencilCount,
+                    needPencilCount: reactor.currentState.requiredPencilCount
+                ).then {
+                    $0.eventRelay
+                        .subscribe(with: self) { (self, event) in
+                            switch event {
+                            case .confirm:
+                                self.navigationController?.pushViewController(
+                                    NoteEnterPencilShopViewController(
+                                        reactor: .init(
+                                            dependency: .init(
+                                                inAppPurchaseService: InAppPurchaseService(
+                                                    pencilShopRepository: .init()
+                                                ),
+                                                pencilShopRepository: PencilShopRepository(),
+                                                needPencilCount: reactor.currentState.requiredPencilCount,
+                                                buildingName: reactor.currentState.buildingName,
+                                                totalRate: reactor.currentState.totalRate
+                                            )
+                                        )
+                                    ),
+                                    animated: true
+                                )
+                                
+                            case .custom:
+                                reactor.action.onNext(.purchaseButtonDidTap)
+                                
+                            default: break
+                            }
+                        }
+                        .disposed(by: self.disposeBag)
+                }
+                
+                self.present(
+                    alertView,
+                    animated: true
+                )
+                
             }
             .disposed(by: disposeBag)
         
@@ -244,8 +270,7 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
                 cell.bind(item.model)
                 return cell
             case .checkList(let item):
-                guard let isBuyer = self.reactor?.currentState.isBuyer,
-                      let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
+                guard let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailCheckListCell.self, for: indexPath)
                 cell.bind(item.model, isOneRoom: isOneRoom)
                 return cell

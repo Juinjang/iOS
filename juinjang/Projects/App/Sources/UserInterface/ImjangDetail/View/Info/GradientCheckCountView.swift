@@ -23,7 +23,7 @@ final class GradientCheckCountView: BaseView {
     }
     
     func configure(for model: ImjangDetailInfoModel) {
-        checkContentLabel.text = "\(model.checkedCount)항목 체크됨"
+        checkContentLabel.text = "\(model.checkedCount ?? 0)항목 체크됨"
     }
         
     override func configureView() {

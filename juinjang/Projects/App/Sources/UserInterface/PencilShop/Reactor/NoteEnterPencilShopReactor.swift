@@ -15,9 +15,12 @@ final class NoteEnterPencilShopReactor: Reactor {
     struct Dependency {
         let inAppPurchaseService: InAppPurchaseService
         let pencilShopRepository: PencilShopRepositoryProtocol
+        let needPencilCount: Int
+        let buildingName: String
+        let totalRate: Double
     }
     
-    private let dependency: Dependency
+    let dependency: Dependency
     private var disposeBag = DisposeBag()
     
     init(dependency: Dependency) {
@@ -38,6 +41,8 @@ final class NoteEnterPencilShopReactor: Reactor {
     
     struct State {
         var pencilTotalBalance: PencilBalanceDTO?
+        var needPencilCount: Int?
+        var lackingPencilCount: Int?
         var products: [Product] = []
         var purchaseResult: PurchasePencilDTO?
         var error: String?
@@ -60,6 +65,8 @@ final class NoteEnterPencilShopReactor: Reactor {
         switch mutation {
         case .setPencilTotalBalance(let pencilTotalBalance):
             state.pencilTotalBalance = pencilTotalBalance
+            state.needPencilCount = dependency.needPencilCount
+            state.lackingPencilCount = max(0, dependency.needPencilCount - pencilTotalBalance.totalBalance)
         case .setProductList(let array):
             state.products = array
         case .purchaseCompleted(let result):

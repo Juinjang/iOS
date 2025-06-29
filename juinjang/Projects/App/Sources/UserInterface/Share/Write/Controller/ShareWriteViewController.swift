@@ -149,28 +149,35 @@ final class ShareWriteViewController: BaseViewController, View {
     }
     
     private func createShareCompletedView() -> UIViewController {
+        guard let reactor = self.reactor else { return UIViewController() }
+        
         return ShareCompletedView().then {
             $0.eventRelay
                 .subscribe(with: self) { (self, event) in
                     switch event {
                     case .cancel:
-                        print("임장 둘러보기로 이동")
+                        self.navigationController?.pushViewController(
+                            LookAroundViewController(reactor: .init(repository: .init())),
+                            animated: true
+                        )
+                        
                     case .confirm:
-                        if let noteId = self.reactor?.getShareSelectModel().noteId,
-                           let title = self.reactor?.getShareSelectModel().name {
-                            self.navigationController?.pushViewController(
-                                ImjangDetailViewController(
-                                    reactor: .init(
-                                        dependency: .init(
-                                            id: noteId,
-                                            title: title,
-                                            repository: SharedNoteRepository()
-                                        )
+                        let selectedModel = reactor.getShareSelectModel()
+                        
+                        self.navigationController?.pushViewController(
+                            ImjangDetailViewController(
+                                reactor: .init(
+                                    dependency: .init(
+                                        id: selectedModel.noteId,
+                                        title: selectedModel.name,
+                                        sharedNoteRepository: SharedNoteRepository(),
+                                        pencilShopRepository: PencilShopRepository()
                                     )
-                                ),
-                                animated: true
-                            )
-                        }
+                                )
+                            ),
+                            animated: true
+                        )
+                    default: break
                     }
                 }
                 .disposed(by: self.disposeBag)

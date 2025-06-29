@@ -24,9 +24,9 @@ enum PencilInfo: Int {
 
 final class PencilInfoView: UIStackView {
     
-    private var infoList: [PencilInfo: Int]
+    private var infoList: [(PencilInfo, Int)]
     
-    init(infoList: [PencilInfo: Int]) {
+    init(infoList: [(PencilInfo, Int)]) {
         self.infoList = infoList
         super.init(frame: .zero)
         configureView()

@@ -7,6 +7,6 @@
 
 extension Optional where Wrapped == Bool {
     mutating func toggle(or defaultValue: Bool = false) {
-        self = !(self ?? defaultValue)
+        return self = !(self ?? defaultValue)
     }
 }
