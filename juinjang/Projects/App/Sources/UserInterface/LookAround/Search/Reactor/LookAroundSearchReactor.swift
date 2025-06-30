@@ -36,9 +36,9 @@ final class LookAroundSearchReactor: Reactor {
     
     struct State {
         var searchRequest = ExploreNoteRequestDTO(
-            sort: nil,
-            propertyType: nil,
-            priceType: nil,
+            sort: SortAction.popularAction.toRequestType,
+            propertyType: "",
+            priceType: "",
             keyword: nil
         )
         var recentSearchKeywordList: [String] = []

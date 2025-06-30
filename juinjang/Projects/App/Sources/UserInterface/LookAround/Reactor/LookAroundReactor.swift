@@ -23,20 +23,44 @@ final class LookAroundReactor: Reactor {
     }
     
     enum Action {
-        case viewDidLoad
+        case filterTapped(SortAction?, TransactionTypeAction?, SaleTypeAction?)
+        case retrieveExploreNotes
     }
     
     enum Mutation {
         case setExploreNotes(ExploreNoteResponseDTO)
+        case setFilterInfo(filterInfo: (sortAction: SortAction?,
+                           transactionAction: TransactionTypeAction?,
+                           saleTypeAction: SaleTypeAction?))
     }
     
     struct State {
         var sectionOfExploreNotes: [SectionOfExploreNote]? = nil
+        var filterInfo: (sortAction: SortAction?,
+                         transactionAction: TransactionTypeAction?,
+                                saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil)
+    }
+    
+    struct ExploreNotesPageState {
+        var notes: [ExploreNoteModel] = []
+        var offset: Int = 0
+        var limit: Int = 20
+        var isLastPage: Bool = false
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .viewDidLoad:
+        case .filterTapped(let sortAction, let transactionTypeAction, let saleTypeAction):
+            let filterInfo = handleFilterTapped(
+                sortAction: sortAction,
+                transactionAction: transactionTypeAction,
+                saleTypeAction: saleTypeAction
+            )
+            return .concat([
+                retrieveExploreNotes(filterInfo: filterInfo),
+                .just(.setFilterInfo(filterInfo: filterInfo))
+            ])
+        case .retrieveExploreNotes:
             return retrieveExploreNotes()
         }
     }
@@ -45,12 +69,48 @@ final class LookAroundReactor: Reactor {
         var state = state
         switch mutation {
         case .setExploreNotes(let exploreNotes):
-            state.sectionOfExploreNotes = getSectionLookAroundImjangDataList(exploreNotes)
+            state.sectionOfExploreNotes = getSectionExploreNoteList(exploreNotes)
+        case .setFilterInfo(let filterInfo):
+            state.filterInfo = filterInfo
         }
         return state
     }
     
-    private func retrieveExploreNotes(_ request: ExploreNoteRequestDTO = ExploreNoteRequestDTO()) -> Observable<Mutation> {
+    private func handleFilterTapped(
+        sortAction: SortAction?,
+        transactionAction: TransactionTypeAction?,
+        saleTypeAction: SaleTypeAction?
+    ) -> (sortAction: SortAction?,
+          transactionAction: TransactionTypeAction?,
+          saleTypeAction: SaleTypeAction?) {
+        var filterInfo = currentState.filterInfo
+        if filterInfo.sortAction != sortAction {
+            filterInfo.sortAction = sortAction
+        }
+        
+        if filterInfo.transactionAction != transactionAction {
+            filterInfo.transactionAction = transactionAction
+        }
+        
+        if filterInfo.saleTypeAction != saleTypeAction {
+            filterInfo.saleTypeAction = saleTypeAction
+        }
+        
+        return filterInfo
+    }
+    
+    private func retrieveExploreNotes(
+        filterInfo: (sortAction: SortAction?,
+                     transactionAction: TransactionTypeAction?,
+                     saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil)
+    ) -> Observable<Mutation> {
+        
+        let request = ExploreNoteRequestDTO(
+            sort: filterInfo.sortAction?.toRequestType ?? SortAction.popularAction.toRequestType,
+            propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
+            priceType: filterInfo.transactionAction?.toRequestType ?? ""
+        )
+        
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
             .asObservable()
             .flatMap { exploreNoteResponseDTO -> Observable<Mutation> in
@@ -58,7 +118,7 @@ final class LookAroundReactor: Reactor {
             }
     }
     
-    private func getSectionLookAroundImjangDataList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
+    private func getSectionExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
         let exploreNotes: [SectionOfExploreNote.Row] = exploreNoteResponseDTO.notes.map { note in
             return .exploreNoteSection(exploreNote: note)
         }

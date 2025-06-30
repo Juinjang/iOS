@@ -10,6 +10,27 @@ import ReactorKit
 import RxDataSources
 import RxRelay
 
+enum LookAroundEventType: Equatable {
+    case cellContentTap(content: LookAroundContent)
+    case filterItemTap(SortAction?, TransactionTypeAction?, SaleTypeAction?)
+}
+
+extension LookAroundEventType {
+    var tappedContent: LookAroundContent? {
+        if case let .cellContentTap(content) = self {
+            return content
+        }
+        return nil
+    }
+    
+    var tappedFilterItem: (sort: SortAction?, transactionType: TransactionTypeAction?, saleType: SaleTypeAction?)? {
+        if case let .filterItemTap(sort, transaction, saleType) = self {
+            return (sort, transaction, saleType)
+        }
+        return nil
+    }
+}
+
 final class LookAroundViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
     
@@ -19,7 +40,7 @@ final class LookAroundViewController: BaseViewController, View {
         return dataSource
     }()
     
-    private let cellEventRelay = PublishRelay<LookAroundCellEventType>()
+    private let cellEventRelay = PublishRelay<LookAroundEventType>()
     
     init(reactor: LookAroundReactor) {
         super.init()
@@ -34,7 +55,7 @@ final class LookAroundViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
-        reactor?.action.onNext(.viewDidLoad)
+        reactor?.action.onNext(.retrieveExploreNotes)
     }
 
     override func loadView() {
@@ -64,6 +85,20 @@ final class LookAroundViewController: BaseViewController, View {
             .compactMap { $0.tappedContent }
             .bind(with: self) { owner, content in
                 owner.handleContentTapped(content: content)
+            }
+            .disposed(by: disposeBag)
+        
+        cellEventRelay
+            .compactMap { $0.tappedFilterItem }
+            .bind(with: self) { owner, tappedFilters in
+                print("@@@ filter 클릭: \(tappedFilters)")
+                owner.reactor?.action.onNext(
+                    .filterTapped(
+                        tappedFilters.sort,
+                        tappedFilters.transactionType,
+                        tappedFilters.saleType
+                    )
+                )
             }
             .disposed(by: disposeBag)
     }
@@ -118,7 +153,7 @@ final class LookAroundViewController: BaseViewController, View {
 extension LookAroundViewController {
     private func configureCollectionViewDataSource() -> RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote> {
         return RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote>(configureCell: { [weak self] dataSource, collectionView, indexPath, lookAroundImjangData in
-            guard let self else { return UICollectionViewCell() }
+            guard let self = self else { return UICollectionViewCell() }
             switch dataSource[indexPath] {
             case .contentsSection(let content):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundContentCell.identifier, for: indexPath) as? LookAroundContentCell else { return UICollectionViewCell() }
@@ -142,13 +177,16 @@ extension LookAroundViewController {
                 cell.configureCell(exploreNote)
                 return cell
             }
-        }, configureSupplementaryView: { dataSource, collectionView, string, indexPath in
+        }, configureSupplementaryView: { [weak self] dataSource, collectionView, string, indexPath in
+            guard let self = self else { return UICollectionReusableView() }
             let section = dataSource.sectionModels[indexPath.section]
             switch section {
             case .exploreNoteSection(_, _):
                 guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: LookAroundFilterHeader.identifier, for: indexPath) as? LookAroundFilterHeader else {
                     return UICollectionReusableView()
                 }
+                
+                headerView.bind(relay: cellEventRelay)
                 
                 return headerView
            
