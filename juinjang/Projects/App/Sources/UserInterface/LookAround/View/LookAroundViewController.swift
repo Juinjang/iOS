@@ -91,7 +91,6 @@ final class LookAroundViewController: BaseViewController, View {
         cellEventRelay
             .compactMap { $0.tappedFilterItem }
             .bind(with: self) { owner, tappedFilters in
-                print("@@@ filter 클릭: \(tappedFilters)")
                 owner.reactor?.action.onNext(
                     .filterTapped(
                         tappedFilters.sort,
