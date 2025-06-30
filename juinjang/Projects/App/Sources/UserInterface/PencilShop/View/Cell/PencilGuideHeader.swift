@@ -16,11 +16,10 @@ final class PencilGuideHeader: BaseCollectionReusableView {
     }
     private let infoCircleImageView = UIImageView().then {
         let image = UIImage.infoCircle
-            .withRenderingMode(.alwaysTemplate)
-            .withTintColor(.gray300)
-        $0.image = image
+        $0.image = image.withTintColor(.gray300)
         $0.contentMode = .scaleAspectFit
     }
+    
     private let guideLabel = DSLabel(.body2).then {
         $0.fontColor = .gray400
         $0.textAlignment = .center
