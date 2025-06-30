@@ -127,11 +127,23 @@ extension SelectNoteCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
+            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
+        
+        if resultScore == 0.0 {
+            setScoreStyle()
+        } else {
+            setScoreStyle(empty: false)
+        }
+    }
+    
+    private func setScoreStyle(empty: Bool = true) {
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        scoreLabel.textColor = empty ? .null : .main
     }
     
     func setSelectStyle(isSelected: Bool) {

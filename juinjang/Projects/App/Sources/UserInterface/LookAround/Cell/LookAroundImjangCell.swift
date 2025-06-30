@@ -229,14 +229,20 @@ extension LookAroundImjangCell {
 }
 
 extension LookAroundImjangCell {
-    private func setScore(_ score: String) {
-        scoreLabel.setAttribute(text: score, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
+    private func setScore(_ score: String?) {
+        guard let score, let doubleScore = Double(score) else {
+            scoreLabel.setAttribute(text: "0.0", color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
+            return
+        }
+        
+        let resultScore = String(format: "%.1f", doubleScore.truncateToSingleDecimal())
+        scoreLabel.setAttribute(text: resultScore, color: .mainWhite, font: .pretendard(size: 13, weight: .semiBold), lineHeight: 19)
     }
     
-    private func setImjangImage(_ imageUrl: String, propertyType: String) {
+    private func setImjangImage(_ imageUrl: String?, propertyType: String) {
         let property = PropertyType.allCases.filter { $0.rawValue == propertyType }
         if let propertyImage = property.first?.image {
-            if let imageUrl = URL(string: imageUrl) {
+            if let imageUrl = URL(string: imageUrl ?? "") {
                 imjangImageView.kf.setImage(with: imageUrl, placeholder: propertyImage)
             } else {
                 imjangImageView.image = propertyImage
@@ -253,12 +259,20 @@ extension LookAroundImjangCell {
     }
     
     private func setPrice(_ priceString: String, priceType: String) {
-        let priceResult = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-        priceLabel.setAttribute(text: priceResult, color: .gray450, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
+        if let priceType = PriceType(rawValue: priceType) {
+            let priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+            priceLabel.setAttribute(text: priceResult, color: .gray450, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
+        }
     }
     
-    private func setRoomDetail(pyong: Int, floor: String) {
-        let roomDetail = "\(pyong)평 \(floor)층"
+    private func setRoomDetail(pyong: Int?, floor: String?) {
+        let roomDetail: String
+        if pyong == nil || floor == nil {
+            roomDetail = "평수와 층수가 입력되지 않음"
+        } else {
+            guard let pyong, let floor else { return }
+            roomDetail = "\(pyong)평 \(floor)층"
+        }
         roomDetailNameLabel.setAttribute(text: roomDetail, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
     }
     
@@ -266,8 +280,8 @@ extension LookAroundImjangCell {
         roomAddressLabel.setAttribute(text: address, color: .gray400, font: .pretendard(size: 13, weight: .medium), lineHeight: 19)
     }
     
-    private func setProfileImage(_ imageUrl: String) {
-        if let imageUrl = URL(string: imageUrl) {
+    private func setProfileImage(_ imageUrl: String?) {
+        if let imageUrl = URL(string: imageUrl ?? "") {
             DispatchQueue.main.async {
                 self.profileImageView.kf.setImage(with: imageUrl, placeholder: UIImage.Setting.profile)
             }
@@ -280,8 +294,8 @@ extension LookAroundImjangCell {
         ownerNicknameLabel.setAttribute(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     
-    private func setAgoDate(_ timeAgo: String) {
-        uploadedDateLabel.setAttribute(text: timeAgo, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
+    private func setAgoDate(_ timeAgo: String?) {
+        uploadedDateLabel.setAttribute(text: timeAgo ?? "", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     
     private func setHits(_ hits: Int) {
