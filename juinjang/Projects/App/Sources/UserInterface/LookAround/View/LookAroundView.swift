@@ -14,7 +14,7 @@ final class LookAroundView: BaseView {
         $0.rightItem = [.search]
     }
     
-    lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout())
+    lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout(isListEmpty: false))
     
     override func configureHierarchy() {
         addSubview(navigationView)
@@ -54,30 +54,33 @@ enum LookAroundImjangSection: Int {
 }
 
 extension LookAroundView {
-    private func createCollectionViewLayout() -> UICollectionViewLayout {
-        print(#function)
+    func createCollectionViewLayout(isListEmpty: Bool) -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
-                   guard let self else { return nil }
-           if let weatherSection = LookAroundImjangSection(rawValue: sectionIndex) {
-               let section: NSCollectionLayoutSection
-               
-               switch weatherSection {
-               case .contents:
-                   section = createContentsSection()
-               case .selectArea:
-                   section = createSelectAreaSection()
-               case .imjangCount:
-                   section = createImjangCountSection()
-               case .imjangList:
-                   section = createImjangListSection()
-               }
+            guard let self = self else { return nil }
+            if let weatherSection = LookAroundImjangSection(rawValue: sectionIndex) {
+                let section: NSCollectionLayoutSection
+                
+                switch weatherSection {
+                case .contents:
+                    section = createContentsSection()
+                case .selectArea:
+                    section = createSelectAreaSection()
+                case .imjangCount:
+                    section = createImjangCountSection()
+                case .imjangList:
+                    section = createImjangListSection(isListEmpty: isListEmpty)
+                }
        
-               return section
-           } else {
-               return nil
-           }
-       }
-       return layout
+                return section
+            } else {
+                return nil
+            }
+        }
+        layout.register(
+        LookAroundEmptyBackground.self,
+          forDecorationViewOfKind: "section-background-element-kind"
+        )
+        return layout
     }
     
     private func createContentsSection() -> NSCollectionLayoutSection {
@@ -123,7 +126,7 @@ extension LookAroundView {
         return section
     }
     
-    private func createImjangListSection() -> NSCollectionLayoutSection {
+    private func createImjangListSection(isListEmpty: Bool) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -145,6 +148,15 @@ extension LookAroundView {
         sectionHeader.pinToVisibleBounds = true
         sectionHeader.zIndex = 2
         section.boundarySupplementaryItems = [sectionHeader]
+        
+        if isListEmpty {
+            let decoration = NSCollectionLayoutDecorationItem.background(
+                elementKind: "section-background-element-kind"
+            )
+            decoration.contentInsets = NSDirectionalEdgeInsets(top: 63, leading: 0, bottom: 0, trailing: 0)
+            section.decorationItems = [decoration]
+        }
+        
         return section
     }
 }
