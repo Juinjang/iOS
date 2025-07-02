@@ -16,6 +16,7 @@ final class LookAroundSearchReactor: Reactor {
     }
 
     let dependency: Dependency
+    private var currentPageCount = 0
 
     init(dependency: Dependency) {
       self.dependency = dependency
@@ -39,7 +40,9 @@ final class LookAroundSearchReactor: Reactor {
             sort: SortAction.popularAction.toRequestType,
             propertyType: "",
             priceType: "",
-            keyword: nil
+            keyword: nil,
+            page: 0,
+            size: 10
         )
         var recentSearchKeywordList: [String] = []
         var searchResultList: [LookAroundSearchResultSectionModel] = []
@@ -98,12 +101,13 @@ final class LookAroundSearchReactor: Reactor {
         return sectionOfLookAroundImjangData
     }
     
-    private func retrieveExploreNotes(
-        _ request: ExploreNoteRequestDTO = ExploreNoteRequestDTO(),
-        keyword: String
+    private func retrieveExploreNotes(keyword: String
     ) -> Observable<Mutation> {
-        var request = request
-        request.keyword = keyword
+        var request = ExploreNoteRequestDTO(
+            keyword: keyword,
+            page: currentPageCount,
+            size: 10
+        )
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
             .asObservable()
             .flatMap { exploreNoteResponseDTO -> Observable<Mutation> in

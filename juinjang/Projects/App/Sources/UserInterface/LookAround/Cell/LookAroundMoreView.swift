@@ -1,8 +1,8 @@
 //
-//  ShareMoreView.swift
+//  LookAroundMoreView.swift
 //  juinjang
 //
-//  Created by KimDongWoo on 4/28/25.
+//  Created by 조유진 on 6/30/25.
 //
 
 import UIKit
@@ -11,16 +11,21 @@ import SnapKit
 import RxSwift
 import RxRelay
 
-final class ShareMoreView: BaseCollectionReusableView {
+final class LookAroundMoreView: BaseCollectionReusableView {
     private let moreButton = MoreButton()
     private var disposeBag = DisposeBag()
     
     func bind(relay: PublishRelay<Void>, isHidden: Bool) {
-        disposeBag = DisposeBag()
+        print(#function, "isHidden: \(isHidden)")
         moreButton.rx.throttleTap
             .bind(to: relay)
             .disposed(by: disposeBag)
         self.isHidden = isHidden
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
     }
     
     override func configureHierarchy() {
@@ -38,3 +43,4 @@ final class ShareMoreView: BaseCollectionReusableView {
         }
     }
 }
+

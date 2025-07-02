@@ -25,6 +25,7 @@ final class LookAroundReactor: Reactor {
     enum Action {
         case filterTapped(SortAction?, TransactionTypeAction?, SaleTypeAction?)
         case retrieveExploreNotes
+        case moreButtonDidTap
     }
     
     enum Mutation {
@@ -32,21 +33,23 @@ final class LookAroundReactor: Reactor {
         case setFilterInfo(filterInfo: (sortAction: SortAction?,
                            transactionAction: TransactionTypeAction?,
                            saleTypeAction: SaleTypeAction?))
+        case updateIsLastPage(Bool)
+        case setIshideMoreButton(Bool)
+        case setCurrentPage(Int)
     }
     
     struct State {
         var sectionOfExploreNotes: [SectionOfExploreNote]? = nil
         var filterInfo: (sortAction: SortAction?,
                          transactionAction: TransactionTypeAction?,
-                                saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil)
+                         saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil)
+        var isLastPage: Bool?
+        var isMoreButtonHidden: Bool = true
+        var currentPage: Int = 0
     }
     
-    struct ExploreNotesPageState {
-        var notes: [ExploreNoteModel] = []
-        var offset: Int = 0
-        var limit: Int = 20
-        var isLastPage: Bool = false
-    }
+    private var currentNotesCount: Int = 0
+    private var currentNoteList: [ExploreNoteModel] = []
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
@@ -57,11 +60,18 @@ final class LookAroundReactor: Reactor {
                 saleTypeAction: saleTypeAction
             )
             return .concat([
-                retrieveExploreNotes(filterInfo: filterInfo),
-                .just(.setFilterInfo(filterInfo: filterInfo))
+                .just(.setCurrentPage(0)),
+                .just(.setFilterInfo(filterInfo: filterInfo)),
+                retrieveExploreNotes(filterInfo: filterInfo)
             ])
         case .retrieveExploreNotes:
             return retrieveExploreNotes()
+        case .moreButtonDidTap:
+            let nextPage = currentState.currentPage + 1
+            return .concat([
+                   .just(.setCurrentPage(nextPage)),
+                   retrieveExploreNotes(filterInfo: currentState.filterInfo, page: nextPage)
+               ])
         }
     }
     
@@ -70,8 +80,16 @@ final class LookAroundReactor: Reactor {
         switch mutation {
         case .setExploreNotes(let exploreNotes):
             state.sectionOfExploreNotes = getSectionExploreNoteList(exploreNotes)
+            print(state.sectionOfExploreNotes?[3].items.count ?? 0)
         case .setFilterInfo(let filterInfo):
             state.filterInfo = filterInfo
+        case .updateIsLastPage(let isLastPage):
+            state.isLastPage = isLastPage
+        case .setIshideMoreButton(let isHidden):
+            print("hideMoreButton: \(isHidden)")
+            state.isMoreButtonHidden = isHidden
+        case .setCurrentPage(let currentPage):
+            state.currentPage = currentPage
         }
         return state
     }
@@ -84,42 +102,60 @@ final class LookAroundReactor: Reactor {
           transactionAction: TransactionTypeAction?,
           saleTypeAction: SaleTypeAction?) {
         var filterInfo = currentState.filterInfo
-        if filterInfo.sortAction != sortAction {
+        
+        if sortAction != nil {
             filterInfo.sortAction = sortAction
         }
         
-        if filterInfo.transactionAction != transactionAction {
+        if transactionAction != nil {
             filterInfo.transactionAction = transactionAction
         }
         
-        if filterInfo.saleTypeAction != saleTypeAction {
+        if saleTypeAction != nil {
             filterInfo.saleTypeAction = saleTypeAction
         }
-        
+        currentNoteList = []
+        currentNotesCount = 0
         return filterInfo
     }
     
     private func retrieveExploreNotes(
         filterInfo: (sortAction: SortAction?,
                      transactionAction: TransactionTypeAction?,
-                     saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil)
+                     saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil),
+        page: Int = 0
     ) -> Observable<Mutation> {
         
         let request = ExploreNoteRequestDTO(
             sort: filterInfo.sortAction?.toRequestType ?? SortAction.popularAction.toRequestType,
             propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
-            priceType: filterInfo.transactionAction?.toRequestType ?? ""
+            priceType: filterInfo.transactionAction?.toRequestType ?? "",
+            page: page,
+            size: 10
         )
+        
+        dump(request)
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
             .asObservable()
-            .flatMap { exploreNoteResponseDTO -> Observable<Mutation> in
-                return .just(.setExploreNotes(exploreNoteResponseDTO))
+            .flatMap { [weak self] exploreNoteResponseDTO -> Observable<Mutation> in
+                print("totalResults: \(exploreNoteResponseDTO.totalResults)")
+                
+                self?.currentNotesCount += exploreNoteResponseDTO.notes.count
+                let isLastPage = self?.currentNotesCount ?? 0 >= exploreNoteResponseDTO.totalResults || exploreNoteResponseDTO.notes.isEmpty
+                print("\(exploreNoteResponseDTO.notes.count)개")
+                
+                return .concat(
+                    .just(.updateIsLastPage(isLastPage)),
+                    .just(.setExploreNotes(exploreNoteResponseDTO)),
+                    .just(.setIshideMoreButton(isLastPage))
+                )
             }
     }
     
     private func getSectionExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
-        let exploreNotes: [SectionOfExploreNote.Row] = exploreNoteResponseDTO.notes.map { note in
+        currentNoteList.append(contentsOf: exploreNoteResponseDTO.notes)
+        let exploreNotes: [SectionOfExploreNote.Row] = currentNoteList.map { note in
             return .exploreNoteSection(exploreNote: note)
         }
         
@@ -135,6 +171,10 @@ final class LookAroundReactor: Reactor {
             .exploreNoteSection(header: "", items: exploreNotes)
         ]
         return sectionOfExploreNotes
+    }
+    
+    private func initSectionExploreNoteList() {
+        
     }
 }
 

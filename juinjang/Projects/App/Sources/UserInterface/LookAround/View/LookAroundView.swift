@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import RxSwift
 
 final class LookAroundView: BaseView {
     let navigationView = DefaultNavigationView().then {
@@ -15,6 +16,8 @@ final class LookAroundView: BaseView {
     }
     
     lazy var collectionView: UICollectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout(isListEmpty: false))
+    
+    fileprivate var isLastPage: Bool = false
     
     override func configureHierarchy() {
         addSubview(navigationView)
@@ -37,12 +40,35 @@ final class LookAroundView: BaseView {
     override func configureView() {
         super.configureView()
         collectionView.backgroundColor = .mainWhite
-        collectionView.register(LookAroundContentCell.self, forCellWithReuseIdentifier: LookAroundContentCell.identifier)
-        collectionView.register(SelectAreaCell.self, forCellWithReuseIdentifier: SelectAreaCell.identifier)
-        collectionView.register(LookAroundImjangCountCell.self, forCellWithReuseIdentifier: LookAroundImjangCountCell.identifier)
-        collectionView.register(LookAroundFilterHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: LookAroundFilterHeader.identifier)
-        collectionView.register(LookAroundImjangCountCell.self, forCellWithReuseIdentifier: LookAroundImjangCountCell.identifier)
-        collectionView.register(LookAroundImjangCell.self, forCellWithReuseIdentifier: LookAroundImjangCell.identifier)
+        collectionView.register(
+            LookAroundContentCell.self,
+            forCellWithReuseIdentifier: LookAroundContentCell.identifier
+        )
+        collectionView.register(
+            SelectAreaCell.self,
+            forCellWithReuseIdentifier: SelectAreaCell.identifier
+        )
+        collectionView.register(
+            LookAroundImjangCountCell.self,
+            forCellWithReuseIdentifier: LookAroundImjangCountCell.identifier
+        )
+        collectionView.register(
+            LookAroundFilterHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: LookAroundFilterHeader.identifier
+        )
+        collectionView.register(
+            LookAroundImjangCountCell.self,
+            forCellWithReuseIdentifier: LookAroundImjangCountCell.identifier
+        )
+        collectionView.register(
+            LookAroundImjangCell.self,
+            forCellWithReuseIdentifier: LookAroundImjangCell.identifier
+        )
+        collectionView.register(
+            LookAroundMoreView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter
+        )
     }
 }
 
@@ -147,7 +173,6 @@ extension LookAroundView {
         sectionHeader.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0)
         sectionHeader.pinToVisibleBounds = true
         sectionHeader.zIndex = 2
-        section.boundarySupplementaryItems = [sectionHeader]
         
         if isListEmpty {
             let decoration = NSCollectionLayoutDecorationItem.background(
@@ -157,6 +182,36 @@ extension LookAroundView {
             section.decorationItems = [decoration]
         }
         
+        var footer: NSCollectionLayoutBoundarySupplementaryItem?
+        
+        if !isLastPage {
+            footer = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                   heightDimension: .absolute(94)),
+                elementKind: UICollectionView.elementKindSectionFooter,
+                alignment: .bottom
+            )
+        }
+        
+        print(isListEmpty, isLastPage)
+        
+        if let footer {
+            print("footer 적용")
+            section.boundarySupplementaryItems = [sectionHeader, footer]
+        } else {
+            section.boundarySupplementaryItems = [sectionHeader]
+        }
+        
         return section
+    }
+}
+
+extension Reactive where Base: LookAroundView {
+    
+    var isLastPage: Binder<Bool> {
+        return Binder(base) { view, isLastPage in
+            view.isLastPage = isLastPage
+            view.collectionView.reloadData()
+        }
     }
 }

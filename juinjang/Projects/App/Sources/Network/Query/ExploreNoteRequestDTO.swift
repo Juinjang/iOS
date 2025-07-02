@@ -7,28 +7,29 @@
 
 struct ExploreNoteRequestDTO: Encodable {
     let code: [String]?
-    let page: String
-    let size: String
     var sort: String
     var propertyType: String
     var priceType: String
     var keyword: String?
+    let page: Int
+    let size: Int
     
     init(
         code: [String]? = nil,
-        page: String = "1",
-        size: String = "10",
         sort: String = "POPULAR",
         propertyType: String = "",
         priceType: String = "",
-        keyword: String? = nil
+        keyword: String? = nil,
+        page: Int,
+        size: Int
     ) {
         self.code = code
-        self.page = page
-        self.size = size
         self.sort = sort
         self.propertyType = propertyType
         self.priceType = priceType
         self.keyword = keyword
+        self.page = page
+        self.size = size
     }
 }
+

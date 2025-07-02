@@ -13,6 +13,7 @@ import RxRelay
 enum LookAroundEventType: Equatable {
     case cellContentTap(content: LookAroundContent)
     case filterItemTap(SortAction?, TransactionTypeAction?, SaleTypeAction?)
+    case heartButtonTap(index: Int)
 }
 
 extension LookAroundEventType {
@@ -41,11 +42,12 @@ final class LookAroundViewController: BaseViewController, View {
     }()
     
     private let cellEventRelay = PublishRelay<LookAroundEventType>()
+    private let moreButtonTapRelay = PublishRelay<Void>()
     
     init(reactor: LookAroundReactor) {
         super.init()
         self.reactor = reactor
-        bindCellEvent()
+        bindEvent()
     }
     
     required init?(coder: NSCoder) {
@@ -84,9 +86,23 @@ final class LookAroundViewController: BaseViewController, View {
             }
             .bind(to: mainView.collectionView.rx.items(dataSource: dataSource))
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isLastPage)
+            .distinctUntilChanged()
+            .compactMap { $0 }
+            .bind(to: mainView.rx.isLastPage)
+            .disposed(by: disposeBag)
     }
     
-    private func bindCellEvent() {
+    private func bindEvent() {
+        guard let reactor = self.reactor else { return }
+        
+        moreButtonTapRelay
+            .map { Reactor.Action.moreButtonDidTap }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
         cellEventRelay
             .compactMap { $0.tappedContent }
             .bind(with: self) { owner, content in
@@ -182,19 +198,32 @@ extension LookAroundViewController {
                 cell.configureCell(exploreNote)
                 return cell
             }
-        }, configureSupplementaryView: { [weak self] dataSource, collectionView, string, indexPath in
+        }, configureSupplementaryView: { [weak self] dataSource, collectionView, kind, indexPath in
             guard let self = self else { return UICollectionReusableView() }
             let section = dataSource.sectionModels[indexPath.section]
             switch section {
             case .exploreNoteSection(_, _):
-                guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: LookAroundFilterHeader.identifier, for: indexPath) as? LookAroundFilterHeader else {
-                    return UICollectionReusableView()
+                if kind == UICollectionView.elementKindSectionHeader {
+                    guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: LookAroundFilterHeader.identifier, for: indexPath) as? LookAroundFilterHeader else {
+                        return UICollectionReusableView()
+                    }
+                    
+                    headerView.bind(relay: cellEventRelay)
+                    
+                    return headerView
+                } else if kind == UICollectionView.elementKindSectionFooter {
+                    guard let footerView = collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionFooter, withReuseIdentifier: LookAroundMoreView.identifier, for: indexPath) as? LookAroundMoreView else {
+                        return UICollectionReusableView()
+                    }
+                    
+                    footerView.bind(
+                        relay: self.moreButtonTapRelay,
+                        isHidden: self.reactor?.currentState.isMoreButtonHidden ?? true
+                    )
+                    
+                    return footerView
                 }
-                
-                headerView.bind(relay: cellEventRelay)
-                
-                return headerView
-           
+                return UICollectionReusableView()
             default: return UICollectionReusableView()
             }
         })
