@@ -12,7 +12,7 @@ import StoreKit
 protocol PencilShopRepositoryProtocol {
     func retrievePencilTotalBalance() -> Single<PencilBalanceDTO>
     func purchasePencil(parameter: PurchasePencilRequestDTO) -> Single<PurchasePencilDTO>
-    func readAcquiredPencil(parameter: ReadAcquiredPencilRequestDTO) -> Single<ReadAcquiredPencilDTO>
+    func readAcquiredPencil(acquiredPencilId: Int) -> Single<ReadAcquiredPencilDTO>
     func retrieveUsedPencil() -> Single<[UsedPencilDTO]>
     func retrievePurchasedPencil() -> Single<[PurchasedPencilDTO]>
     func retrieveAcquiredPencil() -> Single<[AcquiredPencilDTO]>
@@ -41,8 +41,8 @@ final class PencilShopRepository: PencilShopRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func readAcquiredPencil(parameter: ReadAcquiredPencilRequestDTO) -> Single<ReadAcquiredPencilDTO> {
-        return PencilShopAPI.readPencil(parameter)
+    func readAcquiredPencil(acquiredPencilId: Int) -> Single<ReadAcquiredPencilDTO> {
+        return PencilShopAPI.readPencil(acquiredPencilId: acquiredPencilId)
             .request(BaseResponse<ReadAcquiredPencilDTO>.self, networkManager)
             .map { try $0.unwrap() }
     }

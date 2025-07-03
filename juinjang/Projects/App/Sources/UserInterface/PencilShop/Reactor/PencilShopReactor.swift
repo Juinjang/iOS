@@ -166,7 +166,7 @@ extension PencilShopReactor {
         selectedAquiredPencil.read = true
         acquiredPencils[selectedIndex] = selectedAquiredPencil
         
-        return dependency.pencilShopRepository.readAcquiredPencil(parameter: ReadAcquiredPencilRequestDTO(acquiredPencilId: selectedAquiredPencil.acquiredPencilId))
+        return dependency.pencilShopRepository.readAcquiredPencil(acquiredPencilId: selectedAquiredPencil.acquiredPencilId)
             .asObservable()
             .flatMap { readAcquiredPencilDTO -> Observable<Mutation> in
                 print("얻은 연필 읽음 처리 완료: \(readAcquiredPencilDTO.isMarked), isTotalRead: \(readAcquiredPencilDTO.isTotalRead)")
