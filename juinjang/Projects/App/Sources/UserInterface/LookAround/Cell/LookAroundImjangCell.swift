@@ -104,7 +104,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         setRoomAddress(note.address)
         setProfileImage(note.ownerImageUrl)
         setOwnerNickname(note.ownerNickname)
-        setAgoDate(note.timeAgo)
+        setAgoDate(note.timeAge)
         setHits(note.viewCount)
         setIsLiked(note.isLiked)
         
@@ -319,8 +319,8 @@ extension LookAroundImjangCell {
         ownerNicknameLabel.setAttribute(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     
-    private func setAgoDate(_ timeAgo: String?) {
-        uploadedDateLabel.setAttribute(text: timeAgo ?? "", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
+    private func setAgoDate(_ timeAge: String?) {
+        uploadedDateLabel.setAttribute(text: timeAge ?? "", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     
     private func setHits(_ hits: Int) {

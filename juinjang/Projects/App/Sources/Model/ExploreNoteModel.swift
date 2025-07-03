@@ -21,7 +21,7 @@ struct ExploreNoteModel: Codable, Hashable {
     let address: String
     let ownerImageUrl: String?
     let ownerNickname: String
-    let timeAgo: String?
+    let timeAge: String?
     let viewCount: Int
 }
 

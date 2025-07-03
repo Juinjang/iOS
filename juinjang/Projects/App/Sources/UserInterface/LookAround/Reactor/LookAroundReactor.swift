@@ -46,7 +46,6 @@ final class LookAroundReactor: Reactor {
                          transactionAction: TransactionTypeAction?,
                          saleTypeAction: SaleTypeAction?)
         var isLastPage: Bool?
-        var isMoreButtonHidden: Bool
         var currentPage: Int
         var currentNotesCount: Int
     }
@@ -55,7 +54,6 @@ final class LookAroundReactor: Reactor {
         sectionOfExploreNotes: nil,
         filterInfo: (.popularAction,nil,nil),
         isLastPage: nil,
-        isMoreButtonHidden: true,
         currentPage: 0,
         currentNotesCount: 0
     )
@@ -258,7 +256,7 @@ final class LookAroundReactor: Reactor {
     }
     
     private func getSectionExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
-        var sections = currentState.sectionOfExploreNotes ?? []
+        let sections = currentState.sectionOfExploreNotes ?? []
         
         guard let lastIndex = sections.indices.last,
               case let .exploreNoteSection(_, items) = sections[lastIndex] else { return [] }

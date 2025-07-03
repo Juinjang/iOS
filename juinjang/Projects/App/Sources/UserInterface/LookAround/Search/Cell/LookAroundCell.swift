@@ -98,7 +98,7 @@ final class LookAroundCell: BaseCollectionViewCell {
         setRoomAddress(exploreNote.address)
         setProfileImage(exploreNote.ownerImageUrl)
         setOwnerNickname(exploreNote.ownerNickname)
-        setTimeAgoDate(exploreNote.timeAgo)
+        setTimeAgoDate(exploreNote.timeAge)
         setHits(exploreNote.viewCount)
         setIsLiked(exploreNote.isLiked)
     }
@@ -298,8 +298,8 @@ extension LookAroundCell {
         ownerNicknameLabel.setAttribute(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
 
-    private func setTimeAgoDate(_ timeAgo: String?) {
-        uploadedDateLabel.setAttribute(text: timeAgo ?? "", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
+    private func setTimeAgoDate(_ timeAge: String?) {
+        uploadedDateLabel.setAttribute(text: timeAge ?? "", color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
 
     private func setHits(_ hits: Int) {

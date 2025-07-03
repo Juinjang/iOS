@@ -26,13 +26,22 @@ final class LookAroundSearchReactor: Reactor {
         case viewDidLoad
         case searchSummitButtonTapped(keyword: String)
         case searchKeywordTapped(keyword: String)
+        case searchActive(Bool)
         case removeAllKeywordTapped
         case deleteKeywordButtonTapped(keyword: String)
+        case filterTapped(SortAction?, TransactionTypeAction?, SaleTypeAction?)
+        case moreButtonDidTap
     }
     
     enum Mutation {
         case setRecentSearchKeywordList([String])
-        case setSearchExploreNotes(ExploreNoteResponseDTO)
+        case setSearchExploreNotes([LookAroundSearchResultSectionModel])
+        case setKeyword(String)
+        case setFilterInfo(filterInfo: (sortAction: SortAction?,
+                           transactionAction: TransactionTypeAction?,
+                           saleTypeAction: SaleTypeAction?))
+        case updateIsLastPage(Bool)
+        case setCurrentPage(Int)
     }
     
     struct State {
@@ -44,9 +53,17 @@ final class LookAroundSearchReactor: Reactor {
             page: 0,
             size: 10
         )
+        var filterInfo: (sortAction: SortAction?,
+                         transactionAction: TransactionTypeAction?,
+                         saleTypeAction: SaleTypeAction?) = (.popularAction, nil, nil)
+        var keyword: String? = nil
         var recentSearchKeywordList: [String] = []
         var searchResultList: [LookAroundSearchResultSectionModel] = []
+        var isLastPage: Bool?
+        var currentPage: Int = 0
     }
+    
+    private var currentNotesCount: Int = 0
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
@@ -59,7 +76,9 @@ final class LookAroundSearchReactor: Reactor {
             let searchKeywordlist = getRecentSearchList()
             return .concat([
                 .just(.setRecentSearchKeywordList(searchKeywordlist)),
-                retrieveExploreNotes(keyword: keyword)
+                .just(.setKeyword(keyword)),
+                .just(.setCurrentPage(0)),
+                retrieveInitialExploreNotes(keyword: keyword)
             ])
             
         case .removeAllKeywordTapped:
@@ -71,6 +90,25 @@ final class LookAroundSearchReactor: Reactor {
             deleteSearchKeyword(keyword)
             let list = getRecentSearchList()
             return .just(.setRecentSearchKeywordList(list))
+        case .filterTapped(let sortAction, let transactionTypeAction, let saleTypeAction):
+            let filterInfo = handleFilterTapped(
+                sortAction: sortAction,
+                transactionAction: transactionTypeAction,
+                saleTypeAction: saleTypeAction
+            )
+            return .concat([
+                .just(.setCurrentPage(0)),
+                .just(.setFilterInfo(filterInfo: filterInfo)),
+                retrieveInitialExploreNotes(filterInfo: filterInfo, keyword: currentState.keyword ?? "")
+            ])
+        case .moreButtonDidTap:
+            let nextPage = currentState.currentPage + 1
+            return .concat([
+                   .just(.setCurrentPage(nextPage)),
+                   retrieveExploreNotes(filterInfo: currentState.filterInfo, page: nextPage)
+               ])
+        case .searchActive(let isActive):
+            return handlerSearchActive(isActive: isActive)
         }
     }
     
@@ -80,39 +118,159 @@ final class LookAroundSearchReactor: Reactor {
         switch mutation {
         case .setRecentSearchKeywordList(let list):
             newState.recentSearchKeywordList = list
-        case .setSearchExploreNotes(let exploreNoteResponseDTO):
-            let list = getSectionOfExploreNotes(exploreNoteResponseDTO)
-            newState.searchResultList = list
+        case .setSearchExploreNotes(let searchResultList):
+            newState.searchResultList = searchResultList
+        case .setFilterInfo(let filterInfo):
+            newState.filterInfo = filterInfo
+        case .updateIsLastPage(let isLastPage):
+            newState.isLastPage = isLastPage
+        case .setCurrentPage(let currentPage):
+            newState.currentPage = currentPage
+        case .setKeyword(let keyword):
+            newState.keyword = keyword
         }
         return newState
     }
     
-    private func getSectionOfExploreNotes(_ exploreNoteResponse: ExploreNoteResponseDTO) -> [LookAroundSearchResultSectionModel] {
-        let exploreNotes = exploreNoteResponse.notes.map {
-            LookAroundSearchResultSectionModel.Row.exploreNoteSection(exploreNote: $0)
+    private func handlerSearchActive(isActive: Bool) -> Observable<Mutation> {
+        if isActive {
+            return .empty()
+        } else {
+            currentNotesCount = 0
+            return .concat([
+                .just(.setCurrentPage(0)),
+                .just(.setSearchExploreNotes([]))
+            ])
         }
-
+    }
+    
+    private func handleFilterTapped(
+        sortAction: SortAction?,
+        transactionAction: TransactionTypeAction?,
+        saleTypeAction: SaleTypeAction?
+    ) -> (sortAction: SortAction?,
+          transactionAction: TransactionTypeAction?,
+          saleTypeAction: SaleTypeAction?) {
+        var filterInfo = currentState.filterInfo
+        
+        if sortAction != nil {
+            filterInfo.sortAction = sortAction
+        }
+        
+        if transactionAction != nil {
+            filterInfo.transactionAction = transactionAction
+        }
+        
+        if saleTypeAction != nil {
+            filterInfo.saleTypeAction = saleTypeAction
+        }
+        
+        currentNotesCount = 0
+        return filterInfo
+    }
+    
+    private func retrieveExploreNotes(
+        filterInfo: (sortAction: SortAction?,
+                     transactionAction: TransactionTypeAction?,
+                     saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil),
+        page: Int = 0
+    ) -> Observable<Mutation> {
+        
+        let request = ExploreNoteRequestDTO(
+            sort: filterInfo.sortAction?.toRequestType ?? SortAction.popularAction.toRequestType,
+            propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
+            priceType: filterInfo.transactionAction?.toRequestType ?? "",
+            keyword: currentState.keyword,
+            page: page,
+            size: 10
+        )
+        
+        return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
+            .asObservable()
+            .map { dto in
+                self.currentNotesCount += dto.notes.count
+                let isLastPage = self.currentNotesCount >= dto.totalResults || dto.notes.isEmpty
+                return (dto, isLastPage)
+            }
+            .flatMap { [weak self] dto, isLastPage -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
+                return .concat(
+                    .just(.updateIsLastPage(isLastPage)),
+                    .just(.setSearchExploreNotes(self.getSectionOfExploreNoteList(dto)))
+                )
+            }
+    }
+    
+    private func retrieveInitialExploreNotes(
+        filterInfo: (sortAction: SortAction?,
+                     transactionAction: TransactionTypeAction?,
+                     saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil),
+        keyword: String
+    ) -> Observable<Mutation> {
+        
+        let request = ExploreNoteRequestDTO(
+            sort: filterInfo.sortAction?.toRequestType ?? SortAction.popularAction.toRequestType,
+            propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
+            priceType: filterInfo.transactionAction?.toRequestType ?? "",
+            keyword: keyword,
+            page: 0,
+            size: 10
+        )
+        
+        return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
+            .asObservable()
+            .map { dto in
+                self.currentNotesCount += dto.notes.count
+                let isLastPage = self.currentNotesCount >= dto.totalResults || dto.notes.isEmpty
+                return (dto, isLastPage)
+            }
+            .flatMap { [weak self] dto, isLastPage -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
+                return .concat(
+                    .just(.updateIsLastPage(isLastPage)),
+                    .just(.setSearchExploreNotes(self.getInitialSectionOfExploreNotes(dto)))
+                )
+            }
+    }
+    
+    private func getInitialSectionOfExploreNotes(_ exploreNoteResponse: ExploreNoteResponseDTO) -> [LookAroundSearchResultSectionModel] {
         let sectionOfLookAroundImjangData: [LookAroundSearchResultSectionModel] = [
             .imjangCountSection(items: [
                 .imjangCountSection(imjangCount: exploreNoteResponse.totalResults)
             ]),
-            .exploreNoteSection(header: "", items: exploreNotes)
+            .exploreNoteSection(header: "", items: exploreNoteSectionItems(exploreNoteResponse.notes))
         ]
         return sectionOfLookAroundImjangData
     }
     
-    private func retrieveExploreNotes(keyword: String
-    ) -> Observable<Mutation> {
-        let request = ExploreNoteRequestDTO(
-            keyword: keyword,
-            page: currentPageCount,
-            size: 10
-        )
-        return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
-            .asObservable()
-            .flatMap { exploreNoteResponseDTO -> Observable<Mutation> in
-                return .just(.setSearchExploreNotes(exploreNoteResponseDTO))
-            }
+    private func getSectionOfExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [LookAroundSearchResultSectionModel] {
+        let sections = currentState.searchResultList
+        
+        guard let lastIndex = sections.indices.last,
+              case let .exploreNoteSection(_, items) = sections[lastIndex] else { return [] }
+        
+        var notes: [ExploreNoteModel] = items.compactMap { row in
+              if case let .exploreNoteSection(model) = row {
+                  return model
+              }
+              return nil
+          }
+        
+        notes.append(contentsOf: exploreNoteResponseDTO.notes)
+        
+        let sectionOfLookAroundImjangData: [LookAroundSearchResultSectionModel] = [
+            .imjangCountSection(items: [
+                .imjangCountSection(imjangCount: exploreNoteResponseDTO.totalResults)
+            ]),
+            .exploreNoteSection(header: "", items: exploreNoteSectionItems(notes))
+        ]
+        return sectionOfLookAroundImjangData
+    }
+    
+    private func exploreNoteSectionItems(_ notes: [ExploreNoteModel]) -> [LookAroundSearchResultSectionModel.Row] {
+        return  notes.map {
+            LookAroundSearchResultSectionModel.Row.exploreNoteSection(exploreNote: $0)
+        }
     }
     
     private func saveSearchText(_ keyword: String) {
