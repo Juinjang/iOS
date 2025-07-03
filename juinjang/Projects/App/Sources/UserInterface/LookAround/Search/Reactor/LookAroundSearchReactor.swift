@@ -31,6 +31,7 @@ final class LookAroundSearchReactor: Reactor {
         case deleteKeywordButtonTapped(keyword: String)
         case filterTapped(SortAction?, TransactionTypeAction?, SaleTypeAction?)
         case moreButtonDidTap
+        case heartButtonDidTap(sharedNoteId: Int)
     }
     
     enum Mutation {
@@ -64,6 +65,7 @@ final class LookAroundSearchReactor: Reactor {
     }
     
     private var currentNotesCount: Int = 0
+    private var disposeBag = DisposeBag()
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
@@ -109,6 +111,8 @@ final class LookAroundSearchReactor: Reactor {
                ])
         case .searchActive(let isActive):
             return handlerSearchActive(isActive: isActive)
+        case .heartButtonDidTap(let sharedNoteId):
+            return handleHeartButtonDidTap(sharedNoteId: sharedNoteId)
         }
     }
     
@@ -270,6 +274,51 @@ final class LookAroundSearchReactor: Reactor {
     private func exploreNoteSectionItems(_ notes: [ExploreNoteModel]) -> [LookAroundSearchResultSectionModel.Row] {
         return  notes.map {
             LookAroundSearchResultSectionModel.Row.exploreNoteSection(exploreNote: $0)
+        }
+    }
+    
+    private func handleHeartButtonDidTap(sharedNoteId: Int) -> Observable<Mutation> {
+        var sections = currentState.searchResultList
+        
+        guard let lastIndex = sections.indices.last,
+              case let .exploreNoteSection(header, items) = sections[lastIndex]
+        else { return .empty() }
+        
+        var notes: [ExploreNoteModel] = items.compactMap { row in
+              if case let .exploreNoteSection(model) = row { return model }
+              return nil
+          }
+        
+        if let index = notes.firstIndex(where: { $0.sharedNoteId == sharedNoteId }) {
+            notes[index].isLiked.toggle()
+            
+            handleLikeNote(sharedNoteId: sharedNoteId, isLiked: notes[index].isLiked)
+        }
+        
+        let updatedNotes: [LookAroundSearchResultSectionModel.Row] = notes.map { note in
+            .exploreNoteSection(exploreNote: note)
+        }
+      
+        sections[lastIndex] = .exploreNoteSection(header: header, items: updatedNotes)
+        
+        return .just(.setSearchExploreNotes(sections))
+    }
+    
+    private func handleLikeNote(sharedNoteId: Int, isLiked: Bool) {
+        if isLiked {
+            dependency.sharedNoteRepository.createNoteLike(noteID: sharedNoteId)
+                .asObservable()
+                .subscribe(with: self) { owner, noteLikeDTO in
+                    dump(noteLikeDTO)
+                }
+                .disposed(by: disposeBag)
+            
+        } else {
+            dependency.sharedNoteRepository.deleteNoteLike(noteID: sharedNoteId)
+                .subscribe(with: self) { owner, noteLikeDTO in
+                    dump(noteLikeDTO)
+                }
+                .disposed(by: disposeBag)
         }
     }
     

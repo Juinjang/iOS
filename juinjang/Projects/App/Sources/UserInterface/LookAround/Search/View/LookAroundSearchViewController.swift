@@ -134,6 +134,13 @@ final class LookAroundSearchViewController: BaseViewController, View {
                 owner.showLookAroundDetailVC(sharedNoteId: sharedNoteId, buildingName: buildingName)
             }
             .disposed(by: disposeBag)
+        
+        cellEventRelay
+            .compactMap { $0.tappedHeartButton }
+            .bind(with: self) { owner, sharedNoteId in
+                owner.reactor?.action.onNext(.heartButtonDidTap(sharedNoteId: sharedNoteId))
+            }
+            .disposed(by: disposeBag)
     }
     
     private func showLookAroundDetailVC(sharedNoteId: Int, buildingName: String) {
