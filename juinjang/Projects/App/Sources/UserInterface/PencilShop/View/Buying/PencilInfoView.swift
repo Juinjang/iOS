@@ -23,7 +23,6 @@ enum PencilInfo: Int {
 }
 
 final class PencilInfoView: UIStackView {
-    
     private var infoList: [(PencilInfo, Int)]
     
     init(infoList: [(PencilInfo, Int)]) {
