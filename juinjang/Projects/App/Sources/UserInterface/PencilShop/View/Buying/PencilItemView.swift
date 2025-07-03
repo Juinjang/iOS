@@ -99,7 +99,7 @@ final class PencilItemView: UIView {
             ])
         )
         
-        priceButton.rx.throttleTap
+        priceButton.rx.throttleTap(milliseconds: 2000)
             .subscribe(with: self) { owner, _ in
                 owner.priceTappedRelay.accept(product)
             }
