@@ -23,8 +23,8 @@ final class SearchEmptyBackground: BaseCollectionReusableView {
     private let messageLabel = DSLabel(.body).then {
         $0.fontColor = .gray400
         $0.numberOfLines = 0
-        $0.textAlignment = .center
         $0.text = "아직은 노트가 없어요!\n다른 근처 지역을 검색해볼까요?"
+        $0.fontAlignment = .center
     }
     
     override init(frame: CGRect) {
