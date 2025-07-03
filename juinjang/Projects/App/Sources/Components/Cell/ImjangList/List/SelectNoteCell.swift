@@ -79,18 +79,16 @@ extension SelectNoteCell {
                 pyongFloorLabel.text = "\(pyong)평 \(floor)층"
             }
         }
-        
-        addressLabel.text = note.addressDetail
-
+    
         if let priceType = PriceType(rawValue: note.priceType) {
             setPriceLabel(note: note, priceType: priceType)
         }
         
-        if let roadAddress = note.roadAddress {
-            addressLabel.text = roadAddress
+        if let address = note.address {
+            addressLabel.text = address
         } else {
-            if let addressDetail = note.addressDetail {
-                addressLabel.text = addressDetail
+            if let shortAddress = note.shortAddress {
+                addressLabel.text = shortAddress
             }
         }
         

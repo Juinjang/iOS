@@ -160,7 +160,7 @@ final class CompareSearchViewController: BaseViewController {
                     searchedImjangList.append(item)
                     setEmptyUI(isEmpty: false)
                 } else {
-                    if let address = item.roadAddress {
+                    if let address = item.address {
                         if address.contains(searchKeyword) {
                             searchedImjangList.append(item)
                             setEmptyUI(isEmpty: false)

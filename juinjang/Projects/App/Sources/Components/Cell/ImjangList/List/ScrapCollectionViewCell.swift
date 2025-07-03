@@ -73,11 +73,11 @@ extension ScrapCollectionViewCell {
         
         roomPriceLabel.text = note.price
         
-        if let roadAddress = note.roadAddress {
-            roomAddressLabel.text = roadAddress
+        if let address = note.address {
+            roomAddressLabel.text = address
         } else {
-            if let addressDetail = note.addressDetail {
-                roomAddressLabel.text = addressDetail
+            if let shortAddress = note.shortAddress {
+                roomAddressLabel.text = shortAddress
             }
         }
 
