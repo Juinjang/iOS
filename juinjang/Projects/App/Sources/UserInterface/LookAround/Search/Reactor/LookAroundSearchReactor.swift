@@ -43,6 +43,7 @@ final class LookAroundSearchReactor: Reactor {
                            saleTypeAction: SaleTypeAction?))
         case updateIsLastPage(Bool)
         case setCurrentPage(Int)
+        case setIsFilterTapped(Bool)
     }
     
     struct State {
@@ -62,6 +63,7 @@ final class LookAroundSearchReactor: Reactor {
         var searchResultList: [LookAroundSearchResultSectionModel] = []
         var isLastPage: Bool?
         var currentPage: Int = 0
+        var filterTapped: Bool = false
     }
     
     private var currentNotesCount: Int = 0
@@ -80,6 +82,7 @@ final class LookAroundSearchReactor: Reactor {
                 .just(.setRecentSearchKeywordList(searchKeywordlist)),
                 .just(.setKeyword(keyword)),
                 .just(.setCurrentPage(0)),
+                .just(.setIsFilterTapped(false)),
                 retrieveInitialExploreNotes(keyword: keyword)
             ])
             
@@ -101,6 +104,7 @@ final class LookAroundSearchReactor: Reactor {
             return .concat([
                 .just(.setCurrentPage(0)),
                 .just(.setFilterInfo(filterInfo: filterInfo)),
+                .just(.setIsFilterTapped(true)),
                 retrieveInitialExploreNotes(filterInfo: filterInfo, keyword: currentState.keyword ?? "")
             ])
         case .moreButtonDidTap:
@@ -132,6 +136,8 @@ final class LookAroundSearchReactor: Reactor {
             newState.currentPage = currentPage
         case .setKeyword(let keyword):
             newState.keyword = keyword
+        case .setIsFilterTapped(let filterTapped):
+            newState.filterTapped = filterTapped
         }
         return newState
     }

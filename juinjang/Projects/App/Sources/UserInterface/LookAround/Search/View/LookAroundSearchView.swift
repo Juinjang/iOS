@@ -27,7 +27,7 @@ final class LookAroundSearchView: BaseView {
         $0.isScrollEnabled = false
     }
         
-    lazy var searchResultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createImjangCompositionalLayout()).then {
+    lazy var searchResultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createImjangCompositionalLayout(filterTapped: false)).then {
         $0.register(LookAroundImjangCountCell.self)
         $0.register(LookAroundImjangCell.self)
         $0.register(
@@ -152,9 +152,16 @@ final class LookAroundSearchView: BaseView {
         searchEmptyView.isHidden = true
     }
     
-    func setListEmpty(empty: Bool) {
+    func setListEmpty(empty: Bool, filterTapped: Bool?) {
+        guard let filterTapped else { return }
         print(#function, empty)
-        searchEmptyView.isHidden = !empty
+        if !filterTapped {
+            searchEmptyView.isHidden = !empty
+            searchResultCollectionView.isHidden = empty
+        } else {
+            searchEmptyView.isHidden = true
+        }
+        searchResultCollectionView.collectionViewLayout = createImjangCompositionalLayout(filterTapped: filterTapped && empty)
     }
 }
 
@@ -200,7 +207,7 @@ extension LookAroundSearchView {
         return layout
     }
     
-    private func createImjangCompositionalLayout() -> UICollectionViewLayout {
+    private func createImjangCompositionalLayout(filterTapped: Bool) -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
                    guard let self else { return nil }
            if let searchResultSection = LookAroundSearchResultSection(rawValue: sectionIndex) {
@@ -210,15 +217,19 @@ extension LookAroundSearchView {
                case .imjangCount:
                    section = createImjangCountSection()
                case .imjangList:
-                   section = createImjangListSection()
+                   section = createImjangListSection(filterTapped: filterTapped)
                }
 
                return section
            } else {
                return nil
            }
-       }
-       return layout
+        }
+        layout.register(
+            SearchEmptyBackground.self,
+            forDecorationViewOfKind: "section-background-element-kind"
+        )
+        return layout
     }
     
     private func createImjangCountSection() -> NSCollectionLayoutSection {
@@ -234,7 +245,7 @@ extension LookAroundSearchView {
         return section
     }
 
-    private func createImjangListSection() -> NSCollectionLayoutSection {
+    private func createImjangListSection(filterTapped: Bool) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .absolute(136))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -270,6 +281,15 @@ extension LookAroundSearchView {
             section.boundarySupplementaryItems = [sectionHeader, footer]
         } else {
             section.boundarySupplementaryItems = [sectionHeader]
+        }
+        
+        
+        if filterTapped {
+            let decoration = NSCollectionLayoutDecorationItem.background(
+                elementKind: "section-background-element-kind"
+            )
+            decoration.contentInsets = NSDirectionalEdgeInsets(top: 43, leading: 0, bottom: 0, trailing: 0)
+            section.decorationItems = [decoration]
         }
         
         return section
