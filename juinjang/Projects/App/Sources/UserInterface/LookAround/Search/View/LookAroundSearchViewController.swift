@@ -45,7 +45,7 @@ final class LookAroundSearchViewController: BaseViewController, View {
                     owner.popVC()
                     
                 case .searchSummit(let keyword):
-                    owner.mainView.showSearchResultCollectionView(false)
+                    owner.mainView.hideSearchResultCollectionView(false)
                     reactor.action.onNext(.searchSummitButtonTapped(keyword: keyword))
                     
                 case .searchActive(let isActive):
@@ -106,7 +106,7 @@ final class LookAroundSearchViewController: BaseViewController, View {
         
         mainView.searchKeywordCollectionView.rx.modelSelected(String.self)
             .bind(with: self) { owner, keyword  in
-                owner.mainView.showSearchResultCollectionView(false)
+                owner.mainView.hideSearchResultCollectionView(false)
                 owner.reactor?.action.onNext(.searchKeywordTapped(keyword: keyword))
                 owner.mainView.setSearchTextFieldText(keyword)
             }

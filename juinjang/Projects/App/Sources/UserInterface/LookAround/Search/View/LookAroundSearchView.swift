@@ -127,11 +127,19 @@ final class LookAroundSearchView: BaseView {
     
     func setCollectionViewSearchActive(_ isActive: Bool, isEmpty: Bool) {
         if isActive == false {
-            showSearchResultCollectionView(!isActive)
-        }
-        if isEmpty {
-            setCollectionViewSearchKeywordEmpty(isEmpty)
+            hideSearchResultCollectionView(!isActive)
             return
+        }
+        
+        if !isActive && isEmpty {
+            setCollectionViewSearchKeywordEmpty(isActive && isEmpty)
+            return
+        }
+        
+        if isActive && !isEmpty {
+            searchResultCollectionView.isHidden = false
+            searchKeywordCollectionView.isHidden = true
+            searchEmptyView.isHidden = true
         }
     }
     
@@ -143,10 +151,10 @@ final class LookAroundSearchView: BaseView {
     func showSearchKeywordCollectionView(_ isShow: Bool) {
         searchKeywordCollectionView.isHidden = !isShow
         searchResultCollectionView.isHidden = isShow
-        searchEmptyView.isHidden = isShow
+        searchEmptyView.isHidden = true
     }
     
-    func showSearchResultCollectionView(_ isEmpty: Bool) {
+    func hideSearchResultCollectionView(_ isEmpty: Bool) {
         searchKeywordCollectionView.isHidden = !isEmpty
         searchResultCollectionView.isHidden = isEmpty
         searchEmptyView.isHidden = true
@@ -155,6 +163,7 @@ final class LookAroundSearchView: BaseView {
     func setListEmpty(empty: Bool, filterTapped: Bool?) {
         guard let filterTapped else { return }
         print(#function, empty)
+        searchKeywordCollectionView.isHidden = true
         if !filterTapped {
             searchEmptyView.isHidden = !empty
             searchResultCollectionView.isHidden = empty
