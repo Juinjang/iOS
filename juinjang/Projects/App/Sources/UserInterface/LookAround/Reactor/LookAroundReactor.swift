@@ -34,7 +34,6 @@ final class LookAroundReactor: Reactor {
                            transactionAction: TransactionTypeAction?,
                            saleTypeAction: SaleTypeAction?))
         case updateIsLastPage(Bool)
-        case setIshideMoreButton(Bool)
         case setCurrentPage(Int)
         case setCurrentNotesCount(Int)
         
@@ -101,8 +100,6 @@ final class LookAroundReactor: Reactor {
             newState.filterInfo = filterInfo
         case .updateIsLastPage(let isLastPage):
             newState.isLastPage = isLastPage
-        case .setIshideMoreButton(let isHidden):
-            newState.isMoreButtonHidden = isHidden
         case .setCurrentPage(let currentPage):
             newState.currentPage = currentPage
         case .setSectionOfExploreNotes(let sectionOfExploreNotes):
@@ -128,7 +125,7 @@ final class LookAroundReactor: Reactor {
         if let index = notes.firstIndex(where: { $0.sharedNoteId == sharedNoteId }) {
             notes[index].isLiked.toggle()
             
-            handleLikeNote(sharedNoteId: index, isLiked: notes[index].isLiked)
+            handleLikeNote(sharedNoteId: sharedNoteId, isLiked: notes[index].isLiked)
         }
         
         let updatedNotes: [SectionOfExploreNote.Row] = notes.map { note in
@@ -209,11 +206,9 @@ final class LookAroundReactor: Reactor {
                 guard let self = self else { return .empty() }
                 return .concat(
                     .just(.updateIsLastPage(isLastPage)),
-                    .just(.setExploreNotes(self.getInitialSectionExploreNoteList(dto))),
-                    .just(.setIshideMoreButton(isLastPage))
+                    .just(.setExploreNotes(self.getInitialSectionExploreNoteList(dto)))
                 )
             }
-            .debug()
     }
     
     private func retrieveExploreNotes(
@@ -242,11 +237,9 @@ final class LookAroundReactor: Reactor {
                 guard let self = self else { return .empty() }
                 return .concat(
                     .just(.updateIsLastPage(isLastPage)),
-                    .just(.setExploreNotes(self.getSectionExploreNoteList(dto))),
-                    .just(.setIshideMoreButton(isLastPage))
+                    .just(.setExploreNotes(self.getSectionExploreNoteList(dto)))
                 )
             }
-            .debug()
     }
     
     private func getInitialSectionExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {

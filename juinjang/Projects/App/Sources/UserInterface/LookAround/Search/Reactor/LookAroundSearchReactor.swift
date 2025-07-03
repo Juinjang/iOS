@@ -103,7 +103,7 @@ final class LookAroundSearchReactor: Reactor {
     
     private func retrieveExploreNotes(keyword: String
     ) -> Observable<Mutation> {
-        var request = ExploreNoteRequestDTO(
+        let request = ExploreNoteRequestDTO(
             keyword: keyword,
             page: currentPageCount,
             size: 10

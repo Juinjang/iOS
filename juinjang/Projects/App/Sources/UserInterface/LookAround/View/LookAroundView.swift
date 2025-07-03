@@ -193,10 +193,7 @@ extension LookAroundView {
             )
         }
         
-        print(isListEmpty, isLastPage)
-        
         if let footer {
-            print("footer 적용")
             section.boundarySupplementaryItems = [sectionHeader, footer]
         } else {
             section.boundarySupplementaryItems = [sectionHeader]

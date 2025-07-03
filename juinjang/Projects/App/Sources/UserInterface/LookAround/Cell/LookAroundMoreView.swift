@@ -15,7 +15,7 @@ final class LookAroundMoreView: BaseCollectionReusableView {
     private let moreButton = MoreButton()
     private var disposeBag = DisposeBag()
     
-    func bind(relay: PublishRelay<Void>, isHidden: Bool) {
+    func bind(relay: PublishRelay<Void>) {
         print(#function, "isHidden: \(isHidden)")
         moreButton.rx.throttleTap
             .bind(to: relay)

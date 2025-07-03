@@ -231,8 +231,7 @@ extension LookAroundViewController {
                     }
                     
                     footerView.bind(
-                        relay: self.moreButtonTapRelay,
-                        isHidden: self.reactor?.currentState.isMoreButtonHidden ?? true
+                        relay: self.moreButtonTapRelay
                     )
                     
                     return footerView
