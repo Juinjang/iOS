@@ -90,24 +90,34 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         $0.backgroundColor = .stroke
     }
     
+    private let cellButton = UIButton()
+    
     private var disposeBag = DisposeBag()
     
-    func configureCell(_ exploreNote: ExploreNoteModel, relay: PublishRelay<LookAroundEventType>) {
-        setImjangImage(exploreNote.imageUrl, propertyType: exploreNote.propertyType)
-        setScore(exploreNote.rate)
-        setRoomName(exploreNote.buildingName)
-        setIsPurchase(exploreNote.isPurchase)
-        setPrice(exploreNote.price, priceType: exploreNote.priceType)
-        setRoomDetail(pyong: exploreNote.pyong, floor: exploreNote.floor)
-        setRoomAddress(exploreNote.address)
-        setProfileImage(exploreNote.ownerImageUrl)
-        setOwnerNickname(exploreNote.ownerNickname)
-        setAgoDate(exploreNote.timeAgo)
-        setHits(exploreNote.viewCount)
-        setIsLiked(exploreNote.isLiked)
+    func configureCell(_ note: ExploreNoteModel, relay: PublishRelay<LookAroundEventType>) {
+        setImjangImage(note.imageUrl, propertyType: note.propertyType)
+        setScore(note.rate)
+        setRoomName(note.buildingName)
+        setIsPurchase(note.isPurchase)
+        setPrice(note.price, priceType: note.priceType)
+        setRoomDetail(pyong: note.pyong, floor: note.floor)
+        setRoomAddress(note.address)
+        setProfileImage(note.ownerImageUrl)
+        setOwnerNickname(note.ownerNickname)
+        setAgoDate(note.timeAgo)
+        setHits(note.viewCount)
+        setIsLiked(note.isLiked)
         
-        heartButton.rx.tap
-            .map { LookAroundEventType.heartButtonTap(sharedNoteId: exploreNote.sharedNoteId) }
+        heartButton.rx.throttleTap
+            .map { LookAroundEventType.heartButtonTap(sharedNoteId: note.sharedNoteId) }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
+        
+        cellButton.rx.throttleTap
+            .map { LookAroundEventType.noteTap(
+                sharedNoteId: note.sharedNoteId,
+                buildingName: note.buildingName
+            )}
             .bind(to: relay)
             .disposed(by: disposeBag)
     }
@@ -138,12 +148,16 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         [hitsImageView, hitsLabel].forEach {
             hitsStackView.addArrangedSubview($0)
         }
-        [imjangImageView, roomNameLabel, purchasedLabel, priceLabel, roomDetailNameLabel, roomAddressLabel, infoStackView, seperatorView].forEach {
+        [cellButton, imjangImageView, roomNameLabel, purchasedLabel, priceLabel, roomDetailNameLabel, roomAddressLabel, infoStackView, seperatorView].forEach {
             contentView.addSubview($0)
         }
     }
     
     override func configureLayout() {
+        cellButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         imjangImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(12)
             make.leading.equalToSuperview().inset(24)

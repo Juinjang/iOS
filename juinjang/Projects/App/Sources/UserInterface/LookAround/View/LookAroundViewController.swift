@@ -14,6 +14,7 @@ enum LookAroundEventType: Equatable {
     case cellContentTap(content: LookAroundContent)
     case filterItemTap(SortAction?, TransactionTypeAction?, SaleTypeAction?)
     case heartButtonTap(sharedNoteId: Int)
+    case noteTap(sharedNoteId: Int, buildingName: String)
 }
 
 extension LookAroundEventType {
@@ -36,6 +37,14 @@ extension LookAroundEventType {
             return sharedNoteId
         }
         return nil
+    }
+    
+    var tappedNote: (sharedNoteid: Int, buildingName: String)? {
+        if case let .noteTap(sharedNoteId, buildingName) = self {
+            return (sharedNoteId, buildingName)
+        } else {
+            return nil
+        }
     }
 }
 
@@ -136,6 +145,27 @@ final class LookAroundViewController: BaseViewController, View {
                 owner.reactor?.action.onNext(.heartButtonDidTap(sharedNoteId: sharedNoteId))
             }
             .disposed(by: disposeBag)
+     
+        cellEventRelay
+            .compactMap { $0.tappedNote }
+            .bind(with: self) { owner, noteInfo in
+                let (sharedNoteId, buildingName) = noteInfo
+                owner.showLookAroundDetailVC(sharedNoteId: sharedNoteId, buildingName: buildingName)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func showLookAroundDetailVC(sharedNoteId: Int, buildingName: String) {
+        let lookAroundDetailVC = ImjangDetailViewController(
+            reactor: ImjangDetailViewReactor(
+                dependency: .init(
+                    id: sharedNoteId,
+                    title: buildingName,
+                    repository: SharedNoteRepository()
+                )
+            )
+        )
+        navigationController?.pushViewController(lookAroundDetailVC, animated: true)
     }
     
     private func handleContentTapped(content: LookAroundContent) {
