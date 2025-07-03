@@ -39,14 +39,14 @@ final class ObtainedPencilCell: BaseCollectionViewCell {
         )
         pencilCountLabel.setAttribute(
             text: "+\(obtainedPencil.acquiredQuantity)",
-            color:  obtainedPencil.read ? .main : .gray450,
+            color:  obtainedPencil.read ? .gray450 : .main,
             font: .pretendard(size: 16, weight: .medium),
             lineHeight: 23,
             charSpacing: -0.02
         )
-        pencilImageView.image =  obtainedPencil.read ? .ImjangList.pencil : .ImjangList.pencilGray
+        pencilImageView.image =  obtainedPencil.read ? .ImjangList.pencilGray : .ImjangList.pencil
         
-        contentView.backgroundColor = obtainedPencil.read ? .white : .gray100
+        contentView.backgroundColor = obtainedPencil.read ? .gray100 : .white
     }
     
     override func configureHierarchy() {
