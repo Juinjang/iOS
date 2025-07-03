@@ -13,7 +13,7 @@ import RxRelay
 enum LookAroundEventType: Equatable {
     case cellContentTap(content: LookAroundContent)
     case filterItemTap(SortAction?, TransactionTypeAction?, SaleTypeAction?)
-    case heartButtonTap(index: Int)
+    case heartButtonTap(sharedNoteId: Int)
 }
 
 extension LookAroundEventType {
@@ -27,6 +27,13 @@ extension LookAroundEventType {
     var tappedFilterItem: (sort: SortAction?, transactionType: TransactionTypeAction?, saleType: SaleTypeAction?)? {
         if case let .filterItemTap(sort, transaction, saleType) = self {
             return (sort, transaction, saleType)
+        }
+        return nil
+    }
+    
+    var tappedHeartButton: Int? {
+        if case let .heartButtonTap(sharedNoteId) = self {
+            return sharedNoteId
         }
         return nil
     }
@@ -122,6 +129,13 @@ final class LookAroundViewController: BaseViewController, View {
                 )
             }
             .disposed(by: disposeBag)
+        
+        cellEventRelay
+            .compactMap { $0.tappedHeartButton }
+            .bind(with: self) { owner, sharedNoteId in
+                owner.reactor?.action.onNext(.heartButtonDidTap(sharedNoteId: sharedNoteId))
+            }
+            .disposed(by: disposeBag)
     }
     
     private func handleContentTapped(content: LookAroundContent) {
@@ -195,7 +209,7 @@ extension LookAroundViewController {
                 
             case .exploreNoteSection(let exploreNote):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundImjangCell.identifier, for: indexPath) as? LookAroundImjangCell else { return UICollectionViewCell() }
-                cell.configureCell(exploreNote)
+                cell.configureCell(exploreNote, relay: self.cellEventRelay)
                 return cell
             }
         }, configureSupplementaryView: { [weak self] dataSource, collectionView, kind, indexPath in

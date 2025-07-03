@@ -7,12 +7,15 @@
 
 import UIKit
 import Then
+import RxSwift
+import RxRelay
 
 final class LookAroundImjangCell: BaseCollectionViewCell {
     private let imjangImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 6
         $0.backgroundColor = .lightGray
+        $0.isUserInteractionEnabled = true
         $0.clipsToBounds = true
     }
     private let scoreStackView = UIStackView().then {
@@ -87,7 +90,9 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         $0.backgroundColor = .stroke
     }
     
-    func configureCell(_ exploreNote: ExploreNoteModel) {
+    private var disposeBag = DisposeBag()
+    
+    func configureCell(_ exploreNote: ExploreNoteModel, relay: PublishRelay<LookAroundEventType>) {
         setImjangImage(exploreNote.imageUrl, propertyType: exploreNote.propertyType)
         setScore(exploreNote.rate)
         setRoomName(exploreNote.buildingName)
@@ -100,10 +105,16 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         setAgoDate(exploreNote.timeAgo)
         setHits(exploreNote.viewCount)
         setIsLiked(exploreNote.isLiked)
+        
+        heartButton.rx.tap
+            .map { LookAroundEventType.heartButtonTap(sharedNoteId: exploreNote.sharedNoteId) }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
     }
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        disposeBag = DisposeBag()
         imjangImageView.image = nil
         purchasedLabel.isHidden = true
     }
@@ -128,7 +139,7 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
             hitsStackView.addArrangedSubview($0)
         }
         [imjangImageView, roomNameLabel, purchasedLabel, priceLabel, roomDetailNameLabel, roomAddressLabel, infoStackView, seperatorView].forEach {
-            addSubview($0)
+            contentView.addSubview($0)
         }
     }
     

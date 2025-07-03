@@ -12,7 +12,7 @@ struct ExploreNoteModel: Codable, Hashable {
     let buildingName: String
     let imageUrl: String?
     let isPurchase: Bool
-    let isLiked: Bool
+    var isLiked: Bool
     let rate: String?
     let price: String
     let monthlyRent: String?
