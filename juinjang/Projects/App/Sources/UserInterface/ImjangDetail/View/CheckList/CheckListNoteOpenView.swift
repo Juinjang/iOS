@@ -114,7 +114,7 @@ fileprivate final class CheckListNoteOpenInfoView: BaseView {
          ("체크된 항목", model.checkedCount, "개"),
          ("상세 후기", model.reviewLength, "자")].enumerated().forEach { index, element in
             let view = CheckListNoteOpenInfoItemView()
-            view.configure(title: element.0, countText: "\(element.1)\(element.2)")
+            view.configure(title: element.0, countText: "\(element.1 ?? 0)\(element.2)")
             view.isHiddenDashedLine = (index == 2)
             stackView.addArrangedSubview(view)
             itemViews.append(view)

@@ -112,12 +112,12 @@ extension MyNoteStopShareView {
 }
 
 extension Reactive where Base: MyNoteStopShareView {
-    var selectedCount: Binder<Int> {
-        return Binder(base) { view, count in
-            view.selectedCountLabel.text = "\(count)개 선택됨"
-            view.selectedCountLabel.textColor = count > 0 ? .main : .gray400
-            view.removeButton.backgroundColor = count == 0 ? .null : .main
-            view.removeButton.isEnabled = count == 0 ? false : true
+    var isSelected: Binder<Bool> {
+        return Binder(base) { view, bool in
+            view.selectedCountLabel.text = "\(bool ? 1 : 0)개 선택됨"
+            view.selectedCountLabel.textColor = bool ? .main : .gray400
+            view.removeButton.backgroundColor = bool ? .main : .null
+            view.removeButton.isEnabled = bool
         }
     }
 }

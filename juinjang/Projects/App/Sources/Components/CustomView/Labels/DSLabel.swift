@@ -88,5 +88,31 @@ final class DSLabel: UILabel {
             alignment: fontAlignment
         )
     }
+    
+    func setHighlightedText(fullText: String,
+                            highlightText: String,
+                            highlightColor: UIColor) {
+        let attributedString = NSMutableAttributedString(string: fullText)
+        
+        // 1. 먼저 기본 전체 스타일 적용
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.lineSpacing = self.lineHeight - self.fontSize
+        paragraphStyle.alignment = self.fontAlignment
+        
+        attributedString.addAttributes([
+            .font: UIFont.pretendard(size: fontSize, weight: fontWeight),
+            .foregroundColor: fontColor,
+            .kern: letterSpacing,
+            .paragraphStyle: paragraphStyle
+        ], range: NSRange(location: 0, length: attributedString.length))
+        
+        // 2. 이후 하이라이트 부분 덮어쓰기
+        if let range = fullText.range(of: highlightText) {
+            let nsRange = NSRange(range, in: fullText)
+            attributedString.addAttribute(.foregroundColor, value: highlightColor, range: nsRange)
+        }
+        
+        self.attributedText = attributedString
+    }
 }
 

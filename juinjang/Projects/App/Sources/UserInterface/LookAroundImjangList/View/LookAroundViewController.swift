@@ -78,7 +78,7 @@ final class LookAroundViewController: BaseViewController, View {
         let pencilShopVC = PencilShopViewController(
             reactor: PencilShopReactor(
                 dependency: PencilShopReactor.Dependency(
-                    inAppPurchaseService: InAppPurchaseService(buyPencilRepository: MockVerifyTransactionRepository()),
+                    inAppPurchaseService: InAppPurchaseService(pencilShopRepository: PencilShopRepository()),
                     pencilShopRepository: PencilShopRepository()
                 )
             )

@@ -10,22 +10,65 @@ import Foundation
 import StoreKit
 
 protocol PencilShopRepositoryProtocol {
-    func fetchObtainedPencilList() -> RxSwift.Observable<[ObtainedPencilModel]>
-    func fetchPurchasedPencilList() -> RxSwift.Observable<[PurchasedPencilModel]>
-    func fetchUsedPencilList() -> RxSwift.Observable<[UsedPencilModel]> 
+    func retrievePencilTotalBalance() -> Single<PencilBalanceDTO>
+    func purchasePencil(parameter: PurchasePencilRequestDTO) -> Single<PurchasePencilDTO>
+    func readAcquiredPencil(parameter: ReadAcquiredPencilRequestDTO) -> Single<ReadAcquiredPencilDTO>
+    func retrieveUsedPencil() -> Single<[UsedPencilDTO]>
+    func retrievePurchasedPencil() -> Single<[PurchasedPencilDTO]>
+    func retrieveAcquiredPencil() -> Single<[AcquiredPencilDTO]>
+    func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencilDTO>
 }
 
 final class PencilShopRepository: PencilShopRepositoryProtocol {
-    func fetchObtainedPencilList() -> RxSwift.Observable<[ObtainedPencilModel]> {
-        return .just(.mock)
+    private var networkManager: JuinjangAPIManager
+    private var userDefault: UserDefaultManager
+
+    init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared,
+         userDefault: UserDefaultManager = UserDefaultManager.shared) {
+        self.networkManager = networkManager
+        self.userDefault = userDefault
     }
     
-    func fetchPurchasedPencilList() -> RxSwift.Observable<[PurchasedPencilModel]> {
-        return .just(.mock)
+    func retrievePencilTotalBalance() -> Single<PencilBalanceDTO> {
+        return PencilShopAPI.getPencilBalance
+            .request(BaseResponse<PencilBalanceDTO>.self, networkManager)
+            .map { try $0.unwrap() }
     }
     
-    func fetchUsedPencilList() -> RxSwift.Observable<[UsedPencilModel]> {
-        return .just(.mock)
+    func purchasePencil(parameter: PurchasePencilRequestDTO) -> Single<PurchasePencilDTO> {
+        return PencilShopAPI.purchasePencil(parameter)
+            .request(BaseResponse<PurchasePencilDTO>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func readAcquiredPencil(parameter: ReadAcquiredPencilRequestDTO) -> Single<ReadAcquiredPencilDTO> {
+        return PencilShopAPI.readPencil(parameter)
+            .request(BaseResponse<ReadAcquiredPencilDTO>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveUsedPencil() -> Single<[UsedPencilDTO]> {
+        return PencilShopAPI.getUsedPencil
+            .request(BaseResponse<[UsedPencilDTO]>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrievePurchasedPencil() -> Single<[PurchasedPencilDTO]> {
+        return PencilShopAPI.getPurchasedPencil
+            .request(BaseResponse<[PurchasedPencilDTO]>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveAcquiredPencil() -> Single<[AcquiredPencilDTO]> {
+        return PencilShopAPI.getAcquiredPencil
+            .request(BaseResponse<[AcquiredPencilDTO]>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
+    
+    func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencilDTO> {
+        return PencilShopAPI.getIsTotalReadAcquiredPencil
+            .request(BaseResponse<IsTotalReadAcquiredPencilDTO>.self, networkManager)
+            .map { try $0.unwrap() }
     }
 }
 

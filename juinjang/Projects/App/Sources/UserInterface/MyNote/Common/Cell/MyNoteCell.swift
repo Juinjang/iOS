@@ -14,7 +14,7 @@ import Kingfisher
 
 enum MyNoteCellEventType: Equatable {
     case likeButtonTap(id: Int)
-    case cellTap(id: Int)
+    case cellTap(id: Int, title: String)
 }
 
 final class MyNoteCell: UICollectionViewCell {
@@ -129,7 +129,7 @@ final class MyNoteCell: UICollectionViewCell {
             .disposed(by: disposeBag)
         
         cellTapButton.rx.throttleTap
-            .map { MyNoteCellEventType.cellTap(id: model.sharedNoteId) }
+            .map { MyNoteCellEventType.cellTap(id: model.sharedNoteId, title: model.buildingName) }
             .bind(to: relay)
             .disposed(by: disposeBag)
     }

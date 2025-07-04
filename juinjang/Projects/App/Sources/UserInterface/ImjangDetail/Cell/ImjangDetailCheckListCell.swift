@@ -22,13 +22,14 @@ final class ImjangDetailCheckListCell: BaseCollectionViewCell {
     private let textAnswerView = TextAnswerView()
     
     func bind(_ model: ImjangDetailCheckListModel,
-              isOneRoom: Bool,
-              isBuyer: Bool) {
-        let dataSource = isBuyer ? (isOneRoom ? oneRoomItems : items) : items
+              isOneRoom: Bool) {
+        let dataSource = isOneRoom ? oneRoomItems : items
         guard let item = dataSource.first(where: {
             $0.questionId == model.questionId &&
-            $0.category == CheckListCategoryType.from(raw: model.category)
-        }) else { return }
+            $0.category == CheckListCategoryType.from(raw: model.category ?? "LOCATION_CONDITION")
+        }) else {
+            return
+        }
         
         questionLabel.text = item.question
         
@@ -39,14 +40,14 @@ final class ImjangDetailCheckListCell: BaseCollectionViewCell {
         switch model.answerType {
         case "SCORE":
             checkAnswerView.isHidden = false
-            checkAnswerView.configure(for: model.answer)
+            checkAnswerView.configure(for: model.answer ?? "0")
         default:
             if let item = options1.first(where: { $0.option == model.answer }) {
                 subwayAnswerView.isHidden = false
                 subwayAnswerView.configure(for: item)
             } else {
                 textAnswerView.isHidden = false
-                textAnswerView.configure(for: model.answer)
+                textAnswerView.configure(for: model.answer ?? "")
             }
         }
     }

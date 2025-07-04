@@ -12,20 +12,24 @@ final class MyNoteStopShareViewReactor: Reactor {
     enum Action {
         case viewDidLoad
         case removeButtonDidTap
+        case removeConfirmDidTap
         case cellEventOccurred(event: MyNoteCellEventType)
     }
     
     // MARK: - Mutation
     enum Mutation {
         case setList([MyNoteCellModel])
-        case setSelectedList([Int])
-        case addSelectedItem(Int)
+        case setSelectedItem(Int?)
+        case updateIsShowStopShareAlertView
+        case updateIsShowStopShareCompletedView
     }
     
     // MARK: - State
     struct State {
         var list: [MyNoteCellModel] = []
-        var selectedList: [Int] = []
+        var selectedItem: Int?
+        var isShowStopShareAlertView: Bool?
+        var isShowStopShareCompletedView: Bool?
     }
     
     let initialState = State()
@@ -48,7 +52,7 @@ final class MyNoteStopShareViewReactor: Reactor {
             return .concat([
                 dependency.noteRepository
                     .retrieveMyNotes(param: .init(
-                        noteType: "",
+                        noteType: "SHARED",
                         propertyType: "",
                         priceType: "",
                         keyword: ""
@@ -64,9 +68,11 @@ final class MyNoteStopShareViewReactor: Reactor {
                     }
             ])
         case .removeButtonDidTap:
-            return .empty()
+            return .just(.updateIsShowStopShareAlertView)
         case .cellEventOccurred(event: let event):
             return handleCellEvent(event)
+        case .removeConfirmDidTap:
+            return stopShareNote()
         }
     }
     
@@ -76,10 +82,12 @@ final class MyNoteStopShareViewReactor: Reactor {
         switch mutation {
         case .setList(let list):
             newState.list = list
-        case .addSelectedItem(let item):
-            newState.selectedList.append(item)
-        case .setSelectedList(let list):
-            newState.selectedList = list
+        case .setSelectedItem(let item):
+            newState.selectedItem = item
+        case .updateIsShowStopShareAlertView:
+            newState.isShowStopShareAlertView = !(newState.isShowStopShareAlertView ?? false)
+        case .updateIsShowStopShareCompletedView:
+            newState.isShowStopShareCompletedView = !(newState.isShowStopShareCompletedView ?? false)
         }
         return newState
     }
@@ -87,38 +95,40 @@ final class MyNoteStopShareViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension MyNoteStopShareViewReactor {
+    private func stopShareNote() -> Observable<Mutation> {
+        guard let noteId = currentState.selectedItem else {
+            return .empty()
+        }
+        
+        return dependency
+            .noteRepository
+            .deleteSharedNote(noteID: noteId)
+            .andThen(Observable.just(Mutation.updateIsShowStopShareCompletedView))
+            .asObservable()
+    }
+    
     private func handleCellEvent(_ event: MyNoteCellEventType) -> Observable<Mutation> {
         switch event {
         case .likeButtonTap(let id):
             return .empty()
-        case .cellTap(let id):
+        case .cellTap(let id, _):
             var updatedList = currentState.list
             
-            guard let index = updatedList.firstIndex(where: { $0.sharedNoteId == id }) else {
-                return .empty()
+            // 전체 isSelected 초기화 (모두 false)
+            updatedList = updatedList.map {
+                var item = $0
+                item.isSelected = false
+                return item
             }
             
-            // 현재 셀 모델
-            var item = updatedList[index]
-            
-            // 토글
-            item.isSelected.toggle()
-            updatedList[index] = item
-            
-            // selectedList 업데이트
-            var updatedSelectedList = currentState.selectedList
-            
-            if item.isSelected {
-                if !updatedSelectedList.contains(where: { $0 == id }) {
-                    updatedSelectedList.append(item.sharedNoteId)
-                }
-            } else {
-                updatedSelectedList.removeAll(where: { $0 == id })
+            // 선택된 아이템만 true로 변경
+            if let index = updatedList.firstIndex(where: { $0.sharedNoteId == id }) {
+                updatedList[index].isSelected = true
             }
             
             return .concat([
                 .just(.setList(updatedList)),
-                .just(.setSelectedList(updatedSelectedList))
+                .just(.setSelectedItem(id))
             ])
         }
     }

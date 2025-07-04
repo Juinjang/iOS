@@ -12,21 +12,19 @@ final class MyNoteViewReactor: Reactor {
         case viewDidLoad
         case categoryButtonDidTap(Int)
         case pageCellEventOccurred(event: MyNotePageEventType)
-        case alertEventOccurred(event: AlertEventType)
+        case alertEventOccurred(event: AlertEventType, noteID: Int)
     }
-
+    
     enum Mutation {
         case setCategoryState(Int)
         case setPage(MyNotePageModel)
         case appendNotes(notes: [MyNoteModel])
         case hideNotice
-        case updateFilter(transactionType: TransactionTypeAction?,
-                          saleType: SaleTypeAction?)
         case showAlreadyLikedNotice(id: Int)
-        case setLikeTrue(id: Int)
+        case setLikeUpdate(id: Int)
         case resetAlert
     }
-
+    
     struct State {
         var categoryState: MyNoteCategoryType = .share
         var sharePageState = NotesPageState()
@@ -68,7 +66,7 @@ final class MyNoteViewReactor: Reactor {
         var limit: Int = 20
         var isLastPage: Bool = false
     }
-
+    
     let initialState: State = State()
     let dependency: Dependency
     
@@ -85,12 +83,11 @@ final class MyNoteViewReactor: Reactor {
             return handleCategoryChange(index: index)
         case .pageCellEventOccurred(event: let event):
             return handlePageCellEvent(event)
-        case .alertEventOccurred(event: let event):
-            // like API Call
-            return .just(.resetAlert)
+        case let .alertEventOccurred(event, id):
+            return (event == .confirm) ? cancelNoteLike(noteID: id) : .empty()
         }
     }
-
+    
     // MARK: - Reduce
     func reduce(state: State,
                 mutation: Mutation) -> State {
@@ -105,15 +102,10 @@ final class MyNoteViewReactor: Reactor {
             appendNotes(&state, notes: notes)
         case .hideNotice:
             hideNotice(&state)
-        case .updateFilter(transactionType: let transactionType,
-                           saleType: let saleType):
-            updateFilter(&state,
-                         transactionType: transactionType,
-                         saleType: saleType)
         case .showAlreadyLikedNotice(let id):
             state.alreadyLikedNoteId = id
-        case .setLikeTrue(id: let id):
-            setLikeTrue(&state, id: id)
+        case .setLikeUpdate(id: let id):
+            setLikeUpdate(&state, id: id)
         case .resetAlert:
             state.alreadyLikedNoteId = nil
         }
@@ -124,6 +116,18 @@ final class MyNoteViewReactor: Reactor {
 
 // MARK: - Mutate Methods
 extension MyNoteViewReactor {
+    private func cancelNoteLike(noteID id: Int) -> Observable<Mutation> {
+        return dependency.noteRepository
+            .deleteNoteLike(noteID: id)
+            .asObservable()
+            .flatMap { _ in
+                return Observable.concat([
+                    .just(.resetAlert),
+                    .just(.setLikeUpdate(id: id))
+                ])
+            }
+    }
+    
     private func handleCategoryChange(index: Int) -> Observable<Mutation> {
         let category = MyNoteCategoryType(rawValue: index) ?? .share
         
@@ -141,15 +145,9 @@ extension MyNoteViewReactor {
         switch event {
         case .filterItemTap(let transactionTypeAction,
                             let saleTypeAction):
-            // Reload with Filter Items 추가 예정
-            return .just(
-                .updateFilter(
-                    transactionType: transactionTypeAction,
-                    saleType: saleTypeAction
-                )
-            ).delay(
-                .milliseconds(180),
-                scheduler: MainScheduler.instance
+            return handleFilterChange(
+                transactionType: transactionTypeAction,
+                saleType: saleTypeAction
             )
             
         case .noticeCloseButtonTap:
@@ -166,7 +164,6 @@ extension MyNoteViewReactor {
     private func handleMyNoteCellEvent(_ event: MyNoteCellEventType) -> Observable<Mutation> {
         switch event {
         case .likeButtonTap(let id):
-            
             let category = currentState.categoryState
             let currentPage = currentState.pages[category.rawValue]
             
@@ -174,7 +171,12 @@ extension MyNoteViewReactor {
                 if item.isLike {
                     return .just(.showAlreadyLikedNotice(id: id))
                 } else {
-                    return .just(.setLikeTrue(id: id))
+                    return dependency.noteRepository
+                        .createNoteLike(noteID: id)
+                        .asObservable()
+                        .map { _ in
+                            return .setLikeUpdate(id: id)
+                        }
                 }
             }
             
@@ -215,6 +217,50 @@ extension MyNoteViewReactor {
             return currentState.likePageState
         }
     }
+    
+    private func handleFilterChange(
+        transactionType: TransactionTypeAction?,
+        saleType: SaleTypeAction?
+    ) -> Observable<Mutation> {
+        return .deferred { [weak self] in
+            guard let self = self else { return .empty() }
+            var tempState = self.currentState
+            let (tx, sale) = self.updateFilter(&tempState,
+                                               transactionType: transactionType,
+                                               saleType: saleType)
+            return self.fetchFilterNoteList(transaction: tx, sale: sale)
+        }
+    }
+    
+    private func fetchFilterNoteList(
+        transaction: TransactionTypeAction?,
+        sale: SaleTypeAction?
+    ) -> Observable<Mutation> {
+        let transactionType = transaction ?? .totalTransaction
+        let saleType = sale ?? .totalSale
+        let currentNoticeState = currentState.pages.first(where: { $0.category == currentState.categoryState })?.isShowingNotice ?? true
+        
+        return dependency
+            .noteRepository
+            .retrieveMyNotes(
+                param: .init(
+                    noteType: currentState.categoryState.toRequestType,
+                    propertyType: saleType.toRequestType,
+                    priceType: transactionType.toRequestType,
+                    keyword: ""
+                )
+            )
+            .asObservable()
+            .map { notes in
+                return .setPage(
+                    .init(category: self.currentState.categoryState,
+                          isShowingNotice: currentNoticeState,
+                          transactionType: transactionType.filter,
+                          saleType: saleType.filter,
+                          items: notes.map { .init(model: $0) })
+                )
+            }
+    }
 }
 
 // MARK: - Reduce Methods
@@ -246,31 +292,45 @@ extension MyNoteViewReactor {
         state.pages[index].isShowingNotice = false
     }
     
-    private func updateFilter(_ state: inout State,
-                              transactionType: TransactionTypeAction?,
-                              saleType: SaleTypeAction?) {
+    private func updateFilter(
+        _ state: inout State,
+        transactionType: TransactionTypeAction?,
+        saleType: SaleTypeAction?
+    ) -> (TransactionTypeAction, SaleTypeAction) {
+        var finalTransactionType: TransactionTypeAction = .totalTransaction
+        var finalSaleType: SaleTypeAction = .totalSale
+        
         state.pages = state.pages.map { page in
             guard page.category == state.categoryState else { return page }
             var updatedPage = page
             
-            if let transactionType = transactionType {
-                updatedPage.transactionType = transactionType.filter
-            }
-            if let saleType = saleType {
-                updatedPage.saleType = saleType.filter
-            }
+            let currentTransaction = updatedPage.transactionType.action as? TransactionTypeAction
+            let currentSale = updatedPage.saleType.action as? SaleTypeAction
+            
+            let newTransaction = transactionType ?? currentTransaction ?? .totalTransaction
+            let newSale = saleType ?? currentSale ?? .totalSale
+            
+            updatedPage.transactionType = newTransaction.filter
+            updatedPage.saleType = newSale.filter
+            
+            // 최종 값 설정
+            finalTransactionType = newTransaction
+            finalSaleType = newSale
+            
             return updatedPage
         }
+        
+        return (finalTransactionType, finalSaleType)
     }
     
-    private func setLikeTrue(_ state: inout State, id: Int) {
+    private func setLikeUpdate(_ state: inout State, id: Int) {
         state.pages = state.pages.map { page in
             guard page.category == state.categoryState else { return page }
             var updatedPage = page
             updatedPage.items = page.items.map { item in
                 guard item.sharedNoteId == id else { return item }
                 var updated = item
-                updated.isLike = true
+                updated.isLike.toggle()
                 return updated
             }
             return updatedPage

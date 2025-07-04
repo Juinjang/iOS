@@ -2,23 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>Products</key>
-	<dict>
-		<key>consumable.pencil36</key>
-		<string>4000</string>
-		<key>consumable.pencil32</key>
-		<string>3600</string>
-		<key>consumable.pencil28</key>
-		<string>2800</string>
-		<key>consumable.pencil24</key>
-		<string>2000</string>
-		<key>consumable.pencil20</key>
-		<string>1500</string>
-		<key>consumable.pencil16</key>
-		<string>1200</string>
-		<key>consumable.pencil12</key>
-		<string>900</string>
-	</dict>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
@@ -74,6 +57,23 @@
 	<string>임장 활동에 대한 사진 업로드를 위해 사진 앨범에 접근하려면 허용이 필요합니다.</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>임장 활동에 대한 녹음을 텍스트로 변환하기 위해 음성 인식 권한이 필요합니다.</string>
+	<key>Products</key>
+	<dict>
+		<key>consumable.pencil12</key>
+		<string>900</string>
+		<key>consumable.pencil16</key>
+		<string>1200</string>
+		<key>consumable.pencil20</key>
+		<string>1500</string>
+		<key>consumable.pencil24</key>
+		<string>2000</string>
+		<key>consumable.pencil28</key>
+		<string>2800</string>
+		<key>consumable.pencil32</key>
+		<string>3600</string>
+		<key>consumable.pencil36</key>
+		<string>4000</string>
+	</dict>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Pretendard-Black.otf</string>
