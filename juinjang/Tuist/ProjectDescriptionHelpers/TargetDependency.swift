@@ -1,15 +1,15 @@
 import ProjectDescription
 
-public enum Module {
+public enum Module: Sendable {
     case core(Core)
     case spm(SPM)
 }
 
-public enum Core: String {
+public enum Core: String, Sendable {
     case common = "Common"
 }
 
-public enum SPM: String {
+public enum SPM: String, Sendable {
     case alamofire = "Alamofire"
     case amplitude = "AmplitudeSwift"
     case dgCharts = "DGCharts"

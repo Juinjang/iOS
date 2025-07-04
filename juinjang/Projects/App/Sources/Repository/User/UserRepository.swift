@@ -32,4 +32,10 @@ final class UserRepository: UserRepositoryProtocol {
             .request(NoResultResponse.self, networkManager)
             .asCompletable()
     }
+    
+    func regenerateAccesstoken() -> Single<RefreshDto> {
+        return UserAPI.regenerateAccessToken
+            .request(BaseResponse<RefreshDto>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
 }

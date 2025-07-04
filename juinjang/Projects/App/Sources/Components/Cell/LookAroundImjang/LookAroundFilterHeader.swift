@@ -7,9 +7,10 @@
 
 import UIKit
 import RxSwift
+import RxRelay
 
 final class LookAroundFilterHeader: BaseCollectionReusableView {
-    private let lookAroundDropDownView = LookAroundDropDownView()
+    private let filterView = LookAroundDropDownView()
     private var disposeBag = DisposeBag()
     
     override func prepareForReuse() {
@@ -17,12 +18,34 @@ final class LookAroundFilterHeader: BaseCollectionReusableView {
         disposeBag = DisposeBag()
     }
     
+    func bind(relay: PublishRelay<LookAroundEventType>) {
+        filterView.sortActionRelay
+            .subscribe(with: self) { (self, action) in
+                relay.accept(.filterItemTap(action, nil, nil))
+            }
+            .disposed(by: disposeBag)
+        
+        filterView.transactionTypeActionRelay
+            .subscribe(with: self) { (self, action) in
+                relay.accept(.filterItemTap(nil, action, nil))
+            }
+            .disposed(by: disposeBag)
+        
+        filterView.saleTypeActionRelay
+            .subscribe(with: self) { (self, action) in
+                relay.accept(.filterItemTap(nil, nil, action))
+            }
+            .disposed(by: disposeBag)
+    }
+    
     override func configureHierarchy() {
-        addSubview(lookAroundDropDownView)
+        super.configureHierarchy()
+        addSubview(filterView)
     }
     
     override func configureLayout() {
-        lookAroundDropDownView.snp.makeConstraints { make in
+        super.configureLayout()
+        filterView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
             make.top.equalToSuperview()
             make.bottom.lessThanOrEqualToSuperview().inset(4)
@@ -39,8 +62,8 @@ final class LookAroundFilterHeader: BaseCollectionReusableView {
             return hitView
         }
         
-        let convertedPoint = lookAroundDropDownView.convert(point, from: self)
-        if let hitView = lookAroundDropDownView.hitTest(convertedPoint, with: event) {
+        let convertedPoint = filterView.convert(point, from: self)
+        if let hitView = filterView.hitTest(convertedPoint, with: event) {
             return hitView
         }
     

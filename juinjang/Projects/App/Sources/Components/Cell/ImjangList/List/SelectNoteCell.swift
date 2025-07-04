@@ -79,18 +79,16 @@ extension SelectNoteCell {
                 pyongFloorLabel.text = "\(pyong)평 \(floor)층"
             }
         }
-        
-        addressLabel.text = note.addressDetail
-
+    
         if let priceType = PriceType(rawValue: note.priceType) {
             setPriceLabel(note: note, priceType: priceType)
         }
         
-        if let roadAddress = note.roadAddress {
-            addressLabel.text = roadAddress
+        if let address = note.address {
+            addressLabel.text = address
         } else {
-            if let addressDetail = note.addressDetail {
-                addressLabel.text = addressDetail
+            if let shortAddress = note.shortAddress {
+                addressLabel.text = shortAddress
             }
         }
         
@@ -127,11 +125,23 @@ extension SelectNoteCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
+            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
+        
+        if resultScore == 0.0 {
+            setScoreStyle()
+        } else {
+            setScoreStyle(empty: false)
+        }
+    }
+    
+    private func setScoreStyle(empty: Bool = true) {
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        scoreLabel.textColor = empty ? .null : .main
     }
     
     func setSelectStyle(isSelected: Bool) {

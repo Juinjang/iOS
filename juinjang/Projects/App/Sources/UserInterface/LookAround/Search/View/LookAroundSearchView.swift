@@ -27,24 +27,36 @@ final class LookAroundSearchView: BaseView {
         $0.isScrollEnabled = false
     }
         
-    lazy var searchResultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createImjangCompositionalLayout()).then {
+    lazy var searchResultCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createImjangCompositionalLayout(filterTapped: false)).then {
         $0.register(LookAroundImjangCountCell.self)
-        $0.register(LookAroundCell.self)
+        $0.register(LookAroundImjangCell.self)
         $0.register(
             LookAroundFilterHeader.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader
         )
+        $0.register(
+            LookAroundMoreView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionFooter
+        )
         $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.showsVerticalScrollIndicator = false
+        $0.bounces = false
+        $0.keyboardDismissMode = .onDrag
+    }
+    
+    let searchEmptyView = SearchEmptyView().then {
+        $0.isHidden = true
     }
     
     private let disposeBag = DisposeBag()
     let navigationEventRelay = PublishRelay<NavigationAction>()
     let cellEventTapRelay = PublishRelay<SearchKeywordCellEventType>()
+    fileprivate var isLastPage: Bool = false
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         bind()
+        hideKeyBoardWhenTappedView()
     }
     
     @MainActor required init?(coder: NSCoder) {
@@ -58,8 +70,23 @@ final class LookAroundSearchView: BaseView {
                .disposed(by: disposeBag)
     }
     
+    func hideKeyBoardWhenTappedView() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapHandler))
+        tapGesture.cancelsTouchesInView = false
+        addGestureRecognizer(tapGesture)
+    }
+
+    @objc func tapHandler() {
+        endEditing(true)
+    }
+    
     override func configureHierarchy() {
-        add(navigationView, searchKeywordCollectionView, searchResultCollectionView)
+        add(
+            navigationView,
+            searchKeywordCollectionView,
+            searchResultCollectionView,
+            searchEmptyView
+        )
     }
     
     override func configureLayout() {
@@ -79,6 +106,11 @@ final class LookAroundSearchView: BaseView {
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+        
+        searchEmptyView.snp.makeConstraints { make in
+            make.centerY.equalToSuperview().offset(-10)
+            make.centerX.equalToSuperview()
+        }
     }
     
     override func configureView() {
@@ -95,26 +127,50 @@ final class LookAroundSearchView: BaseView {
     
     func setCollectionViewSearchActive(_ isActive: Bool, isEmpty: Bool) {
         if isActive == false {
-            showSearchResultCollectionView(!isActive)
-        }
-        if isEmpty {
-            setCollectionViewSearchKeywordEmpty(isEmpty)
+            hideSearchResultCollectionView(!isActive)
             return
+        }
+        
+        if !isActive && isEmpty {
+            setCollectionViewSearchKeywordEmpty(isActive && isEmpty)
+            return
+        }
+        
+        if isActive && !isEmpty {
+            searchResultCollectionView.isHidden = false
+            searchKeywordCollectionView.isHidden = true
+            searchEmptyView.isHidden = true
         }
     }
     
     func setCollectionViewSearchKeywordEmpty(_ isEmpty: Bool) {
         searchKeywordCollectionView.isHidden = isEmpty
+        searchEmptyView.isHidden = true
     }
     
     func showSearchKeywordCollectionView(_ isShow: Bool) {
         searchKeywordCollectionView.isHidden = !isShow
         searchResultCollectionView.isHidden = isShow
+        searchEmptyView.isHidden = true
     }
     
-    func showSearchResultCollectionView(_ isEmpty: Bool) {
+    func hideSearchResultCollectionView(_ isEmpty: Bool) {
         searchKeywordCollectionView.isHidden = !isEmpty
         searchResultCollectionView.isHidden = isEmpty
+        searchEmptyView.isHidden = true
+    }
+    
+    func setListEmpty(empty: Bool, filterTapped: Bool?) {
+        guard let filterTapped else { return }
+        print(#function, empty)
+        searchKeywordCollectionView.isHidden = true
+        if !filterTapped {
+            searchEmptyView.isHidden = !empty
+            searchResultCollectionView.isHidden = empty
+        } else {
+            searchEmptyView.isHidden = true
+        }
+        searchResultCollectionView.collectionViewLayout = createImjangCompositionalLayout(filterTapped: filterTapped && empty)
     }
 }
 
@@ -124,7 +180,6 @@ enum LookAroundSearchResultSection: Int {
 }
 
 extension LookAroundSearchView {
-    
     private func createKeywordCompositionalLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             let itemSize = NSCollectionLayoutSize(
@@ -161,7 +216,7 @@ extension LookAroundSearchView {
         return layout
     }
     
-    private func createImjangCompositionalLayout() -> UICollectionViewLayout {
+    private func createImjangCompositionalLayout(filterTapped: Bool) -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
                    guard let self else { return nil }
            if let searchResultSection = LookAroundSearchResultSection(rawValue: sectionIndex) {
@@ -171,15 +226,19 @@ extension LookAroundSearchView {
                case .imjangCount:
                    section = createImjangCountSection()
                case .imjangList:
-                   section = createImjangListSection()
+                   section = createImjangListSection(filterTapped: filterTapped)
                }
 
                return section
            } else {
                return nil
            }
-       }
-       return layout
+        }
+        layout.register(
+            SearchEmptyBackground.self,
+            forDecorationViewOfKind: "section-background-element-kind"
+        )
+        return layout
     }
     
     private func createImjangCountSection() -> NSCollectionLayoutSection {
@@ -195,7 +254,7 @@ extension LookAroundSearchView {
         return section
     }
 
-    private func createImjangListSection() -> NSCollectionLayoutSection {
+    private func createImjangListSection(filterTapped: Bool) -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .absolute(136))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -215,7 +274,43 @@ extension LookAroundSearchView {
         sectionHeader.contentInsets = NSDirectionalEdgeInsets(top: 4, leading: 0, bottom: 0, trailing: 0)
         sectionHeader.pinToVisibleBounds = true
         sectionHeader.zIndex = 2
-        section.boundarySupplementaryItems = [sectionHeader]
+        
+        var footer: NSCollectionLayoutBoundarySupplementaryItem?
+        
+        if !isLastPage {
+            footer = NSCollectionLayoutBoundarySupplementaryItem(
+                layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                                   heightDimension: .absolute(94)),
+                elementKind: UICollectionView.elementKindSectionFooter,
+                alignment: .bottom
+            )
+        }
+        
+        if let footer {
+            section.boundarySupplementaryItems = [sectionHeader, footer]
+        } else {
+            section.boundarySupplementaryItems = [sectionHeader]
+        }
+        
+        
+        if filterTapped {
+            let decoration = NSCollectionLayoutDecorationItem.background(
+                elementKind: "section-background-element-kind"
+            )
+            decoration.contentInsets = NSDirectionalEdgeInsets(top: 43, leading: 0, bottom: 0, trailing: 0)
+            section.decorationItems = [decoration]
+        }
+        
         return section
+    }
+}
+
+extension Reactive where Base: LookAroundSearchView {
+    
+    var isLastPage: Binder<Bool> {
+        return Binder(base) { view, isLastPage in
+            view.isLastPage = isLastPage
+            view.searchResultCollectionView.reloadData()
+        }
     }
 }

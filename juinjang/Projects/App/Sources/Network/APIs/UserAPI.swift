@@ -11,6 +11,7 @@ import Alamofire
 enum UserAPI: TargetType {
     case getProfileInfo
     case patchProfileIntroduction(String)
+    case regenerateAccessToken
 
     var path: String {
         switch self {
@@ -18,6 +19,8 @@ enum UserAPI: TargetType {
             return "profile"
         case .patchProfileIntroduction:
             return "profile/introduction"
+        case .regenerateAccessToken:
+            return "auth/regenerate-token"
         }
     }
 
@@ -27,13 +30,16 @@ enum UserAPI: TargetType {
             return .get
         case .patchProfileIntroduction:
             return .patch
+        case .regenerateAccessToken:
+            return .post
         }
     }
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getProfileInfo,
-                .patchProfileIntroduction:
+        case .getProfileIntroduction,
+                .patchProfileIntroduction,
+                .regenerateAccessToken:
             return []
         }
     }
@@ -44,6 +50,14 @@ enum UserAPI: TargetType {
             return nil
         case .patchProfileIntroduction(let text):
             return ["introduction": text]
+        case .regenerateAccessToken:
+            let dto = RefreshDto(
+                accessToken: UserDefaultManager.shared.accessToken,
+                refreshToken: UserDefaultManager.shared.refreshToken,
+                email: UserDefaultManager.shared.email
+            )
+            dump(dto)
+            return dto.toDictionary()
         }
     }
     

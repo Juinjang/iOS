@@ -11,7 +11,7 @@ import Alamofire
 enum PencilShopAPI: TargetType {
     case getPencilBalance
     case purchasePencil(PurchasePencilRequestDTO)
-    case readPencil(ReadAcquiredPencilRequestDTO)
+    case readPencil(acquiredPencilId: Int)
     case getUsedPencil
     case getPurchasedPencil
     case getAcquiredPencil
@@ -23,8 +23,8 @@ enum PencilShopAPI: TargetType {
             "v2/pencil-account/balance"
         case .purchasePencil:
             "v2/pencil/purchase/apple"
-        case .readPencil:
-            "v2/pencil/acquired/read"
+        case .readPencil(let acquiredPencilId):
+            "v2/pencil/acquired/\(acquiredPencilId)/read"
         case .getUsedPencil:
             "v2/pencil/used"
         case .getPurchasedPencil:
@@ -56,8 +56,7 @@ enum PencilShopAPI: TargetType {
 
     var parameters: [String : Any]? {
         switch self {
-        case .purchasePencil(let param as Encodable),
-                .readPencil(let param as Encodable):
+        case .purchasePencil(let param as Encodable):
                 return param.toDictionary()
         default:
             return nil

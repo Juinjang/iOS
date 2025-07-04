@@ -12,5 +12,5 @@ struct AcquiredPencilDTO: Codable, Hashable {
     let acquiredQuantity: Int
     let type: String
     let createdAt: String
-    let read: Bool
+    var read: Bool
 }

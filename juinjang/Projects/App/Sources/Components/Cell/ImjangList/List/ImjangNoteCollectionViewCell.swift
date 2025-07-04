@@ -80,11 +80,11 @@ extension ImjangNoteCollectionViewCell {
             }
         }
         
-        if let roadAddress = note.roadAddress {
-            addressLabel.text = roadAddress
+        if let address = note.address {
+            addressLabel.text = address
         } else {
-            if let addressDetail = note.addressDetail {
-                addressLabel.text = addressDetail
+            if let shortAddress = note.shortAddress {
+                addressLabel.text = shortAddress
             }
         }
 

@@ -73,11 +73,11 @@ extension ScrapCollectionViewCell {
         
         roomPriceLabel.text = note.price
         
-        if let roadAddress = note.roadAddress {
-            roomAddressLabel.text = roadAddress
+        if let address = note.address {
+            roomAddressLabel.text = address
         } else {
-            if let addressDetail = note.addressDetail {
-                roomAddressLabel.text = addressDetail
+            if let shortAddress = note.shortAddress {
+                roomAddressLabel.text = shortAddress
             }
         }
 
@@ -229,12 +229,23 @@ extension ScrapCollectionViewCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
-//            setScoreStyle()
+            setScoreStyle()
             return
         }
         
         let resultScore = doubleScore.truncateToSingleDecimal()
         scoreLabel.text = String(format: "%.1f", resultScore)
+        
+        if resultScore == 0.0 {
+            setScoreStyle()
+        } else {
+            setScoreStyle(empty: false)
+        }
+    }
+    
+    private func setScoreStyle(empty: Bool = true) {
+        starIcon.image = empty ? UIImage.starEmpty : UIImage.star
+        scoreLabel.textColor = empty ? .null : .main
     }
     
     private func setStackViewBackground(propertyType: String, isEmpty: Bool) {
