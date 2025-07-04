@@ -33,6 +33,7 @@ protocol LogoutDelegate: AnyObject {
 final class SettingViewController : BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
     static let id = "SettingViewController"
     
+    private let userRepository = UserRepository()
     private let navigationView = DefaultNavigationView().then {
         $0.title = "설정"
         $0.leftItem = [.pop]
@@ -175,12 +176,27 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         configureHierarchy()
         setConstraint()
         
+        userRepository
+            .retrieveProfileInfo()
+            .subscribe(with: self) { (self, model) in
+                self.oneLineIntroTextFieldView.text = model.introduction ?? ""
+            }
+            .disposed(by: disposeBag)
+        
         oneLineIntroTextFieldView
             .saveButtonDidTapRelay
             .subscribe(with: self) { (self, text) in
-                // 성공시
-                // oneLineIntroTextFieldView.text = text 설정
-                
+                self.userRepository.updateProfileIntroduction(text: text)
+                    .observe(on: MainScheduler.instance)
+                    .subscribe(
+                        onCompleted: { [weak self] in
+                            self?.oneLineIntroTextFieldView.text = text
+                        },
+                        onError: { [weak self] error in
+                            self?.showAlert(title: "주인장", message: "한줄소개 변경 실패", actionHandler: nil)
+                        }
+                    )
+                    .disposed(by: self.disposeBag)
             }
             .disposed(by: disposeBag)
     }
