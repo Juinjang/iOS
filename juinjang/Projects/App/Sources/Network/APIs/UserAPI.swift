@@ -37,7 +37,7 @@ enum UserAPI: TargetType {
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getProfileIntroduction,
+        case .getProfileInfo,
                 .patchProfileIntroduction,
                 .regenerateAccessToken:
             return []
