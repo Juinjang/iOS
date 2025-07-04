@@ -10,11 +10,6 @@ struct ShareableNoteRequestDTO: Codable {
     let propertyType: String?
     let priceType: String?
     let keyword: String?
-    let pageable: Pageable
-    
-    struct Pageable: Codable {
-        let page: Int
-        let size: Int
-        let sort: [String]
-    }
+    let page: Int
+    let size: Int
 }
