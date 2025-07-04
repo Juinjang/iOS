@@ -81,6 +81,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.font = .pretendard(size: 12, weight: .medium)
         $0.textColor = .main
     }
+    
     private let saveButton = UIButton().then {
         $0.layer.cornerRadius = 10
         $0.setTitle("변경", for: .normal)
@@ -90,6 +91,14 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     private let line1 = UIView().then {
         $0.backgroundColor = .stroke
     }
+    
+    private let oneLineIntroTextFieldView = SettingEditableFieldView(
+        title: "한줄소개",
+        defaultPlaceholder: "한줄소개를 입력해 보세요",
+        editingPlaceholder: "20자 이내",
+        warnningText: "20자 이내로 입력해 주세요.",
+        maxTextCount: 20
+    )
     
     //MARK: - 로그인 정보
     private let logInfoLabel = UILabel().then {
@@ -165,6 +174,15 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         addTarget()
         configureHierarchy()
         setConstraint()
+        
+        oneLineIntroTextFieldView
+            .saveButtonDidTapRelay
+            .subscribe(with: self) { (self, text) in
+                // 성공시
+                // oneLineIntroTextFieldView.text = text 설정
+                
+            }
+            .disposed(by: disposeBag)
     }
     
     private func retrieveProfileInfo() {
@@ -430,6 +448,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             nicknameValueLabel,
             saveButton,
             line1,
+            oneLineIntroTextFieldView,
             logInfoLabel,
             loginImageView,
             logInfoMailLabel,
@@ -474,8 +493,16 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             $0.height.equalTo(29)
             $0.width.equalTo(64)
         }
+        
+        oneLineIntroTextFieldView.snp.makeConstraints {
+            $0.top.equalTo(saveButton.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(24)
+            $0.right.equalToSuperview().inset(21)
+            $0.height.equalTo(68)
+        }
+        
         logInfoLabel.snp.makeConstraints {
-            $0.top.equalTo(nicknameLabel.snp.bottom).offset(79)
+            $0.top.equalTo(oneLineIntroTextFieldView.snp.bottom).offset(29)
             $0.leading.equalToSuperview().offset(24)
         }
         loginImageView.snp.makeConstraints{
@@ -600,7 +627,6 @@ extension SettingViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        print(#function, textField.text)
         let text = textField.text ?? ""
         if (text.trimmingCharacters(in: [" "]).isEmpty) {
             showAlert(title: "닉네임 입력", message: "한 글자 이상 입력해주세요", actionHandler: nil)
