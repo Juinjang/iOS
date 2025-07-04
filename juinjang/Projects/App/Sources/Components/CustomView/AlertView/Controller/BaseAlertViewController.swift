@@ -47,6 +47,7 @@ enum AlertButtonType: Equatable {
 enum AlertEventType {
     case confirm
     case cancel
+    case custom
 }
 
 class BaseAlertViewController: UIViewController {

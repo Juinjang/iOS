@@ -11,14 +11,14 @@ import ReactorKit
 final class PencilShopViewController: BaseViewController, View {
     private let mainView = PencilShopView()
     
-    typealias ObtainedDataSource = UICollectionViewDiffableDataSource<ObtainedPencilSection, ObtainedPencilModel>
+    typealias ObtainedDataSource = UICollectionViewDiffableDataSource<ObtainedPencilSection, AcquiredPencilDTO>
     private var obtainedDataSource: ObtainedDataSource!
     
-    typealias PurchasedDataSource = UICollectionViewDiffableDataSource<PurchasedPencilSection, PurchasedPencilModel>
+    typealias PurchasedDataSource = UICollectionViewDiffableDataSource<PurchasedPencilSection, PurchasedPencilDTO>
     private var purchasedDataSource: PurchasedDataSource!
     
     typealias UsedDataSource =
-    UICollectionViewDiffableDataSource<UsedPencilSection, UsedPencilModel>
+    UICollectionViewDiffableDataSource<UsedPencilSection, UsedPencilDTO>
     private var usedDataSource: UsedDataSource!
     
     var disposeBag = DisposeBag()
@@ -43,7 +43,26 @@ final class PencilShopViewController: BaseViewController, View {
     
     func bind(reactor: PencilShopReactor) {
         reactor.state
+            .compactMap { $0.pencilTotalBalance }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, pencilBalanceDTO in
+                owner.mainView.buyingView.setPencilCount(count: pencilBalanceDTO.totalBalance)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .compactMap { $0.isTotalRead }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, isTotalReadDTO in
+                !isTotalReadDTO.isTotalRead ?
+                owner.mainView.segmentedView.showNewDotView() :
+                owner.mainView.segmentedView.hideNewDotView()
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .compactMap { $0.products }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, products in
                 owner.mainView.setProductList(products)
@@ -55,7 +74,9 @@ final class PencilShopViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyObtainedSnapshot(sections: sections)
-                owner.mainView.obtainedView.setListEmpty(empty: sections.isEmpty)
+                if let section = sections.first {
+                    owner.mainView.obtainedView.setListEmpty(empty: section.obtainedPencils.isEmpty)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -64,7 +85,9 @@ final class PencilShopViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyPurchasedSnapshot(sections: sections)
-                owner.mainView.purchasedView.setListEmpty(empty: sections.isEmpty)
+                if let section = sections.first {
+                    owner.mainView.purchasedView.setListEmpty(empty: section.purchasedPencils.isEmpty)
+                }
             }
             .disposed(by: disposeBag)
         
@@ -73,17 +96,20 @@ final class PencilShopViewController: BaseViewController, View {
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, sections in
                 owner.applyUsedSnapshot(sections: sections)
-                owner.mainView.usedView.setListEmpty(empty: sections.isEmpty)
+                if let section = sections.first {
+                    owner.mainView.usedView.setListEmpty(empty: section.usedPencils.isEmpty)
+                }
             }
             .disposed(by: disposeBag)
         
         reactor.state
-            .compactMap { $0.purchaseResult }
+            .map { $0.purchaseResult }
             .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
-            .bind(with: self) { owner, response in
-                owner.showPurchasedPopupView(response: response)
-                owner.mainView.buyingView.setPencilCount(count: response.currentPencilCount)
+            .bind(with: self) { owner, purchasePencilDTO in
+                guard let purchasePencilDTO else { return }
+                owner.showPurchasedPopupView(response: purchasePencilDTO)
+                owner.mainView.buyingView.setPencilCount(count: purchasePencilDTO.remainQuantity)
             }
             .disposed(by: disposeBag)
     }
@@ -122,9 +148,13 @@ final class PencilShopViewController: BaseViewController, View {
         
         mainView.obtainedView.collectionView.rx.itemSelected
             .subscribe(with: self) { owner, indexPath in
-                if let model = owner.obtainedDataSource.itemIdentifier(for: indexPath) {
-                  print("selected: \(model)")
-                }
+                guard let model = owner.obtainedDataSource.itemIdentifier(for: indexPath) else { return }
+            }
+            .disposed(by: disposeBag)
+        
+        mainView.obtainedView.goMyNoteButtonTapRelay
+            .subscribe(with: self) { owner, _ in
+                owner.goMyNoteVC()
             }
             .disposed(by: disposeBag)
     }
@@ -133,12 +163,27 @@ final class PencilShopViewController: BaseViewController, View {
         view = mainView
     }
     
-    private func showPurchasedPopupView(response: VerifiyTransactionResponse) {
-        self.present(PurchasePopupViewController(purchasedPencilCount: response.purchasedPencilCount, currentPencilCount: response.currentPencilCount), animated: true)
+    private func goMyNoteVC() {
+        guard let presentingVC = self.presentingViewController as? UINavigationController else { return }
+        self.dismiss(animated: true) {
+            presentingVC.popToRootViewController(animated: false)
+            presentingVC.pushViewController(ImjangImageListViewController(), animated: false)
+        }
+    }
+    
+    private func showPurchasedPopupView(response: PurchasePencilDTO) {
+        print(#function)
+        self.present(
+            PurchasePopupViewController(
+                purchasedPencilCount: response.purchaseQuantity,
+                currentPencilCount: response.remainQuantity
+            ),
+            animated: true
+        )
     }
     
     private func applyObtainedSnapshot(sections: [ObtainedSectionModel]) {
-        var snapshot = NSDiffableDataSourceSnapshot<ObtainedPencilSection, ObtainedPencilModel>()
+        var snapshot = NSDiffableDataSourceSnapshot<ObtainedPencilSection, AcquiredPencilDTO>()
         
         for section in sections {
             snapshot.appendSections([section.section])
@@ -149,7 +194,7 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     private func configureObtainedDataSource() {
-        self.obtainedDataSource =  UICollectionViewDiffableDataSource<ObtainedPencilSection, ObtainedPencilModel>(
+        self.obtainedDataSource =  UICollectionViewDiffableDataSource<ObtainedPencilSection, AcquiredPencilDTO>(
             collectionView: mainView.obtainedView.collectionView
         ) { collectionView, indexPath, item in
             let cell = collectionView.dequeueReusableCell(ObtainedPencilCell.self, for: indexPath)
@@ -159,18 +204,18 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     private func applyPurchasedSnapshot(sections: [PurchasedSectionModel]) {
-        var snapshot = NSDiffableDataSourceSnapshot<PurchasedPencilSection, PurchasedPencilModel>()
+        var snapshot = NSDiffableDataSourceSnapshot<PurchasedPencilSection, PurchasedPencilDTO>()
         
         for section in sections {
             snapshot.appendSections([section.section])
-            snapshot.appendItems(section.obtainedPencils, toSection: section.section)
+            snapshot.appendItems(section.purchasedPencils, toSection: section.section)
         }
         
         purchasedDataSource.apply(snapshot, animatingDifferences: true)
     }
     
     private func configurePurchasedDataSource() {
-        self.purchasedDataSource =  UICollectionViewDiffableDataSource<PurchasedPencilSection, PurchasedPencilModel>(
+        self.purchasedDataSource =  UICollectionViewDiffableDataSource<PurchasedPencilSection, PurchasedPencilDTO>(
             collectionView: mainView.purchasedView.collectionView
         ) { collectionView, indexPath, item in
             let cell = collectionView.dequeueReusableCell(PurchasedPencilCell.self, for: indexPath)
@@ -194,7 +239,7 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     private func applyUsedSnapshot(sections: [UsedSectionModel]) {
-        var snapshot = NSDiffableDataSourceSnapshot<UsedPencilSection, UsedPencilModel>()
+        var snapshot = NSDiffableDataSourceSnapshot<UsedPencilSection, UsedPencilDTO>()
         
         for section in sections {
             snapshot.appendSections([section.section])
@@ -205,7 +250,7 @@ final class PencilShopViewController: BaseViewController, View {
     }
     
     private func configureUsedDataSource() {
-        self.usedDataSource =  UICollectionViewDiffableDataSource<UsedPencilSection, UsedPencilModel>(
+        self.usedDataSource =  UICollectionViewDiffableDataSource<UsedPencilSection, UsedPencilDTO>(
             collectionView: mainView.usedView.collectionView
         ) { collectionView, indexPath, item in
             let cell = collectionView.dequeueReusableCell(UsedPencilCell.self, for: indexPath)

@@ -15,4 +15,9 @@ extension Double {
     func convertTo1fString() -> String {
         return String(format: "%.1f", self)
     }
+    
+    func roundedOneDecimal() -> Double {
+        let multiplier = 10.0
+        return (self * multiplier).rounded() / multiplier
+    }
 }

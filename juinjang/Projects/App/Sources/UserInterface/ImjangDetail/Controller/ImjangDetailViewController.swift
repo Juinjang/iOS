@@ -41,6 +41,11 @@ final class ImjangDetailViewController: BaseViewController, View {
         reactor?.action.onNext(.viewDidLoad)
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        reactor?.action.onNext(.viewWillAppear)
+    }
+    
     func bind(reactor: ImjangDetailViewReactor) {
         reactor.state
             .map(\.title)
@@ -79,19 +84,53 @@ final class ImjangDetailViewController: BaseViewController, View {
         
         reactor.state
             .map(\.isShowPencilAlert)
+            .compactMap { $0 }
             .observe(on: MainScheduler.instance)
-            .distinctUntilChanged()
             .subscribe(with: self) { (self, bool) in
-                if bool {
-                    self.present(
-                        PencilAlertView(
-                            title: "판교푸르지오월드마크",
-                            pencilCount: 0,
-                            needPencilCount: 3
-                        ),
-                        animated: true
-                    )
+                guard let reactor = self.reactor else {
+                    return
                 }
+                
+                let alertView = PencilAlertView(
+                    title: reactor.dependency.title,
+                    pencilCount: reactor.currentState.balancePencilCount,
+                    needPencilCount: reactor.currentState.requiredPencilCount
+                ).then {
+                    $0.eventRelay
+                        .subscribe(with: self) { (self, event) in
+                            switch event {
+                            case .confirm:
+                                self.navigationController?.pushViewController(
+                                    NoteEnterPencilShopViewController(
+                                        reactor: .init(
+                                            dependency: .init(
+                                                inAppPurchaseService: InAppPurchaseService(
+                                                    pencilShopRepository: .init()
+                                                ),
+                                                pencilShopRepository: PencilShopRepository(),
+                                                needPencilCount: reactor.currentState.requiredPencilCount,
+                                                buildingName: reactor.currentState.buildingName,
+                                                totalRate: reactor.currentState.totalRate
+                                            )
+                                        )
+                                    ),
+                                    animated: true
+                                )
+                                
+                            case .custom:
+                                reactor.action.onNext(.purchaseButtonDidTap)
+                                
+                            default: break
+                            }
+                        }
+                        .disposed(by: self.disposeBag)
+                }
+                
+                self.present(
+                    alertView,
+                    animated: true
+                )
+                
             }
             .disposed(by: disposeBag)
         
@@ -118,6 +157,15 @@ final class ImjangDetailViewController: BaseViewController, View {
                 self.showCaptureAlert()
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowReportCompletedView)
+            .observe(on: MainScheduler.instance)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, _) in
+                self.present(ReportCompletedAlertView(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindView() {
@@ -136,6 +184,32 @@ final class ImjangDetailViewController: BaseViewController, View {
         CheckListNoteOpenView.tapRelay
             .map { Reactor.Action.noteOpenButtonDidTap }
             .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        mainView.navigationView
+            .itemActionRelay
+            .subscribe(with: self) { (self, action) in
+                switch action {
+                case .popButtonTap:
+                    self.navigationController?.popViewController(animated: true)
+                case .reportButtonTap:
+                    self.present(ReportSelectAlertView().then { view in
+                        view.reportEventRelay
+                            .subscribe(with: self) { (self, event) in
+                                switch event {
+                                case .updateSelectType(let reason):
+                                    self.reactor?.action.onNext(.reportReasonDidSelected(reason))
+                                case .reportButtonTap:
+                                    view.dismiss(animated: true) {
+                                        self.reactor?.action.onNext(.reportButtonDidTap)
+                                    }
+                                }
+                            }
+                            .disposed(by: self.disposeBag)
+                    }, animated: true)
+                default: break
+                }
+            }
             .disposed(by: disposeBag)
     }
     
@@ -157,9 +231,6 @@ final class ImjangDetailViewController: BaseViewController, View {
                     reactor.action.onNext(.expandImageButtonDidTap(index: index))
                 case .likeButtonTap:
                     reactor.action.onNext(.likeButtonDidTap)
-                case .reportButtonTap:
-                    // report Alert 뷰 띄우기
-                    print("신고 버튼 클릭 됨")
                 }
             }
             .disposed(by: disposeBag)
@@ -199,10 +270,9 @@ extension ImjangDetailViewController: UICollectionViewDelegate {
                 cell.bind(item.model)
                 return cell
             case .checkList(let item):
-                guard let isBuyer = self.reactor?.currentState.isBuyer,
-                      let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
+                guard let isOneRoom = self.reactor?.currentState.isOneRoom else { return UICollectionViewCell() }
                 let cell = collectionView.dequeueReusableCell(ImjangDetailCheckListCell.self, for: indexPath)
-                cell.bind(item.model, isOneRoom: isOneRoom, isBuyer: isBuyer)
+                cell.bind(item.model, isOneRoom: isOneRoom)
                 return cell
             case .review(let item):
                 let cell = collectionView.dequeueReusableCell(ImjangDetailReviewCell.self, for: indexPath)

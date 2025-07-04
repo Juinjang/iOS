@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-enum PencilInfo {
+enum PencilInfo: Int {
     case necessaryPencil
     case pencilYouHave
     case notEnoughPencil
@@ -24,9 +24,9 @@ enum PencilInfo {
 
 final class PencilInfoView: UIStackView {
     
-    private var infoList: [PencilInfo: Int]
+    private var infoList: [(PencilInfo, Int)]
     
-    init(infoList: [PencilInfo: Int]) {
+    init(infoList: [(PencilInfo, Int)]) {
         self.infoList = infoList
         super.init(frame: .zero)
         configureView()
@@ -49,20 +49,25 @@ final class PencilInfoView: UIStackView {
     }
     
     private func setInfo() {
-        for (index, (info, value)) in infoList.enumerated() {
+        for (info, value) in infoList {
             let vStackView = createVerticalStackView()
             let titleLabel = createTitleLabel(title: info.title)
             let valueLabel = createValueLabel(value: value, info: info)
             [titleLabel, valueLabel].forEach { vStackView.addArrangedSubview($0) }
             addArrangedSubview(vStackView)
-            
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        for (index, vStackView) in subviews.enumerated() {
             if infoList.count > 1 && index < infoList.count - 1 {
                 addDashBorder(view: vStackView)
             }
         }
     }
     
-    func setMyPencilCount(pencilCount: Int) {
+    func setPencilShopMyPencilCount(pencilCount: Int) {
         guard subviews.count == 1,
               let vStackView = subviews.first else { return }
 
@@ -74,6 +79,60 @@ final class PencilInfoView: UIStackView {
         valueLabel.setAttribute(
             text: "\(pencilCount)",
             color: .gray600,
+            font: .pretendard(size: 20, weight: .semiBold),
+            lineHeight: 27,
+            alignment: .center
+        )
+    }
+    
+    func setNoteEnterMyPencilCount(pencilCount: Int) {
+        guard subviews.count == 3 else { return }
+        let vStackView = subviews[1]
+        
+        let valueLabelIndex = 1
+
+        guard vStackView.subviews.indices.contains(valueLabelIndex),
+              let valueLabel = vStackView.subviews[valueLabelIndex] as? UILabel else { return }
+        
+        valueLabel.setAttribute(
+            text: "\(pencilCount)",
+            color: .gray600,
+            font: .pretendard(size: 20, weight: .semiBold),
+            lineHeight: 27,
+            alignment: .center
+        )
+    }
+    
+    func setNeededPencilCount(neededPencilCount: Int) {
+        guard subviews.count == 3 else { return }
+        let vStackView = subviews[0]
+        
+        let valueLabelIndex = 1
+
+        guard vStackView.subviews.indices.contains(valueLabelIndex),
+              let valueLabel = vStackView.subviews[valueLabelIndex] as? UILabel else { return }
+        
+        valueLabel.setAttribute(
+            text: "\(neededPencilCount)",
+            color: .gray600,
+            font: .pretendard(size: 20, weight: .semiBold),
+            lineHeight: 27,
+            alignment: .center
+        )
+    }
+    
+    func setNotEnoughPencilCount(notEnoughPencilCount: Int) {
+        guard subviews.count == 3 else { return }
+        let vStackView = subviews[2]
+        
+        let valueLabelIndex = 1
+
+        guard vStackView.subviews.indices.contains(valueLabelIndex),
+              let valueLabel = vStackView.subviews[valueLabelIndex] as? UILabel else { return }
+        
+        valueLabel.setAttribute(
+            text: "\(notEnoughPencilCount)",
+            color: .main,
             font: .pretendard(size: 20, weight: .semiBold),
             lineHeight: 27,
             alignment: .center

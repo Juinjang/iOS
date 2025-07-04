@@ -32,14 +32,22 @@ final class EmptyPencilView: UIStackView {
     
     func configureHierarchy() {
         [imageView, descriptionLabel].forEach {
-            self.addArrangedSubview($0)
+            self.addSubview($0)
         }
     }
     
     func configureLayout() {
         imageView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
             make.width.equalTo(234)
             make.height.equalTo(154)
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.top.equalTo(imageView.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
     

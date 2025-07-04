@@ -38,9 +38,9 @@ final class ReportInfoView: BaseView {
         
         zip(
             infoContentStackViewSubViews,
-            [(model.indoorKeyword, "실내", model.indoorRate),
-             (model.publicSpaceKeyword, "공용 공간", model.publicSpaceRate),
-             (model.locationConditionsKeyword, "입지 여건", model.locationConditionsRate)]
+            [(model.indoorKeyword, "실내", model.indoorRate.roundedOneDecimal()),
+             (model.publicSpaceKeyword, "공용 공간", model.publicSpaceRate.roundedOneDecimal()),
+             (model.locationConditionsKeyword, "입지 여건", model.locationConditionsRate.roundedOneDecimal())]
         ).forEach { view, data in
             view.configure(
                 keywordText: data.0,
@@ -52,7 +52,7 @@ final class ReportInfoView: BaseView {
         totalInfoKeywordView.configure(
             keywordText: "총점",
             contentText: "",
-            rate: model.totalRate,
+            rate: model.totalRate.roundedOneDecimal(),
             isTotalLabel: true
         )
     }

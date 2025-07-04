@@ -47,9 +47,47 @@ final class MyNoteStopShareViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
-            .map { $0.selectedList.count }
+            .map { $0.selectedItem != nil }
             .distinctUntilChanged()
-            .bind(to: mainView.rx.selectedCount)
+            .bind(to: mainView.rx.isSelected)
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowStopShareAlertView)
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .subscribe(with: self) { (self, _) in
+                self.present(
+                    StopShareAlertView().then { view in
+                        view.eventRelay
+                            .subscribe(with: self) { (self, event) in
+                                switch event {
+                                case .cancel:
+                                    break
+                                case .confirm:
+                                    view.dismiss(animated: true) {
+                                        self.reactor?.action.onNext(.removeConfirmDidTap)
+                                    }
+                                default: break
+                                }
+                            }
+                            .disposed(by: self.disposeBag)
+                    },
+                    animated: true
+                )
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowStopShareCompletedView)
+            .compactMap { $0 }
+            .distinctUntilChanged()
+            .subscribe(with: self) { (self, _) in
+                self.present(
+                    StopShareCompletedView(),
+                    animated: true
+                )
+            }
             .disposed(by: disposeBag)
     }
     

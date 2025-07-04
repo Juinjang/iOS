@@ -133,6 +133,19 @@ enum TransactionTypeAction: FilterActionType {
             return .sale
         }
     }
+    
+    var toRequestType: String {
+        switch self {
+        case .totalTransaction:
+            return "" // 서버에 빈값 전송
+        case .monthlyRent:
+            return "MONTHLY_RENT"
+        case .lease:
+            return "PULL_RENT"
+        case .sale:
+            return "SALE"
+        }
+    }
 }
 
 enum SaleTypeAction: FilterActionType {
@@ -154,6 +167,21 @@ enum SaleTypeAction: FilterActionType {
             return .detachedHouse
         case .villa:
             return .villa
+        }
+    }
+    
+    var toRequestType: String {
+        switch self {
+        case .totalSale:
+            return "" // 서버에 빈값 전송
+        case .officetel:
+            return "OFFICE_TEL"
+        case .apartment:
+            return "APARTMENT"
+        case .detachedHouse:
+            return "DETACHED_HOUSE"
+        case .villa:
+            return "VILLA"
         }
     }
 }

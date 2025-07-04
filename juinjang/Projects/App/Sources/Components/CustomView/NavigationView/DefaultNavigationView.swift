@@ -21,6 +21,7 @@ enum NavigationButton {
     case close
     case trash
     case text(title: String)
+    case report
     
     var image: UIImage? {
         switch self {
@@ -40,6 +41,8 @@ enum NavigationButton {
             return .trash
         case .text:
             return nil
+        case .report:
+            return .siren
         }
     }
     
@@ -61,6 +64,8 @@ enum NavigationButton {
             return .trashButtonTap
         case .text:
             return .textButtonTap
+        case .report:
+            return .reportButtonTap
         }
     }
 }
@@ -76,6 +81,7 @@ enum NavigationAction: Equatable {
     case closeButtonTap
     case textButtonTap
     case trashButtonTap
+    case reportButtonTap
 }
 
 class DefaultNavigationView: BaseView {
@@ -176,38 +182,45 @@ class DefaultNavigationView: BaseView {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
         
         items?.forEach { item in
+            let button: UIButton?
+            
             switch item {
             case let .text(title):
-                let button = UIButton().then {
+                button = UIButton().then {
                     $0.setTitle(title, for: .normal)
                     $0.setTitleColor(.gray400, for: .normal)
                     $0.titleLabel?.font = UIFont.pretendard(size: 14, weight: .semiBold)
-                    
-                    $0.rx.tap
-                        .withUnretained(self)
-                        .subscribe(onNext: { (self, _) in
-                            self.itemActionRelay.accept(item.action)
-                        })
-                        .disposed(by: self.disposeBag)
                 }
                 
-                stackView.addArrangedSubview(button)
-                
-            default:
-                let button = ImageButton(normalImage: item.image).then {
+            case .report:
+                button = ImageButton(normalImage: item.image).then {
                     $0.tintColor = .gray450
                     $0.snp.makeConstraints {
-                        $0.width.height.equalTo(24)
+                        $0.size.equalTo(18)
                     }
-                    $0.rx.tap
-                        .withUnretained(self)
-                        .subscribe(onNext: { (self, _) in
-                            self.itemActionRelay.accept(item.action)
-                        })
-                        .disposed(by: self.disposeBag)
                 }
-                stackView.addArrangedSubview(button)
+                
+                stackView.snp.updateConstraints {
+                    $0.height.equalTo(18)
+                }
+
+            default:
+                button = ImageButton(normalImage: item.image).then {
+                    $0.tintColor = .gray450
+                    $0.snp.makeConstraints {
+                        $0.size.equalTo(24)
+                    }
+                }
             }
+            
+            stackView.addArrangedSubview(button!)
+            
+            button?.rx.tap
+                .withUnretained(self)
+                .subscribe(onNext: { (self, _) in
+                    self.itemActionRelay.accept(item.action)
+                })
+                .disposed(by: self.disposeBag)
         }
     }
 }

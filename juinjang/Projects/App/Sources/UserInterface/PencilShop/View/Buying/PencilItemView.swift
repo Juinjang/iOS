@@ -86,7 +86,8 @@ final class PencilItemView: UIView {
     
     private func configureView(product: Product) {
         print(product)
-        titleLabel.setAttribute(text: "\(product.displayName)", color: .gray600, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+        let productName = product.displayName.filter { $0.isNumber || $0 == "개" }
+        titleLabel.setAttribute(text: "\(productName)", color: .gray600, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
  
         let priceString = formatNumber(productPrice(productId: product.id))
         let price = "₩\(priceString)"

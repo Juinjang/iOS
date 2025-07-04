@@ -14,13 +14,14 @@ final class InAppPurchaseService {
     private let productIdList: [String: String]
     private var pencilProductList: [Product] = []
     
+    private var disposeBag = DisposeBag()
     var updateListenerTask: Task<Void, Never>? = nil
-    let transactionCompleted = PublishSubject<VerifiyTransactionResponse>() // 외부에 알림용
+    let completedPurchasePencilDTO = PublishSubject<PurchasePencilDTO?>() // 외부에 알림용
     
-    let buyPencilRepository: VerifyTransactionRepositoryProtocol
+    let pencilShopRepository: PencilShopRepository
     
-    init(buyPencilRepository: VerifyTransactionRepositoryProtocol) {
-        self.buyPencilRepository = buyPencilRepository
+    init(pencilShopRepository: PencilShopRepository) {
+        self.pencilShopRepository = pencilShopRepository
         self.productIdList = InAppPurchaseService.loadProductIdList()
         
         updateListenerTask = listenForTransactions()
@@ -60,31 +61,40 @@ final class InAppPurchaseService {
         products.sorted(by: { return $0.displayName < $1.displayName })
     }
 
-    func purchase(_ product: Product) async throws -> VerifiyTransactionResponse? {
-        let result = try await product.purchase()
+    func purchase(_ product: Product, completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
+        let myToken = UUID()
+        let result = try await product.purchase(options: [.appAccountToken(myToken)])
 
         switch result {
         case .success(let verificationResult):
             do {
                 let transaction = try checkVerified(verificationResult)
                 
+                let purchasePencilRequest = PurchasePencilRequestDTO(
+                    transactionId: "\(transaction.id)",
+                    appAccountToken: transaction.appAccountToken?.uuidString ?? "",
+                    pencilQuantity: product.displayName.pencilQuantity,
+                    price: productPrice(productId: product.id),
+                    productId: transaction.productID,
+                    playTime: Int(PlayTimeTracker.shared.getPlayTime())
+                )
+                
+                dump(purchasePencilRequest)
+                
                 // 서버 검증
-                let verifyResult = try await buyPencilRepository.verifyTransaction(transaction: transaction)
+                pencilShopRepository.purchasePencil(parameter: purchasePencilRequest)
+                    .asObservable()
+                    .subscribe(with: self) { owner, purchasePencilDTO in
+                        completionHandler(purchasePencilDTO)
+                    }
+                    .disposed(by: disposeBag)
 
-                if verifyResult.isSuccess {
-                    await transaction.finish()
-                    return verifyResult
-                } else {
-                    await transaction.finish()
-                    return nil
-                }
-
+                await transaction.finish()
             } catch {
-//                storePendingTransaction(jws: verificationResult.jwsRepresentation)
-                return nil
+                completionHandler(nil)
             }
-        case .userCancelled, .pending: return nil
-        default: return nil
+        case .userCancelled, .pending: completionHandler(nil)
+        default: completionHandler(nil)
         }
     }
     
@@ -97,21 +107,24 @@ final class InAppPurchaseService {
                     let transaction = try checkVerified(result)
 
                     do {
-                        let verifyResult = try await buyPencilRepository.verifyTransaction(transaction: transaction)
-
-                        if verifyResult.isSuccess {
-                            transactionCompleted.onNext(verifyResult)
-                            await transaction.finish()
-                        } else {
-                            await transaction.finish()
-                            print("🚫 서버 검증 실패: \(transaction.id)")
-                        }
-
-                    } catch {
-                        // 서버 통신 실패 → finish() 하지 않고 jws 저장
-                        print("🌐 서버 요청 실패, 트랜잭션 저장: \(error)")
+                        let purchasePencilRequest = PurchasePencilRequestDTO(
+                            transactionId: "\(transaction.id)",
+                            appAccountToken: transaction.appAccountToken?.uuidString ?? "",
+                            pencilQuantity: transaction.productID.pencilQuantity,
+                            price: productPrice(productId: transaction.productID),
+                            productId: transaction.productID,
+                            playTime: Int(PlayTimeTracker.shared.getPlayTime())
+                        )
+                        
+                        // 서버 검증
+                        pencilShopRepository.purchasePencil(parameter: purchasePencilRequest)
+                            .asObservable()
+                            .subscribe(with: self) { owner, purchasePencilDTO in
+                                owner.completedPurchasePencilDTO.onNext(purchasePencilDTO)
+                            }
+                            .disposed(by: disposeBag)
+                        await transaction.finish()
                     }
-
                 } catch {
                     print("🚫 트랜잭션 서명 검증 실패")
                     // VerificationResult가 .unverified인 경우는 대부분 버리는 것이 맞음
@@ -151,13 +164,14 @@ extension InAppPurchaseService {
         }
     }
     
-    func requestPurchase(product: Product) -> Single<VerifiyTransactionResponse?> {
+    func requestPurchase(product: Product) -> Single<PurchasePencilDTO?> {
         return Single.create { single in
             let task = Task.detached { [weak self] in
                 guard let self else { return }
                 do {
-                    let verifyResult = try await purchase(product)
-                    single(.success((verifyResult)))
+                    try await purchase(product) { purchasePencilDTO in
+                        single(.success((purchasePencilDTO)))
+                    }
                 } catch {
                     single(.failure(error))
                 }
@@ -171,6 +185,14 @@ extension InAppPurchaseService {
     private func storePendingTransaction(jws: String) {
         let pendingTransaction = PendingTransaction(jws: jws, createdAt: Date())
         PendingTransactionStore.shared.save(pendingTransaction)
+    }
+    
+    private func productPrice(productId: String) -> Int {
+        guard let infoDict = Bundle.main.infoDictionary,
+              let products = infoDict["Products"] as? [String: String] else {
+            return 0
+        }
+        return Int(products[productId] ?? "") ?? 0
     }
 }
 

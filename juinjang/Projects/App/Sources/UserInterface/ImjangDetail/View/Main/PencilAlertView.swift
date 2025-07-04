@@ -25,8 +25,6 @@ final class PencilAlertView: BaseAlertViewController {
     init(title: String,
          pencilCount: Int,
          needPencilCount: Int) {
-        let isNeedPencil = pencilCount < needPencilCount
-        
         super.init(
             height: 257,
             isShowDismissButton: true,
@@ -36,14 +34,14 @@ final class PencilAlertView: BaseAlertViewController {
                 myPencilView
             ],
             buttons: [
-                isNeedPencil
+                pencilCount < needPencilCount
                 ? .confirm(title: "연필 상점으로 가기")
                 : .custom(view: customButtonView)
             ]
         )
         
         titleLabel.text = title
-        contentLabel.text = isNeedPencil 
+        contentLabel.text = pencilCount < needPencilCount
         ? "연필이 부족해요:("
         : "노트를 구매할까요?"
         

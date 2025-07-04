@@ -27,7 +27,7 @@ final class EmptyObtainedView: UIStackView {
         $0.numberOfLines = 0
     }
     
-    private let goMyImjangNoteButton = UIButton().then {
+    let goMyImjangNoteButton = UIButton().then {
         var config = UIButton.Configuration.plain()
         config.attributedTitle = AttributedString("내 임장노트로 가기", attributes: AttributeContainer([
             .font: UIFont.pretendard(size: 16, weight: .semiBold),
@@ -52,13 +52,13 @@ final class EmptyObtainedView: UIStackView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureHierarchy() {
+    private func configureHierarchy() {
         [imageView, descriptionLabel, goMyImjangNoteButton].forEach {
             self.addArrangedSubview($0)
         }
     }
     
-    func configureLayout() {
+    private func configureLayout() {
         self.setCustomSpacing(8, after: imageView)
         self.setCustomSpacing(36, after: descriptionLabel)
         
@@ -68,7 +68,7 @@ final class EmptyObtainedView: UIStackView {
         }
     }
     
-    func configureView() {
+    private func configureView() {
         axis = .vertical
         alignment = .center
         distribution = .fill
