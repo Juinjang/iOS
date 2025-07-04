@@ -253,7 +253,8 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             reactor: PencilShopReactor(
                 dependency: PencilShopReactor.Dependency(
                     inAppPurchaseService: InAppPurchaseService(pencilShopRepository: PencilShopRepository()),
-                    pencilShopRepository: PencilShopRepository()
+                    pencilShopRepository: PencilShopRepository(),
+                    userRepository: UserRepository()
                 )
             )
         )
