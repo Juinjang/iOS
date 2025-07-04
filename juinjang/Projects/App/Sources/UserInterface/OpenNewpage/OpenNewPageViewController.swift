@@ -44,7 +44,7 @@ final class OpenNewPageViewController: BaseViewController {
     var selectedPropertyType: Int?
     var selectedPriceType: Int = 3 // 기본값 실거래가로 설정
     var selectedPrice: String = ""
-    var selectedMonthlyRent: String = ""
+    var selectedMonthlyRent: String? = nil
     
     var backgroundImageViewWidthConstraint: NSLayoutConstraint? // 배경 이미지의 너비 제약조건
     

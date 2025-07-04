@@ -141,11 +141,8 @@ extension ShareSelectViewReactor {
                     propertyType: nil,
                     priceType: nil,
                     keyword: nil,
-                    pageable: .init(
-                        page: 0,
-                        size: 10,
-                        sort: ["createdAt,desc"]
-                    )
+                    page: 0,
+                    size: 10
                 )
             )
             .asObservable()
@@ -188,11 +185,8 @@ extension ShareSelectViewReactor {
                     propertyType: nil,
                     priceType: nil,
                     keyword: nil,
-                    pageable: .init(
-                        page: self.currentPageCount,
-                        size: 10,
-                        sort: ["createdAt,desc"]
-                    )
+                    page: self.currentPageCount,
+                    size: 10
                 )
             )
             .asObservable()
