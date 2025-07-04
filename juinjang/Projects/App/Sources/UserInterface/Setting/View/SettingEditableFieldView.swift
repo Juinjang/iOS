@@ -263,6 +263,17 @@ extension SettingEditableFieldView: UITextFieldDelegate {
         state = text == "" ? .editing : .editCompleted
     }
     
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
+        let currentText = textField.text ?? ""
+        guard let stringRange = Range(range, in: currentText) else { return true }
+
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+
+        return updatedText.count <= (maxTextCount-1)
+    }
+    
     func textFieldDidChangeSelection(_ textField: UITextField) {
         let updatedText = textField.text ?? ""
         
