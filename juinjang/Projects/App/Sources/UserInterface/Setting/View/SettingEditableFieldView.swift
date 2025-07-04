@@ -95,7 +95,7 @@ final class SettingEditableFieldView: BaseView {
          maxTextCount: Int) {
         self.defaultPlaceholder = defaultPlaceholder
         self.editingPlaceholder = editingPlaceholder
-        self.maxTextCount = maxTextCount
+        self.maxTextCount = maxTextCount-1
         super.init(frame: .zero)
         bind()
         titleLabel.text = title
@@ -260,7 +260,8 @@ extension SettingEditableFieldView {
 extension SettingEditableFieldView: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         guard let text = textField.text else { return }
-        state = text == "" ? .editing : .editCompleted
+        let isCompleted: State = text == self.text ? .editing : .editCompleted
+        state = text == "" ? .editing : isCompleted
     }
     
     func textField(_ textField: UITextField,
@@ -271,7 +272,7 @@ extension SettingEditableFieldView: UITextFieldDelegate {
 
         let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
 
-        return updatedText.count <= (maxTextCount-1)
+        return updatedText.count <= maxTextCount
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
