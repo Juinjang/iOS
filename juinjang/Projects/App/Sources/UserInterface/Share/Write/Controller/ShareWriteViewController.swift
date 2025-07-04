@@ -157,7 +157,7 @@ final class ShareWriteViewController: BaseViewController, View {
                     switch event {
                     case .cancel:
                         self.navigationController?.pushViewController(
-                            LookAroundViewController(reactor: .init(repository: .init())),
+                            LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository()))),
                             animated: true
                         )
                         

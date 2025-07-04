@@ -9,13 +9,13 @@ import Foundation
 import Alamofire
 
 enum UserAPI: TargetType {
-    case getProfileIntroduction
+    case getProfileInfo
     case patchProfileIntroduction(String)
     case regenerateAccessToken
 
     var path: String {
         switch self {
-        case .getProfileIntroduction:
+        case .getProfileInfo:
             return "profile"
         case .patchProfileIntroduction:
             return "profile/introduction"
@@ -26,7 +26,7 @@ enum UserAPI: TargetType {
 
     var method: HTTPMethod {
         switch self {
-        case .getProfileIntroduction:
+        case .getProfileInfo:
             return .get
         case .patchProfileIntroduction:
             return .patch
@@ -37,7 +37,7 @@ enum UserAPI: TargetType {
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getProfileIntroduction,
+        case .getProfileInfo,
                 .patchProfileIntroduction,
                 .regenerateAccessToken:
             return []
@@ -46,7 +46,7 @@ enum UserAPI: TargetType {
 
     var parameters: [String : Any]? {
         switch self {
-        case .getProfileIntroduction:
+        case .getProfileInfo:
             return nil
         case .patchProfileIntroduction(let text):
             return ["introduction": text]

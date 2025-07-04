@@ -161,7 +161,8 @@ final class LookAroundViewController: BaseViewController, View {
                 dependency: .init(
                     id: sharedNoteId,
                     title: buildingName,
-                    repository: SharedNoteRepository()
+                    sharedNoteRepository: SharedNoteRepository(),
+                    pencilShopRepository: PencilShopRepository()
                 )
             )
         )

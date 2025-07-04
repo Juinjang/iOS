@@ -10,6 +10,7 @@ import Then
 import SnapKit
 import Alamofire
 import RxSwift
+import Kingfisher
 
 struct YourResponseModel: Codable {
     let isSuccess: Bool
@@ -32,88 +33,82 @@ protocol LogoutDelegate: AnyObject {
 final class SettingViewController : BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
     static let id = "SettingViewController"
     
+    private let userRepository = UserRepository()
     private let navigationView = DefaultNavigationView().then {
         $0.title = "설정"
         $0.leftItem = [.pop]
     }
     
     //MARK: - 프로필 사진, 닉네임
-    var profileImageView = UIImageView().then {
+    private let profileImageView = UIImageView().then {
         $0.image = UIImage.Setting.profile
-        $0.translatesAutoresizingMaskIntoConstraints = false
         $0.contentMode = .scaleAspectFill
         $0.layer.cornerRadius = 33
         $0.clipsToBounds = true
     }
-    
-    var editButton = UIButton().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
+    private let editButton = UIButton().then {
         $0.setTitle("수정", for: .normal)
         $0.setTitleColor(.main, for: .normal)
-        $0.titleLabel?.font = UIFont(name: "Pretendard-Medium", size: 14)
-    } // 수정 버튼 눌렀을 때 갤러리 들어가게
+        $0.titleLabel?.font = .pretendard(size: 14, weight: .medium)
+    } //수정 버튼 눌렀을 때 갤러리 들어가게
     
-    var nicknameLabel = UILabel().then {
+    private let nicknameLabel = UILabel().then {
         $0.text = "닉네임"
-        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 14, weight: .medium)
         $0.textColor = .gray400
     }
-    
-    var nickname = UILabel().then {
+    private let nicknameValueLabel = UILabel().then {
         $0.text = UserDefaultManager.shared.nickname
-        $0.font = UIFont(name: "Pretendard-Medium", size: 16)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 16, weight: .medium)
         $0.textColor = .gray500
     }
-    
-    var nicknameTextField = UITextField().then {
+    private let nicknameTextField = UITextField().then {
         $0.backgroundColor = .mainWhite
         $0.returnKeyType = .done
         $0.placeholder = "8자 이내"
         $0.text = UserDefaultManager.shared.nickname
-        $0.font = UIFont(name: "Pretendard-Medium", size: 16)
+        $0.font = .pretendard(size: 16, weight: .medium)
     }
-    
-    var nicknameWarnImageView = UIImageView().then {
+    private let nicknameWarnImageView = UIImageView().then {
         $0.image = UIImage.Setting.warn
     }
-    
-    var nicknameWarnLabel = UILabel().then {
+    private let nicknameWarnLabel = UILabel().then {
         $0.text = "닉네임은 8자 이내로 입력해 주세요."
-        $0.font = UIFont(name: "Pretendard-Medium", size: 12)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 12, weight: .medium)
         $0.textColor = .main
     }
-    
-    var nicknameSameWarnLabel = UILabel().then {
+    private let nicknameSameWarnLabel = UILabel().then {
         $0.text = "동일한 닉네임이 존재해요"
-        $0.font = UIFont(name: "Pretendard-Medium", size: 12)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 12, weight: .medium)
         $0.textColor = .main
     }
     
-    var saveButton = UIButton().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
+    private let saveButton = UIButton().then {
         $0.layer.cornerRadius = 10
         $0.setTitle("변경", for: .normal)
         $0.backgroundColor = .gray450
-        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 14)
+        $0.titleLabel?.font = .pretendard(size: 14, weight: .semiBold)
     }
-    
-    var line1 = UIView().then {
+    private let line1 = UIView().then {
         $0.backgroundColor = .stroke
     }
     
+    private let oneLineIntroTextFieldView = SettingEditableFieldView(
+        title: "한줄소개",
+        defaultPlaceholder: "한줄소개를 입력해 보세요",
+        editingPlaceholder: "20자 이내",
+        warnningText: "20자 이내로 입력해 주세요.",
+        maxTextCount: 20
+    )
+    
     //MARK: - 로그인 정보
-    var logInfoLabel = UILabel().then {
+    private let logInfoLabel = UILabel().then {
         $0.text = "로그인 정보"
-        $0.font = UIFont(name: "Pretendard-Medium", size: 14)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 14, weight: .medium)
         $0.textColor = .gray400
     }
 
-    var logImageView = UIImageView().then {
+    private let loginImageView = UIImageView().then {
         if UserDefaultManager.shared.isKakaoLogin {
             $0.image = UIImage.Setting.KAKAO
         } else {
@@ -121,81 +116,58 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         }
     }
     
-    var logInfoMailLabel = UILabel().then {
+    private let logInfoMailLabel = UILabel().then {
         $0.text = "\(UserDefaultManager.shared.email)"
-        $0.font = UIFont(name: "Pretendard-Medium", size: 16)
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = .pretendard(size: 16, weight: .medium)
         $0.textColor = .gray500
     }
     
-    var line2 = UIView().then {
-        $0.backgroundColor = .gray100
-    }
+    private lazy var line2 = makeSeparatorView()
     
-    //MARK: - 이용약관, 자주 묻는 질문
-    var useButton = UIButton().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
-    }
+    // 연필상점
+    private lazy var pencilShopButton = makeButton(title: "연필상점", image: .pencil24)
     
-    var useImageView = UIImageView().then {
-        $0.image = UIImage.Setting.documentText
-    }
-    var useLabel = UILabel().then {
-        $0.text = "이용약관"
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = .gray500
-    }
-    var qnaButton = UIButton().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
-    }
-    var qnaImageView = UIImageView().then {
-        $0.image = UIImage.Setting.qnA
-    }
-    var qnaLabel = UILabel().then {
-        $0.text = "자주 묻는 질문"
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = .gray500
-    }
-    var line3 = UIView().then {
-        $0.backgroundColor = .gray100
-    }
+    private lazy var line3 = makeSeparatorView()
+    
+    private lazy var useButton = makeButton(title: "이용약관", image: .Setting.documentText)
+    
+    private lazy var qnaButton = makeButton(title: "자주 묻는 질문", image: .Setting.documentText)
+    
+    private lazy var line4 = makeSeparatorView()
     
     //MARK: - 로그아웃, 계정삭제
-    var logoutButton = UIButton().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.setTitle("로그아웃", for: .normal)
-        $0.setTitleColor(.main, for: .normal)
-        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-    }
+    private lazy var logoutButton = makeButton(title: "로그아웃", color: .main)
     
-    var line4 = UIView().then {
-        $0.backgroundColor = .gray100
-    }
+    private lazy var line5 = makeSeparatorView()
     
-    var backgroundView = UIView().then{
+    private let backgroundView = UIView().then{
         $0.backgroundColor = .black.withAlphaComponent(0.6)
     }
     
-    var accountDeleteButton = UIButton().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
+    private lazy var withdrawalButton = makeButton(title: "계정 삭제하기", color: .gray400)
+    
+    struct Dependency {
+        let userRepository: UserRepositoryProtocol
     }
     
-    var accountDeleteLabel = UILabel().then {
-        $0.text = "계정 삭제하기"
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.textColor = .gray400
-    }
-    
+    private let dependency: Dependency
     weak var updateNicknameDelegate: updateNicknameDelegate?
     private var disposeBag = DisposeBag()
+    
+    init(dependency: Dependency) {
+        self.dependency = dependency
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .mainWhite
         
+        retrieveProfileInfo()
         loadProfileImage()
         logoutButton.contentHorizontalAlignment = .left
 
@@ -203,6 +175,48 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         addTarget()
         configureHierarchy()
         setConstraint()
+        
+        userRepository
+            .retrieveProfileInfo()
+            .subscribe(with: self) { (self, model) in
+                self.oneLineIntroTextFieldView.text = model.introduction ?? ""
+            }
+            .disposed(by: disposeBag)
+        
+        oneLineIntroTextFieldView
+            .saveButtonDidTapRelay
+            .subscribe(with: self) { (self, text) in
+                self.userRepository.updateProfileIntroduction(text: text)
+                    .observe(on: MainScheduler.instance)
+                    .subscribe(
+                        onCompleted: { [weak self] in
+                            self?.oneLineIntroTextFieldView.text = text
+                        },
+                        onError: { [weak self] error in
+                            self?.showAlert(title: "주인장", message: "한줄소개 변경 실패", actionHandler: nil)
+                        }
+                    )
+                    .disposed(by: self.disposeBag)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func retrieveProfileInfo() {
+        dependency.userRepository.retrieveProfileInfo()
+            .asObservable()
+            .subscribe(with: self) { owner, profileModel in
+                print(profileModel)
+                owner.nicknameValueLabel.text = profileModel.nickname
+                owner.logInfoMailLabel.text = profileModel.email
+                
+                if let profileImage = profileModel.image, let url = URL(string: profileImage) {
+                    owner.profileImageView.kf.setImage(with: url)
+                }
+                
+                owner.loginImageView.image = profileModel.provider == "KAKAO"
+                ? UIImage.Setting.KAKAO : UIImage.SignUp.appleLogo
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindAction() {
@@ -215,6 +229,12 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                 }
             }
             .disposed(by: disposeBag)
+        
+        pencilShopButton.rx.throttleTap
+            .subscribe(with: self) { owner, action in
+                owner.showPencilShopVC()
+            }
+            .disposed(by: disposeBag)
     }
     
     //MARK: - 함수
@@ -225,13 +245,27 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         useButton.addTarget(self, action: #selector(showUseSelectVC), for: .touchUpInside)
         qnaButton.addTarget(self, action: #selector(showQnAVC), for: .touchUpInside)
         logoutButton.addTarget(self, action: #selector(logoutButtonTap), for: .touchUpInside)
-        accountDeleteButton.addTarget(self, action: #selector(showAccountDeleteVC), for: .touchUpInside)
+        withdrawalButton.addTarget(self, action: #selector(showAccountDeleteVC), for: .touchUpInside)
     }
+    
+    private func showPencilShopVC() {
+        let pencilShopVC = PencilShopViewController(
+            reactor: PencilShopReactor(
+                dependency: PencilShopReactor.Dependency(
+                    inAppPurchaseService: InAppPurchaseService(pencilShopRepository: PencilShopRepository()),
+                    pencilShopRepository: PencilShopRepository(),
+                    userRepository: UserRepository()
+                )
+            )
+        )
+        navigationController?.pushViewController(pencilShopVC, animated: true)
+    }
+    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         if let pickedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             profileImageView.image = pickedImage
             saveProfileImage(pickedImage)
-            uploadImage(profileImageView.image!)
+            uploadImage(pickedImage)
         }
         picker.dismiss(animated: true, completion: nil)
     }
@@ -316,7 +350,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     @objc private func tapChangeButton(_ sender: Any) {
         switch saveButton.titleLabel?.text {
         case "변경":
-            nicknameTextField.text = nickname.text
+            nicknameTextField.text = nicknameValueLabel.text
             saveButton.setTitle("저장", for: .normal)
             saveButton.backgroundColor = .main
             view.addSubview(nicknameTextField)
@@ -350,9 +384,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                     return
                 }
                 nicknameTextField.endEditing(true)
-              
             }
-            
         }
     }
     
@@ -371,7 +403,6 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                 saveButton.backgroundColor = .main
             }
         }
-        
     }
     
     @objc private func backBtnTap() {
@@ -380,8 +411,6 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func sendNickName(nickname: String) {
-        print("sendNickName : \(nickname)")
-
         let parameters: [String: Any] = [
             "nickname": nickname
         ]
@@ -411,7 +440,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                     line1.removeFromSuperview()
                     nicknameWarnLabel.removeFromSuperview()
                     nicknameWarnImageView.removeFromSuperview()
-                    self.nickname.text = nicknameTextField.text
+                    nicknameValueLabel.text = nicknameTextField.text
                     UserDefaultManager.shared.nickname = nickname
                     nicknameSameWarnLabel.removeFromSuperview()
                     nicknameWarnImageView.removeFromSuperview()
@@ -433,32 +462,23 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             profileImageView,
             editButton,
             nicknameLabel,
-            nickname,
+            nicknameValueLabel,
             saveButton,
             line1,
+            oneLineIntroTextFieldView,
             logInfoLabel,
-            logImageView,
+            loginImageView,
             logInfoMailLabel,
             line2,
+            pencilShopButton,
+            line3,
             useButton,
             qnaButton,
-            line3,
-            logoutButton,
             line4,
-            accountDeleteButton
+            logoutButton,
+            line5,
+            withdrawalButton
         )
-        
-        useButton.add(
-            useImageView,
-            useLabel
-        )
-        
-        qnaButton.add(
-            qnaImageView,
-            qnaLabel
-        )
-        
-        accountDeleteButton.add(accountDeleteLabel)
     }
     
     private func setConstraint() {
@@ -480,7 +500,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             $0.top.equalTo(editButton.snp.bottom).offset(28)
             $0.leading.equalToSuperview().offset(24)
         }
-        nickname.snp.makeConstraints{
+        nicknameValueLabel.snp.makeConstraints{
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(24)
         }
@@ -490,77 +510,106 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             $0.height.equalTo(29)
             $0.width.equalTo(64)
         }
+        
+        oneLineIntroTextFieldView.snp.makeConstraints {
+            $0.top.equalTo(saveButton.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(24)
+            $0.right.equalToSuperview().inset(21)
+            $0.height.equalTo(68)
+        }
+        
         logInfoLabel.snp.makeConstraints {
-            $0.top.equalTo(nicknameLabel.snp.bottom).offset(79)
+            $0.top.equalTo(oneLineIntroTextFieldView.snp.bottom).offset(29)
             $0.leading.equalToSuperview().offset(24)
         }
-        logImageView.snp.makeConstraints{
+        loginImageView.snp.makeConstraints{
             $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(24)
             $0.height.width.equalTo(20)
         }
         logInfoMailLabel.snp.makeConstraints{
             $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(logImageView.snp.trailing).offset(8)
+            $0.leading.equalTo(loginImageView.snp.trailing).offset(8)
         }
         line2.snp.makeConstraints {
             $0.top.equalTo(logInfoMailLabel.snp.bottom).offset(28)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(4)
         }
+        
+        pencilShopButton.snp.makeConstraints { make in
+            make.top.equalTo(line2.snp.bottom).offset(10)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(60)
+        }
+        
+        line3.snp.makeConstraints { make in
+            make.top.equalTo(pencilShopButton.snp.bottom).offset(10)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(4)
+        }
+        
         useButton.snp.makeConstraints {
-            $0.top.equalTo(line2.snp.bottom).offset(10)
+            $0.top.equalTo(line3.snp.bottom).offset(10)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
-        useImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(18)
-            $0.leading.equalToSuperview().offset(24)
-            $0.height.equalTo(24)
-        }
-        useLabel.snp.makeConstraints {
-            $0.centerY.equalTo(useImageView)
-            $0.leading.equalTo(useImageView.snp.trailing).offset(8)
-        }
+        
         qnaButton.snp.makeConstraints {
             $0.top.equalTo(useButton.snp.bottom)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
-        qnaImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(18)
-            $0.leading.equalToSuperview().offset(24)
-            $0.height.equalTo(24)
-        }
-        qnaLabel.snp.makeConstraints {
-            $0.centerY.equalTo(qnaImageView)
-            $0.leading.equalTo(qnaImageView.snp.trailing).offset(8)
-        }
-        line3.snp.makeConstraints {
-            $0.top.equalTo(qnaImageView.snp.bottom).offset(28)
-            $0.horizontalEdges.equalToSuperview()
-            $0.height.equalTo(4)
-        }
-        logoutButton.snp.makeConstraints {
-            $0.top.equalTo(line3.snp.bottom).offset(25)
-            $0.horizontalEdges.equalToSuperview().inset(24)
-            $0.height.equalTo(23)
-        }
+        
         line4.snp.makeConstraints {
-            $0.top.equalTo(logoutButton.snp.bottom).offset(25)
+            $0.top.equalTo(qnaButton.snp.bottom).offset(10)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(4)
         }
-        accountDeleteButton.snp.makeConstraints {
+        
+        logoutButton.snp.makeConstraints {
             $0.top.equalTo(line4.snp.bottom).offset(10)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
-        accountDeleteLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(15)
-            $0.leading.equalToSuperview().offset(24)
-            $0.height.equalTo(23)
+        
+        line5.snp.makeConstraints {
+            $0.top.equalTo(logoutButton.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(4)
         }
+        
+        withdrawalButton.snp.makeConstraints {
+            $0.top.equalTo(line5.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(60)
+        }
+    }
+    
+    private func makeSeparatorView() -> UIView {
+        let view = UIView()
+        view.backgroundColor = .gray100
+        return view
+    }
+    
+    private func makeButton(title: String, color: UIColor = .gray500, image: UIImage? = nil) -> UIButton {
+        let button = UIButton()
+        var config = UIButton.Configuration.plain()
+        config.attributedTitle = AttributedString(
+            title,
+            attributes: AttributeContainer([
+                .font: UIFont.pretendard(size: 16, weight: .semiBold),
+                .foregroundColor: color
+        ]))
+        if let image {
+            config.image = image
+            config.imagePadding = 8
+        }
+        config.contentInsets = NSDirectionalEdgeInsets(top: 18, leading: 24, bottom: 18, trailing: 24)
+        config.background.backgroundColor = .clear
+        button.configuration = config
+        button.contentHorizontalAlignment = .leading
+        return button
     }
 }
 
@@ -595,7 +644,6 @@ extension SettingViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        print(#function, textField.text)
         let text = textField.text ?? ""
         if (text.trimmingCharacters(in: [" "]).isEmpty) {
             showAlert(title: "닉네임 입력", message: "한 글자 이상 입력해주세요", actionHandler: nil)

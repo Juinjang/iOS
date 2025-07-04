@@ -21,6 +21,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
     //테이블 뷰
     private let tableView = UITableView().then {
+        $0.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.register(TopTableViewCell.self, forCellReuseIdentifier: TopTableViewCell.id)
         $0.register(BottomTableViewCell.self, forCellReuseIdentifier: BottomTableViewCell.id)
@@ -34,7 +35,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
-        bindAction()
+        bind()
         tableView.delegate = self
         tableView.dataSource = self
         tableView.separatorStyle = .none
@@ -49,19 +50,17 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
        
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
-        
         setConstraint()
         callMainImjangRequest()
         checkAndUpdateIfNeeded()
         print("메인화면에서 이메일 출력 : \(UserDefaultManager.shared.email)")
     }
     
-    private func bindAction() {
+    private func bind() {
         navigationView.itemActionRelay
             .subscribe(with: self) { owner, action in
                 switch action {
-                case .settingButtonTap:
-                    owner.setttingBtnTap()
+                case .settingButtonTap: owner.setttingBtnTap()
                 default: break
                 }
             }
@@ -146,9 +145,13 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func setttingBtnTap() {
-        let vc = SettingViewController()
-        vc.updateNicknameDelegate = self
-        self.navigationController?.pushViewController(vc, animated: true)
+        let settingVC = SettingViewController(
+            dependency: SettingViewController.Dependency(
+                userRepository: UserRepository()
+            )
+        )
+        settingVC.updateNicknameDelegate = self
+        self.navigationController?.pushViewController(settingVC, animated: true)
     }
     
     private func setConstraint() {
