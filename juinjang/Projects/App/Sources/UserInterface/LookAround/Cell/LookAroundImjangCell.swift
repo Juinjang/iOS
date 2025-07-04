@@ -239,7 +239,9 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        profileImageView.layer.cornerRadius = profileImageView.bounds.width / 2
+        DispatchQueue.main.async {
+            self.profileImageView.layer.cornerRadius = self.profileImageView.bounds.width / 2
+        }
     }
 }
 

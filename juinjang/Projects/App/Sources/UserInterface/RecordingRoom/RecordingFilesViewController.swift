@@ -8,9 +8,15 @@
 import UIKit
 import AVFoundation
 import SkeletonView
+import RxSwift
 
 final class RecordingFilesViewController: BaseViewController {
-
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "녹음 파일"
+        $0.leftItem = [.pop]
+        $0.rightItem = [.startRecord]
+    }
+    
     let lastPopupDateKey = "lastPopupDate" // 경고 메시지 날짜 저장 Key
     
     // empty view
@@ -41,10 +47,12 @@ final class RecordingFilesViewController: BaseViewController {
     
     weak var removeRecordDelegate: RemoveRecordDelegate?
     var imjangId: Int
+    private var disposeBag = DisposeBag()
     
     init(imjangId: Int) {
         self.imjangId = imjangId
         super.init()
+        bind()
     }
     
     required init?(coder: NSCoder) {
@@ -57,7 +65,6 @@ final class RecordingFilesViewController: BaseViewController {
         addSubViews()
         setConstraints()
         configureView()
-        designNavigationBar()
         setDelegate()
         fetchRecordFiles()
     }
@@ -74,6 +81,18 @@ final class RecordingFilesViewController: BaseViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(editRecordName), name: .editRecordName, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(editRecordScript), name: .editRecordScript, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(addRecordResponse), name: .addRecordResponse, object: nil)
+    }
+    
+    private func bind() {
+        navigationView.itemActionRelay
+            .bind(with: self, onNext: { owner, action in
+                switch action {
+                case .popButtonTap: owner.popViewController()
+                case .startRecordButtonTap: owner.startRecording()
+                default: break
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     private func showSkeletonView() {
@@ -134,33 +153,11 @@ final class RecordingFilesViewController: BaseViewController {
         recordingFileTableView.delegate = self
     }
     
-    private func designNavigationBar() {
-        self.navigationItem.title = "녹음 파일"     // TODO: - 나중에 roomName 으로 연결
-        self.navigationController?.navigationBar.tintColor = .gray500
-        navigationItem.setHidesBackButton(true, animated: true)
-
-        // UIBarButtonItem 생성 및 이미지 설정
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft,
-                                             style: .plain,
-                                             target: self,
-                                             action: #selector(back))
-        
-        let addButtonItem = UIBarButtonItem(image: UIImage.addOrange,
-                                            style: .plain,
-                                            target: self,
-                                            action: #selector(startRecording))
-
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        self.navigationItem.rightBarButtonItem = addButtonItem
-        self.navigationItem.rightBarButtonItem?.tintColor = .main
-    }
-    
-    @objc private func back(_ sender: Any) {
+    private func popViewController() {
         navigationController?.popViewController(animated: true)
     }
     
-    @objc private func startRecording(_ sender: Any) {
+    private func startRecording() {
         if fileItems.count >= 3 {
             showAlert(title: nil, message: "녹음 파일은 3개까지 생성 가능해요", actionHandler: nil)
             return
@@ -217,14 +214,22 @@ final class RecordingFilesViewController: BaseViewController {
     }
  
     private func addSubViews() {
-        view.addSubview(recordingFileTableView)
-        view.addSubview(emptyRecordImageView)
-        view.addSubview(emptyLabel)
+        view.add(
+            navigationView,
+            recordingFileTableView,
+            emptyRecordImageView,
+            emptyLabel
+        )
     }
     
     private func setConstraints() {
+        navigationView.snp.makeConstraints { make in
+            make.horizontalEdges.top.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         recordingFileTableView.snp.makeConstraints {
-            $0.edges.equalTo(view.safeAreaLayoutGuide)
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         emptyRecordImageView.snp.makeConstraints { make in
