@@ -48,7 +48,7 @@ final class PlayTimeTracker {
     }
     
     private func save() {
-        UserDefaults.standard.set(totalPlayTime, forKey: userDefaultsKey)
+        UserDefaults.standard.set(Int(totalPlayTime) / 60, forKey: userDefaultsKey)
     }
     
     

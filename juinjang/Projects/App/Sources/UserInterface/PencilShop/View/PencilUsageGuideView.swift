@@ -48,6 +48,7 @@ final class PencilUsageGuideView: BaseView {
         
         $0.attributedText = NSAttributedString(AttributedString($0.text, attributes: AttributeContainer(attributes)))
         $0.isEditable = false
+        $0.isScrollEnabled = false
         $0.isHidden = true
     }
     

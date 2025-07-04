@@ -10,19 +10,6 @@ import SnapKit
 import RxSwift
 import RxRelay
 
-enum LookAroundCellEventType: Equatable {
-    case cellContentTap(content: LookAroundContent)
-}
-
-extension LookAroundCellEventType {
-    var tappedContent: LookAroundContent? {
-        if case let .cellContentTap(content) = self {
-            return content
-        }
-        return nil
-    }
-}
-
 final class LookAroundContentCell: BaseCollectionViewCell {
     private let iconImageView = UIImageView().then {
         $0.image = nil
@@ -43,12 +30,12 @@ final class LookAroundContentCell: BaseCollectionViewCell {
         disposeBag = DisposeBag()
     }
     
-    func configureCell(content: LookAroundContent, relay: PublishRelay<LookAroundCellEventType>) {
+    func configureCell(content: LookAroundContent, relay: PublishRelay<LookAroundEventType>) {
         iconImageView.image = content.iconImage
         titleLabel.setAttribute(text: content.title, color: .gray600, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
         
         cellTapButton.rx.tap
-            .map { LookAroundCellEventType.cellContentTap(content: content) }
+            .map { LookAroundEventType.cellContentTap(content: content) }
             .bind(to: relay)
             .disposed(by: disposeBag)
     }
