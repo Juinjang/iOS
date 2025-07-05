@@ -14,6 +14,7 @@ enum LookAroundEventType: Equatable {
     case cellContentTap(content: LookAroundContent)
     case filterItemTap(SortAction?, TransactionTypeAction?, SaleTypeAction?)
     case heartButtonTap(sharedNoteId: Int)
+    case selectAreaTap
     case noteTap(sharedNoteId: Int, buildingName: String)
 }
 
@@ -46,6 +47,13 @@ extension LookAroundEventType {
             return nil
         }
     }
+    
+    var tappedSelectArea: Void? {
+        if case .selectAreaTap = self {
+            return ()
+        }
+        return nil
+    }
 }
 
 final class LookAroundViewController: BaseViewController, View {
@@ -73,7 +81,7 @@ final class LookAroundViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
-        reactor?.action.onNext(.retrieveExploreNotes)
+        reactor?.action.onNext(.viewDidLoad)
     }
 
     override func loadView() {
@@ -127,6 +135,13 @@ final class LookAroundViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         cellEventRelay
+            .map { $0.tappedSelectArea }
+            .bind(with: self) { owner, _ in
+                owner.showSelectAreaVC()
+            }
+            .disposed(by: disposeBag)
+        
+        cellEventRelay
             .compactMap { $0.tappedFilterItem }
             .bind(with: self) { owner, tappedFilters in
                 owner.reactor?.action.onNext(
@@ -153,6 +168,16 @@ final class LookAroundViewController: BaseViewController, View {
                 owner.showLookAroundDetailVC(sharedNoteId: sharedNoteId, buildingName: buildingName)
             }
             .disposed(by: disposeBag)
+    }
+    
+    private func showSelectAreaVC() {
+        let selectAreaVC = SelectAreaViewController(
+            reactor: SelectAreaReactor(dependency: .init(selectAreaRepository:SelectAreaRepository())
+            )
+        )
+        DispatchQueue.main.async {
+            self.navigationController?.pushViewController(selectAreaVC, animated: true)
+        }
     }
     
     private func showLookAroundDetailVC(sharedNoteId: Int, buildingName: String) {
@@ -223,13 +248,13 @@ extension LookAroundViewController {
             switch dataSource[indexPath] {
             case .contentsSection(let content):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundContentCell.identifier, for: indexPath) as? LookAroundContentCell else { return UICollectionViewCell() }
-                cell.configureCell(content: content, relay: self.cellEventRelay)
+                cell.configureCell(content: content, relay: cellEventRelay)
                 return cell
                 
             case .selectAreaSection(let selectArea):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SelectAreaCell.identifier, for: indexPath) as? SelectAreaCell else { return UICollectionViewCell() }
                 
-                cell.configureCell(area: selectArea)
+                cell.configureCell(area: selectArea, relay: cellEventRelay)
                 
                 return cell
                 
@@ -240,7 +265,7 @@ extension LookAroundViewController {
                 
             case .exploreNoteSection(let exploreNote):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LookAroundImjangCell.identifier, for: indexPath) as? LookAroundImjangCell else { return UICollectionViewCell() }
-                cell.configureCell(exploreNote, relay: self.cellEventRelay)
+                cell.configureCell(exploreNote, relay: cellEventRelay)
                 return cell
             }
         }, configureSupplementaryView: { [weak self] dataSource, collectionView, kind, indexPath in
