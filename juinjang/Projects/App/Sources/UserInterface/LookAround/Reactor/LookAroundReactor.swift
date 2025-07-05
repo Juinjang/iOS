@@ -22,8 +22,8 @@ final class LookAroundReactor: Reactor {
     }
     
     enum Action {
+        case viewDidLoad
         case filterTapped(SortAction?, TransactionTypeAction?, SaleTypeAction?)
-        case retrieveExploreNotes
         case moreButtonDidTap
         case heartButtonDidTap(sharedNoteId: Int)
     }
@@ -64,6 +64,8 @@ final class LookAroundReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
+        case .viewDidLoad:
+            return retrieveInitialExploreNotes()
         case .filterTapped(let sortAction, let transactionTypeAction, let saleTypeAction):
             let filterInfo = handleFilterTapped(
                 sortAction: sortAction,
@@ -76,8 +78,6 @@ final class LookAroundReactor: Reactor {
                 .just(.setFilterInfo(filterInfo: filterInfo)),
                 retrieveInitialExploreNotes(filterInfo: filterInfo)
             ])
-        case .retrieveExploreNotes:
-            return retrieveInitialExploreNotes()
         case .moreButtonDidTap:
             let nextPage = currentState.currentPage + 1
             return .concat([
