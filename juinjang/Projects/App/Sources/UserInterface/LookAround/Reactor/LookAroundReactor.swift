@@ -225,7 +225,7 @@ final class LookAroundReactor: Reactor {
             propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
             priceType: filterInfo.transactionAction?.toRequestType ?? "",
             page: page,
-            size: 10
+            size: 15
         )
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
@@ -257,7 +257,7 @@ final class LookAroundReactor: Reactor {
             propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
             priceType: filterInfo.transactionAction?.toRequestType ?? "",
             page: page,
-            size: 10
+            size: 15
         )
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
