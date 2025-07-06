@@ -33,6 +33,12 @@ final class SelectedAreaView: BaseView {
         $0.configuration = config
     }
     
+    private let scrollView = UIScrollView().then {
+        $0.showsHorizontalScrollIndicator = false
+        $0.alwaysBounceHorizontal = true
+        $0.contentInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 0)
+    }
+    
     private let stackView = UIStackView().then {
         $0.design(alignment: .fill, distribution: .fill, spacing: 12)
     }
@@ -93,9 +99,11 @@ final class SelectedAreaView: BaseView {
             selectedCountLabel,
             totalCountLabel,
             resetButton,
-            stackView,
+            scrollView,
             bottomBorder
         )
+        
+        scrollView.add(stackView)
     }
     
     override func configureLayout() {
@@ -119,10 +127,16 @@ final class SelectedAreaView: BaseView {
             make.height.equalTo(20)
         }
         
-        stackView.snp.makeConstraints { make in
+        scrollView.snp.makeConstraints { make in
             make.top.equalTo(selectedCountLabel.snp.bottom).offset(12)
-            make.leading.equalToSuperview().inset(24)
+            make.horizontalEdges.equalToSuperview()
             make.height.equalTo(28)
+        }
+        
+        stackView.snp.makeConstraints { make in
+            make.verticalEdges.equalTo(scrollView.contentLayoutGuide)
+            make.horizontalEdges.equalTo(scrollView.contentLayoutGuide)
+            make.height.equalTo(scrollView.frameLayoutGuide)
         }
         
         bottomBorder.snp.makeConstraints { make in
