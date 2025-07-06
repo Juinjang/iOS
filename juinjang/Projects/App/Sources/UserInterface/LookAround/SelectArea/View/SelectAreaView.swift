@@ -17,6 +17,7 @@ final class SelectAreaView: BaseView {
         $0.axis = .horizontal
         $0.distribution = .fillEqually
         $0.spacing = 0
+        $0.backgroundColor = .mainWhite
     }
     
     private let topBorder = UIView().then {
@@ -51,13 +52,25 @@ final class SelectAreaView: BaseView {
         )
     }
     
+    let selectedAreaView = SelectedAreaView()
+    
     let bottomButtonView = BottomButtonView()
     
     override func configureHierarchy() {
-        add(navigationView, collectionViewStackView, topBorder, bottomButtonView)
-        [sidoCollectionView, sigunguCollectionView, dongCollectionView].forEach {
+        [sidoCollectionView,
+         sigunguCollectionView,
+         dongCollectionView
+        ].forEach {
             collectionViewStackView.addArrangedSubview($0)
         }
+        
+        add(
+            navigationView,
+            collectionViewStackView,
+            topBorder,
+            bottomButtonView,
+            selectedAreaView
+        )
     }
     
     override func configureLayout() {
@@ -72,7 +85,7 @@ final class SelectAreaView: BaseView {
         }
         
         topBorder.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalTo(collectionViewStackView.snp.top)
             make.horizontalEdges.equalToSuperview()
             make.height.equalTo(1)
         }
@@ -81,6 +94,12 @@ final class SelectAreaView: BaseView {
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
         }
+        
+        selectedAreaView.snp.makeConstraints { make in
+            make.bottom.equalTo(bottomButtonView.snp.top)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(92)
+        }
     }
     
     override func configureView() {
@@ -88,6 +107,7 @@ final class SelectAreaView: BaseView {
         DispatchQueue.main.async {
             self.addRightBorder(collectionView: self.sidoCollectionView, color: .gray200, thickness: 1)
             self.addRightBorder(collectionView: self.sigunguCollectionView, color: .gray200, thickness: 1)
+            self.bringSubviewToFront(self.selectedAreaView)
         }
     }
     

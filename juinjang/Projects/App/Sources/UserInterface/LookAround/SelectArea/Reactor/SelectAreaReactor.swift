@@ -15,12 +15,14 @@ final class SelectAreaReactor: Reactor {
         case sidoSelected(Int)
         case sigunguSelected(Int)
         case dongSelected(Int)
+        case resetButtonTapped
     }
     
     enum Mutation {
         case setSidoList([SidoSectionModel])
         case setSigunguList([SigunguSectionModel])
         case setDongList([DongSectionModel])
+        case setSelectedAreaList([DongCellItem])
         case setError(Error)
     }
     
@@ -28,7 +30,7 @@ final class SelectAreaReactor: Reactor {
         var sidoList: [SidoSectionModel] = []
         var sigunguList: [SigunguSectionModel] = []
         var dongList: [DongSectionModel] = []
-        var selectedDongList: [DongCellItem] = []
+        var selectedAreaList: [DongCellItem] = []
         var errorMessage: String?
     }
     
@@ -45,6 +47,7 @@ final class SelectAreaReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
+            guard currentState.sidoList.isEmpty else { return .empty() }
             return fetchInitialSidoList()
         case .sidoSelected(let index):
             return selectSido(selectedIndex: index)
@@ -52,6 +55,11 @@ final class SelectAreaReactor: Reactor {
             return selectSigungu(selectedIndex: index)
         case .dongSelected(let index):
             return selectDong(selectedIndex: index)
+        case .resetButtonTapped:
+            return .concat([
+                selectSido(selectedIndex: 0, isReset: true),
+                .just(.setSelectedAreaList([]))
+            ])
         }
     }
     
@@ -65,6 +73,8 @@ final class SelectAreaReactor: Reactor {
             newState.sigunguList = sectionList
         case .setDongList(let dongList):
             newState.dongList = dongList
+        case .setSelectedAreaList(let areaList):
+            newState.selectedAreaList = areaList
         case .setError(let error):
             newState.errorMessage = error.localizedDescription
         }
@@ -147,10 +157,13 @@ extension SelectAreaReactor{
     }
     
     // 시도 선택 -> 시도 UI 업데이트, 시군구 갱신
-    private func selectSido(selectedIndex: Int) -> Observable<Mutation> {
+    private func selectSido(selectedIndex: Int, isReset: Bool = false) -> Observable<Mutation> {
         guard let sectionModel = currentState.sidoList.first else { return .empty() }
-        guard !sectionModel.sidoItemList.isEmpty,
-                sectionModel.selectedIndex != selectedIndex else { return .empty() }
+        
+        if !isReset {
+            guard !sectionModel.sidoItemList.isEmpty,
+                  sectionModel.selectedIndex != selectedIndex else { return .empty() }
+        }
         let sidoList = sectionModel.sidoItemList
         
         let newSidoList = sidoList.enumerated().map { index, item in
@@ -208,10 +221,9 @@ extension SelectAreaReactor{
     
     // 동 선택
     private func selectDong(selectedIndex: Int) -> Observable<Mutation> {
-        print(#function, selectedIndex)
         guard var sectionModel = currentState.dongList.first else { return .empty() }
         guard sectionModel.dongItemList.count > selectedIndex else { return .empty() }
-    
+        var selectedAreaList = currentState.selectedAreaList
         let dongList = sectionModel.dongItemList
         
         let newDongList = dongList.enumerated().map { index, item in
@@ -221,10 +233,10 @@ extension SelectAreaReactor{
             
             if item.isSelected {
                 isSelected = false
-                sectionModel.selectedIndexs.remove(index)
+                selectedAreaList.removeAll { $0.admCode == item.admCode }
             } else {
                 isSelected = true
-                sectionModel.selectedIndexs.insert(index)
+                selectedAreaList.append(item)
             }
             
             return DongCellItem(
@@ -234,7 +246,10 @@ extension SelectAreaReactor{
             )
         }
         sectionModel.dongItemList = newDongList
-        return .just(.setDongList([sectionModel]))
+        return .concat([
+            .just(.setDongList([sectionModel])),
+            .just(.setSelectedAreaList(selectedAreaList))
+        ])
     }
     
     private func setSidoList(list: [AdmVO]) -> Observable<Mutation> {

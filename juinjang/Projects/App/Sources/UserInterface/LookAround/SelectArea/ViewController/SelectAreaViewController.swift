@@ -66,6 +66,13 @@ final class SelectAreaViewController: BaseViewController, View {
                 owner.applyDongList(sections: dongSectionModel)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.selectedAreaList }
+            .subscribe(with: self) { owner, selectedAreaList in
+                owner.mainView.selectedAreaView.isHidden = selectedAreaList.isEmpty
+                owner.mainView.selectedAreaView.configureSelectedList(itemList: selectedAreaList)
+            }
+            .disposed(by: disposeBag)
     }
     
     func bindEvent() {
@@ -94,6 +101,26 @@ final class SelectAreaViewController: BaseViewController, View {
         mainView.dongCollectionView.rx.itemSelected
             .subscribe(with: self) { owner, indexPath in
                 owner.reactor?.action.onNext(.dongSelected(indexPath.item))
+            }
+            .disposed(by: disposeBag)
+        
+        mainView.selectedAreaView.resetTapRelay
+            .subscribe(with: self) { owner, _ in
+                owner.mainView.selectedAreaView.isHidden = true
+                owner.mainView.selectedAreaView.configureSelectedList(itemList: [])
+                owner.reactor?.action.onNext(.resetButtonTapped)
+            }
+            .disposed(by: disposeBag)
+        
+        mainView.bottomButtonView.cancelButtonTapRelay
+            .subscribe(with: self) { owner, _ in
+                owner.popViewController()
+            }
+            .disposed(by: disposeBag)
+        
+        mainView.bottomButtonView.confirmButtonTapRelay
+            .subscribe(with: self) { owner, _ in
+                
             }
             .disposed(by: disposeBag)
     }

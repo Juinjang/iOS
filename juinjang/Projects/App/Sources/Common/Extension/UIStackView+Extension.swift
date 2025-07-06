@@ -8,7 +8,12 @@
 import UIKit
 
 extension UIStackView {
-    func design(axis: NSLayoutConstraint.Axis = .horizontal, alignment: UIStackView.Alignment = .center, distribution: UIStackView.Distribution = .equalSpacing, spacing: CGFloat = 4) {
+    func design(
+        axis: NSLayoutConstraint.Axis = .horizontal,
+        alignment: UIStackView.Alignment = .center,
+        distribution: UIStackView.Distribution = .equalSpacing,
+        spacing: CGFloat = 4
+    ) {
         self.axis = axis
         self.alignment = alignment
         self.distribution = distribution
