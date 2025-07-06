@@ -18,7 +18,7 @@ final class DongCell: BaseCollectionViewCell {
     func configureCell(item: DongCellItem) {
         titleLabel.text = item.name
         titleLabel.fontColor = item.isSelected ? .main : .gray400
-        
+        titleLabel.fontWeight = item.isSelected ? .semiBold : .medium
         checkImageView.isHidden = !item.isSelected
     }
     
