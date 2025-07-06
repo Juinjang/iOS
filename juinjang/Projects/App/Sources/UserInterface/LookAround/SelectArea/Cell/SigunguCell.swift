@@ -13,6 +13,7 @@ final class SigunguCell: BaseCollectionViewCell {
     func configureCell(item: SigunguCellItem) {
         titleLabel.text = item.name
         titleLabel.fontColor = item.isSelected ? .main : .gray400
+        titleLabel.fontWeight = item.isSelected ? .semiBold : .medium
         contentView.backgroundColor = item.isSelected ? .main100 : .mainWhite
     }
     
