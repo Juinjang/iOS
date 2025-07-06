@@ -269,8 +269,8 @@ extension LookAroundImjangCell {
     private func setImjangImage(_ imageUrl: String?, propertyType: String) {
         let property = PropertyType.allCases.filter { $0.rawValue == propertyType }
         if let propertyImage = property.first?.image {
-            if let imageUrl = URL(string: imageUrl ?? "") {
-                imjangImageView.kf.setImage(with: imageUrl, placeholder: propertyImage)
+            if let imageUrl {
+                imjangImageView.setImage(with: imageUrl, placeholder: propertyImage, resizedTo: CGSize(width: 144, height: 112))
             } else {
                 imjangImageView.image = propertyImage
             }

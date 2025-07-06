@@ -42,7 +42,7 @@ final class TopTableViewCell: UITableViewCell {
     
     let newPageButton = UIButton().then {
         var config = UIButton.Configuration.plain()
-        config.background.image = .Main.newPage
+        config.background.image = .Main.newPage.resize(newHeight: 136)
         config.background.imageContentMode = .scaleToFill
         config.background.cornerRadius = 10
         $0.configuration = config
@@ -56,7 +56,7 @@ final class TopTableViewCell: UITableViewCell {
     //새 페이지 펼치기
     let lookAroundButton = UIButton().then {
         var config = UIButton.Configuration.plain()
-        config.background.image = .Main.lookAround
+        config.background.image = .Main.lookAround.resize(newHeight: 136)
         config.background.imageContentMode = .scaleToFill
         config.background.cornerRadius = 10
         $0.configuration = config
