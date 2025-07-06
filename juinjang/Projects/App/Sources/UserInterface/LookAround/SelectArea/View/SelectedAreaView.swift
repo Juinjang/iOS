@@ -63,7 +63,6 @@ final class SelectedAreaView: BaseView {
     }
     
     func configureSelectedList(itemList: [DongCellItem]) {
-        guard itemList.count > 3 else { return }
         stackView.arrangedSubviews.forEach { view in
             view.removeFromSuperview()
         }
@@ -82,6 +81,9 @@ final class SelectedAreaView: BaseView {
         label.text = title
         label.textColor = .main
         label.backgroundColor = .main100
+        
+        label.layer.cornerRadius = 4
+        label.layer.masksToBounds = true
         return label
     }
     
@@ -148,11 +150,5 @@ final class SelectedAreaView: BaseView {
                               width: bounds.width,
                               height: shadowHeight)
         layer.shadowPath = UIBezierPath(rect: pathRect).cgPath
-        
-        DispatchQueue.main.async { [weak self] in
-            self?.stackView.arrangedSubviews.forEach { view in
-                view.layer.cornerRadius = 4
-            }
-        }
     }
 }
