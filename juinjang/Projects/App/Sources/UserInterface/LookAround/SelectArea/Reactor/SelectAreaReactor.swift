@@ -22,7 +22,7 @@ final class SelectAreaReactor: Reactor {
         case setSidoList([SidoSectionModel])
         case setSigunguList([SigunguSectionModel])
         case setDongList([DongSectionModel])
-        case setSelectedAreaList([DongCellItem])
+        case setSelectedAreaList(Set<DongCellItem>)
         case setError(Error)
     }
     
@@ -30,7 +30,7 @@ final class SelectAreaReactor: Reactor {
         var sidoList: [SidoSectionModel] = []
         var sigunguList: [SigunguSectionModel] = []
         var dongList: [DongSectionModel] = []
-        var selectedAreaList: [DongCellItem] = []
+        var selectedAreaList: Set<DongCellItem> = []
         var errorMessage: String?
     }
     
@@ -203,7 +203,6 @@ extension SelectAreaReactor{
                 sectionModel.selectedIndex != selectedIndex else { return .empty() }
         let sigunguList = sectionModel.sigunguItemList
         
-        let selectedSigungu: SigunguCellItem
         let newSigunguList = sigunguList.enumerated().map { index, item in
             SigunguCellItem(
                 admCode: item.admCode,
@@ -233,10 +232,12 @@ extension SelectAreaReactor{
             
             if item.isSelected {
                 isSelected = false
-                selectedAreaList.removeAll { $0.admCode == item.admCode }
+                if let index = selectedAreaList.firstIndex(where: { $0.admCode == item.admCode }) {
+                    selectedAreaList.remove(at: index)
+                }
             } else {
                 isSelected = true
-                selectedAreaList.append(item)
+                selectedAreaList.insert(item)
             }
             
             return DongCellItem(
@@ -274,10 +275,20 @@ extension SelectAreaReactor{
     
     private func setDongList(list: [AdmVO]) -> Observable<Mutation> {
         let dongCellItems = list.enumerated().map { index, admVO in
-            DongCellItem(admCode: admVO.admCode, name: admVO.lowestAdmCodeNm, isTotal: index == 0)
+            DongCellItem(
+                admCode: admVO.admCode,
+                name: admVO.lowestAdmCodeNm,
+                isSelected: isSelectedArea(admCode: admVO.admCode),
+                isTotal: index == 0
+            )
         }
         
         let sectionModel = [DongSectionModel(section: .main, dongItemList: dongCellItems)]
         return .just(.setDongList(sectionModel))
+    }
+    
+    private func isSelectedArea(admCode: String) -> Bool {
+        let selectedAreaList = currentState.selectedAreaList
+        return selectedAreaList.contains(where: { $0.admCode == admCode })
     }
 }

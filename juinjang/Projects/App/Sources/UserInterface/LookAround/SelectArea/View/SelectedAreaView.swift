@@ -62,13 +62,12 @@ final class SelectedAreaView: BaseView {
     private func bind() {
         resetButton.rx.throttleTap
             .subscribe(with: self) { owner, _ in
-                print("@@@ resetButton throttleTapped")
                 owner.resetTapRelay.accept(())
             }
             .disposed(by: disposeBag)
     }
     
-    func configureSelectedList(itemList: [DongCellItem]) {
+    func configureSelectedList(itemList: Set<DongCellItem>) {
         stackView.arrangedSubviews.forEach { view in
             view.removeFromSuperview()
         }
