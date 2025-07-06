@@ -15,7 +15,7 @@ final class SelectAreaView: BaseView {
     
     private let collectionViewStackView = UIStackView().then {
         $0.axis = .horizontal
-        $0.distribution = .fillEqually
+        $0.distribution = .fill
         $0.spacing = 0
         $0.backgroundColor = .mainWhite
     }
@@ -99,6 +99,21 @@ final class SelectAreaView: BaseView {
             make.top.equalTo(navigationView.snp.bottom).offset(24)
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(bottomButtonView.snp.top)
+        }
+        
+        let totalRatio: CGFloat = 18 + 29 + 33
+        let screenWidth = UIScreen.main.bounds.width
+        
+        sidoCollectionView.snp.makeConstraints { make in
+            make.width.equalTo(screenWidth * (18 / totalRatio))
+        }
+        
+        sigunguCollectionView.snp.makeConstraints { make in
+            make.width.equalTo(screenWidth * (29 / totalRatio))
+        }
+        
+        dongCollectionView.snp.makeConstraints { make in
+            make.width.equalTo(screenWidth * (33 / totalRatio))
         }
         
         topBorder.snp.makeConstraints { make in
