@@ -59,7 +59,7 @@ final class LookAroundReactor: Reactor {
         isLastPage: nil,
         currentPage: 0,
         currentNotesCount: 0,
-        areaList: []
+        areaList: nil
     )
     
     private var currentNotesCount: Int = 0
