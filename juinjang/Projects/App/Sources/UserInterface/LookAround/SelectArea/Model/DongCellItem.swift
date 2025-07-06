@@ -9,4 +9,5 @@ struct DongCellItem: Hashable {
     let admCode: String
     let name: String
     var isSelected: Bool = false
+    var isTotal: Bool = false
 }

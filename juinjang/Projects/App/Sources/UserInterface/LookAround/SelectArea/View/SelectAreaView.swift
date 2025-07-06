@@ -19,6 +19,10 @@ final class SelectAreaView: BaseView {
         $0.spacing = 0
     }
     
+    private let topBorder = UIView().then {
+        $0.backgroundColor = .gray200
+    }
+    
     lazy var sidoCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
         $0.backgroundColor = .mainWhite
         $0.showsVerticalScrollIndicator = false
@@ -50,7 +54,7 @@ final class SelectAreaView: BaseView {
     let bottomButtonView = BottomButtonView()
     
     override func configureHierarchy() {
-        add(navigationView, collectionViewStackView, bottomButtonView)
+        add(navigationView, collectionViewStackView, topBorder, bottomButtonView)
         [sidoCollectionView, sigunguCollectionView, dongCollectionView].forEach {
             collectionViewStackView.addArrangedSubview($0)
         }
@@ -67,6 +71,12 @@ final class SelectAreaView: BaseView {
             make.bottom.equalTo(bottomButtonView.snp.top)
         }
         
+        topBorder.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(1)
+        }
+        
         bottomButtonView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -75,46 +85,24 @@ final class SelectAreaView: BaseView {
     
     override func configureView() {
         super.configureView()
-    }
-    
-    func addTopBorder(color: UIColor, thickness: CGFloat) {
-        let borderName = "topBorder"
-        // 이미 추가된 게 있으면 중복 금지
-        if let sublayers = collectionViewStackView.layer.sublayers,
-           sublayers.contains(where: { $0.name == borderName }) {
-            return
+        DispatchQueue.main.async {
+            self.addRightBorder(collectionView: self.sidoCollectionView, color: .gray200, thickness: 1)
+            self.addRightBorder(collectionView: self.sigunguCollectionView, color: .gray200, thickness: 1)
         }
-        
-        let border = CALayer()
-        
-        border.name = borderName
-        border.backgroundColor = color.cgColor
-        border.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: thickness)
-        collectionViewStackView.layer.addSublayer(border)
-        collectionViewStackView.layer.masksToBounds = true
     }
     
     func addRightBorder(collectionView: UICollectionView, color: UIColor, thickness: CGFloat) {
         if collectionView.viewWithTag(1) != nil { return }
-
+        
         let border = UIView()
         border.backgroundColor = color
         border.tag = 1  // 중복 추가 체크용
         add(border)
-        border.translatesAutoresizingMaskIntoConstraints = false
+        
         border.snp.makeConstraints { make in
             make.verticalEdges.equalTo(collectionView)
             make.trailing.equalTo(collectionView.snp.trailing)
             make.width.equalTo(thickness)
-        }
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        DispatchQueue.main.async {
-            self.addTopBorder(color: .gray200, thickness: 1)
-            self.addRightBorder(collectionView: self.sidoCollectionView, color: .gray200, thickness: 1)
-            self.addRightBorder(collectionView: self.sigunguCollectionView, color: .gray200, thickness: 1)
         }
     }
 }
@@ -125,9 +113,7 @@ extension SelectAreaView {
                                               heightDimension: .absolute(43))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
-                                               heightDimension: .estimated(1000))
-        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
         section.interGroupSpacing = 0

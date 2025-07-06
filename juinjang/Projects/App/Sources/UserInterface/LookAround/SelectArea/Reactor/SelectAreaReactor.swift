@@ -28,6 +28,7 @@ final class SelectAreaReactor: Reactor {
         var sidoList: [SidoSectionModel] = []
         var sigunguList: [SigunguSectionModel] = []
         var dongList: [DongSectionModel] = []
+        var selectedDongList: [DongCellItem] = []
         var errorMessage: String?
     }
     
@@ -210,6 +211,7 @@ extension SelectAreaReactor{
         print(#function, selectedIndex)
         guard var sectionModel = currentState.dongList.first else { return .empty() }
         guard sectionModel.dongItemList.count > selectedIndex else { return .empty() }
+    
         let dongList = sectionModel.dongItemList
         
         let newDongList = dongList.enumerated().map { index, item in
@@ -256,8 +258,8 @@ extension SelectAreaReactor{
     }
     
     private func setDongList(list: [AdmVO]) -> Observable<Mutation> {
-        let dongCellItems = list.map { admVO in
-            DongCellItem(admCode: admVO.admCode, name: admVO.lowestAdmCodeNm)
+        let dongCellItems = list.enumerated().map { index, admVO in
+            DongCellItem(admCode: admVO.admCode, name: admVO.lowestAdmCodeNm, isTotal: index == 0)
         }
         
         let sectionModel = [DongSectionModel(section: .main, dongItemList: dongCellItems)]
