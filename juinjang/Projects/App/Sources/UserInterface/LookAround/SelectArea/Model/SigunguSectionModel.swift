@@ -8,5 +8,5 @@
 struct SigunguSectionModel: Hashable {
     let section: SelectAreaSection
     let sigunguItemList: [SigunguCellItem]
-    let selectedId: Int = 0
+    var selectedIndex: Int = 0
 }

@@ -110,16 +110,20 @@ extension SelectAreaReactor{
     }
     
     // 선택된 시군구 기준 동읍면 조회
-    private func fetchDongList(admCode: String?) -> Observable<Mutation> {
-        guard let admCode else { return .empty() }
-        let admRequestDto = AreaCodeRequestDTO(admCode: admCode)
+    private func fetchDongList(signugu: SigunguCellItem?) -> Observable<Mutation> {
+        guard let signugu else { return .empty() }
+        let admRequestDto = AreaCodeRequestDTO(admCode: signugu.admCode)
         
         return dependency.selectAreaRepository
             .fetchAdmDongList(param: admRequestDto)
             .asObservable()
             .flatMap { [weak self] admResponseDto -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
-                let list = admResponseDto.admVOList.admVOList
+                var list = admResponseDto.admVOList.admVOList
+
+                let totalDong = AdmVO(admCode: signugu.admCode, lowestAdmCodeNm: "\(signugu.name) 전체")
+                list.insert(totalDong, at: 0)
+                
                 dump(list)
                 return setDongList(list: list)
             }
@@ -144,7 +148,8 @@ extension SelectAreaReactor{
     // 시도 선택 -> 시도 UI 업데이트, 시군구 갱신
     private func selectSido(selectedIndex: Int) -> Observable<Mutation> {
         guard let sectionModel = currentState.sidoList.first else { return .empty() }
-        guard !sectionModel.sidoItemList.isEmpty, sectionModel.selectedIndex != selectedIndex else { return .empty() }
+        guard !sectionModel.sidoItemList.isEmpty,
+                sectionModel.selectedIndex != selectedIndex else { return .empty() }
         let sidoList = sectionModel.sidoItemList
         
         let newSidoList = sidoList.enumerated().map { index, item in
@@ -171,15 +176,20 @@ extension SelectAreaReactor{
     }
     
     // 시군구 admCode
-    private func sigunguAdmCode(index: Int) -> String? {
+    private func sigungu(index: Int) -> SigunguCellItem? {
         guard let list = currentState.sigunguList.first?.sigunguItemList else { return nil }
         guard list.count > index else { return nil }
-        return list[index].admCode
+        return list[index]
     }
     
     // 시군구 선택 -> 시군구 UI 업데이트, 동 조회
     private func selectSigungu(selectedIndex: Int) -> Observable<Mutation> {
-        guard let sigunguList = currentState.sigunguList.first?.sigunguItemList else { return .empty() }
+        guard let sectionModel = currentState.sigunguList.first else { return .empty() }
+        guard !sectionModel.sigunguItemList.isEmpty,
+                sectionModel.selectedIndex != selectedIndex else { return .empty() }
+        let sigunguList = sectionModel.sigunguItemList
+        
+        let selectedSigungu: SigunguCellItem
         let newSigunguList = sigunguList.enumerated().map { index, item in
             SigunguCellItem(
                 admCode: item.admCode,
@@ -188,10 +198,10 @@ extension SelectAreaReactor{
                 ? true : false
             )
         }
-        let sectionModel = [SigunguSectionModel(section: .main, sigunguItemList: newSigunguList)]
+        let newSectionModel = [SigunguSectionModel(section: .main, sigunguItemList: newSigunguList, selectedIndex: selectedIndex)]
         return .concat([
-            .just(.setSigunguList(sectionModel)),
-            fetchDongList(admCode: sigunguAdmCode(index: selectedIndex))
+            .just(.setSigunguList(newSectionModel)),
+            fetchDongList(signugu: sigungu(index: selectedIndex))
         ])
     }
     
@@ -202,8 +212,6 @@ extension SelectAreaReactor{
         guard sectionModel.dongItemList.count > selectedIndex else { return .empty() }
         let dongList = sectionModel.dongItemList
         
-        
-        print("selectedIndexs 1: \(sectionModel.selectedIndexs)")
         let newDongList = dongList.enumerated().map { index, item in
             guard index == selectedIndex else { return item }
             
@@ -216,7 +224,7 @@ extension SelectAreaReactor{
                 isSelected = true
                 sectionModel.selectedIndexs.insert(index)
             }
-            print("selectedIndexs 2: \(sectionModel.selectedIndexs)")
+            
             return DongCellItem(
                 admCode: item.admCode,
                 name: item.name,
