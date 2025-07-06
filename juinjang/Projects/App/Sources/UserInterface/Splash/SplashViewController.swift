@@ -30,8 +30,8 @@ final class SplashViewController: UIViewController, View {
         view.addSubview(animationView)
         animationView.center = view.center
 
-        self.animationView.play{ (finish) in
-            self.reactor?.action.onNext(.checkLoginStatus)
+        animationView.play { [weak self] (finish) in
+            self?.reactor?.action.onNext(.checkLoginStatus)
         }
     }
     
@@ -40,6 +40,8 @@ final class SplashViewController: UIViewController, View {
             .compactMap { $0.navigation }
             .asDriver(onErrorDriveWith: .just(.login))
             .drive(with: self, onNext: { owner, navigation in
+                owner.animationView.stop()
+                
                 switch navigation {
                 case .onbording:
                     owner.changeOnboardingContainerVC()
