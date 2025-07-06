@@ -8,7 +8,9 @@
 import UIKit
 
 final class DongCell: BaseCollectionViewCell {
-    private var titleLabel = DSLabel(.body)
+    private var titleLabel = DSLabel(.body).then {
+        $0.fontSize = 14
+    }
     
     private let checkImageView = UIImageView().then {
         $0.image = .ImjangList.on

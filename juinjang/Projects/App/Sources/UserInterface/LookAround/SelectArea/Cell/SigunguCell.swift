@@ -8,7 +8,9 @@
 import UIKit
 
 final class SigunguCell: BaseCollectionViewCell {
-    private var titleLabel = DSLabel(.body)
+    private var titleLabel = DSLabel(.body).then {
+        $0.fontSize = 14
+    }
     
     func configureCell(item: SigunguCellItem) {
         titleLabel.text = item.name

@@ -10,7 +10,9 @@ import SnapKit
 import Then
 
 final class SidoCell: BaseCollectionViewCell {
-    private var titleLabel = DSLabel(.body)
+    private var titleLabel = DSLabel(.body).then {
+        $0.fontSize = 14
+    }
     
     override func prepareForReuse() {
         super.prepareForReuse()
