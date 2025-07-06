@@ -40,7 +40,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     var priceDetailLabel: UILabel?
     var priceDetailLabel2: UILabel?
-    var delegate: SendDetailEditData?
+    weak var delegate: SendDetailEditData?
 
     let contentView = UIView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
@@ -1005,6 +1005,6 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
     }
 }
 
-protocol SendDetailEditData {
+protocol SendDetailEditData: AnyObject {
     func sendDetailData(imjangId: Int, model: NoteDetailModel)
 }

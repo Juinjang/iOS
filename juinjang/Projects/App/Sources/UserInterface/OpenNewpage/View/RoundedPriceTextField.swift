@@ -44,7 +44,7 @@ final class RoundedPriceTextField: BaseView {
         set { textField.text = newValue }
     }
     
-    var delegate: UITextFieldDelegate? {
+    weak var delegate: UITextFieldDelegate? {
         get { textField.delegate ?? nil  }
         set { textField.delegate = newValue }
     }
