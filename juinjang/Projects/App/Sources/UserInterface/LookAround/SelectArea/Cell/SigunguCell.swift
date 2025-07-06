@@ -10,35 +10,22 @@ import UIKit
 final class SigunguCell: BaseCollectionViewCell {
     private var titleLabel = DSLabel(.body)
     
-    private let checkImageView = UIImageView().then {
-        $0.image = .ImjangList.on
-        $0.isHidden = true
-    }
-    
     func configureCell(item: SigunguCellItem) {
         titleLabel.text = item.name
-        titleLabel.fontColor = item.isSelected ? .white : .gray400
+        titleLabel.fontColor = item.isSelected ? .main : .gray400
+        contentView.backgroundColor = item.isSelected ? .main100 : .mainWhite
     }
     
     override func configureHierarchy() {
         super.configureHierarchy()
-        addSubview(titleLabel)
-        addSubview(checkImageView)
+        contentView.addSubview(titleLabel)
     }
      
     override func configureLayout() {
         super.configureLayout()
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(16)
-            make.trailing.lessThanOrEqualTo(checkImageView.snp.leading).offset(-4)
+            make.horizontalEdges.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
-            make.verticalEdges.lessThanOrEqualToSuperview().inset(10)
-        }
-        
-        checkImageView.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(16)
-            make.centerY.equalToSuperview()
-            make.size.equalTo(20)
         }
     }
     

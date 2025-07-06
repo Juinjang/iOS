@@ -17,6 +17,14 @@ final class DongCell: BaseCollectionViewCell {
     
     func configureCell(item: DongCellItem) {
         titleLabel.text = item.name
+        titleLabel.fontColor = item.isSelected ? .main : .gray400
+        
+        checkImageView.isHidden = !item.isSelected
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        checkImageView.isHidden = true
     }
     
     override func configureHierarchy() {
@@ -29,7 +37,7 @@ final class DongCell: BaseCollectionViewCell {
         super.configureLayout()
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(16)
-            make.trailing.lessThanOrEqualTo(checkImageView.snp.leading).offset(-4)
+            make.trailing.greaterThanOrEqualTo(checkImageView.snp.leading).offset(-4)
             make.centerY.equalToSuperview()
             make.verticalEdges.lessThanOrEqualToSuperview().inset(10)
         }

@@ -8,5 +8,5 @@
 struct SidoSectionModel: Hashable {
     let section: SelectAreaSection
     let sidoItemList: [SidoCellItem]
-    let selectedId: Int = 0
+    var selectedIndex: Int = 0
 }

@@ -15,6 +15,9 @@ final class SelectAreaViewController: BaseViewController, View {
     typealias SigunguDataSource = UICollectionViewDiffableDataSource<SelectAreaSection, SigunguCellItem>
     private var sigunguDataSource: SigunguDataSource!
     
+    typealias DongDataSource = UICollectionViewDiffableDataSource<SelectAreaSection, DongCellItem>
+    private var dongDataSource: DongDataSource!
+    
     var disposeBag = DisposeBag()
     
     private let mainView = SelectAreaView()
@@ -23,6 +26,7 @@ final class SelectAreaViewController: BaseViewController, View {
         super.init()
         configureSidoDataSource()
         configureSigunguDataSource()
+        configureDongDataSource()
         self.reactor = reactor
         bindEvent()
     }
@@ -56,6 +60,12 @@ final class SelectAreaViewController: BaseViewController, View {
                 owner.applySigunguList(sections: sigunguSectionModel)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state.map { $0.dongList }
+            .subscribe(with: self) { owner, dongSectionModel in
+                owner.applyDongList(sections: dongSectionModel)
+            }
+            .disposed(by: disposeBag)
     }
     
     func bindEvent() {
@@ -74,10 +84,21 @@ final class SelectAreaViewController: BaseViewController, View {
                 owner.reactor?.action.onNext(.sidoSelected(indexPath.item))
             }
             .disposed(by: disposeBag)
+        
+        mainView.sigunguCollectionView.rx.itemSelected
+            .subscribe(with: self) { owner, indexPath in
+                owner.reactor?.action.onNext(.sigunguSelected(indexPath.item))
+            }
+            .disposed(by: disposeBag)
+        
+        mainView.dongCollectionView.rx.itemSelected
+            .subscribe(with: self) { owner, indexPath in
+                owner.reactor?.action.onNext(.dongSelected(indexPath.item))
+            }
+            .disposed(by: disposeBag)
     }
     
     private func applySidoList(sections: [SidoSectionModel]) {
-        print(#function)
         var snapshot = NSDiffableDataSourceSnapshot<SelectAreaSection, SidoCellItem>()
 
         for section in sections {
@@ -89,12 +110,22 @@ final class SelectAreaViewController: BaseViewController, View {
     
     private func applySigunguList(sections: [SigunguSectionModel]) {
         var snapshot = NSDiffableDataSourceSnapshot<SelectAreaSection, SigunguCellItem>()
-        print(sections.count)
+
         for section in sections {
             snapshot.appendSections([section.section])
             snapshot.appendItems(section.sigunguItemList, toSection: section.section)
         }
         sigunguDataSource.apply(snapshot, animatingDifferences: false)
+    }
+    
+    private func applyDongList(sections: [DongSectionModel]) {
+        var snapshot = NSDiffableDataSourceSnapshot<SelectAreaSection, DongCellItem>()
+   
+        for section in sections {
+            snapshot.appendSections([section.section])
+            snapshot.appendItems(section.dongItemList, toSection: section.section)
+        }
+        dongDataSource.apply(snapshot, animatingDifferences: false)
     }
     
     private func popViewController() {
@@ -118,6 +149,16 @@ extension SelectAreaViewController {
             collectionView: mainView.sigunguCollectionView
         ) { collectionView, indexPath, item in
             let cell = collectionView.dequeueReusableCell(SigunguCell.self, for: indexPath)
+            cell.configureCell(item: item)
+            return cell
+        }
+    }
+    
+    private func configureDongDataSource() {
+        dongDataSource = DongDataSource(
+            collectionView: mainView.dongCollectionView
+        ) { collectionView, indexPath, item in
+            let cell = collectionView.dequeueReusableCell(DongCell.self, for: indexPath)
             cell.configureCell(item: item)
             return cell
         }

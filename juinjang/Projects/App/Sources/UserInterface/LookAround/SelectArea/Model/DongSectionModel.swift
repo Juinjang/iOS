@@ -7,6 +7,6 @@
 
 struct DongSectionModel: Hashable {
     let section: SelectAreaSection
-    let sigunguItemList: [DongCellItem]
-    let selectedId: [Int] = []
+    var dongItemList: [DongCellItem]
+    var selectedIndexs: Set<Int> = []
 }
