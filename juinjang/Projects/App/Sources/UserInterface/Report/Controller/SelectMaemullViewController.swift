@@ -10,7 +10,7 @@ import SnapKit
 import Alamofire
 import RxSwift
 
-protocol SendCompareImjangData{
+protocol SendCompareImjangData: AnyObject {
     func sendData(isSelected: Bool, compareImjangId: Int,  compareImjangName: String)
 }
 
@@ -57,7 +57,7 @@ final class SelectMaemullViewController : BaseViewController {
     var imjangId: Int
     var comparedImjangId : Int = 0
     private var comparedName : String = ""
-    var delegate: SendCompareImjangData?
+    weak var delegate: SendCompareImjangData?
     
     private var selectedIndex: Int? {
         didSet {

@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-protocol CheckWarningMessageDelegate {
+protocol CheckWarningMessageDelegate: AnyObject {
     func checkMessage()
 }
 
@@ -25,7 +25,7 @@ final class WarningMessageViewController: BaseViewController {
     let ratio: CGFloat = 392 // Bottom Sheet가 차지하는 높이
     let lastPopupDateKey = "lastPopupDate" // 경고 메시지 날짜 저장 Key
     
-    var delegate: CheckWarningMessageDelegate?
+    weak var delegate: CheckWarningMessageDelegate?
     
     var bottomSheetHeight: CGFloat {
         return (ratio / totalHeight) * UIScreen.main.bounds.height // 디바이스가 달라져도 비율만큼 차지
