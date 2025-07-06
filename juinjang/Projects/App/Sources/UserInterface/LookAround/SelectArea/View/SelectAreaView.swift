@@ -56,6 +56,23 @@ final class SelectAreaView: BaseView {
     
     let bottomButtonView = BottomButtonView()
     
+    func setCollectionViewContentInset(isShowSelectedAreaView: Bool) {
+        var inset: UIEdgeInsets
+        
+        inset = isShowSelectedAreaView ?
+        UIEdgeInsets(top: 0, left: 0, bottom: 92, right: 0) :
+        UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        
+        collectionViewStackView.subviews.forEach { view in
+            guard let view = view as? UICollectionView else { return }
+            setCollectionViewContentInset(view: view, inset: inset)
+        }
+    }
+    
+    func setCollectionViewContentInset(view: UICollectionView, inset: UIEdgeInsets) {
+        view.contentInset = inset
+    }
+    
     override func configureHierarchy() {
         [sidoCollectionView,
          sigunguCollectionView,

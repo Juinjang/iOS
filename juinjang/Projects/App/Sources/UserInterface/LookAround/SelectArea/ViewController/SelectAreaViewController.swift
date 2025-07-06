@@ -70,6 +70,7 @@ final class SelectAreaViewController: BaseViewController, View {
         reactor.state.map { $0.selectedAreaList }
             .subscribe(with: self) { owner, selectedAreaList in
                 owner.mainView.selectedAreaView.isHidden = selectedAreaList.isEmpty
+                owner.mainView.setCollectionViewContentInset(isShowSelectedAreaView: !selectedAreaList.isEmpty)
                 owner.mainView.selectedAreaView.configureSelectedList(itemList: selectedAreaList)
             }
             .disposed(by: disposeBag)
