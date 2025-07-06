@@ -54,6 +54,10 @@ final class DSLabel: UILabel {
         didSet { updateAttributedText() }
     }
     
+    override var lineBreakMode: NSLineBreakMode {
+         didSet { updateAttributedText() }
+     }
+    
     init(_ style: DSFontStyle) {
         self.fontSize = style.size
         self.fontWeight = style.weight
@@ -85,7 +89,8 @@ final class DSLabel: UILabel {
             font: UIFont.pretendard(size: fontSize, weight: fontWeight),
             lineHeight: lineHeight,
             charSpacing: letterSpacing,
-            alignment: fontAlignment
+            alignment: fontAlignment,
+            lineBreakMode: lineBreakMode
         )
     }
     

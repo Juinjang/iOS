@@ -27,7 +27,6 @@ final class LookAroundContentCell: BaseCollectionViewCell {
         super.prepareForReuse()
         disposeBag = DisposeBag()
         iconImageView.image = nil
-        disposeBag = DisposeBag()
     }
     
     func configureCell(content: LookAroundContent, relay: PublishRelay<LookAroundEventType>) {

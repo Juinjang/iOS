@@ -42,7 +42,7 @@ final class SelectAreaView: BaseView {
         )
     }
     
-    lazy var dongCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createVerticalListLayout()).then {
+    lazy var dongCollectionView = UICollectionView(frame: .zero, collectionViewLayout: createDongListLayout()).then {
         $0.backgroundColor = .mainWhite
         $0.showsVerticalScrollIndicator = false
         $0.allowsMultipleSelection = true
@@ -163,6 +163,19 @@ extension SelectAreaView {
     private func createVerticalListLayout() -> UICollectionViewLayout {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
                                               heightDimension: .absolute(43))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.interGroupSpacing = 0
+        
+        return UICollectionViewCompositionalLayout(section: section)
+    }
+    
+    private func createDongListLayout() -> UICollectionViewLayout {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0),
+                                              heightDimension: .estimated(43))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         
         let group = NSCollectionLayoutGroup.vertical(layoutSize: itemSize, subitems: [item])

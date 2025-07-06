@@ -8,6 +8,10 @@
 import UIKit
 import ReactorKit
 
+protocol SendSelectedAreasDelegate: AnyObject {
+    func sendSelectedAreas(list: [DongCellItem])
+}
+
 final class SelectAreaViewController: BaseViewController, View {
     typealias SidoDataSource = UICollectionViewDiffableDataSource<SelectAreaSection, SidoCellItem>
     private var sidoDataSource: SidoDataSource!
@@ -21,6 +25,8 @@ final class SelectAreaViewController: BaseViewController, View {
     var disposeBag = DisposeBag()
     
     private let mainView = SelectAreaView()
+    
+    weak var sendSelectedAreasDelegate: SendSelectedAreasDelegate?
     
     init(reactor: SelectAreaReactor) {
         super.init()
@@ -74,6 +80,12 @@ final class SelectAreaViewController: BaseViewController, View {
                 owner.mainView.selectedAreaView.configureSelectedList(itemList: selectedAreaList)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state.compactMap { $0.errorMessage }
+            .subscribe(with: self) { owner, errorMessage in
+                owner.showAlert(title: nil, message: errorMessage, actionHandler: nil)
+            }
+            .disposed(by: disposeBag)
     }
     
     func bindEvent() {
@@ -124,7 +136,9 @@ final class SelectAreaViewController: BaseViewController, View {
                 guard let reactor = owner.reactor else { return }
                 if reactor.currentState.selectedAreaList.isEmpty {
                     owner.popViewController()
+                    return
                 }
+                owner.confirmSelectedAreaList()
             }
             .disposed(by: disposeBag)
     }
@@ -161,6 +175,15 @@ final class SelectAreaViewController: BaseViewController, View {
     
     private func popViewController() {
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func confirmSelectedAreaList() {
+        guard let list = reactor?.currentState.selectedAreaList else {
+            popViewController()
+            return
+        }
+        sendSelectedAreasDelegate?.sendSelectedAreas(list: list)
+        popViewController()
     }
 }
 

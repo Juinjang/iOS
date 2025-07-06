@@ -135,7 +135,7 @@ final class LookAroundViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         cellEventRelay
-            .map { $0.tappedSelectArea }
+            .compactMap { $0.tappedSelectArea }
             .bind(with: self) { owner, _ in
                 owner.showSelectAreaVC()
             }
@@ -171,10 +171,12 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     private func showSelectAreaVC() {
+        print(#function)
         let selectAreaVC = SelectAreaViewController(
             reactor: SelectAreaReactor(dependency: .init(selectAreaRepository:SelectAreaRepository())
             )
         )
+        selectAreaVC.sendSelectedAreasDelegate = self
         DispatchQueue.main.async {
             self.navigationController?.pushViewController(selectAreaVC, animated: true)
         }
@@ -202,6 +204,7 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     private func showPencilShopVC() {
+        print(#function)
         let pencilShopVC = PencilShopViewController(
             reactor: PencilShopReactor(
                 dependency: PencilShopReactor.Dependency(
@@ -215,6 +218,7 @@ final class LookAroundViewController: BaseViewController, View {
     }
 
     private func showMyNoteVC() {
+        print(#function)
         let myNoteVC = MyNoteViewController(
             reactor: MyNoteViewReactor(
                 dependency: MyNoteViewReactor.Dependency(
@@ -241,6 +245,12 @@ final class LookAroundViewController: BaseViewController, View {
     }
 }
 
+extension LookAroundViewController: SendSelectedAreasDelegate {
+    func sendSelectedAreas(list: [DongCellItem]) {
+        reactor?.action.onNext(.setSelectedArea(list))
+    }
+}
+
 extension LookAroundViewController {
     private func configureCollectionViewDataSource() -> RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote> {
         return RxCollectionViewSectionedReloadDataSource<SectionOfExploreNote>(configureCell: { [weak self] dataSource, collectionView, indexPath, lookAroundImjangData in
@@ -251,10 +261,10 @@ extension LookAroundViewController {
                 cell.configureCell(content: content, relay: cellEventRelay)
                 return cell
                 
-            case .selectAreaSection(let selectArea):
+            case .selectAreaSection(let areaString):
                 guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: SelectAreaCell.identifier, for: indexPath) as? SelectAreaCell else { return UICollectionViewCell() }
                 
-                cell.configureCell(area: selectArea, relay: cellEventRelay)
+                cell.configureCell(areaString: areaString, relay: cellEventRelay)
                 
                 return cell
                 

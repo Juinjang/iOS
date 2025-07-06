@@ -22,7 +22,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
     }
     
     private let iconImageView = UIImageView().then {
-        $0.image = UIImage.ImjangNote.location.withTintColor(.gray400)
+        $0.image = UIImage.ImjangNote.location.withTintColor(.main200)
         $0.contentMode = .scaleAspectFit
     }
     
@@ -35,16 +35,14 @@ final class SelectAreaCell: BaseCollectionViewCell {
     private let cellButton = UIButton()
     private var disposeBag = DisposeBag()
     
-    func configureCell(area: Area?, relay: PublishRelay<LookAroundEventType>) {
-        var title: String
-        if let area {
-            title = "\(area.si) > \(area.gu) > \(area.dong)"
+    func configureCell(areaString: String?, relay: PublishRelay<LookAroundEventType>) {
+        if let areaString {
+            iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main)
+            messageLabel.setAttribute(text: areaString, color: .main, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
         } else {
-            title = "지역을 선택해주세요"
+            iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main200)
+            messageLabel.setAttribute(text: "지역을 선택해주세요", color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
         }
-        title = "지역을 선택해주세요"
-        iconImageView.tintColor = .main200
-        messageLabel.setAttribute(text: title, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
         
         cellButton.rx.throttleTap
             .map { LookAroundEventType.selectAreaTap }
@@ -55,6 +53,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         disposeBag = DisposeBag()
+        iconImageView.image = nil
     }
     
     override func configureHierarchy() {

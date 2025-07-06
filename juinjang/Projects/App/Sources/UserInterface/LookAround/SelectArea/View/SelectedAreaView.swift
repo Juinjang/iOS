@@ -67,7 +67,7 @@ final class SelectedAreaView: BaseView {
             .disposed(by: disposeBag)
     }
     
-    func configureSelectedList(itemList: Set<DongCellItem>) {
+    func configureSelectedList(itemList: [DongCellItem]) {
         stackView.arrangedSubviews.forEach { view in
             view.removeFromSuperview()
         }
@@ -81,7 +81,7 @@ final class SelectedAreaView: BaseView {
     }
     
     private func makeLabel(title: String) -> UILabel {
-        let label = PaddingLabel(padding: UIEdgeInsets(top: 4, left: 6, bottom: 4, right: 6))
+        let label = PaddingLabel(padding: UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8))
         label.font = .pretendard(size: 14, weight: .medium)
         label.text = title
         label.textColor = .main

@@ -6,6 +6,7 @@
 //
 
 import ReactorKit
+import Foundation
 
 final class SelectAreaReactor: Reactor {
     var initialState = State()
@@ -22,15 +23,15 @@ final class SelectAreaReactor: Reactor {
         case setSidoList([SidoSectionModel])
         case setSigunguList([SigunguSectionModel])
         case setDongList([DongSectionModel])
-        case setSelectedAreaList(Set<DongCellItem>)
-        case setError(Error)
+        case setSelectedAreaList([DongCellItem])
+        case setErrorMessage(String?)
     }
     
     struct State {
         var sidoList: [SidoSectionModel] = []
         var sigunguList: [SigunguSectionModel] = []
         var dongList: [DongSectionModel] = []
-        var selectedAreaList: Set<DongCellItem> = []
+        var selectedAreaList: [DongCellItem] = []
         var errorMessage: String?
     }
     
@@ -65,7 +66,7 @@ final class SelectAreaReactor: Reactor {
     
     func reduce(state: State, mutation: Mutation) -> State {
         var newState = state
-        
+        newState.errorMessage = nil
         switch mutation {
         case .setSidoList(let sectionList):
             newState.sidoList = sectionList
@@ -75,8 +76,8 @@ final class SelectAreaReactor: Reactor {
             newState.dongList = dongList
         case .setSelectedAreaList(let areaList):
             newState.selectedAreaList = areaList
-        case .setError(let error):
-            newState.errorMessage = error.localizedDescription
+        case .setErrorMessage(let errorMessage):
+            newState.errorMessage = errorMessage
         }
         return newState
     }
@@ -93,11 +94,8 @@ extension SelectAreaReactor{
                 guard let self = self else { return .empty() }
                 return .concat([
                     selectInitialSido(list: admResponseDto.admVOList.admVOList),
-                    fetchSigunguList(admCode: admResponseDto.admVOList.admVOList[0].admCode)
+                    fetchSigunguList(admCode: admResponseDto.admVOList.admVOList[0].admCode),
                 ])
-            }
-            .catch { error in
-                return Observable.just(.setError(error))
             }
     }
     
@@ -112,11 +110,7 @@ extension SelectAreaReactor{
             .flatMap { [weak self] admResponseDto -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
                 let list = admResponseDto.admVOList.admVOList
-                dump(list)
                 return setSigunguList(list: list)
-            }
-            .catch { error in
-                return Observable.just(.setError(error))
             }
     }
     
@@ -135,11 +129,7 @@ extension SelectAreaReactor{
                 let totalDong = AdmVO(admCode: signugu.admCode, lowestAdmCodeNm: "\(signugu.name) 전체")
                 list.insert(totalDong, at: 0)
                 
-                dump(list)
                 return setDongList(list: list)
-            }
-            .catch { error in
-                return Observable.just(.setError(error))
             }
     }
     
@@ -225,32 +215,70 @@ extension SelectAreaReactor{
         var selectedAreaList = currentState.selectedAreaList
         let dongList = sectionModel.dongItemList
         
-        let newDongList = dongList.enumerated().map { index, item in
-            guard index == selectedIndex else { return item }
+        dongList.enumerated().forEach { index, item in
+            guard index == selectedIndex else { return }
             
-            var isSelected: Bool
+            let newSelectedAreaList = selected(item: item)
             
-            if item.isSelected {
-                isSelected = false
-                if let index = selectedAreaList.firstIndex(where: { $0.admCode == item.admCode }) {
-                    selectedAreaList.remove(at: index)
-                }
-            } else {
-                isSelected = true
-                selectedAreaList.insert(item)
-            }
-            
+            selectedAreaList = newSelectedAreaList
+        }
+        
+        let newDongList = dongList.map { item in
+            let isSelected = selectedAreaList.map{ $0.admCode }.contains(item.admCode)
             return DongCellItem(
                 admCode: item.admCode,
                 name: item.name,
-                isSelected: isSelected
+                isSelected: isSelected,
+                isTotal: item.isTotal
             )
         }
+        
+        guard selectedAreaList.count <= 3 else {
+            return .just(.setErrorMessage(SelectAreaError.limitCount.errorDescription))
+        }
+        
         sectionModel.dongItemList = newDongList
         return .concat([
             .just(.setDongList([sectionModel])),
             .just(.setSelectedAreaList(selectedAreaList))
         ])
+    }
+    
+    private func selected(item: DongCellItem) -> [DongCellItem] {
+        var selectedAreaList = currentState.selectedAreaList
+        
+        if selectedAreaList.isEmpty {
+            selectedAreaList.append(item)
+            return selectedAreaList
+        }
+        
+        if item.isSelected {
+            if let index = selectedAreaList.firstIndex(where: { $0.admCode == item.admCode }) {
+                selectedAreaList.remove(at: index)
+            }
+            return selectedAreaList
+        }
+        
+        if item.isTotal {   // 시군구 전체 클릭 시
+            for selectedArea in selectedAreaList {
+                if selectedArea.admCode.contains(item.admCode) {
+                    if let removeIndex = selectedAreaList.firstIndex(where: { $0.admCode.contains(item.admCode) }) {
+                        selectedAreaList.remove(at: removeIndex)
+                    }
+                }
+            }
+            selectedAreaList.append(item)
+            return selectedAreaList
+        } else {
+            let totalAdmCode = String(item.admCode.prefix(5))
+            for (index, selectedArea) in selectedAreaList.enumerated() {
+                if selectedArea.admCode.contains(totalAdmCode) && selectedArea.isTotal {
+                    selectedAreaList.remove(at: index)
+                }
+            }
+            selectedAreaList.append(item)
+            return selectedAreaList
+        }
     }
     
     private func setSidoList(list: [AdmVO]) -> Observable<Mutation> {
@@ -266,7 +294,11 @@ extension SelectAreaReactor{
     
     private func setSigunguList(list: [AdmVO]) -> Observable<Mutation> {
         let sidoCellItems = list.map { admVO in
-            SigunguCellItem(admCode: admVO.admCode, name: admVO.lowestAdmCodeNm)
+            
+            if admVO.lowestAdmCodeNm == "세종특별자치시" {
+                return SigunguCellItem(admCode: admVO.admCode, name: "세종시")
+            }
+            return SigunguCellItem(admCode: admVO.admCode, name: admVO.lowestAdmCodeNm)
         }
         
         let sectionModel = [SigunguSectionModel(section: .main, sigunguItemList: sidoCellItems)]
@@ -290,5 +322,15 @@ extension SelectAreaReactor{
     private func isSelectedArea(admCode: String) -> Bool {
         let selectedAreaList = currentState.selectedAreaList
         return selectedAreaList.contains(where: { $0.admCode == admCode })
+    }
+}
+
+enum SelectAreaError: LocalizedError {
+    case limitCount
+    
+    var errorDescription: String? {
+        switch self {
+        case .limitCount: "지역 선택은 3개까지 가능해요"
+        }
     }
 }
