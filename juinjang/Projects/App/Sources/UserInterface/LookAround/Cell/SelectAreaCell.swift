@@ -17,16 +17,12 @@ final class SelectAreaCell: BaseCollectionViewCell {
         $0.layer.cornerRadius = 10
     }
     
-    private let messageStackView = UIStackView().then {
-        $0.design(spacing: 4)
-    }
-    
     private let iconImageView = UIImageView().then {
         $0.image = UIImage.ImjangNote.location.withTintColor(.main200)
         $0.contentMode = .scaleAspectFit
     }
     
-    private let messageLabel = UILabel()
+    private let titleLabel = UILabel()
     
     private let selectLabel = UILabel().then {
         $0.setAttribute(text: "선택", color: .gray450, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
@@ -38,10 +34,10 @@ final class SelectAreaCell: BaseCollectionViewCell {
     func configureCell(areaString: String?, relay: PublishRelay<LookAroundEventType>) {
         if let areaString {
             iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main)
-            messageLabel.setAttribute(text: areaString, color: .main, font: .pretendard(size: 15, weight: .medium), lineHeight: 20)
+            titleLabel.setAttribute(text: areaString, color: .main, font: .pretendard(size: 15, weight: .medium), lineHeight: 20)
         } else {
             iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main200)
-            messageLabel.setAttribute(text: "지역을 선택해주세요", color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+            titleLabel.setAttribute(text: "지역을 선택해주세요", color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
         }
         
         cellButton.rx.throttleTap
@@ -57,15 +53,13 @@ final class SelectAreaCell: BaseCollectionViewCell {
     }
     
     override func configureHierarchy() {
-        [iconImageView, messageLabel].forEach {
-            messageStackView.addArrangedSubview($0)
-        }
-        
-        [messageStackView, selectLabel].forEach {
-            selectBackgroundView.addSubview($0)
-        }
-        
-        contentView.add(selectBackgroundView, cellButton)
+        contentView.add(
+            selectBackgroundView,
+            iconImageView,
+            titleLabel,
+            selectLabel,
+            cellButton
+        )
     }
     
     override func configureLayout() {
@@ -74,13 +68,18 @@ final class SelectAreaCell: BaseCollectionViewCell {
         }
         
         selectBackgroundView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(0)
-            make.horizontalEdges.equalToSuperview()
+            make.edges.equalToSuperview()
+        }
+
+        iconImageView.snp.makeConstraints { make in
+            make.size.equalTo(24)
+            make.verticalEdges.leading.equalToSuperview().inset(12)
         }
         
-        messageStackView.snp.makeConstraints { make in
-            make.verticalEdges.leading.equalToSuperview().inset(12)
-            make.trailing.lessThanOrEqualTo(selectLabel).inset(12)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconImageView.snp.trailing).offset(4)
+            make.centerY.equalTo(iconImageView)
+            make.trailing.equalTo(selectLabel.snp.leading).offset(-22)
         }
         
         selectLabel.snp.makeConstraints { make in
@@ -88,9 +87,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
             make.trailing.equalToSuperview().inset(12)
         }
         
-        iconImageView.snp.makeConstraints { make in
-            make.size.equalTo(24)
-        }
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
     
     override func configureView() {
