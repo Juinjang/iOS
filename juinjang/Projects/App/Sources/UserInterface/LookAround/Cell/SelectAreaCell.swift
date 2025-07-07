@@ -38,7 +38,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
     func configureCell(areaString: String?, relay: PublishRelay<LookAroundEventType>) {
         if let areaString {
             iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main)
-            messageLabel.setAttribute(text: areaString, color: .main, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+            messageLabel.setAttribute(text: areaString, color: .main, font: .pretendard(size: 15, weight: .medium), lineHeight: 20)
         } else {
             iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main200)
             messageLabel.setAttribute(text: "지역을 선택해주세요", color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
