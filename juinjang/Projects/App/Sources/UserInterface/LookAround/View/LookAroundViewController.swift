@@ -171,7 +171,6 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     private func showSelectAreaVC() {
-        print(#function)
         let selectAreaVC = SelectAreaViewController(
             reactor: SelectAreaReactor(dependency: .init(selectAreaRepository:SelectAreaRepository())
             )
@@ -246,6 +245,10 @@ final class LookAroundViewController: BaseViewController, View {
 }
 
 extension LookAroundViewController: SendSelectedAreasDelegate {
+    func setDefaultLookAround() {
+        reactor?.action.onNext(.fetchDefaultList)
+    }
+    
     func sendSelectedAreas(list: [DongCellItem]) {
         reactor?.action.onNext(.setSelectedArea(list))
     }

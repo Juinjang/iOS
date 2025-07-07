@@ -27,6 +27,7 @@ final class LookAroundReactor: Reactor {
         case moreButtonDidTap
         case heartButtonDidTap(sharedNoteId: Int)
         case setSelectedArea([DongCellItem])
+        case fetchDefaultList
     }
     
     enum Mutation {
@@ -36,10 +37,9 @@ final class LookAroundReactor: Reactor {
                            saleTypeAction: SaleTypeAction?))
         case updateIsLastPage(Bool)
         case setCurrentPage(Int)
-        case setCurrentNotesCount(Int)
         
         case setSectionOfExploreNotes([SectionOfExploreNote])
-        case setAreaList([DongCellItem])
+        case setAreaList([DongCellItem]?)
     }
     
     struct State {
@@ -49,7 +49,6 @@ final class LookAroundReactor: Reactor {
                          saleTypeAction: SaleTypeAction?)
         var isLastPage: Bool?
         var currentPage: Int
-        var currentNotesCount: Int
         var areaList: [DongCellItem]? = nil
     }
     
@@ -58,7 +57,6 @@ final class LookAroundReactor: Reactor {
         filterInfo: (.popularAction,nil,nil),
         isLastPage: nil,
         currentPage: 0,
-        currentNotesCount: 0,
         areaList: nil
     )
     
@@ -76,9 +74,9 @@ final class LookAroundReactor: Reactor {
                 transactionAction: transactionTypeAction,
                 saleTypeAction: saleTypeAction
             )
+            currentNotesCount = 0
             return .concat([
                 .just(.setCurrentPage(0)),
-                .just(.setCurrentNotesCount(0)),
                 .just(.setFilterInfo(filterInfo: filterInfo)),
                 retrieveInitialExploreNotes(areaList: currentState.areaList, filterInfo: filterInfo)
             ])
@@ -86,15 +84,23 @@ final class LookAroundReactor: Reactor {
             let nextPage = currentState.currentPage + 1
             return .concat([
                    .just(.setCurrentPage(nextPage)),
-                   retrieveExploreNotes(areaList: currentState.areaList ?? nil, filterInfo: currentState.filterInfo, page: nextPage)
+                   retrieveExploreNotes(areaList: currentState.areaList, filterInfo: currentState.filterInfo, page: nextPage)
                ])
         case .heartButtonDidTap(let sharedNoteId):
             return handleHeartButtonDidTap(sharedNoteId: sharedNoteId)
         case .setSelectedArea(let areaList):
+            currentNotesCount = 0
             return .concat([
                 .just(.setCurrentPage(0)),
-                .just(.setCurrentNotesCount(0)),
                 setSelectedArea(list: areaList)
+            ])
+        case .fetchDefaultList:
+            currentNotesCount = 0
+            return .concat([
+                .just(.setCurrentPage(0)),
+                .just(.setFilterInfo(filterInfo: (.popularAction,nil,nil))),
+                .just(.setAreaList(nil)),
+                retrieveInitialExploreNotes(areaList: nil, filterInfo: (.popularAction,nil,nil))
             ])
         }
     }
@@ -112,8 +118,6 @@ final class LookAroundReactor: Reactor {
             newState.currentPage = currentPage
         case .setSectionOfExploreNotes(let sectionOfExploreNotes):
             newState.sectionOfExploreNotes = sectionOfExploreNotes
-        case .setCurrentNotesCount(let currentNotesCount):
-            newState.currentNotesCount = currentNotesCount
         case .setAreaList(let list):
             newState.areaList = list
         }
@@ -138,7 +142,6 @@ final class LookAroundReactor: Reactor {
                 areaCodeList.append(dong.admCode)
             }
         }
-        print("@@@@@\(areaCodeList)")
         return areaCodeList
     }
     

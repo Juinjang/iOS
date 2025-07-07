@@ -10,6 +10,7 @@ import ReactorKit
 
 protocol SendSelectedAreasDelegate: AnyObject {
     func sendSelectedAreas(list: [DongCellItem])
+    func setDefaultLookAround()
 }
 
 final class SelectAreaViewController: BaseViewController, View {
@@ -134,10 +135,6 @@ final class SelectAreaViewController: BaseViewController, View {
         mainView.bottomButtonView.confirmButtonTapRelay
             .subscribe(with: self) { owner, _ in
                 guard let reactor = owner.reactor else { return }
-                if reactor.currentState.selectedAreaList.isEmpty {
-                    owner.popViewController()
-                    return
-                }
                 owner.confirmSelectedAreaList()
             }
             .disposed(by: disposeBag)
@@ -178,11 +175,13 @@ final class SelectAreaViewController: BaseViewController, View {
     }
     
     private func confirmSelectedAreaList() {
-        guard let list = reactor?.currentState.selectedAreaList else {
+        guard let reactor = reactor else { return }
+        guard !reactor.currentState.selectedAreaList.isEmpty else {
+            sendSelectedAreasDelegate?.setDefaultLookAround()
             popViewController()
             return
         }
-        sendSelectedAreasDelegate?.sendSelectedAreas(list: list)
+        sendSelectedAreasDelegate?.sendSelectedAreas(list: reactor.currentState.selectedAreaList)
         popViewController()
     }
 }
