@@ -95,7 +95,7 @@ final class ImjangDetailViewController: BaseViewController, View {
                 let alertView = PencilAlertView(
                     title: reactor.dependency.title,
                     pencilCount: reactor.currentState.balancePencilCount,
-                    needPencilCount: 100
+                    needPencilCount: reactor.currentState.requiredPencilCount
                 ).then {
                     $0.eventRelay
                         .subscribe(with: self) { (self, event) in
@@ -109,7 +109,7 @@ final class ImjangDetailViewController: BaseViewController, View {
                                                     pencilShopRepository: .init()
                                                 ),
                                                 pencilShopRepository: PencilShopRepository(),
-                                                needPencilCount: 100,
+                                                needPencilCount: reactor.currentState.requiredPencilCount,
                                                 buildingName: reactor.currentState.buildingName,
                                                 totalRate: reactor.currentState.totalRate
                                             )
