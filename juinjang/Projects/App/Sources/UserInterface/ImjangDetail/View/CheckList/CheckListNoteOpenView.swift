@@ -110,6 +110,9 @@ fileprivate final class CheckListNoteOpenInfoView: BaseView {
     private let gradientLayer = CAGradientLayer()
     
     func configure(for model: ImjangDetailInfoModel) {
+        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        itemViews.removeAll()
+        
         [("사진", model.imageCount, "장"),
          ("체크된 항목", model.checkedCount, "개"),
          ("상세 후기", model.reviewLength, "자")].enumerated().forEach { index, element in

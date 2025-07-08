@@ -292,7 +292,6 @@ extension MyNotePageCell {
 // MARK: - Cell Layout Update
 extension MyNotePageCell {
     private func configureCellLayout(isEmpty: Bool) {
-        filterView.isHidden = isEmpty
         innerCollectionView.isHidden = isEmpty
         emptyView.isHidden = !isEmpty
     }

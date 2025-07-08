@@ -15,7 +15,7 @@ extension MyNoteCategoryType {
     var toText: String {
         switch self {
         case .share:
-            return "공유된 노트"
+            return "공유한 노트"
         case .own:
             return "소장한 노트"
         case .like:

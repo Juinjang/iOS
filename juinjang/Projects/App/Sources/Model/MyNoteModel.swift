@@ -11,7 +11,7 @@ struct MyNoteModel: Codable {
     let imageUrl: String?
     let isPurchase: Bool
     var isLiked: Bool
-    let rate: String
+    let rate: String?
     let price: String
     let monthlyRent: String?
     let pyong: Int?
