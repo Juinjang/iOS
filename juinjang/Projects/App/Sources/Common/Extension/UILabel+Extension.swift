@@ -51,12 +51,15 @@ extension UILabel {
     }
     
     
-    func setAttribute(text: String?,
-                      color: UIColor = .gray600,
-                      font: UIFont? = .pretendard(size: 14, weight: .regular),
-                      lineHeight: CGFloat = 30,
-                      charSpacing: CGFloat = -0.02,
-                      alignment: NSTextAlignment = .left) {
+    func setAttribute(
+        text: String?,
+        color: UIColor = .gray600,
+        font: UIFont? = .pretendard(size: 14, weight: .regular),
+        lineHeight: CGFloat = 30,
+        charSpacing: CGFloat = -0.02,
+        alignment: NSTextAlignment = .left,
+        lineBreakMode: NSLineBreakMode = .byTruncatingTail
+    ) {
         guard let text, let font else { return }
 
         let resultText = text.isEmpty ? "" : text
@@ -65,13 +68,14 @@ extension UILabel {
         style.maximumLineHeight = lineHeight
         style.minimumLineHeight = lineHeight
         style.alignment = alignment
+        style.lineBreakMode = lineBreakMode
         
         let attributes: [NSAttributedString.Key: Any] = [
             .paragraphStyle: style,
             .baselineOffset: (lineHeight - font.lineHeight) / 2,
             .kern: charSpacing,
             .font: font,
-            .foregroundColor: color,
+            .foregroundColor: color
         ]
         
         let attrString = NSAttributedString(string: resultText, attributes: attributes)

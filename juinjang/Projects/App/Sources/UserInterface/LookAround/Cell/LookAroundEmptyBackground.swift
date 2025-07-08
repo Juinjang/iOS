@@ -44,7 +44,7 @@ final class LookAroundEmptyBackground: BaseCollectionReusableView {
     override func configureLayout() {
         super.configureLayout()
         stackView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(60)
             make.centerX.equalToSuperview()
         }
         

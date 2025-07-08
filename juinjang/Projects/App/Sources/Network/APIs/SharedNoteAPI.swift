@@ -69,9 +69,19 @@ enum SharedNoteAPI: TargetType {
     
     var queryItems: [URLQueryItem] {
         switch self {
-        case .getMyNoteList(let param as Encodable),
-                .getExploreNoteList(let param as Encodable):
+        case .getMyNoteList(let param as Encodable):
             return param.toQueryItems()
+        case .getExploreNoteList(let param):
+            var items = param.code?.map { URLQueryItem(name: "code", value: $0) } ?? []
+
+            return  items + [
+                URLQueryItem(name: "sort", value: param.sort),
+                URLQueryItem(name: "propertyType", value: param.propertyType),
+                URLQueryItem(name: "priceType", value: param.priceType),
+                URLQueryItem(name: "page", value: "\(param.page)"),
+                URLQueryItem(name: "size", value: "\(param.size)"),
+                URLQueryItem(name: "keyword", value: param.keyword)
+            ]
         case .getNoteDetail,
                 .getNoteDetailReport,
                 .getNoteDetailChecklist,

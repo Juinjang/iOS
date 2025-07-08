@@ -53,7 +53,7 @@ final class LookAroundSearchReactor: Reactor {
             priceType: "",
             keyword: nil,
             page: 0,
-            size: 10
+            size: 15
         )
         var filterInfo: (sortAction: SortAction?,
                          transactionAction: TransactionTypeAction?,
@@ -192,7 +192,7 @@ final class LookAroundSearchReactor: Reactor {
             priceType: filterInfo.transactionAction?.toRequestType ?? "",
             keyword: currentState.keyword,
             page: page,
-            size: 10
+            size: 15
         )
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
@@ -224,7 +224,7 @@ final class LookAroundSearchReactor: Reactor {
             priceType: filterInfo.transactionAction?.toRequestType ?? "",
             keyword: keyword,
             page: 0,
-            size: 10
+            size: 15
         )
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)

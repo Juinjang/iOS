@@ -4,7 +4,7 @@ import Toast
 import SnapKit
 import RxSwift
 
-protocol SendSearchCompareImjangData{
+protocol SendSearchCompareImjangData: AnyObject {
     func sendData(isSelected: Bool, compareImjangId: Int,  compareImjangName: String)
 }
 
@@ -58,7 +58,7 @@ final class CompareSearchViewController: BaseViewController {
         }
     }
     
-    var delegate: SendSearchCompareImjangData?
+    weak var delegate: SendSearchCompareImjangData?
     private var disposeBag = DisposeBag()
     
     struct Dependency {

@@ -36,7 +36,7 @@ final class SplashViewReactor: Reactor {
                 // 홈 화면으로 이동
                 navigation = .home
             }
-            return .just(.setNavigation(navigation))
+            return .just(.setNavigation(navigation)).debug()
         }
     }
     

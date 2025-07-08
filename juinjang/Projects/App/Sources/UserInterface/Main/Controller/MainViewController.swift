@@ -80,7 +80,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
     @objc private func callMainImjangRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
-                                            api: .mainImjang) { response, error in
+                                            api: .mainImjang) { [weak self] response, error in
+            guard let self = self else { return }
             if let error = error {
                 print(error.localizedDescription)
                 return
@@ -89,8 +90,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             guard let response = response else { return }
             guard let result = response.result else { return }
             print(response)
-            self.mainImjangList = result.recentUpdatedList
-            self.tableView.reloadData()
+            mainImjangList = result.recentUpdatedList
+            tableView.reloadData()
         }
     }
     
@@ -243,11 +244,12 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let item = mainImjangList[indexPath.row]
-        callVersionRequest(imjangId: item.limjangId) { version in
+        callVersionRequest(imjangId: item.limjangId) { [weak self] version in
+            guard let self = self else { return }
             if let version = version {
-                self.showImjangNoteVC(imjangId: item.limjangId, version: version)
+                showImjangNoteVC(imjangId: item.limjangId, version: version)
             } else {
-                self.showImjangNoteVC(imjangId: item.limjangId, version: version)
+                showImjangNoteVC(imjangId: item.limjangId, version: version)
             }
         }
     }

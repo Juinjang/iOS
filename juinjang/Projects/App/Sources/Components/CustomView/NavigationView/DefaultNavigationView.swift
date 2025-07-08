@@ -22,6 +22,7 @@ enum NavigationButton {
     case trash
     case text(title: String)
     case report
+    case startRecord
     
     var image: UIImage? {
         switch self {
@@ -43,6 +44,8 @@ enum NavigationButton {
             return nil
         case .report:
             return .siren
+        case .startRecord:
+            return .addOrange
         }
     }
     
@@ -66,6 +69,8 @@ enum NavigationButton {
             return .textButtonTap
         case .report:
             return .reportButtonTap
+        case .startRecord:
+            return .startRecordButtonTap
         }
     }
 }
@@ -82,6 +87,7 @@ enum NavigationAction: Equatable {
     case textButtonTap
     case trashButtonTap
     case reportButtonTap
+    case startRecordButtonTap
 }
 
 class DefaultNavigationView: BaseView {
@@ -203,7 +209,17 @@ class DefaultNavigationView: BaseView {
                 stackView.snp.updateConstraints {
                     $0.height.equalTo(18)
                 }
-
+            case .startRecord:
+                button = ImageButton(normalImage: item.image).then {
+                    $0.tintColor = .main
+                    $0.snp.makeConstraints {
+                        $0.size.equalTo(22)
+                    }
+                }
+                
+                stackView.snp.updateConstraints {
+                    $0.height.equalTo(22)
+                }
             default:
                 button = ImageButton(normalImage: item.image).then {
                     $0.tintColor = .gray450

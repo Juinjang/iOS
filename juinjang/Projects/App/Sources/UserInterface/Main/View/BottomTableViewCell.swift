@@ -35,7 +35,7 @@ final class BottomTableViewCell: UITableViewCell{
     
     //최근 본 임장이 없을 때
     var noImjangImageView = UIImageView().then {
-        $0.image = UIImage.Main.nomaemull
+        $0.image = UIImage.Main.nomaemull.resize(newHeight: 108)
         $0.contentMode = .scaleAspectFill
     }
     var noImjangLabel = UILabel().then {
@@ -76,7 +76,7 @@ final class BottomTableViewCell: UITableViewCell{
         noImjangImageView.snp.makeConstraints{
             $0.top.equalTo(recentImjangLabel.snp.bottom).offset(49)
             $0.centerX.equalToSuperview()
-            $0.height.equalTo(108.83)
+            $0.height.equalTo(108)
         }
         
         noImjangLabel.snp.makeConstraints{

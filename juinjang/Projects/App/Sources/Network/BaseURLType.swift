@@ -9,7 +9,7 @@ import Foundation
 
 enum BaseURLType {
     case juinjang
-    case lawDistrict
+    case areaCode
     
     var url: String {
         switch self {
@@ -19,8 +19,11 @@ enum BaseURLType {
             }
             return baseURL
             
-        case .lawDistrict:
-            return ""
+        case .areaCode:
+            guard let areaCodeURL = Bundle.main.infoDictionary?["AREA_CODE_URL"] as? String else {
+                fatalError("❌ AREA_CODE_URL not found in Info.plist")
+            }
+            return areaCodeURL
         }
     }
 }

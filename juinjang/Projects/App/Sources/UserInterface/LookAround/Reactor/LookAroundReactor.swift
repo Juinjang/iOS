@@ -22,10 +22,12 @@ final class LookAroundReactor: Reactor {
     }
     
     enum Action {
+        case viewDidLoad
         case filterTapped(SortAction?, TransactionTypeAction?, SaleTypeAction?)
-        case retrieveExploreNotes
         case moreButtonDidTap
         case heartButtonDidTap(sharedNoteId: Int)
+        case setSelectedArea([DongCellItem])
+        case fetchDefaultList
     }
     
     enum Mutation {
@@ -35,9 +37,9 @@ final class LookAroundReactor: Reactor {
                            saleTypeAction: SaleTypeAction?))
         case updateIsLastPage(Bool)
         case setCurrentPage(Int)
-        case setCurrentNotesCount(Int)
         
         case setSectionOfExploreNotes([SectionOfExploreNote])
+        case setAreaList([DongCellItem]?)
     }
     
     struct State {
@@ -47,7 +49,7 @@ final class LookAroundReactor: Reactor {
                          saleTypeAction: SaleTypeAction?)
         var isLastPage: Bool?
         var currentPage: Int
-        var currentNotesCount: Int
+        var areaList: [DongCellItem]? = nil
     }
     
     var initialState: State = State(
@@ -55,7 +57,7 @@ final class LookAroundReactor: Reactor {
         filterInfo: (.popularAction,nil,nil),
         isLastPage: nil,
         currentPage: 0,
-        currentNotesCount: 0
+        areaList: nil
     )
     
     private var currentNotesCount: Int = 0
@@ -64,28 +66,42 @@ final class LookAroundReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
+        case .viewDidLoad:
+            return retrieveInitialExploreNotes(areaList: nil)
         case .filterTapped(let sortAction, let transactionTypeAction, let saleTypeAction):
             let filterInfo = handleFilterTapped(
                 sortAction: sortAction,
                 transactionAction: transactionTypeAction,
                 saleTypeAction: saleTypeAction
             )
+            currentNotesCount = 0
             return .concat([
                 .just(.setCurrentPage(0)),
-                .just(.setCurrentNotesCount(0)),
                 .just(.setFilterInfo(filterInfo: filterInfo)),
-                retrieveInitialExploreNotes(filterInfo: filterInfo)
+                retrieveInitialExploreNotes(areaList: currentState.areaList, filterInfo: filterInfo)
             ])
-        case .retrieveExploreNotes:
-            return retrieveInitialExploreNotes()
         case .moreButtonDidTap:
             let nextPage = currentState.currentPage + 1
             return .concat([
                    .just(.setCurrentPage(nextPage)),
-                   retrieveExploreNotes(filterInfo: currentState.filterInfo, page: nextPage)
+                   retrieveExploreNotes(areaList: currentState.areaList, filterInfo: currentState.filterInfo, page: nextPage)
                ])
         case .heartButtonDidTap(let sharedNoteId):
             return handleHeartButtonDidTap(sharedNoteId: sharedNoteId)
+        case .setSelectedArea(let areaList):
+            currentNotesCount = 0
+            return .concat([
+                .just(.setCurrentPage(0)),
+                setSelectedArea(list: areaList)
+            ])
+        case .fetchDefaultList:
+            currentNotesCount = 0
+            return .concat([
+                .just(.setCurrentPage(0)),
+                .just(.setFilterInfo(filterInfo: (.popularAction,nil,nil))),
+                .just(.setAreaList(nil)),
+                retrieveInitialExploreNotes(areaList: nil, filterInfo: (.popularAction,nil,nil))
+            ])
         }
     }
     
@@ -102,10 +118,31 @@ final class LookAroundReactor: Reactor {
             newState.currentPage = currentPage
         case .setSectionOfExploreNotes(let sectionOfExploreNotes):
             newState.sectionOfExploreNotes = sectionOfExploreNotes
-        case .setCurrentNotesCount(let currentNotesCount):
-            newState.currentNotesCount = currentNotesCount
+        case .setAreaList(let list):
+            newState.areaList = list
         }
         return newState
+    }
+    
+    private func setSelectedArea(list: [DongCellItem]) -> Observable<Mutation> {
+        return .concat([
+            retrieveInitialExploreNotes(areaList: list, filterInfo: currentState.filterInfo),
+            .just(.setAreaList(list))
+        ])
+    }
+    
+    private func codeList(list: [DongCellItem]?) -> [String]? {
+        guard let list = list else { return nil }
+        
+        var areaCodeList: [String] = []
+        for dong in list {
+            if dong.admCode.count > 5 {
+                areaCodeList.append("\(dong.admCode)00")
+            } else {
+                areaCodeList.append(dong.admCode)
+            }
+        }
+        return areaCodeList
     }
     
     private func handleHeartButtonDidTap(sharedNoteId: Int) -> Observable<Mutation> {
@@ -179,18 +216,19 @@ final class LookAroundReactor: Reactor {
     }
     
     private func retrieveInitialExploreNotes(
+        areaList: [DongCellItem]?,
         filterInfo: (sortAction: SortAction?,
                      transactionAction: TransactionTypeAction?,
                      saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil),
         page: Int = 0
     ) -> Observable<Mutation> {
-        
         let request = ExploreNoteRequestDTO(
+            code: codeList(list: areaList),
             sort: filterInfo.sortAction?.toRequestType ?? SortAction.popularAction.toRequestType,
             propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
             priceType: filterInfo.transactionAction?.toRequestType ?? "",
             page: page,
-            size: 10
+            size: 15
         )
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
@@ -204,24 +242,25 @@ final class LookAroundReactor: Reactor {
                 guard let self = self else { return .empty() }
                 return .concat(
                     .just(.updateIsLastPage(isLastPage)),
-                    .just(.setExploreNotes(self.getInitialSectionExploreNoteList(dto)))
+                    .just(.setExploreNotes(self.getInitialSectionExploreNoteList(areaList: areaList, dto)))
                 )
             }
     }
     
     private func retrieveExploreNotes(
+        areaList: [DongCellItem]?,
         filterInfo: (sortAction: SortAction?,
                      transactionAction: TransactionTypeAction?,
                      saleTypeAction: SaleTypeAction?) = (.popularAction,nil,nil),
         page: Int = 0
     ) -> Observable<Mutation> {
-        
         let request = ExploreNoteRequestDTO(
+            code: codeList(list: areaList),
             sort: filterInfo.sortAction?.toRequestType ?? SortAction.popularAction.toRequestType,
             propertyType: filterInfo.saleTypeAction?.toRequestType ?? "",
             priceType: filterInfo.transactionAction?.toRequestType ?? "",
             page: page,
-            size: 10
+            size: 15
         )
         
         return dependency.sharedNoteRepository.retrieveExploreNotes(param: request)
@@ -235,19 +274,19 @@ final class LookAroundReactor: Reactor {
                 guard let self = self else { return .empty() }
                 return .concat(
                     .just(.updateIsLastPage(isLastPage)),
-                    .just(.setExploreNotes(self.getSectionExploreNoteList(dto)))
+                    .just(.setExploreNotes(self.getSectionExploreNoteList(areaList: areaList, dto)))
                 )
             }
     }
     
-    private func getInitialSectionExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
+    private func getInitialSectionExploreNoteList(areaList: [DongCellItem]?, _ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
         let sectionOfExploreNotes: [SectionOfExploreNote] = [
             .contentsSection(items: [
                 .contentsSection(content: .pencilShop),
                 .contentsSection(content: .myNote)
             ]),
             .selectAreaSection(items: [
-                .selectAreaSection(area: Area(si: "서울시", gu: "동작구", dong: nil))
+                .selectAreaSection(areaString: dongListString(list: areaList))
             ]),
             .imjangCountSection(items: [.imjangCountSection(imjangCount: exploreNoteResponseDTO.totalResults)]),
             .exploreNoteSection(header: "", items: exploreNoteSectionList(noteList: exploreNoteResponseDTO.notes))
@@ -255,7 +294,7 @@ final class LookAroundReactor: Reactor {
         return sectionOfExploreNotes
     }
     
-    private func getSectionExploreNoteList(_ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
+    private func getSectionExploreNoteList(areaList: [DongCellItem]?, _ exploreNoteResponseDTO: ExploreNoteResponseDTO) -> [SectionOfExploreNote] {
         let sections = currentState.sectionOfExploreNotes ?? []
         
         guard let lastIndex = sections.indices.last,
@@ -276,12 +315,18 @@ final class LookAroundReactor: Reactor {
                 .contentsSection(content: .myNote)
             ]),
             .selectAreaSection(items: [
-                .selectAreaSection(area: Area(si: "서울시", gu: "동작구", dong: nil))
+                .selectAreaSection(areaString: dongListString(list: areaList))
             ]),
             .imjangCountSection(items: [.imjangCountSection(imjangCount: exploreNoteResponseDTO.totalResults)]),
             .exploreNoteSection(header: "", items: exploreNoteSectionList(noteList: notes))
         ]
         return sectionOfExploreNotes
+    }
+    
+    private func dongListString(list: [DongCellItem]?) -> String? {
+        guard let list else { return nil }
+        let nameList = list.map { $0.name }
+        return nameList.joined(separator: ", ")
     }
     
     private func exploreNoteSectionList(noteList: [ExploreNoteModel]) -> [SectionOfExploreNote.Row] {
@@ -302,7 +347,7 @@ enum SectionOfExploreNote: SectionModelType, Hashable, Equatable {
     
     enum Row: Hashable, Equatable {
         case contentsSection(content: LookAroundContent)
-        case selectAreaSection(area: Area)
+        case selectAreaSection(areaString: String?)
         case imjangCountSection(imjangCount: Int)
         case exploreNoteSection(exploreNote: ExploreNoteModel)
     }
