@@ -30,11 +30,7 @@ final class StopShareAlertView: BaseAlertViewController {
         $0.fontSize = 13
         $0.fontColor = .gray450
         $0.fontAlignment = .center
-        $0.setHighlightedText(
-            fullText: "무분별한 공유를 방지하기 위해 같은 임장노트는\n6개월 이후부터 재공유할 수 있어요.",
-            highlightText: "6개월 이후부터",
-            highlightColor: .main
-        )
+        $0.text = "공유를 중단하면 해당 임장노트는\n더 이상 수정이 불가능해요."
     }
     
     init() {
