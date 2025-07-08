@@ -125,14 +125,10 @@ final class BottomCollectionViewCell: UICollectionViewCell {
     
     private func setImageUI(image: String?) {
         guard let imageURL = image else {
-            recentImjangImageView.image = UIImage.ImjangList.empty
+            recentImjangImageView.image = UIImage.ImjangList.empty.resized(toWidth: 127)
             return
         }
-        if let url = URL(string: imageURL) {
-            recentImjangImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
-        } else {
-            recentImjangImageView.image = UIImage.Main.gallery
-        }
+        recentImjangImageView.setImage(with: imageURL, placeholder: UIImage.ImjangList.empty, resizedTo: CGSize(width: 127, height: 119))
     }
     
     private func configureView() {

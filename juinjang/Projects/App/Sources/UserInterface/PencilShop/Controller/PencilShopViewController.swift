@@ -152,6 +152,7 @@ final class PencilShopViewController: BaseViewController, View {
         mainView.obtainedView.collectionView.rx.itemSelected
             .subscribe(with: self) { owner, indexPath in
                 owner.reactor?.action.onNext(.acquiredPencilSelected(indexPath.item))
+                owner.showNoteDetialVC(index: indexPath.item)
             }
             .disposed(by: disposeBag)
         
@@ -164,6 +165,22 @@ final class PencilShopViewController: BaseViewController, View {
 
     override func loadView() {
         view = mainView
+    }
+    
+    private func showNoteDetialVC(index: Int) {
+        guard let reactor = reactor else { return }
+        guard let section = reactor.currentState.acquiredSections.first else { return }
+        let acquiredPencil = section.acquiredPencils[index]
+        
+        let noteDetailVC = ImjangDetailViewController(reactor: ImjangDetailViewReactor(
+            dependency: .init(
+                id: acquiredPencil.sharedNoteId,
+                title: acquiredPencil.buildingName,
+                sharedNoteRepository: SharedNoteRepository(),
+                pencilShopRepository: PencilShopRepository())
+            )
+        )
+        navigationController?.pushViewController(noteDetailVC, animated: true)
     }
     
     private func goMyNoteVC() {

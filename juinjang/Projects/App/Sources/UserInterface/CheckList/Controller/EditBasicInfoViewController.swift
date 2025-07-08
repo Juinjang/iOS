@@ -29,7 +29,7 @@ final class EditBasicInfoViewController: BaseViewController {
     var priceDetailLabel: UILabel?
     var priceDetailLabel2: UILabel?
     
-    var delegate: SendEditData?
+    weak var delegate: SendEditData?
     
     var postModel: PostCodeResponseModel? {
         didSet {
@@ -763,6 +763,6 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
     }
 }
 
-protocol SendEditData {
+protocol SendEditData: AnyObject {
     func sendData(imjangId: Int, model: NoteDetailModel)
 }

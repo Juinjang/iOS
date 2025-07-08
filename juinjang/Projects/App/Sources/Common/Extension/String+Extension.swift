@@ -180,6 +180,47 @@ extension String {
     }
 }
 
+extension String {
+    /// 행정구역명에서 ‘특별자치시/도·광역시·특별시·북도·남도·도’를 제거하고
+    /// 충청·경상·전라 ⇒ 충·경·전, 북도/남도 ⇒ 북/남 으로 축약
+    ///
+    /// 예) "충청북도" → "충북", "전라남도" → "전남",
+    ///     "서울특별시" → "서울", "강원특별자치도" → "강원"
+    var provinceAbbr: String {
+        var name = self
+        
+        // 1) '특별자치시‧도 / 광역시 / 특별시' 제거
+        name = name.replacingOccurrences(
+            of: "(특별자치시|특별자치도|광역시|특별시)$",
+            with: "",
+            options: [.regularExpression]
+        )
+        
+        // 2) '북도 / 남도' → '북 / 남', 단순 '도'는 제거
+        name = name.replacingOccurrences(of: "북도$", with: "북",
+                                         options: [.regularExpression])
+        name = name.replacingOccurrences(of: "남도$", with: "남",
+                                         options: [.regularExpression])
+        name = name.replacingOccurrences(of: "도$",  with: "",
+                                         options: [.regularExpression])
+        
+        // 3) '충청 / 경상 / 전라' → '충 / 경 / 전'
+        let prefixMap: [(String, String)] = [
+            ("충청", "충"), ("경상", "경"), ("전라", "전")
+        ]
+        for (long, short) in prefixMap where name.hasPrefix(long) {
+            name = name.replacingOccurrences(
+                of: "^" + long,
+                with: short,
+                options: [.regularExpression]
+            )
+            break      
+        }
+        
+        return name
+    }
+}
+
 private extension NumberFormatter {
     static let withComma: NumberFormatter = {
         let formatter = NumberFormatter()

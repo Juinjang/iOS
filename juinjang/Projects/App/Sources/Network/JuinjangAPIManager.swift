@@ -18,7 +18,7 @@ final class JuinjangAPIManager {
     func fetchData<T: Decodable>(type: T.Type,
                                  api: JuinjangAPI,
                                  completionHandler: @escaping (T?, NetworkError?) -> Void) {
-        
+        print(api.header)
         AF.request(api.endpoint,
                    method: api.method,
                    parameters: api.parameter,

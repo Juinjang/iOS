@@ -10,7 +10,7 @@ import Then
 
 final class ReportPopupViewController: BaseViewController {
     
-    var delegate: ButtonStateDelegate?
+    weak var delegate: ButtonStateDelegate?
     
     // 팝업 View
     lazy var popupView = UIView().then {
@@ -119,6 +119,6 @@ final class ReportPopupViewController: BaseViewController {
     }
 }
 
-protocol ButtonStateDelegate {
+protocol ButtonStateDelegate: AnyObject {
     func updateButtonState(isSelected: Bool)
 }

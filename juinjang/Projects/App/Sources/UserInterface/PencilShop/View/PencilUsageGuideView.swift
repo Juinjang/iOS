@@ -19,7 +19,7 @@ final class PencilUsageGuideView: BaseView {
     }
     
     private let arrowImageView = UIImageView().then {
-        $0.design(image: .ImjangList.arrowDown, contentMode: .scaleAspectFit)
+        $0.design(image: .arrow16Down, contentMode: .scaleAspectFit)
     }
     
     private let dividorView = UIView().then {

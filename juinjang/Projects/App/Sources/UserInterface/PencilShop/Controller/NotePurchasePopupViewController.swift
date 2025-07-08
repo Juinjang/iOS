@@ -63,7 +63,7 @@ final class NotePurchasePopupViewController: BaseAlertViewController {
     }
     
     private func setScore(score: Double) {
-        let attributedString1 = NSMutableAttributedString(string: "\(score)", attributes: [.font: UIFont.pretendard(size: 20, weight: .semiBold)])
+        let attributedString1 = NSMutableAttributedString(string: "\(score.convertTo1fString())", attributes: [.font: UIFont.pretendard(size: 20, weight: .semiBold)])
         
         let imageAttachment1 = NSTextAttachment()
         imageAttachment1.image = UIImage.ImjangList.starRounded.withTintColor(.main)
@@ -72,7 +72,7 @@ final class NotePurchasePopupViewController: BaseAlertViewController {
         attributedString1.insert(NSAttributedString(attachment: imageAttachment1), at: 0)
         
         scoreLabel.attributedText = attributedString1
-        scoreLabel.textColor = .gray400
+        scoreLabel.textColor = .main
         scoreLabel.textAlignment = .center
     }
 }
@@ -80,10 +80,12 @@ final class NotePurchasePopupViewController: BaseAlertViewController {
 fileprivate final class NotePurchaseStatusView: BaseView {
     private let myPencilLabel = DSLabel(.body).then {
         $0.fontColor = .gray450
+        $0.text = "나의 연필"
     }
     
     private let neededPencilLabel = DSLabel(.body).then {
         $0.fontColor = .gray450
+        $0.text =  "필요한 연필"
     }
     
     private lazy var pencilImageView = makePencilImageView()
@@ -120,7 +122,6 @@ fileprivate final class NotePurchaseStatusView: BaseView {
         myPencilLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(12)
             make.leading.equalToSuperview().offset(16)
-            make.centerY.equalToSuperview()
         }
         
         myPencilCountLabel.snp.makeConstraints { make in

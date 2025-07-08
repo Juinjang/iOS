@@ -12,7 +12,7 @@ import RealmSwift
 import AmplitudeSwift
 import RxSwift
 
-protocol CheckListDelegate {
+protocol CheckListDelegate: AnyObject {
     func didSavedCheckListItems(_ items: [CheckListAnswer])
 }
 
@@ -29,7 +29,7 @@ final class CheckListViewController: BaseViewController {
     var savedCheckListItems: [CheckListAnswer] = [] // 저장되어 있던 체크리스트 항목
     var checkListItems: [CheckListAnswer] = [] // 저장될 체크리스트 항목
     
-    var delegate: CheckListDelegate?
+    weak var delegate: CheckListDelegate?
     
     init(imjangId: Int, version: Int) {
         self.imjangId = imjangId

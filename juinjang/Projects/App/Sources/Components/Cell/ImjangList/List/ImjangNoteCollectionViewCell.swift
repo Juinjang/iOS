@@ -46,9 +46,8 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-        configureCell(note: nil)
-        self.roomThumbnailImageView.image = nil
-        self.roomIcon.image = UIImage.ImjangNote.house
+        roomThumbnailImageView.image = nil
+        roomIcon.image = UIImage.ImjangNote.house
     }
 }
 

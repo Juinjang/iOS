@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxRelay
 
 final class SelectAreaCell: BaseCollectionViewCell {
     private let selectBackgroundView = UIView().then {
@@ -15,54 +17,69 @@ final class SelectAreaCell: BaseCollectionViewCell {
         $0.layer.cornerRadius = 10
     }
     
-    private let messageStackView = UIStackView().then {
-        $0.design(spacing: 4)
-    }
-    
     private let iconImageView = UIImageView().then {
-        $0.image = UIImage.ImjangNote.location.withTintColor(.gray400)
+        $0.image = UIImage.ImjangNote.location.withTintColor(.main200)
         $0.contentMode = .scaleAspectFit
     }
     
-    private let messageLabel = UILabel()
+    private let titleLabel = UILabel()
     
     private let selectLabel = UILabel().then {
         $0.setAttribute(text: "선택", color: .gray450, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
     }
     
-    func configureCell(area: Area?) {
-        var title: String
-        if let area {
-            title = "\(area.si) > \(area.gu) > \(area.dong)"
+    private let cellButton = UIButton()
+    private var disposeBag = DisposeBag()
+    
+    func configureCell(areaString: String?, relay: PublishRelay<LookAroundEventType>) {
+        if let areaString {
+            iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main)
+            titleLabel.setAttribute(text: areaString, color: .main, font: .pretendard(size: 15, weight: .medium), lineHeight: 20)
         } else {
-            title = "지역을 선택해주세요"
+            iconImageView.image = UIImage.ImjangNote.location.withTintColor(.main200)
+            titleLabel.setAttribute(text: "지역을 선택해주세요", color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
         }
-        title = "지역을 선택해주세요"
-        iconImageView.tintColor = .main200
-        messageLabel.setAttribute(text: title, color: .gray400, font: .pretendard(size: 14, weight: .medium), lineHeight: 20)
+        
+        cellButton.rx.throttleTap
+            .map { LookAroundEventType.selectAreaTap }
+            .bind(to: relay)
+            .disposed(by: disposeBag)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        disposeBag = DisposeBag()
+        iconImageView.image = nil
     }
     
     override func configureHierarchy() {
-        [iconImageView, messageLabel].forEach {
-            messageStackView.addArrangedSubview($0)
-        }
-        
-        [messageStackView, selectLabel].forEach {
-            selectBackgroundView.addSubview($0)
-        }
-        
-        addSubview(selectBackgroundView)
+        contentView.add(
+            selectBackgroundView,
+            iconImageView,
+            titleLabel,
+            selectLabel,
+            cellButton
+        )
     }
     
     override func configureLayout() {
-        selectBackgroundView.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview().inset(0)
-            make.horizontalEdges.equalToSuperview()
+        cellButton.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         
-        messageStackView.snp.makeConstraints { make in
+        selectBackgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        iconImageView.snp.makeConstraints { make in
+            make.size.equalTo(24)
             make.verticalEdges.leading.equalToSuperview().inset(12)
-            make.trailing.lessThanOrEqualTo(selectLabel).inset(12)
+        }
+        
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconImageView.snp.trailing).offset(4)
+            make.centerY.equalTo(iconImageView)
+            make.trailing.equalTo(selectLabel.snp.leading).offset(-22)
         }
         
         selectLabel.snp.makeConstraints { make in
@@ -70,9 +87,7 @@ final class SelectAreaCell: BaseCollectionViewCell {
             make.trailing.equalToSuperview().inset(12)
         }
         
-        iconImageView.snp.makeConstraints { make in
-            make.size.equalTo(24)
-        }
+        titleLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
     
     override func configureView() {

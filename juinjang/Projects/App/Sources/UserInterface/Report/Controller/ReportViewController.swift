@@ -18,12 +18,19 @@ import KakaoSDKShare
 import SafariServices
 
 import Alamofire
+import RxSwift
 
 final class ReportViewController : BaseViewController {
     
     let templateId = 103560
     var safariViewController : SFSafariViewController?
     var checkListViewController: CheckListViewController?
+    private var disposeBag = DisposeBag()
+    
+    private let navigationView = DefaultNavigationView().then {
+        $0.title = "주인장 리포트"
+        $0.leftItem = [.pop]
+    }
     
     //MARK: - 총 평점 멘트, 가격, 주소
     var totalGradeLabel = UILabel().then {
@@ -64,6 +71,39 @@ final class ReportViewController : BaseViewController {
     //MARK: - 그래프
     var tabViewController = TabViewController()
     
+    
+    init(imjangId: Int, savedCheckListItems: [CheckListAnswer]) {
+        self.imjangId = imjangId
+        tabViewController.imjangId = imjangId
+        self.savedCheckListItems = savedCheckListItems
+        super.init()
+        bind()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        getReportInfo(limjangId: imjangId, accessToken: UserDefaultManager.shared.accessToken)
+        print(imjangId)
+        view.backgroundColor = .mainWhite
+        
+        view.add(
+            navigationView,
+            totalGradeLabel,
+            priceLabel,
+            addressLabel
+        )
+        
+        addChild(tabViewController)
+        view.addSubview(tabViewController.view)
+        tabViewController.didMove(toParent: self)
+        
+        setConstraint()
+    }
+    
     func getReportInfo(limjangId: Int, accessToken: String) {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<ReportResponseDto>.self, api: .fetchReportInfo(imjangId: limjangId)) { [weak self] response, error in
             guard let self else { return }
@@ -81,14 +121,20 @@ final class ReportViewController : BaseViewController {
     }
     
     func setConstraint() {
+        navigationView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
         totalGradeLabel.snp.makeConstraints{
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(28)
+            $0.top.equalTo(navigationView.snp.bottom).offset(28)
             $0.left.equalToSuperview().offset(24)
         }
+        
         priceLabel.snp.makeConstraints{
             $0.top.equalTo(totalGradeLabel.snp.bottom).offset(13)
             $0.left.equalToSuperview().offset(24)
         }
+        
         addressLabel.snp.makeConstraints{
             $0.top.equalTo(priceLabel.snp.bottom).offset(6)
             $0.left.equalToSuperview().offset(24)
@@ -101,19 +147,15 @@ final class ReportViewController : BaseViewController {
         }
     }
     
-    func designNavigationBar() {
-        self.navigationController?.navigationBar.tintColor = .black
-        navigationItem.title = "주인장 리포트"
-        
-        //let shareButtonItem = UIBarButtonItem(image: UIImage.share, style: .plain, target: self, action: #selector(shareBtnTap))
-        let backButtonItem = UIBarButtonItem(image: UIImage.arrowLeft, style: .plain, target: self, action: #selector(backBtnTap))
-        backButtonItem.tintColor = .gray450
-        //backButtonItem.imageInsets = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-        
-        // 네비게이션 아이템에 백 버튼 아이템 설정
-        //self.navigationItem.hidesBackButton = true
-        self.navigationItem.leftBarButtonItem = backButtonItem
-        //self.navigationItem.rightBarButtonItem = shareButtonItem
+    private func bind() {
+        navigationView.itemActionRelay
+            .bind(with: self, onNext: { owner, action in
+                switch action {
+                case .popButtonTap: owner.backBtnTap()
+                default: break
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     func changeItem() {
@@ -210,8 +252,6 @@ final class ReportViewController : BaseViewController {
             savedCheckListItems: savedCheckListItems
         )
         self.navigationController?.popViewController(animated: true)
-//        let mainVC = ImjangNoteViewController()
-//        navigationController?.pushViewController(mainVC, animated: true)
     }
     @objc func shareBtnTap() {
         if ShareApi.isKakaoTalkSharingAvailable() {
@@ -245,35 +285,6 @@ final class ReportViewController : BaseViewController {
     
     func updateUI(with items: [CheckListAnswer]) {
         self.savedCheckListItems = items
-    }
-    
-    init(imjangId: Int, savedCheckListItems: [CheckListAnswer]) {
-        self.imjangId = imjangId
-        tabViewController.imjangId = imjangId
-        self.savedCheckListItems = savedCheckListItems
-        super.init()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        designNavigationBar()
-        getReportInfo(limjangId: imjangId, accessToken: UserDefaultManager.shared.accessToken)
-        print(imjangId)
-        view.backgroundColor = .mainWhite
-        
-        view.addSubview(totalGradeLabel)
-        view.addSubview(priceLabel)
-        view.addSubview(addressLabel)
-        
-        addChild(tabViewController)
-        view.addSubview(tabViewController.view)
-        tabViewController.didMove(toParent: self)
-        
-        setConstraint()
     }
 }
 
