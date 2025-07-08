@@ -58,6 +58,10 @@ final class NoteEnterPencilShopViewController: BaseViewController, View {
                 
                 owner.mainView.setPencilCount(count: purchasePencilDTO.remainQuantity)
                 
+                if purchasePencilDTO.status == "SUCCESS" {
+                    owner.onPurchaseCompleted?(true)
+                }
+                
                 owner.present(NotePurchasePopupViewController(
                     buildingName: reactor.dependency.buildingName,
                     score: reactor.dependency.totalRate,
@@ -69,7 +73,7 @@ final class NoteEnterPencilShopViewController: BaseViewController, View {
                             switch event {
                             case .confirm:
                                 owner.onPurchaseCompleted?(true)
-                                owner.dismiss(animated: true)
+                                owner.navigationController?.popViewController(animated: true)
                             default: break
                             }
                         })

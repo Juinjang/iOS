@@ -20,6 +20,7 @@ final class ImjangDetailViewReactor: Reactor {
         case reportReasonDidSelected(ReportReason)
         case reportButtonDidTap
         case purchaseButtonDidTap
+        case didPurchasePencil(isSuccess: Bool)
     }
     
     enum Mutation {
@@ -39,6 +40,7 @@ final class ImjangDetailViewReactor: Reactor {
         case updatePurchasePencil(Bool)
         case updateTotalRate(Double)
         case updateBuildingName(String)
+        case updateDidPurchasePencil(Bool)
     }
     
     struct State {
@@ -93,6 +95,7 @@ final class ImjangDetailViewReactor: Reactor {
         case .viewWillAppear:
             if currentState.didPurchasePencil {
                 return .concat(
+                    requestBalancePencilCount(),
                     fetchAllSectionData(),
                     .just(.updatePurchasePencil(false))
                 )
@@ -126,6 +129,8 @@ final class ImjangDetailViewReactor: Reactor {
             return createReport(reason: self.currentState.reportReason!)
         case .purchaseButtonDidTap:
             return handlePurchase()
+        case .didPurchasePencil(let success):
+            return .just(.updateDidPurchasePencil(success))
         }
     }
     
@@ -166,6 +171,8 @@ final class ImjangDetailViewReactor: Reactor {
             newState.totalRate = rate
         case .updateBuildingName(let name):
             newState.buildingName = name
+        case .updateDidPurchasePencil(let bool):
+            newState.didPurchasePencil = bool
         }
         return newState
     }
