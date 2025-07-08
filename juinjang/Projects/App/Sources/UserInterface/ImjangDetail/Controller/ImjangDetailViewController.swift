@@ -85,6 +85,7 @@ final class ImjangDetailViewController: BaseViewController, View {
         reactor.state
             .map(\.isShowPencilAlert)
             .compactMap { $0 }
+            .distinctUntilChanged()
             .observe(on: MainScheduler.instance)
             .subscribe(with: self) { (self, bool) in
                 guard let reactor = self.reactor else {

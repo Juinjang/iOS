@@ -31,7 +31,7 @@ enum AlertButtonType: Equatable {
         case .cancel(_,_):
             return .cancel
         case .custom(_):
-            return .confirm
+            return .custom
         }
     }
 

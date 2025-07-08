@@ -206,17 +206,14 @@ extension ImjangDetailViewReactor {
         return dependency
             .sharedNoteRepository
             .purchaseNote(noteID: dependency.id)
-            .asObservable()
-            .flatMap { [weak self] _ -> Observable<Mutation> in
-                guard let self = self else { return .empty() }
-                
-                return .concat([
+            .andThen(
+                Observable.concat([
                     .just(.updateIsBuyer(true)),
                     .just(.updateIsBuyerInInfoSection(true)),
                     self.createSection(for: .checkList),
                     self.createSection(for: .review)
                 ])
-            }
+            )
             .catch { _ -> Observable<Mutation> in
                 return .just(.updateIsShowPencilAlert)
             }
