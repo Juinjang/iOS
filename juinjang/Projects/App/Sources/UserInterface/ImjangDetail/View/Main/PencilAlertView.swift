@@ -47,7 +47,7 @@ final class PencilAlertView: BaseAlertViewController {
         
         myPencilView.configure(count: pencilCount,
                                needCount: needPencilCount)
-        customButtonView.configure(for: pencilCount)
+        customButtonView.configure(for: needPencilCount)
     }
     
     required init?(coder: NSCoder) {
