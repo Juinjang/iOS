@@ -33,7 +33,7 @@ struct MyNoteCellModel {
         imageUrl = model.imageUrl
         isPurchase = model.isPurchase
         isLike = model.isLiked
-        rate = model.rate.to1f
+        rate = model.rate?.to1f ?? 0.0
         price = model.price
         pyong = model.pyong
         floor = model.floor
