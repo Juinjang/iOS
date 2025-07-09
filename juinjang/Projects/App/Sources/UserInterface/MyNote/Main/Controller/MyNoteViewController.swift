@@ -65,6 +65,8 @@ final class MyNoteViewController: BaseViewController, View {
     
     // MARK: - View Event
     func bindViewEvent() {
+        guard let reactor = self.reactor else { return }
+        
         mainView
             .navigationView
             .itemActionRelay
@@ -74,7 +76,14 @@ final class MyNoteViewController: BaseViewController, View {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
                 case .searchButtonTap:
-                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(noteRepository: SharedNoteRepository())))
+                    let viewController = MyNoteSearchViewController(
+                        reactor: .init(
+                            dependency: .init(
+                                noteRepository: SharedNoteRepository(),
+                                noteType: reactor.currentState.categoryState
+                            )
+                        )
+                    )
                     self.navigationController?.pushViewController(viewController, animated: true)
                 default: break
                 }
@@ -85,7 +94,7 @@ final class MyNoteViewController: BaseViewController, View {
             .segmentedView
             .scrollSelectedRelay
             .map { Reactor.Action.categoryButtonDidTap($0) }
-            .bind(to: reactor!.action)
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         mainView

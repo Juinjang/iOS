@@ -34,6 +34,7 @@ final class MyNoteSearchViewReactor: Reactor {
     // MARK: - Dependencies
     struct Dependency {
         let noteRepository: SharedNoteRepositoryProtocol
+        let noteType: MyNoteCategoryType
     }
     
     let dependency: Dependency
@@ -51,7 +52,7 @@ final class MyNoteSearchViewReactor: Reactor {
                 dependency.noteRepository
                     .retrieveMyNotes(
                         param: .init(
-                            noteType: "SHARED",
+                            noteType: dependency.noteType.toRequestType,
                             propertyType: nil,
                             priceType: nil,
                             keyword: keyword
