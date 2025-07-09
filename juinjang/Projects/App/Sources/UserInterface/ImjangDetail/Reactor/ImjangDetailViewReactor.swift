@@ -188,10 +188,6 @@ extension ImjangDetailViewReactor {
                 guard let self = self else { return .empty() }
                 return .concat(
                     self.currentState.isBuyer
-                    ? .empty()
-                    : .just(.updateIsShowPencilAlert),
-                    
-                    self.currentState.isBuyer
                     ? self.createSection(for: .checkList)
                     : self.createCheckListHolderSection()
                 )
