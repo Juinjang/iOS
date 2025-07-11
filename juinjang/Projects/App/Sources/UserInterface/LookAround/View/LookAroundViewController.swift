@@ -104,8 +104,10 @@ final class LookAroundViewController: BaseViewController, View {
             .distinctUntilChanged()
             .map { [weak self] sections in
                 if let notes = sections[3].items as? [ExploreNoteModel] {
+                    print("notes count: \(notes.count)")
                     self?.mainView.collectionView.collectionViewLayout = self?.mainView.createCollectionViewLayout(isListEmpty: notes.isEmpty) ?? UICollectionViewLayout()
                 }
+                print("notes count: \(sections[3].items.count)")
                 return sections
             }
             .bind(to: mainView.collectionView.rx.items(dataSource: dataSource))
