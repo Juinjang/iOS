@@ -19,6 +19,8 @@ final class MyNoteSearchViewController: BaseViewController, View {
     
     private let mainView = MyNoteSearchView()
     
+    private let likeEventRelay = PublishRelay<Int>()
+    
     init(reactor: MyNoteSearchViewReactor) {
         super.init()
         self.reactor = reactor
@@ -77,7 +79,8 @@ final class MyNoteSearchViewController: BaseViewController, View {
                                     id: noteId,
                                     title: title,
                                     sharedNoteRepository: SharedNoteRepository(),
-                                    pencilShopRepository: PencilShopRepository()
+                                    pencilShopRepository: PencilShopRepository(),
+                                    likeEventRelay: self.likeEventRelay
                                 )
                             )
                         ),

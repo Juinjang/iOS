@@ -171,7 +171,8 @@ final class ShareWriteViewController: BaseViewController, View {
                                         id: selectedModel.noteId,
                                         title: selectedModel.name,
                                         sharedNoteRepository: SharedNoteRepository(),
-                                        pencilShopRepository: PencilShopRepository()
+                                        pencilShopRepository: PencilShopRepository(),
+                                        likeEventRelay: nil
                                     )
                                 )
                             ),

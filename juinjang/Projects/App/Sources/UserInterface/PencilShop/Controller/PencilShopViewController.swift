@@ -177,7 +177,8 @@ final class PencilShopViewController: BaseViewController, View {
                 id: acquiredPencil.sharedNoteId,
                 title: acquiredPencil.buildingName,
                 sharedNoteRepository: SharedNoteRepository(),
-                pencilShopRepository: PencilShopRepository())
+                pencilShopRepository: PencilShopRepository(),
+                likeEventRelay: nil)
             )
         )
         navigationController?.pushViewController(noteDetailVC, animated: true)

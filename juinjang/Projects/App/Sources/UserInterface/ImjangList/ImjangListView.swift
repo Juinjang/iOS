@@ -140,7 +140,6 @@ final class ImjangListView: UIView {
 }
 
 extension ImjangListView {
-    
     func createCollectionViewLayout(isScrapEmpty: Bool) -> UICollectionViewCompositionalLayout {
         print(#function, isScrapEmpty)
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in

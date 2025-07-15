@@ -188,7 +188,8 @@ final class LookAroundViewController: BaseViewController, View {
                     id: sharedNoteId,
                     title: buildingName,
                     sharedNoteRepository: SharedNoteRepository(),
-                    pencilShopRepository: PencilShopRepository()
+                    pencilShopRepository: PencilShopRepository(),
+                    likeEventRelay: nil
                 )
             )
         )

@@ -18,6 +18,7 @@ final class MyNoteViewController: BaseViewController, View {
     
     private let mainView = MyNoteView()
     private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
+    private let noteLikeEventRelay = PublishRelay<Int>()
     
     init(reactor: MyNoteViewReactor) {
         super.init()
@@ -52,9 +53,11 @@ final class MyNoteViewController: BaseViewController, View {
             .subscribe(with: self) { (self, id) in
                 let alertView = MyNoteAlertView()
                 alertView.eventRelay
-                    .map { MyNoteViewReactor.Action.alertEventOccurred(
-                        event: $0,
-                        noteID: id)
+                    .map {
+                        MyNoteViewReactor.Action.alertEventOccurred(
+                            event: $0,
+                            noteID: id
+                        )
                     }
                     .bind(to: reactor.action)
                     .disposed(by: self.disposeBag)
@@ -114,6 +117,11 @@ final class MyNoteViewController: BaseViewController, View {
         mainView
             .pageContainerCollectionView.rx.setDelegate(self)
             .disposed(by: disposeBag)
+        
+        noteLikeEventRelay
+            .map { Reactor.Action.receivedNoteLikeChange($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - PageCellEvent
@@ -136,7 +144,8 @@ final class MyNoteViewController: BaseViewController, View {
                                 id: id,
                                 title: reactor.getNoteTitle(noteID: id),
                                 sharedNoteRepository: SharedNoteRepository(),
-                                pencilShopRepository: PencilShopRepository()
+                                pencilShopRepository: PencilShopRepository(),
+                                likeEventRelay: self.noteLikeEventRelay
                             )
                         )
                     ), animated: true

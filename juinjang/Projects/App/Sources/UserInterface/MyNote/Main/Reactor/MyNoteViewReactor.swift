@@ -13,6 +13,7 @@ final class MyNoteViewReactor: Reactor {
         case categoryButtonDidTap(Int)
         case pageCellEventOccurred(event: MyNotePageEventType)
         case alertEventOccurred(event: AlertEventType, noteID: Int)
+        case receivedNoteLikeChange(Int)
     }
     
     enum Mutation {
@@ -85,6 +86,8 @@ final class MyNoteViewReactor: Reactor {
             return handlePageCellEvent(event)
         case let .alertEventOccurred(event, id):
             return (event == .confirm) ? cancelNoteLike(noteID: id) : .empty()
+        case .receivedNoteLikeChange(let noteID):
+            return .just(.setLikeUpdate(id: noteID))
         }
     }
     

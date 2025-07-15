@@ -7,6 +7,7 @@
 
 import ReactorKit
 import Foundation
+import RxRelay
 
 final class ImjangDetailViewReactor: Reactor {
     enum Action {
@@ -66,6 +67,7 @@ final class ImjangDetailViewReactor: Reactor {
         let title: String
         let sharedNoteRepository: SharedNoteRepositoryProtocol
         let pencilShopRepository: PencilShopRepositoryProtocol
+        let likeEventRelay: PublishRelay<Int>?
     }
     
     let initialState: State
@@ -237,8 +239,12 @@ extension ImjangDetailViewReactor {
         ? dependency.sharedNoteRepository.deleteNoteLike(noteID: self.dependency.id).asObservable()
         : dependency.sharedNoteRepository.createNoteLike(noteID: self.dependency.id).asObservable()
         
-        return observable.map { response in
-            Mutation.updateIsLikedInInfoSection(isLiked: !isLiked, likedCount: response.count)
+        return observable.map { [weak self] response in
+            if let noteID = self?.dependency.id {
+                self?.dependency.likeEventRelay?.accept(noteID)
+            }
+
+            return Mutation.updateIsLikedInInfoSection(isLiked: !isLiked, likedCount: response.count)
         }
     }
     

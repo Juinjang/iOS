@@ -47,6 +47,7 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         roomThumbnailImageView.image = nil
+        roomThumbnailImageView.kf.setImage(with: URL(string: ""))
         roomIcon.image = UIImage.ImjangNote.house
     }
 }
@@ -55,6 +56,8 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
 extension ImjangNoteCollectionViewCell {
     func configureCell(note: NoteDTO?) {
         guard let note else { return }
+        roomThumbnailImageView.kf.setImage(with: URL(string: ""))
+        roomThumbnailImageView.image = nil
 
         roomNameLabel.text = note.name
         
@@ -95,7 +98,8 @@ extension ImjangNoteCollectionViewCell {
         bookMarkButton.setImage(image, for: .normal)
         
         let images = note.imageUrl
-        if images.isEmpty {
+        
+        if images.isEmpty || images.count == 0 {
             if let propertyType = PropertyType(rawValue: note.propertyType) {
                 roomThumbnailImageView.image = propertyType.detailImage
             } else {
@@ -104,9 +108,7 @@ extension ImjangNoteCollectionViewCell {
         } else {
             let image = images[0]
             if let url = URL(string: image) {
-                DispatchQueue.main.async {
-                    self.roomThumbnailImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
-                }
+                self.roomThumbnailImageView.kf.setImage(with: url, placeholder: UIImage(named: "1"))
             }
         }
     }
