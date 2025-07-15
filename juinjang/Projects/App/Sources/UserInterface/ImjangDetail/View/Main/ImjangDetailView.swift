@@ -11,9 +11,27 @@ import SnapKit
 import RxSwift
 
 final class ImjangDetailView: BaseView {
-    let navigationView = DefaultNavigationView().then {
+    lazy var navigationView = CenterFlexibleNavigationView(centerView: titleView).then {
         $0.leftItem = [.pop]
         $0.rightItem = [.report]
+    }
+    
+    private let titleView = UIView()
+    
+    fileprivate let titleLabel = DSLabel(.title).then {
+        $0.fontSize = 16
+        $0.fontColor = .gray600
+    }
+    
+    fileprivate let purchaseLabel = DSLabel(.body).then {
+        $0.backgroundColor = .point.withAlphaComponent(0.1)
+        $0.layer.cornerRadius = 4
+        $0.layer.masksToBounds = true
+        $0.text = "소장"
+        $0.fontAlignment = .center
+        $0.fontColor = .point
+        $0.fontSize = 12
+        $0.isHidden = true
     }
     
     fileprivate var infoCellHeight: CGFloat = 0
@@ -57,6 +75,8 @@ final class ImjangDetailView: BaseView {
         super.configureHierarchy()
         
         add(navigationView, detailCollectionView, topFloatingButton)
+        
+        titleView.add(titleLabel, purchaseLabel)
     }
     
     override func configureLayout() {
@@ -76,6 +96,17 @@ final class ImjangDetailView: BaseView {
             $0.size.equalTo(48)
             $0.right.equalToSuperview().inset(24)
             $0.bottom.equalToSuperview().inset(36)
+        }
+        
+        titleLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
+        purchaseLabel.snp.makeConstraints {
+            $0.left.equalTo(titleLabel.snp.right).offset(4)
+            $0.centerY.equalToSuperview()
+            $0.width.equalTo(29)
+            $0.height.equalTo(17)
         }
     }
 }
@@ -170,7 +201,13 @@ extension ImjangDetailView {
 extension Reactive where Base: ImjangDetailView {
     var navigationTitle: Binder<String> {
         return Binder(base) { view, title in
-            view.navigationView.title = title
+            view.titleLabel.text = title
+        }
+    }
+    
+    var isPurchased: Binder<Bool> {
+        return Binder(base) { view, bool in
+            view.purchaseLabel.isHidden = !bool
         }
     }
     

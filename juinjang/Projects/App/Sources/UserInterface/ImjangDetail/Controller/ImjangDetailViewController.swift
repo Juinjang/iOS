@@ -53,6 +53,11 @@ final class ImjangDetailViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
+            .map(\.isBuyer)
+            .bind(to: mainView.rx.isPurchased)
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .map(\.sectionItems)
             .observe(on: MainScheduler.instance)
             .withUnretained(mainView)
