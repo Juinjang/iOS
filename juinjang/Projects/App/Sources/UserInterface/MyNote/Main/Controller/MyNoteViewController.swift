@@ -199,7 +199,7 @@ extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - MyNote Page DataSource
 extension MyNoteViewController {
-    private func createDataSource() ->RxCollectionViewSectionedReloadDataSource<MyNoteMainSection> {
+    private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MyNoteMainSection> {
         return .init(configureCell: { [weak self] _, collectionView, indexPath, item in
             guard let self = self else { return UICollectionViewCell() }
             

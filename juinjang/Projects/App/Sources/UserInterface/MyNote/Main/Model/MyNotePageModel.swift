@@ -14,7 +14,8 @@ struct MyNotePageModel: Equatable {
     var saleType: SaleTypeFilter
     var items: [MyNoteCellModel]
     
-    static func == (lhs: MyNotePageModel, rhs: MyNotePageModel) -> Bool {
+    static func == (lhs: MyNotePageModel,
+                    rhs: MyNotePageModel) -> Bool {
         return lhs.category == rhs.category &&
         lhs.isShowingNotice == rhs.isShowingNotice &&
         lhs.transactionType == rhs.transactionType &&

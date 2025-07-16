@@ -14,6 +14,7 @@ final class MyNoteViewReactor: Reactor {
         case pageCellEventOccurred(event: MyNotePageEventType)
         case alertEventOccurred(event: AlertEventType, noteID: Int)
         case receivedNoteLikeChange(Int)
+        case likedNoticeDidShow
     }
     
     enum Mutation {
@@ -85,9 +86,14 @@ final class MyNoteViewReactor: Reactor {
         case .pageCellEventOccurred(event: let event):
             return handlePageCellEvent(event)
         case let .alertEventOccurred(event, id):
-            return (event == .confirm) ? cancelNoteLike(noteID: id) : .empty()
+            return .concat(
+                (event == .confirm) ? cancelNoteLike(noteID: id) : .empty(),
+                .just(.resetAlert)
+            )
         case .receivedNoteLikeChange(let noteID):
             return .just(.setLikeUpdate(id: noteID))
+        case .likedNoticeDidShow:
+            return .just(.resetAlert)
         }
     }
     
@@ -127,6 +133,11 @@ extension MyNoteViewReactor {
                 return Observable.concat([
                     .just(.resetAlert),
                     .just(.setLikeUpdate(id: id))
+                ])
+            }
+            .catch { _ in
+                return Observable.concat([
+                    .just(.resetAlert)
                 ])
             }
     }
@@ -327,16 +338,41 @@ extension MyNoteViewReactor {
     }
     
     private func setLikeUpdate(_ state: inout State, id: Int) {
+        var isUnliked = false
+
         state.pages = state.pages.map { page in
-            guard page.category == state.categoryState else { return page }
             var updatedPage = page
             updatedPage.items = page.items.map { item in
                 guard item.sharedNoteId == id else { return item }
                 var updated = item
                 updated.isLike.toggle()
+                if !updated.isLike {
+                    isUnliked = true
+                }
                 return updated
             }
             return updatedPage
+        }
+
+        if isUnliked {
+            state.pages = removeNote(withId: id, in: .like, from: state.pages)
+        }
+    }
+    
+    private func removeNote(withId id: Int,
+                            in category: MyNoteCategoryType,
+                            from pages: [MyNotePageModel]) -> [MyNotePageModel] {
+        return pages.map { page in
+            guard page.category == category else { return page }
+            let newItems = page.items.filter { $0.sharedNoteId != id }
+            
+            return MyNotePageModel(
+                category: page.category,
+                isShowingNotice: page.isShowingNotice,
+                transactionType: page.transactionType,
+                saleType: page.saleType,
+                items: newItems
+            )
         }
     }
 }
