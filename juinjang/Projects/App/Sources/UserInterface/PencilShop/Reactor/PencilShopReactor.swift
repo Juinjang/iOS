@@ -169,7 +169,6 @@ extension PencilShopReactor {
         return dependency.pencilShopRepository.readAcquiredPencil(acquiredPencilId: selectedAquiredPencil.acquiredPencilId)
             .asObservable()
             .flatMap { readAcquiredPencilDTO -> Observable<Mutation> in
-                print("얻은 연필 읽음 처리 완료: \(readAcquiredPencilDTO.isMarked), isTotalRead: \(readAcquiredPencilDTO.isTotalRead)")
                 return .concat([
                     .just(.setAcquiredList(acquiredPencils)),
                     .just(.setIsTotalRead(readAcquiredPencilDTO.isTotalRead))
@@ -190,11 +189,15 @@ extension PencilShopReactor {
         
         return dependency.inAppPurchaseService.requestPurchase(product: product)
             .asObservable()
-            .flatMap { result -> Observable<Mutation> in
+            .flatMap { [weak self] result -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
                 guard let result else {
                     return .just(.purchaseFailed(StoreError.failedPurchase))
                 }
-                return .just(.purchaseCompleted(result))
+                return .concat([
+                    .just(.purchaseCompleted(result)),
+                    retrievePencilTotalBalance()
+                ])
             }
             .catch { error -> Observable<Mutation> in
                 return .just(.purchaseFailed(error))
@@ -204,6 +207,7 @@ extension PencilShopReactor {
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let transactionMutation = dependency.inAppPurchaseService.completedPurchasePencilDTO
             .map { Mutation.purchaseCompleted($0) }
+            .flatMap { _ in self.retrievePencilTotalBalance() }
 
         return Observable.merge(mutation, transactionMutation)
     }
