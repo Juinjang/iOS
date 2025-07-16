@@ -98,6 +98,22 @@ final class ShareWriteViewController: BaseViewController, View {
                 )
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowErrorAlertView)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, text) in
+                self.showAlert(title: "에러", message: text, actionHandler: nil)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowSafetyAlertView)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, _) in
+                self.present(ShareSafetyAlertView(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindEvent() {

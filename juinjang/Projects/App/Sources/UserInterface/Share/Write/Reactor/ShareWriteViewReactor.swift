@@ -32,6 +32,8 @@ final class ShareWriteViewReactor: Reactor {
         case updateBuildingName(String)
         case updateReviewContent(String)
         case updateShowCompletedView
+        case updateIsShowErrorAlertView(String)
+        case updateIsShowSafetyAlertView
     }
     
     // MARK: - State
@@ -45,6 +47,8 @@ final class ShareWriteViewReactor: Reactor {
         var reviewContentText: String = ""
         var isActivatedUploadButton: Bool = false
         var isShowCompletedView: Bool? = nil
+        var isShowErrorAlertView: String? = nil
+        var isShowSafetyAlertView: Bool? = nil
         
         mutating func evaluateUploadButtonState() {
             isActivatedUploadButton =
@@ -122,6 +126,10 @@ final class ShareWriteViewReactor: Reactor {
             newState.evaluateUploadButtonState()
         case .updateShowCompletedView:
             newState.isShowCompletedView = true
+        case .updateIsShowErrorAlertView(let text):
+            newState.isShowErrorAlertView = text
+        case .updateIsShowSafetyAlertView:
+            newState.isShowSafetyAlertView.toggle()
         }
         
         return newState
@@ -134,17 +142,29 @@ extension ShareWriteViewReactor {
         return dependency
             .sharedNoteRepository
             .createSharedNote(
-                noteID: self.dependency.selectedModel.noteId,
+                noteID: dependency.selectedModel.noteId,
                 param: .init(
-                    buildingName: self.currentState.buildingName,
-                    isImageShared: self.currentState.isPublic,
-                    year: Int(self.currentState.selectImjangPeriod?.year ?? "0") ?? 0,
-                    month: Int(self.currentState.selectImjangPeriod?.month ?? "0") ?? 0,
-                    period: self.currentState.selectImjangPeriod?.phase ?? "",
-                    review: self.currentState.reviewContentText
+                    buildingName: currentState.buildingName,
+                    isImageShared: currentState.isPublic,
+                    year: Int(currentState.selectImjangPeriod?.year ?? "0") ?? 0,
+                    month: Int(currentState.selectImjangPeriod?.month ?? "0") ?? 0,
+                    period: currentState.selectImjangPeriod?.phase ?? "",
+                    review: currentState.reviewContentText
                 )
             )
-            .andThen(.just(.updateShowCompletedView))
+            .asObservable()
+            .flatMap { response -> Observable<Mutation> in
+                if response.isSuccess {
+                    return .just(.updateShowCompletedView)
+                }
+                
+                switch response.message {
+                case "공유가 금지된 노트입니다.":
+                    return .just(.updateIsShowSafetyAlertView)
+                default:
+                    return .just(.updateIsShowErrorAlertView(response.message))
+                }
+            }
     }
     
     private func fetchUserNickname() -> Observable<Mutation> {

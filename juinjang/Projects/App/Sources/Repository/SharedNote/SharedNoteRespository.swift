@@ -53,10 +53,9 @@ final class SharedNoteRepository: SharedNoteRepositoryProtocol {
             .asCompletable()
     }
     
-    func createSharedNote(noteID id: Int, param: NoteShareRequestDTO) -> Completable {
+    func createSharedNote(noteID id: Int, param: NoteShareRequestDTO) -> Single<NoResultResponse> {
         return SharedNoteAPI.postSharedNote(id, param)
             .request(NoResultResponse.self, networkManager)
-            .asCompletable()
     }
 
     func createNoteLike(noteID id: Int) -> Single<NoteLikeDTO> {

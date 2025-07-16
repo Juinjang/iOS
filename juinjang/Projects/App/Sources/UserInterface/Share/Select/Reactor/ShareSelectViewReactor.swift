@@ -147,7 +147,7 @@ extension ShareSelectViewReactor {
             )
             .asObservable()
             .flatMap { models -> Observable<Mutation> in
-                if !models.isEmpty {
+                if models.isEmpty {
                     return .concat(
                         .just(.updateIsShowEmptyView(bool: true)),
                         .just(.updateSectionItems(

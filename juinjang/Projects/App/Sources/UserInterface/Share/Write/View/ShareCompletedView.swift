@@ -58,7 +58,8 @@ final class ShareCompletedView: BaseAlertViewController {
         super.configureContentLayout()
         
         baseView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(204)
         }
         
         titleLabel.snp.makeConstraints {
@@ -68,7 +69,8 @@ final class ShareCompletedView: BaseAlertViewController {
         
         animatedView.snp.makeConstraints {
             $0.size.equalTo(168)
-            $0.center.equalToSuperview()
+            $0.centerX.equalToSuperview()
+            $0.bottom.equalToSuperview()
         }
     }
 }
