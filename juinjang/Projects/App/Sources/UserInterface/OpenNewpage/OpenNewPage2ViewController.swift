@@ -20,7 +20,11 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     private let repository = NoteRepository()
     private let disposeBag = DisposeBag()
     
-    var postCodeModel: PostCodeResponseModel? 
+    var postCodeModel: PostCodeResponseModel? {
+        didSet {
+            checkNextButtonActivation()
+        }
+    }
     
     private let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
