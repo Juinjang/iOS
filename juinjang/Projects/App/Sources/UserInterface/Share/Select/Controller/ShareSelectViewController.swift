@@ -126,6 +126,13 @@ final class ShareSelectViewController: BaseViewController, View {
                 }
             }
             .disposed(by: disposeBag)
+        
+        mainView
+            .rx.myImjangNoteButtonTapped
+            .subscribe(with: self) { (self, _) in
+                self.navigationController?.popViewController(animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 }
 

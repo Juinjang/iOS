@@ -39,6 +39,7 @@ final class ShareSelectView: BaseView {
     fileprivate let emptyView = ShareSelectEmptyView().then {
         $0.isHidden = true
     }
+    
     let nextButton = FilledButton(title: "다음으로")
     
     override func configureHierarchy() {
@@ -173,5 +174,9 @@ extension Reactive where Base: ShareSelectView {
                 view.shareCollectionView.reloadData()
             }
         }
+    }
+    
+    var myImjangNoteButtonTapped: Observable<Void> {
+        return base.emptyView.rx.noteButtonTapped
     }
 }
