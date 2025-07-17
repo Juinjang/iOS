@@ -75,12 +75,10 @@ final class LookAroundSearchViewController: BaseViewController, View {
         reactor.state
             .map { $0.searchResultList }
             .map({ [weak self] sections in
-                if let notes = sections.last?.items as? [ExploreNoteModel] {
-                    self?.mainView.setListEmpty(
-                        empty: notes.isEmpty,
-                        filterTapped: reactor.currentState.filterTapped
-                    )
-                }
+                self?.mainView.setListEmpty(
+                    empty: sections.last?.items.isEmpty == true,
+                    filterTapped: reactor.currentState.filterTapped
+                )
                 return sections
             })
             .bind(to: mainView.searchResultCollectionView.rx.items(dataSource: searchResultDataSource))
