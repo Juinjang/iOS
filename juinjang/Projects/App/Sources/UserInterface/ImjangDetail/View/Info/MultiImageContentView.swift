@@ -63,34 +63,6 @@ final class MultiImageContentView: BaseView {
                 }
                 .disposed(by: disposeBag)
         }
-        
-        if model.isBuyer {
-            mainImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // relay.accept(index: 0)
-                }
-                .disposed(by: disposeBag)
-            
-            secondImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // relay.accept(index: 1)
-
-                }
-                .disposed(by: disposeBag)
-            
-            thirdImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // relay.accept(index: 2)
-
-                }
-                .disposed(by: disposeBag)
-        } else {
-            mainImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // 시스템 알림: "구매하지 않은 임장노트예요."
-                }
-                .disposed(by: disposeBag)
-        }
     }
     
     func prepareForReuse() {

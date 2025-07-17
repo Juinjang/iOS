@@ -176,6 +176,25 @@ final class ImjangDetailViewController: BaseViewController, View {
                 self.present(ReportCompletedAlertView(), animated: true)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.tappedImageInfo)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, imageInfo) in
+                let viewController = EnlargePhotoViewController(
+                    currentIndex: imageInfo.index,
+                    photoList: imageInfo.DTOs
+                )
+                
+                viewController.modalPresentationStyle = .overFullScreen
+                viewController.modalTransitionStyle = .crossDissolve
+                
+                self.present(
+                    viewController,
+                    animated: true
+                )
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindView() {

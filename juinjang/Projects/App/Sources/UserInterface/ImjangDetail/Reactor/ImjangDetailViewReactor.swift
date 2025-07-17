@@ -42,6 +42,7 @@ final class ImjangDetailViewReactor: Reactor {
         case updateTotalRate(Double)
         case updateBuildingName(String)
         case updateDidPurchasePencil(Bool)
+        case updateTappedImageInfo(index: Int, DTOs: [ImageDto])
     }
     
     struct State {
@@ -60,6 +61,7 @@ final class ImjangDetailViewReactor: Reactor {
         var didPurchasePencil: Bool = false
         var totalRate: Double = 0.0
         var buildingName: String = ""
+        var tappedImageInfo: (index: Int, DTOs: [ImageDto])?
     }
         
     struct Dependency {
@@ -115,10 +117,15 @@ final class ImjangDetailViewReactor: Reactor {
             ))
         case .noteOpenButtonDidTap:
             return .just(.updateIsShowPencilAlert)
-        case .expandImageButtonDidTap(index: _):
-            return self.currentState.isBuyer
+        case .expandImageButtonDidTap(index: let index):
+            return currentState.isBuyer
+            ? {
+                let imageDTOs = extractImageDTO()
+                return imageDTOs.isEmpty
                 ? .empty()
-                : .just(.updateIsShowNotBuyerAlert)
+                : .just(.updateTappedImageInfo(index: index, DTOs: imageDTOs))
+            }()
+            : .just(.updateIsShowNotBuyerAlert)
         case .likeButtonDidTap:
             return likeButtonDidTap()
         case let .screenRecordingChanged(isRecording):
@@ -175,6 +182,8 @@ final class ImjangDetailViewReactor: Reactor {
             newState.buildingName = name
         case .updateDidPurchasePencil(let bool):
             newState.didPurchasePencil = bool
+        case .updateTappedImageInfo(index: let index, DTOs: let urls):
+            newState.tappedImageInfo = (index, urls)
         }
         return newState
     }
@@ -360,6 +369,16 @@ extension ImjangDetailViewReactor {
                     }
                 )
             }
+    }
+    
+    private func extractImageDTO() -> [ImageDto] {
+        guard let item = self.currentState.sectionItems[.info]?.first,
+              case let .info(infoCellItem) = item else {
+            return []
+        }
+        return infoCellItem.model.images.enumerated().map { index, url in
+            .init(imageId: index, imageUrl: url)
+        }
     }
 }
 
