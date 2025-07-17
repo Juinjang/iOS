@@ -24,8 +24,8 @@ final class ImjangListView: UIView {
     
     // 임장 노트가 존재하지 않을 때의 뷰
     let emptyBackgroundView = UIView()
-    private let emptyLogoImageView = UIImageView()
-    private let emptyMessageLabel = UILabel()
+    let emptyLogoImageView = UIImageView()
+    let emptyMessageLabel = UILabel()
     let newPageButton = UIButton()
     
     lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: createCollectionViewLayout(isScrapEmpty: true))
@@ -42,15 +42,17 @@ final class ImjangListView: UIView {
     }
     
     private func configureHierarchy() {
-        add(navigationView,
-            emptyBackgroundView)
-        [emptyLogoImageView,
-         emptyMessageLabel,
-         newPageButton].forEach {
-            emptyBackgroundView.addSubview($0)
-        }
-        addSubview(collectionView)
-        self.bringSubviewToFront(navigationView)
+        add(
+            navigationView,
+            emptyBackgroundView,
+            collectionView
+        )
+        
+        emptyBackgroundView.add(
+            emptyLogoImageView,
+            emptyMessageLabel,
+            newPageButton
+        )
     }
     
     private func configureLayout() {
@@ -92,6 +94,10 @@ final class ImjangListView: UIView {
     private func configureView() {
         backgroundColor = .mainWhite
         emptyBackgroundView.isHidden = true     // 일단 숨겨놓기
+        emptyLogoImageView.isHidden = true
+        emptyMessageLabel.isHidden = true
+        newPageButton.isHidden = true
+        collectionView.isHidden = true
         
         // 비었을 때 로고 이미지뷰
         emptyLogoImageView.design(image: UIImage.Main.nomaemull,
@@ -135,7 +141,14 @@ final class ImjangListView: UIView {
         
         collectionView.showsVerticalScrollIndicator = false
         collectionView.isSkeletonable = true
-        collectionView.clipsToBounds = true
+    }
+    
+    func hasResults(_ hasResults: Bool) {
+        emptyBackgroundView.isHidden = hasResults
+        emptyLogoImageView.isHidden = hasResults
+        emptyMessageLabel.isHidden = hasResults
+        newPageButton.isHidden = hasResults
+        collectionView.isHidden = !hasResults
     }
 }
 
