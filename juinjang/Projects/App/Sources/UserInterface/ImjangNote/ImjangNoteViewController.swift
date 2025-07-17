@@ -210,8 +210,35 @@ final class ImjangNoteViewController: BaseViewController,
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .share:
-                    let viewController = ShareSelectViewController(reactor: .init(dependency: .init(noteRepository: NoteRepository(), userRepository: UserRepository())))
-                    self.navigationController?.pushViewController(viewController, animated: true)
+                    self.noteRepository.retrieveShareableNoteList(
+                        param: .init(
+                            sort: nil,
+                            propertyType: nil,
+                            priceType: nil,
+                            keyword: self.roomNameLabel.text ?? "",
+                            page: 1,
+                            size: 20
+                        )
+                    )
+                    .asObservable()
+                    .map { notes in
+                        notes.first(where: { $0.noteId == self.imjangId })
+                    }
+                    .compactMap { $0 }
+                    .subscribe { model in
+                        let viewController = ShareWriteViewController(
+                            reactor: .init(
+                                dependecy: .init(
+                                    selectedModel: model,
+                                    noteRepository: NoteRepository(),
+                                    userRepository: UserRepository(),
+                                    sharedNoteRepository: SharedNoteRepository()
+                                )
+                            )
+                        )
+                        self.navigationController?.pushViewController(viewController, animated: true)
+                    }
+                    .disposed(by: self.disposeBag)
                 }
             }
             .disposed(by: disposeBag)
