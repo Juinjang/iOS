@@ -39,6 +39,9 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.leftItem = [.pop]
     }
     
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
     //MARK: - 프로필 사진, 닉네임
     private let profileImageView = UIImageView().then {
         $0.image = UIImage.Setting.profile
@@ -457,8 +460,10 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func configureHierarchy() {
-        view.add(
-            navigationView,
+        view.add(navigationView, scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.add(
             profileImageView,
             editButton,
             nicknameLabel,
@@ -486,8 +491,19 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
         
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.bottom.equalTo(withdrawalButton.snp.bottom).offset(20)
+        }
+        
         profileImageView.snp.makeConstraints{
-            $0.top.equalTo(navigationView.snp.bottom).offset(28)
+            $0.top.equalToSuperview().offset(28)
             $0.centerX.equalToSuperview()
             $0.width.height.equalTo(66)
         }
