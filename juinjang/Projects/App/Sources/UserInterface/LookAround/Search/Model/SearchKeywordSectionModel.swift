@@ -11,13 +11,9 @@ struct SearchKeywordSectionModel {
     var items: [String]
 }
 
-extension SearchKeywordSectionModel: SectionModelType {
+extension SearchKeywordSectionModel: SectionModelType, Hashable, Equatable {
     typealias Identity = String
     typealias Item = String
-
-    var identity: String {
-        return "search_section"
-    }
 
     init(original: SearchKeywordSectionModel, items: [Item]) {
         self = original
