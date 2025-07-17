@@ -6,6 +6,7 @@
 //
 
 import ReactorKit
+import RxRelay
 
 final class MyNoteStopShareViewReactor: Reactor {
     // MARK: - Action
@@ -37,6 +38,7 @@ final class MyNoteStopShareViewReactor: Reactor {
     // MARK: - Dependency
     struct Dependency {
         let noteRepository: SharedNoteRepositoryProtocol
+        let stopShareNoteRelay: PublishRelay<Int>
     }
     
     let dependency: Dependency
@@ -103,13 +105,16 @@ extension MyNoteStopShareViewReactor {
         return dependency
             .noteRepository
             .deleteSharedNote(noteID: noteId)
-            .andThen(Observable.just(Mutation.updateIsShowStopShareCompletedView))
-            .asObservable()
+            .andThen(Observable.deferred { [weak self] in
+                guard let self else { return .empty() }
+                self.dependency.stopShareNoteRelay.accept(noteId)
+                return .just(.updateIsShowStopShareCompletedView)
+            })
     }
     
     private func handleCellEvent(_ event: MyNoteCellEventType) -> Observable<Mutation> {
         switch event {
-        case .likeButtonTap(let id):
+        case .likeButtonTap(_):
             return .empty()
         case .cellTap(let id, _):
             var updatedList = currentState.list

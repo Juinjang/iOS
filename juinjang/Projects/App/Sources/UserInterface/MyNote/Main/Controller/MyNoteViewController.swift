@@ -19,6 +19,7 @@ final class MyNoteViewController: BaseViewController, View {
     private let mainView = MyNoteView()
     private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
     private let noteLikeEventRelay = PublishRelay<Int>()
+    private let stopShareEventRelay = PublishRelay<Int>()
     
     init(reactor: MyNoteViewReactor) {
         super.init()
@@ -122,6 +123,11 @@ final class MyNoteViewController: BaseViewController, View {
             .map { Reactor.Action.receivedNoteLikeChange($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
+        
+        stopShareEventRelay
+            .map { Reactor.Action.receivedStopShareNote($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
     }
     
     // MARK: - PageCellEvent
@@ -177,7 +183,8 @@ final class MyNoteViewController: BaseViewController, View {
                     MyNoteStopShareViewController(
                         reactor: .init(
                             dependency: .init(
-                                noteRepository: SharedNoteRepository()
+                                noteRepository: SharedNoteRepository(),
+                                stopShareNoteRelay: self.stopShareEventRelay
                             )
                         )
                     ),

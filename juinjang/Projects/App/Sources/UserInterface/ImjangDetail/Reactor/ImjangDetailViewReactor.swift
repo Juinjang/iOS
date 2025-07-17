@@ -291,7 +291,8 @@ extension ImjangDetailViewReactor {
                         .updateItem(section: .info, item: [item]),
                         .updateIsBuyer(model.isBuyer),
                         .updateIsOneRoom(
-                            model.propertyType == "VILLA" || model.propertyType == "OFFICE_TEL"
+                            model.limjangPurpose == "RESIDENTIAL_PURPOSE" &&
+                            (model.propertyType == "VILLA" || model.propertyType == "OFFICE_TEL")
                         )
                     ])
                 }
@@ -317,10 +318,11 @@ extension ImjangDetailViewReactor {
                 .retrieveNoteDetailCheckList(noteId: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
-                    let items = model.checklistAnswers.map {
+                    let items = model.checklistAnswers.filter {
+                        $0.category != "DEADLINE"
+                    }.map {
                         ImjangDetailCheckListCellItem(id: UUID().uuidString, model: $0)
                     }
-                    
                     return Observable.concat([
                         .just(.updateAllCheckListItems(items: items)),
                         .just(.updateItem(
@@ -359,7 +361,9 @@ extension ImjangDetailViewReactor {
             .map { response in
                 return .updateItem(
                     section: .checkList,
-                    item: response.checklistAnswers.prefix(5).map { model in
+                    item: response.checklistAnswers.filter {
+                        $0.category != "DEADLINE"
+                    }.prefix(5).map { model in
                         ImjangDetailBaseCellItem.checkList(
                             ImjangDetailCheckListCellItem(
                                 id: UUID().uuidString,

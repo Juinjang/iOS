@@ -15,6 +15,7 @@ final class MyNoteViewReactor: Reactor {
         case alertEventOccurred(event: AlertEventType, noteID: Int)
         case receivedNoteLikeChange(Int)
         case likedNoticeDidShow
+        case receivedStopShareNote(Int)
     }
     
     enum Mutation {
@@ -25,6 +26,7 @@ final class MyNoteViewReactor: Reactor {
         case showAlreadyLikedNotice(id: Int)
         case setLikeUpdate(id: Int)
         case resetAlert
+        case updateStopShareNote(id: Int)
     }
     
     struct State {
@@ -94,6 +96,8 @@ final class MyNoteViewReactor: Reactor {
             return .just(.setLikeUpdate(id: noteID))
         case .likedNoticeDidShow:
             return .just(.resetAlert)
+        case .receivedStopShareNote(let id):
+            return .just(.updateStopShareNote(id: id))
         }
     }
     
@@ -117,6 +121,8 @@ final class MyNoteViewReactor: Reactor {
             setLikeUpdate(&state, id: id)
         case .resetAlert:
             state.alreadyLikedNoteId = nil
+        case .updateStopShareNote(id: let id):
+            state.pages = removeNote(withId: id, in: .share, from: state.pages)
         }
         
         return state
