@@ -31,7 +31,7 @@ final class UserInfoView: BaseView {
     func configure(for model: ImjangDetailInfoModel) {
         profileImageView.kf.setImage(with: URL(string: model.ownerProfileUrl ?? ""))
         nicknameLabel.text = model.ownerNickname
-        introductionLabel.text = model.ownerProfileBio
+        introductionLabel.text = model.ownerProfileBio ?? "안녕하세요. \(model.ownerNickname) 입니다."
     }
     
     override func configureHierarchy() {

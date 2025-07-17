@@ -131,7 +131,7 @@ final class MultiImageContentView: BaseView {
 // MARK: - Setup Layout for Default
 extension MultiImageContentView {
     private func configureImageSection(for model: ImjangDetailInfoModel) {
-        switch model.imageCount {
+        switch model.images.count {
         case 0, 1:
             if let firstImageUrlString = model.images.first {
                 mainImageButton.setImage(
@@ -158,7 +158,7 @@ extension MultiImageContentView {
     }
     
     private func applyImageLayout(for model: ImjangDetailInfoModel) {
-        switch model.imageCount {
+        switch model.images.count {
         case 0, 1:
             setupLayoutForSingleImage()
         default:
@@ -206,12 +206,7 @@ extension MultiImageContentView {
 // MARK: - Setup Layout for Buyer
 extension MultiImageContentView {
     private func configureImageSectionForBuyer(for model: ImjangDetailInfoModel) {
-        switch model.imageCount {
-        case nil:
-            mainImageButton.setImage(
-                urlString: "",
-                placeholder: PropertyType(rawValue: model.propertyType)?.detailImage
-            )
+        switch model.images.count {
         case 0, 1:
             if let firstImageUrlString = model.images.first {
                 mainImageButton.isHiddenExpandButton = false
@@ -257,8 +252,8 @@ extension MultiImageContentView {
     private func applyImageLayoutForBuyer(for model: ImjangDetailInfoModel) {
         checkCountView.isHidden = true
         imageCountView.isHidden = true
-        switch model.imageCount {
-        case nil, 0, 1:
+        switch model.images.count {
+        case 0, 1:
             setupBuyerLayoutForSingleImage()
         case 2:
             setupBuyerLayoutForTwoImages()
