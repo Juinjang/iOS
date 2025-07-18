@@ -10,6 +10,7 @@ import SnapKit
 import Then
 import Alamofire
 import RxSwift
+import RxRelay
 
 final class EditBasicInfoDetailViewController: BaseViewController {
     private let navigationView = DefaultNavigationView().then {
@@ -18,6 +19,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
+    
+    var checkSaveTimeRelay: PublishRelay<Void>?
     
     var postModel: PostCodeResponseModel? {
         didSet {
@@ -347,6 +350,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             .retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, response) in
+                self.postModel = response.toPostCodeModel
                 self.setData(detailDto: response)
             }
             .disposed(by: disposeBag)
@@ -370,7 +374,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             fourDigit: fourDigitPriceField.text
         )
 
-        let monthlyRent = fourDigitMonthlyRentField.text ?? ""
+        let monthlyRent = fourDigitMonthlyRentField.text?.isEmpty == true ? "0" : fourDigitMonthlyRentField.text
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
         let nickname = houseNicknameTextField.text ?? ""
@@ -880,9 +884,17 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                     monthlyRent: fourDigitMonthlyRentField.text ?? "",
                     updatedAt: updatedAt,
                     floor: "",
-                    pyong: 0
+                    pyong: 0,
+                    bcode: nil,
+                    sido: nil,
+                    sigungu: nil,
+                    bname1: nil,
+                    bname2: nil
                 )
             )
+            
+            self.checkSaveTimeRelay?.accept(())
+            
             self.navigationController?.popViewController(animated: true)
         }
     }

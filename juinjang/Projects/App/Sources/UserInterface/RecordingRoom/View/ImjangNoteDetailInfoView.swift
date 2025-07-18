@@ -32,6 +32,11 @@ final class ImjangNoteDetailInfoView: BaseView {
     
     func configure(model: NoteDetailModel,
                    relay: PublishRelay<Void>) {
+        contentStackView.arrangedSubviews.forEach {
+            contentStackView.removeArrangedSubview($0)
+            $0.removeFromSuperview()
+        }
+        
         if let floor = model.floor,
            let pyong = model.pyong {
             [createContentLabel(text: model.propertyTypeToKorean),
