@@ -35,6 +35,7 @@ final class ShareWriteViewReactor: Reactor {
         case updateIsShowErrorAlertView(String)
         case updateIsShowSafetyAlertView
         case updateSharedNoteId(Int)
+        case updateIsShowLoadingView(Bool)
     }
     
     // MARK: - State
@@ -51,12 +52,13 @@ final class ShareWriteViewReactor: Reactor {
         var isShowCompletedView: Bool? = nil
         var isShowErrorAlertView: String? = nil
         var isShowSafetyAlertView: Bool? = nil
+        var isShowLoadingView: Bool? = nil
         
         mutating func evaluateUploadButtonState() {
             isActivatedUploadButton =
-                !buildingName.isEmpty &&
-                selectImjangPeriod != nil &&
-                !reviewContentText.isEmpty
+            !buildingName.isEmpty &&
+            selectImjangPeriod != nil &&
+            !reviewContentText.isEmpty
         }
     }
     
@@ -99,7 +101,10 @@ final class ShareWriteViewReactor: Reactor {
         case .editingReviewContent(let text):
             return .just(.updateReviewContent(text))
         case .uploadButtonDidTap:
-            return createShareableNote()
+            return .concat(
+                .just(.updateIsShowLoadingView(true)),
+                createShareableNote()
+            )
         }
     }
     
@@ -134,6 +139,8 @@ final class ShareWriteViewReactor: Reactor {
             newState.isShowSafetyAlertView.toggle()
         case .updateSharedNoteId(let sharedNoteId):
             newState.sharedNoteId = sharedNoteId
+        case .updateIsShowLoadingView(let bool):
+            newState.isShowLoadingView = bool
         }
         
         return newState
@@ -158,19 +165,29 @@ extension ShareWriteViewReactor {
             )
             .asObservable()
             .flatMap { response -> Observable<Mutation> in
+                let resultObservable: Observable<Mutation>
+                
                 if response.isSuccess {
-                    return .concat(
+                    resultObservable = .concat(
                         .just(.updateSharedNoteId(response.result?.sharedNoteId ?? 0)),
                         .just(.updateShowCompletedView)
                     )
+                } else {
+                    switch response.message {
+                    case "공유가 금지된 노트입니다.":
+                        resultObservable = .just(.updateIsShowSafetyAlertView)
+                    default:
+                        resultObservable = .just(.updateIsShowErrorAlertView(response.message))
+                    }
                 }
                 
-                switch response.message {
-                case "공유가 금지된 노트입니다.":
-                    return .just(.updateIsShowSafetyAlertView)
-                default:
-                    return .just(.updateIsShowErrorAlertView(response.message))
-                }
+                return .concat(
+                    resultObservable,
+                    .just(.updateIsShowLoadingView(false))
+                )
+            }
+            .catch { error in
+                return .just(.updateIsShowLoadingView(false))
             }
     }
     

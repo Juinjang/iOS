@@ -40,21 +40,24 @@ final class MyNoteViewReactor: Reactor {
                 isShowingNotice: true,
                 transactionType: .total,
                 saleType: .totalSale,
-                items: []
+                items: [],
+                isFirstShowing: true
             ),
             MyNotePageModel(
                 category: .own,
                 isShowingNotice: true,
                 transactionType: .total,
                 saleType: .totalSale,
-                items: []
+                items: [],
+                isFirstShowing: true
             ),
             MyNotePageModel(
                 category: .like,
                 isShowingNotice: true,
                 transactionType: .total,
                 saleType: .totalSale,
-                items: []
+                items: [],
+                isFirstShowing: true
             )
         ]
         var alreadyLikedNoteId: Int? = nil
@@ -216,13 +219,15 @@ extension MyNoteViewReactor {
                 priceType: "",
                 keyword: ""
             )
-        ).map { notes in
+        )
+        .map { notes in
             return Mutation.setPage(
                 .init(category: category,
                       isShowingNotice: currentNoticeState,
                       transactionType: .total,
                       saleType: .totalSale,
-                      items: notes.map { .init(model: $0) })
+                      items: notes.map { .init(model: $0) },
+                      isFirstShowing: false)
             )
         }.asObservable()
     }
@@ -277,7 +282,8 @@ extension MyNoteViewReactor {
                           isShowingNotice: currentNoticeState,
                           transactionType: transactionType.filter,
                           saleType: saleType.filter,
-                          items: notes.map { .init(model: $0) })
+                          items: notes.map { .init(model: $0) },
+                          isFirstShowing: false)
                 )
             }
     }
@@ -377,7 +383,8 @@ extension MyNoteViewReactor {
                 isShowingNotice: page.isShowingNotice,
                 transactionType: page.transactionType,
                 saleType: page.saleType,
-                items: newItems
+                items: newItems,
+                isFirstShowing: false
             )
         }
     }

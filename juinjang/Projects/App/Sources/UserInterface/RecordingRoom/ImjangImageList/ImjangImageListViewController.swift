@@ -37,6 +37,7 @@ final class ImjangImageListViewController: BaseViewController {
             }
         }
     }
+    
     var imjangId: Int? = nil
     var completionHandler: (([String]) -> Void)?
     private var isDeleteMode = false

@@ -114,6 +114,14 @@ final class ShareWriteViewController: BaseViewController, View {
                 self.present(ShareSafetyAlertView(), animated: true)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowLoadingView)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, bool) in
+                bool ? self.showLoading() : self.hideLoading()
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindEvent() {
@@ -126,7 +134,7 @@ final class ShareWriteViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         mainView.uploadButton
-            .rx.throttleTap
+            .rx.throttleTap(milliseconds: 1000) // 중복 클릭 방지
             .map { Reactor.Action.uploadButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)

@@ -53,4 +53,22 @@ class BaseViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    func showLoading() {
+        let overlay = UIView(frame: view.bounds)
+        overlay.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+        overlay.tag = 998
+        overlay.isUserInteractionEnabled = true // 터치 막기
+
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.center = overlay.center
+        spinner.startAnimating()
+        spinner.tag = 999
+
+        overlay.addSubview(spinner)
+        view.addSubview(overlay)
+    }
+
+    func hideLoading() {
+        view.viewWithTag(998)?.removeFromSuperview()
+    }
 }

@@ -13,6 +13,7 @@ struct MyNotePageModel: Equatable {
     var transactionType: TransactionTypeFilter
     var saleType: SaleTypeFilter
     var items: [MyNoteCellModel]
+    var isFirstShowing: Bool
     
     static func == (lhs: MyNotePageModel,
                     rhs: MyNotePageModel) -> Bool {
