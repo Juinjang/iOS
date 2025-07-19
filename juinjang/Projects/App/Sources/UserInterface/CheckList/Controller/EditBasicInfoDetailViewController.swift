@@ -373,31 +373,33 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             fourDigit: fourDigitPriceField.text
         )
 
-        let monthlyRent = fourDigitMonthlyRentField.text?.isEmpty == true ? "0" : fourDigitMonthlyRentField.text
+        let monthlyRent = fourDigitMonthlyRentField.text?.isEmpty == true ? nil : fourDigitMonthlyRentField.text
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
         let nickname = houseNicknameTextField.text ?? ""
         let floor = floorTextField.text ?? ""
         let pyong = Int(pyungTextField.text ?? "") ?? 0
         
+        let parameter: NoteUpdateRequestDTO = .init(
+            priceType: selectedPriceType,
+            price: price,
+            monthlyRent: monthlyRent,
+            roadAddress: roadAddress,
+            addressDetail: addressDetail,
+            bcode: postModel?.bcode ?? "",
+            nickname: nickname,
+            floor: floor,
+            pyong: pyong,
+            sido: postModel?.sido,
+            sigungu: postModel?.sigungu,
+            bname1: postModel?.bname1,
+            bname2: postModel?.bname2
+        )
+        
         noteRepository
             .updateImjang(
                 noteID: imjangId,
-                param: .init(
-                    priceType: selectedPriceType,
-                    price: price,
-                    monthlyRent: monthlyRent,
-                    roadAddress: roadAddress,
-                    addressDetail: addressDetail,
-                    bcode: postModel?.bcode ?? "",
-                    nickname: nickname,
-                    floor: floor,
-                    pyong: pyong,
-                    sido: postModel?.sido,
-                    sigungu: postModel?.sigungu,
-                    bname1: postModel?.bname1,
-                    bname2: postModel?.bname2
-                )
+                param: parameter
             )
             .subscribe(
                 onCompleted: {

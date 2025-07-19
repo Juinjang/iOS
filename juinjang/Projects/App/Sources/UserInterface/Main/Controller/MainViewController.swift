@@ -52,7 +52,10 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
         setConstraint()
-        callMainImjangRequest()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.callMainImjangRequest()
+        }
         checkAndUpdateIfNeeded()
     }
     
@@ -93,8 +96,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             self.isFirstShowing = false
             mainImjangList = result.recentUpdatedList
             tableView.reloadData()
-            let bottomCollectionViewCell = tableView.cellForRow(at: IndexPath(item: 1, section: 0)) as? BottomTableViewCell
-            bottomCollectionViewCell?.hasResults(mainImjangList.isEmpty)
         }
     }
     
