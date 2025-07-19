@@ -37,11 +37,13 @@ final class BottomTableViewCell: UITableViewCell{
     var noImjangImageView = UIImageView().then {
         $0.image = UIImage.Main.nomaemull.resize(newHeight: 108)
         $0.contentMode = .scaleAspectFill
+        $0.isHidden = true
     }
     var noImjangLabel = UILabel().then {
         $0.text = "아직 등록된 집이 없어요"
         $0.textColor = .gray400
         $0.font = .pretendard(size: 16, weight: .semiBold)
+        $0.isHidden = true
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -53,11 +55,16 @@ final class BottomTableViewCell: UITableViewCell{
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-        
-    func isHidden(_ isEmpty: Bool) {
-        noImjangLabel.isHidden = isEmpty ? false : true
-        noImjangImageView.isHidden = isEmpty ? false : true
-        collectionView.isHidden = isEmpty ? true : false
+    
+    func isHidden(_ isEmpty: Bool, isFirstShowing: Bool) {
+        guard !isFirstShowing else {
+            showLoading()
+            return
+        }
+        hideLoading()
+        noImjangLabel.isHidden = !isEmpty
+        noImjangImageView.isHidden = !isEmpty
+        collectionView.isHidden = isEmpty
     }
     
     private func addContentView() {
@@ -89,6 +96,23 @@ final class BottomTableViewCell: UITableViewCell{
             $0.top.equalTo(recentImjangLabel.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(204)
+        }
+    }
+    
+    func showLoading() {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.center = contentView.center
+        spinner.tag = 999
+        spinner.startAnimating()
+        spinner.isUserInteractionEnabled = false // 터치 막을 필요 없으므로 false
+
+        contentView.addSubview(spinner)
+    }
+
+    func hideLoading() {
+        if let spinner = viewWithTag(999) as? UIActivityIndicatorView {
+            spinner.stopAnimating()
+            spinner.removeFromSuperview()
         }
     }
 }

@@ -29,6 +29,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
     private var mainImjangList: [LimjangDto] = []
     private var disposeBag = DisposeBag()
+    private var isFirstShowing: Bool = true
     
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
@@ -53,7 +54,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         setConstraint()
         callMainImjangRequest()
         checkAndUpdateIfNeeded()
-        print("메인화면에서 이메일 출력 : \(UserDefaultManager.shared.email)")
     }
     
     private func bind() {
@@ -90,6 +90,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             guard let response = response else { return }
             guard let result = response.result else { return }
             print(response)
+            self.isFirstShowing = false
             mainImjangList = result.recentUpdatedList
             tableView.reloadData()
         }
@@ -206,8 +207,7 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             cell.collectionView.delegate = self
             cell.collectionView.dataSource = self
             cell.isSkeletonable = true
-            
-            cell.isHidden(mainImjangList.isEmpty)
+            cell.isHidden(mainImjangList.isEmpty, isFirstShowing: isFirstShowing)
             cell.collectionView.reloadData()
             return cell
         }
