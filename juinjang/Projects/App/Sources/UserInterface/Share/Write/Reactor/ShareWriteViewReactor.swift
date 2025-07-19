@@ -34,10 +34,12 @@ final class ShareWriteViewReactor: Reactor {
         case updateShowCompletedView
         case updateIsShowErrorAlertView(String)
         case updateIsShowSafetyAlertView
+        case updateSharedNoteId(Int)
     }
     
     // MARK: - State
     struct State {
+        var sharedNoteId: Int? = nil
         var nickname: String = ""
         var popViewTrigger: Observable<Void>? = nil
         var sectionItems: [ShareWriteSection: [ShareWriteBaseCellItem]] = [:]
@@ -130,6 +132,8 @@ final class ShareWriteViewReactor: Reactor {
             newState.isShowErrorAlertView = text
         case .updateIsShowSafetyAlertView:
             newState.isShowSafetyAlertView.toggle()
+        case .updateSharedNoteId(let sharedNoteId):
+            newState.sharedNoteId = sharedNoteId
         }
         
         return newState
@@ -155,7 +159,10 @@ extension ShareWriteViewReactor {
             .asObservable()
             .flatMap { response -> Observable<Mutation> in
                 if response.isSuccess {
-                    return .just(.updateShowCompletedView)
+                    return .concat(
+                        .just(.updateSharedNoteId(response.result?.sharedNoteId ?? 0)),
+                        .just(.updateShowCompletedView)
+                    )
                 }
                 
                 switch response.message {

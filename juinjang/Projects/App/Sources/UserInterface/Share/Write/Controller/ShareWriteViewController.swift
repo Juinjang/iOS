@@ -172,27 +172,13 @@ final class ShareWriteViewController: BaseViewController, View {
                 .subscribe(with: self) { (self, event) in
                     switch event {
                     case .cancel:
-                        self.navigationController?.pushViewController(
-                            LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository()))),
-                            animated: true
-                        )
-                        
+                        self.changeLookAroundVC()
                     case .confirm:
                         let selectedModel = reactor.getShareSelectModel()
                         
-                        self.navigationController?.pushViewController(
-                            ImjangDetailViewController(
-                                reactor: .init(
-                                    dependency: .init(
-                                        id: selectedModel.noteId,
-                                        title: selectedModel.name,
-                                        sharedNoteRepository: SharedNoteRepository(),
-                                        pencilShopRepository: PencilShopRepository(),
-                                        likeEventRelay: nil
-                                    )
-                                )
-                            ),
-                            animated: true
+                        self.changeImjangDetailVCFromLookAround(
+                            SharedNoteID: reactor.currentState.sharedNoteId ?? 0,
+                            title: selectedModel.name
                         )
                     default: break
                     }

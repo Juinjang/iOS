@@ -48,6 +48,56 @@ extension UIViewController {
         window.makeKey()
     }
     
+    func changeLookAroundVC() {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+        let sceneDelegate = windowScene.delegate as? SceneDelegate,
+        let window = sceneDelegate.window else { return }
+        
+        let lookAroundViewController = LookAroundViewController(reactor: .init(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
+        let mainViewController = MainViewController()
+        let nav = UINavigationController(rootViewController: mainViewController)
+        window.rootViewController = nav
+        DispatchQueue.main.async {
+            nav.pushViewController(lookAroundViewController, animated: false)
+        }
+        UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve], animations: nil, completion: nil)
+        
+        window.makeKey()
+    }
+    
+    func changeImjangDetailVCFromLookAround(SharedNoteID: Int, title: String) {
+        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+              let sceneDelegate = windowScene.delegate as? SceneDelegate,
+              let window = sceneDelegate.window else { return }
+        
+        let mainVC = MainViewController()
+        
+        let lookAroundVC = LookAroundViewController(reactor: .init(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
+                
+        let imjangDetailVC = ImjangDetailViewController(
+            reactor: .init(
+                dependency: .init(
+                    id: SharedNoteID,
+                    title: title,
+                    sharedNoteRepository: SharedNoteRepository(),
+                    pencilShopRepository: PencilShopRepository(),
+                    likeEventRelay: nil
+                )
+            )
+        )
+        
+        let nav = UINavigationController()
+        nav.setViewControllers([mainVC, lookAroundVC], animated: false)
+        window.rootViewController = nav
+        DispatchQueue.main.async {
+            nav.pushViewController(imjangDetailVC, animated: true)
+        }
+        
+        UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve], animations: nil, completion: nil)
+        
+        window.makeKey()
+    }
+    
     func changeLoginVC() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
         let sceneDelegate = windowScene.delegate as? SceneDelegate,
