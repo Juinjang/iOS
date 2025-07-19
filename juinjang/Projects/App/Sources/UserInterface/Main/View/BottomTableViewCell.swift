@@ -37,11 +37,13 @@ final class BottomTableViewCell: UITableViewCell{
     var noImjangImageView = UIImageView().then {
         $0.image = UIImage.Main.nomaemull.resize(newHeight: 108)
         $0.contentMode = .scaleAspectFill
+        $0.isHidden = true
     }
     var noImjangLabel = UILabel().then {
         $0.text = "아직 등록된 집이 없어요"
         $0.textColor = .gray400
         $0.font = .pretendard(size: 16, weight: .semiBold)
+        $0.isHidden = true
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -54,10 +56,11 @@ final class BottomTableViewCell: UITableViewCell{
         fatalError("init(coder:) has not been implemented")
     }
         
-    func isHidden(_ isEmpty: Bool) {
-        noImjangLabel.isHidden = isEmpty ? false : true
-        noImjangImageView.isHidden = isEmpty ? false : true
-        collectionView.isHidden = isEmpty ? true : false
+    func hasResults(_ isEmpty: Bool) {
+        print(#function, isEmpty)
+        noImjangLabel.isHidden = !isEmpty
+        noImjangImageView.isHidden = !isEmpty
+        collectionView.isHidden = isEmpty
     }
     
     private func addContentView() {

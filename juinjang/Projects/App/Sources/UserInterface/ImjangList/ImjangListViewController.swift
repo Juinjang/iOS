@@ -30,21 +30,10 @@ final class ImjangListViewController: BaseViewController {
             } else if !oldValue.isEmpty && scrapImjangList.isEmpty {    // 데이터가 존재하지 않게 됐을 때
                 mainView.collectionView.collectionViewLayout = mainView.createCollectionViewLayout(isScrapEmpty: true)
             }
-
         }
     }
         
-    var imjangList: [NoteDTO] = [] {
-        didSet(oldValue) {
-            if !oldValue.isEmpty && imjangList.isEmpty {
-                mainView.emptyBackgroundView.isHidden = false
-                mainView.collectionView.isHidden = true
-            } else if oldValue.isEmpty && !imjangList.isEmpty {
-                mainView.emptyBackgroundView.isHidden = true
-                mainView.collectionView.isHidden = false
-            }
-        }
-    }
+    var imjangList: [NoteDTO] = []
     
     private var currentFilter: MyNoteFilter = .updated
     
@@ -69,8 +58,6 @@ final class ImjangListViewController: BaseViewController {
         bind()
         setDelegate()
         fetchImjangList(sort: .updated, setScrap: true)
-        mainView.emptyBackgroundView.isHidden = !imjangList.isEmpty
-        mainView.collectionView.isHidden = imjangList.isEmpty
         mainView.newPageButton.addTarget(self, action: #selector(openNewPageVC), for: .touchUpInside)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshImjangList), name: .refreshImjangList, object: nil)
     }
@@ -115,9 +102,10 @@ extension ImjangListViewController {
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)
                 let notes = noteResultDTO
-                self.imjangList = notes
-                self.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
-                self.mainView.collectionView.reloadData()
+                owner.imjangList = notes
+                owner.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
+                owner.mainView.collectionView.reloadData()
+                owner.mainView.hasResults(!owner.imjangList.isEmpty)
             }
             .disposed(by: disposeBag)
     }
@@ -144,6 +132,7 @@ extension ImjangListViewController {
                 self.imjangList = response
                 self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
                 self.mainView.collectionView.reloadData()
+                self.mainView.hasResults(!self.imjangList.isEmpty)
             }
             .disposed(by: disposeBag)
     }
@@ -223,7 +212,9 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         scrapImjangList.removeAll { scrapImjang in
             deleteIdList.contains(scrapImjang.noteId)
         }
+
         mainView.collectionView.reloadData()
+        mainView.hasResults(!imjangList.isEmpty)
     }
     
     private func setScrap(imjangNote: NoteDTO) {

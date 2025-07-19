@@ -134,7 +134,6 @@ final class SelectAreaViewController: BaseViewController, View {
         
         mainView.bottomButtonView.confirmButtonTapRelay
             .subscribe(with: self) { owner, _ in
-                guard let reactor = owner.reactor else { return }
                 owner.confirmSelectedAreaList()
             }
             .disposed(by: disposeBag)

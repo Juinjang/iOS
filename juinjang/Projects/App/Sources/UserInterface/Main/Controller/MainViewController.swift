@@ -92,6 +92,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             print(response)
             mainImjangList = result.recentUpdatedList
             tableView.reloadData()
+            let bottomCollectionViewCell = tableView.cellForRow(at: IndexPath(item: 1, section: 0)) as? BottomTableViewCell
+            bottomCollectionViewCell?.hasResults(mainImjangList.isEmpty)
         }
     }
     
@@ -206,9 +208,8 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             cell.collectionView.delegate = self
             cell.collectionView.dataSource = self
             cell.isSkeletonable = true
-            
-            cell.isHidden(mainImjangList.isEmpty)
             cell.collectionView.reloadData()
+    
             return cell
         }
     }
