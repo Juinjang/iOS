@@ -61,10 +61,10 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             nickname: nickname,
             floor: floorTextField.text ?? "",
             pyong: Int(pyungTextField.text ?? "") ?? 0,
-            sido: postCodeModel?.sido ?? "",
-            sigungu: postCodeModel?.sigungu ?? "",
-            bname1: postCodeModel?.bname1 ?? "",
-            bname2: postCodeModel?.bname2 ?? ""
+            sido: postCodeModel?.sido,
+            sigungu: postCodeModel?.sigungu,
+            bname1: postCodeModel?.bname1,
+            bname2: postCodeModel?.bname2
         )
         
         repository.createNote(
