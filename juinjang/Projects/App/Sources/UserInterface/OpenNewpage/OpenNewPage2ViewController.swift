@@ -143,12 +143,12 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     
     private let floorTextField = RoundedPriceTextField(
         unitType: .floor,
-        placeHolder: "00"
+        placeholder: "00"
     )
     
     private let pyungTextField = RoundedPriceTextField(
         unitType: .pyung,
-        placeHolder: "000"
+        placeholder: "000"
     )
 
     lazy var houseNicknameLabel = UILabel().then {

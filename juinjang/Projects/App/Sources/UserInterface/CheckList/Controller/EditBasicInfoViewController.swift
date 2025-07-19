@@ -77,8 +77,8 @@ final class EditBasicInfoViewController: BaseViewController {
     private let floorAndPyungBaseView = UIView().then {
         $0.backgroundColor = .gray100
     }
-    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeHolder: "00")
-    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeHolder: "000")
+    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeholder: "00")
+    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeholder: "000")
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")

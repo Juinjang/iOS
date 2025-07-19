@@ -21,19 +21,31 @@ enum MeasurementUnit: String {
 final class RoundedPriceTextField: BaseView {
     private let disposeBag = DisposeBag()
     
-    private let textField = UITextField().then {
-        $0.layer.cornerRadius = 15
-        $0.textColor = .main
-        $0.keyboardType = .numberPad
-        $0.font = UIFont.pretendard(size: 24, weight: .semiBold)
-        $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
-        $0.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
-        $0.rightViewMode = .always
-        $0.leftViewMode = .always
-    }
+    private lazy var textField: UITextField = {
+        return UITextField().then {
+            $0.layer.cornerRadius = 15
+            $0.textColor = .main
+            $0.keyboardType = .numberPad
+            $0.font = UIFont.pretendard(size: 24, weight: .semiBold)
+            $0.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
+            $0.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
+            $0.rightViewMode = .always
+            $0.leftViewMode = .always
+            $0.textAlignment = .center
+            $0.attributedPlaceholder = NSAttributedString(
+                string: placeholder,
+                attributes: [
+                    .foregroundColor: placeholderTextColor,
+                    .font: UIFont.pretendard(size: 24, weight: .medium)
+                ]
+            )
+            $0.layer.backgroundColor = textFieldBackgroundColor
+        }
+    }()
     
-    private var placeholderText: String = ""
-    private var placeholderTextColor: UIColor = .gray300
+    private let placeholder: String
+    private let placeholderTextColor: UIColor
+    private let textFieldBackgroundColor: CGColor
     
     private let priceUnitLabel = DSLabel(.title).then {
         $0.fontColor = .gray600
@@ -41,7 +53,12 @@ final class RoundedPriceTextField: BaseView {
     
     var text: String? {
         get { textField.text }
-        set { textField.text = newValue }
+        set {
+            if let newValue = newValue, !newValue.isEmpty {
+                textField.attributedPlaceholder = nil
+            }
+            textField.text = newValue
+        }
     }
     
     weak var delegate: UITextFieldDelegate? {
@@ -50,22 +67,14 @@ final class RoundedPriceTextField: BaseView {
     }
     
     init(unitType: MeasurementUnit,
-         placeHolder: String,
-         placeHolderTextColor: UIColor = .gray300,
+         placeholder: String,
+         placeholderTextColor: UIColor = .gray300,
          backgroundColor: UIColor = .gray200) {
+        self.placeholder = placeholder
+        self.placeholderTextColor = placeholderTextColor
+        self.textFieldBackgroundColor = backgroundColor.cgColor
         super.init(frame: .zero)
-        self.placeholderText = placeHolder
-        self.placeholderTextColor = placeHolderTextColor
-        textField.attributedPlaceholder = NSAttributedString(
-            string: placeHolder,
-            attributes: [
-                .foregroundColor: placeHolderTextColor,
-                .font: UIFont.pretendard(size: 24, weight: .medium)
-            ]
-        )
-        textField.layer.backgroundColor = backgroundColor.cgColor
         priceUnitLabel.text = unitType.rawValue
-        
         bindEvents()
     }
     
@@ -112,7 +121,7 @@ final class RoundedPriceTextField: BaseView {
                 guard let self = self else { return }
                 if (self.textField.text ?? "").isEmpty {
                     self.textField.attributedPlaceholder = NSAttributedString(
-                        string: self.placeholderText,
+                        string: self.placeholder,
                         attributes: [
                             .foregroundColor: self.placeholderTextColor,
                             .font: UIFont.pretendard(size: 24, weight: .medium)
