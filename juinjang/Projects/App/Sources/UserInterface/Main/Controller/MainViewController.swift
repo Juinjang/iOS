@@ -52,7 +52,10 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
         setConstraint()
-        callMainImjangRequest()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            self.callMainImjangRequest()
+        }
         checkAndUpdateIfNeeded()
     }
     
