@@ -35,6 +35,7 @@ final class LookAroundSearchViewController: BaseViewController, View {
     override func viewDidLoad() {
         super.viewDidLoad()
         reactor?.action.onNext(.viewDidLoad)
+        mainView.setSearchTextFieldBecomeResponder()
     }
     
     func bind(reactor: LookAroundSearchReactor) {
@@ -74,17 +75,23 @@ final class LookAroundSearchViewController: BaseViewController, View {
         
         reactor.state
             .map { $0.searchResultList }
-            .map({ [weak self] sections in
-                if let notes = sections.last?.items as? [ExploreNoteModel] {
-                    self?.mainView.setListEmpty(
-                        empty: notes.isEmpty,
-                        filterTapped: reactor.currentState.filterTapped
-                    )
-                }
-                return sections
-            })
+            .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind(to: mainView.searchResultCollectionView.rx.items(dataSource: searchResultDataSource))
             .disposed(by: disposeBag)
+    
+        mainView.searchResultCollectionView.rx
+          .methodInvoked(#selector(UICollectionView.reloadData))
+          .observe(on: MainScheduler.instance)
+          .subscribe(onNext: { [weak self] _ in
+            guard let self = self else { return }
+            let sections   = reactor.currentState.searchResultList
+            let isEmpty    = sections.last?.items.isEmpty == true
+            let filterTap  = reactor.currentState.filterTapped
+            self.mainView.setListEmpty(empty: isEmpty, filterTapped: filterTap)
+          })
+          .disposed(by: disposeBag)
+
         
         reactor.state
             .map(\.isLastPage)
@@ -167,11 +174,6 @@ final class LookAroundSearchViewController: BaseViewController, View {
     
     override func loadView() {
         view = mainView
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        mainView.setSearchTextFieldBecomeResponder()
     }
 }
 

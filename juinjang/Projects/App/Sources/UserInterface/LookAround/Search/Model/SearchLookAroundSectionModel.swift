@@ -7,13 +7,13 @@
 
 import RxDataSources
 
-enum LookAroundSearchResultSectionModel: SectionModelType {
+enum LookAroundSearchResultSectionModel: SectionModelType, Hashable, Equatable {
     typealias ITEM = Row
     
     case imjangCountSection(items: [Row])
     case exploreNoteSection(header: String, items: [Row])
 
-    enum Row {
+    enum Row: Hashable, Equatable {
         case imjangCountSection(imjangCount: Int)
         case exploreNoteSection(exploreNote: ExploreNoteModel)
     }

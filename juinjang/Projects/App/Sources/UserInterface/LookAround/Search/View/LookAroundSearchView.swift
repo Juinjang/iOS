@@ -310,7 +310,6 @@ extension Reactive where Base: LookAroundSearchView {
     var isLastPage: Binder<Bool> {
         return Binder(base) { view, isLastPage in
             view.isLastPage = isLastPage
-            view.searchResultCollectionView.reloadData()
         }
     }
 }

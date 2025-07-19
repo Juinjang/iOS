@@ -30,7 +30,6 @@ final class ImjangListViewController: BaseViewController {
             } else if !oldValue.isEmpty && scrapImjangList.isEmpty {    // 데이터가 존재하지 않게 됐을 때
                 mainView.collectionView.collectionViewLayout = mainView.createCollectionViewLayout(isScrapEmpty: true)
             }
-
         }
     }
         
@@ -43,6 +42,7 @@ final class ImjangListViewController: BaseViewController {
             }
         }
     }
+
     
     private var currentFilter: MyNoteFilter = .updated
     
@@ -150,6 +150,7 @@ extension ImjangListViewController {
                 self.mainView.setupEmptyView(isEmpty: response.isEmpty)
                 self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
                 self.mainView.collectionView.reloadData()
+                self.mainView.hasResults(!self.imjangList.isEmpty)
             }
             .disposed(by: disposeBag)
     }
@@ -226,7 +227,9 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         scrapImjangList.removeAll { scrapImjang in
             deleteIdList.contains(scrapImjang.noteId)
         }
+
         mainView.collectionView.reloadData()
+        mainView.hasResults(!imjangList.isEmpty)
     }
     
     private func setScrap(imjangNote: NoteDTO) {
