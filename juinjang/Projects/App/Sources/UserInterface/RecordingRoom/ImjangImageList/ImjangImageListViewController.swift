@@ -27,6 +27,13 @@ final class ImjangImageListViewController: BaseViewController {
         didSet {
             if isDeleteMode {
                 mainView.navigationView.title = "삭제할 사진 선택(\(selectedIndexs.count))"
+                if !selectedIndexs.isEmpty {
+                    self.mainView.deleteImageButton.isEnabled = true
+                    self.mainView.deleteImageButton.backgroundColor = .gray500
+                } else {
+                    self.mainView.deleteImageButton.isEnabled = false
+                    self.mainView.deleteImageButton.backgroundColor = .null
+                }
             }
         }
     }
