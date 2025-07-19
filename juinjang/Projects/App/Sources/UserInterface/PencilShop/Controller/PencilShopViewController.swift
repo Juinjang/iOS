@@ -115,6 +115,14 @@ final class PencilShopViewController: BaseViewController, View {
                 owner.mainView.buyingView.setPencilCount(count: purchasePencilDTO.remainQuantity)
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map { $0.isLoading }
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, bool in
+                self.setLoading(isShow: bool)
+            }
+            .disposed(by: disposeBag)
     }
     
     func bindViewEvent() {

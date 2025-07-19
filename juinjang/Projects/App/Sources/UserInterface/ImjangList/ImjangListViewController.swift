@@ -37,10 +37,8 @@ final class ImjangListViewController: BaseViewController {
     var imjangList: [NoteDTO] = [] {
         didSet(oldValue) {
             if !oldValue.isEmpty && imjangList.isEmpty {
-                mainView.emptyBackgroundView.isHidden = false
                 mainView.collectionView.isHidden = true
             } else if oldValue.isEmpty && !imjangList.isEmpty {
-                mainView.emptyBackgroundView.isHidden = true
                 mainView.collectionView.isHidden = false
             }
         }
@@ -69,7 +67,6 @@ final class ImjangListViewController: BaseViewController {
         bind()
         setDelegate()
         fetchImjangList(sort: .updated, setScrap: true)
-        mainView.emptyBackgroundView.isHidden = !imjangList.isEmpty
         mainView.collectionView.isHidden = imjangList.isEmpty
         mainView.newPageButton.addTarget(self, action: #selector(openNewPageVC), for: .touchUpInside)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshImjangList), name: .refreshImjangList, object: nil)
@@ -107,19 +104,27 @@ final class ImjangListViewController: BaseViewController {
 extension ImjangListViewController {
     private func fetchImjangList(sort: MyNoteFilter = .updated, setScrap: Bool = false) {
         print(#function)
-        showSkeletonView()
+        setLoading(isShow: true)
         dependency
             .noteRepository
             .retrieveNoteList(sort: sort.parameterValue, keyword: "")
             .asObservable()
+            .catch { [weak self] error in
+                self?.setLoading(isShow: false)
+                self?.showAlert(title: "에러", message: error.localizedDescription, actionHandler: nil)
+                return .empty()
+            }
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)
                 let notes = noteResultDTO
-                self.imjangList = notes
-                self.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
-                self.mainView.collectionView.reloadData()
+                owner.mainView.setupEmptyView(isEmpty: notes.isEmpty)
+                owner.imjangList = notes
+                owner.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
+                owner.mainView.collectionView.reloadData()
+                owner.setLoading(isShow: false)
             }
-            .disposed(by: disposeBag)
+            .disposed(by: self.disposeBag)
+        
     }
     
     private func showSkeletonView() {
@@ -142,6 +147,7 @@ extension ImjangListViewController {
             .asObservable()
             .subscribe(with: self) { (self, response) in
                 self.imjangList = response
+                self.mainView.setupEmptyView(isEmpty: response.isEmpty)
                 self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
                 self.mainView.collectionView.reloadData()
             }
@@ -207,9 +213,6 @@ extension ImjangListViewController: DeleteImjangListDelegate {
         let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
         imjangNoteVC.imjangId = imjangId
         imjangNoteVC.previousVCType = .imjangList
-//        imjangNoteVC.completionHandler = {
-//            self.fetchImjangList()
-//        }
         self.navigationController?.pushViewController(imjangNoteVC, animated: true)
     }
 

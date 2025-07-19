@@ -119,7 +119,7 @@ final class ShareWriteViewController: BaseViewController, View {
             .map(\.isShowLoadingView)
             .compactMap { $0 }
             .subscribe(with: self) { (self, bool) in
-                bool ? self.showLoading() : self.hideLoading()
+                self.setLoading(isShow: bool, isOverlay: true)
             }
             .disposed(by: disposeBag)
     }

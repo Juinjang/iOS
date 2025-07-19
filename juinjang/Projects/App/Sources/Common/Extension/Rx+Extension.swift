@@ -8,6 +8,7 @@
 import RxSwift
 import RxCocoa
 import UIKit
+import ReactorKit
 
 extension Reactive where Base: UIButton {
     var throttleTap: Observable<ControlEvent<()>.Element> {
@@ -55,12 +56,12 @@ extension Reactive where Base: UIApplication {
 
 extension Observable where Element == Void {
     func withHaptic(style: UIImpactFeedbackGenerator.FeedbackStyle = .medium) -> Observable<Void> {
-            return self.do(onNext: {
-                let generator = UIImpactFeedbackGenerator(style: style)
-                generator.prepare()
-                generator.impactOccurred()
-            })
-        }
+        return self.do(onNext: {
+            let generator = UIImpactFeedbackGenerator(style: style)
+            generator.prepare()
+            generator.impactOccurred()
+        })
+    }
 }
 
 extension Reactive where Base: UICollectionView {

@@ -59,11 +59,18 @@ final class MyNoteSearchViewReactor: Reactor {
                         )
                     )
                     .asObservable()
-                    .map { notes in
-                        return .setList(notes.map { MyNoteCellModel(model: $0) })
-                    },
-                
-                .just(.setLoading(false))
+                    .delay(.seconds(Int(2)), scheduler: MainScheduler.instance)
+                    .flatMap { notes in
+                        Observable.concat([
+                            .just(.setList(notes.map { MyNoteCellModel(model: $0) })),
+                            .just(.setLoading(false))
+                        ])
+                    }
+                    .catch { error in
+                        return Observable.concat([
+                            .just(.setLoading(false))
+                        ])
+                    }
             ])
         }
     }

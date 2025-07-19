@@ -41,6 +41,7 @@ final class PencilShopReactor: Reactor {
         case setUsedList([UsedPencilDTO])
         case purchaseCompleted(PurchasePencilDTO?)
         case purchaseFailed(Error)
+        case setLoading(Bool)
     }
     
     struct State {
@@ -52,18 +53,23 @@ final class PencilShopReactor: Reactor {
         var usedSections: [UsedSectionModel] = []
         var purchaseResult: PurchasePencilDTO?
         var error: String?
+        var isLoading: Bool = false
     }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
             return .concat([
+                .just(.setLoading(true)),
                 retrievePencilTotalBalance(),
                 retrieveIsTotalRead(),
                 handleCategoryTapped(index: PencilShopCategoryType.buying.rawValue)
             ])
         case .categoryButtonDidTap(let index):
-            return handleCategoryTapped(index: index)
+            return .concat(
+                .just(.setLoading(true)),
+                handleCategoryTapped(index: index)
+            )
         case .priceButtonDidTap(let product):
             return buyProduct(product: product)
         case .acquiredPencilSelected(let selectedIndex):
@@ -90,6 +96,8 @@ final class PencilShopReactor: Reactor {
             state.purchaseResult = result
         case .purchaseFailed(let error):
             state.error = error.localizedDescription
+        case .setLoading(let bool):
+            state.isLoading = bool
         }
         return state
     }
@@ -115,33 +123,40 @@ extension PencilShopReactor {
     private func handleCategoryTapped(index: Int) -> Observable<Mutation> {
         let category = PencilShopCategoryType(rawValue: index) ?? .buying
         
+        let mutationStream: Observable<Mutation>
+        
         switch category {
         case .buying:
-            if !currentState.products.isEmpty { return .empty() }
-            return dependency.inAppPurchaseService.requestProductList()
+            if !currentState.products.isEmpty {
+                return .just(.setLoading(false))
+            }
+            mutationStream = dependency.inAppPurchaseService.requestProductList()
                 .map { .setProductList($0) }
                 .asObservable()
-                
+            
         case .obtainedPencil:
-            return dependency.pencilShopRepository.retrieveAcquiredPencil()
+            mutationStream = dependency.pencilShopRepository.retrieveAcquiredPencil()
                 .asObservable()
-                .flatMap { obtainedList -> Observable<Mutation> in
-                    return .just(.setAcquiredList(obtainedList))
-                }
+                .map { .setAcquiredList($0) }
             
         case .purchasedPencil:
-            return dependency.pencilShopRepository.retrievePurchasedPencil()
+            mutationStream = dependency.pencilShopRepository.retrievePurchasedPencil()
                 .asObservable()
-                .flatMap { purchasedList -> Observable<Mutation> in
-                    return .just(.setPurchasedList(purchasedList))
-                }
+                .map { .setPurchasedList($0) }
+            
         case .usedPencil:
-            return dependency.pencilShopRepository.retrieveUsedPencil()
+            mutationStream = dependency.pencilShopRepository.retrieveUsedPencil()
                 .asObservable()
-                .flatMap { usedList -> Observable<Mutation> in
-                    return .just(.setUsedList(usedList))
-                }
+                .map { .setUsedList($0) }
         }
+        
+        return Observable.concat([
+            mutationStream
+                .catch { error in
+                    return .just(.setLoading(false))
+                },
+            .just(.setLoading(false))
+        ])
     }
     
     private func setAcquiredSectionModel(state: inout State, acquiredList: [AcquiredPencilDTO]) {
@@ -201,14 +216,14 @@ extension PencilShopReactor {
             }
             .catch { error -> Observable<Mutation> in
                 return .just(.purchaseFailed(error))
-           }
+            }
     }
     
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
         let transactionMutation = dependency.inAppPurchaseService.completedPurchasePencilDTO
             .map { Mutation.purchaseCompleted($0) }
             .flatMap { _ in self.retrievePencilTotalBalance() }
-
+        
         return Observable.merge(mutation, transactionMutation)
     }
 }

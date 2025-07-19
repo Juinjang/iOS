@@ -54,6 +54,13 @@ final class MyNoteSearchViewController: BaseViewController, View {
             .bind(to: mainView.emptyView.rx.isHidden )
             .disposed(by: disposeBag)
         
+        reactor.state
+            .map(\.isLoading)
+            .subscribe(with: self) { (self, bool) in
+                self.setLoading(isShow: bool)
+            }
+            .disposed(by: disposeBag)
+        
         mainView
             .navigationEventRelay
             .subscribe(with: self) { (self, action) in
