@@ -67,6 +67,7 @@ final class LookAroundViewController: BaseViewController, View {
     
     private let cellEventRelay = PublishRelay<LookAroundEventType>()
     private let moreButtonTapRelay = PublishRelay<Void>()
+    private let likeEventRelay = PublishRelay<Int>()
     
     init(reactor: LookAroundReactor) {
         super.init()
@@ -163,8 +164,17 @@ final class LookAroundViewController: BaseViewController, View {
             .compactMap { $0.tappedNote }
             .bind(with: self) { owner, noteInfo in
                 let (sharedNoteId, buildingName) = noteInfo
-                owner.showLookAroundDetailVC(sharedNoteId: sharedNoteId, buildingName: buildingName)
+                owner.showLookAroundDetailVC(
+                    sharedNoteId: sharedNoteId,
+                    buildingName: buildingName,
+                    likeEventRelay: owner.likeEventRelay
+                )
             }
+            .disposed(by: disposeBag)
+        
+        likeEventRelay
+            .map { Reactor.Action.heartButtonDidTap(sharedNoteId: $0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
     
@@ -179,14 +189,17 @@ final class LookAroundViewController: BaseViewController, View {
         }
     }
     
-    private func showLookAroundDetailVC(sharedNoteId: Int, buildingName: String) {
+    private func showLookAroundDetailVC(sharedNoteId: Int,
+                                        buildingName: String,
+                                        likeEventRelay: PublishRelay<Int>) {
         let lookAroundDetailVC = ImjangDetailViewController(
             reactor: ImjangDetailViewReactor(
                 dependency: .init(
                     id: sharedNoteId,
                     title: buildingName,
                     sharedNoteRepository: SharedNoteRepository(),
-                    pencilShopRepository: PencilShopRepository()
+                    pencilShopRepository: PencilShopRepository(),
+                    likeEventRelay: likeEventRelay
                 )
             )
         )

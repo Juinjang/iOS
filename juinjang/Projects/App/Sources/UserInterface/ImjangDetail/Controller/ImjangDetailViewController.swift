@@ -53,6 +53,11 @@ final class ImjangDetailViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         reactor.state
+            .map(\.isBuyer)
+            .bind(to: mainView.rx.isPurchased)
+            .disposed(by: disposeBag)
+        
+        reactor.state
             .map(\.sectionItems)
             .observe(on: MainScheduler.instance)
             .withUnretained(mainView)
@@ -169,6 +174,25 @@ final class ImjangDetailViewController: BaseViewController, View {
             .compactMap { $0 }
             .subscribe(with: self) { (self, _) in
                 self.present(ReportCompletedAlertView(), animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.tappedImageInfo)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, imageInfo) in
+                let viewController = EnlargePhotoViewController(
+                    currentIndex: imageInfo.index,
+                    photoList: imageInfo.DTOs
+                )
+                
+                viewController.modalPresentationStyle = .overFullScreen
+                viewController.modalTransitionStyle = .crossDissolve
+                
+                self.present(
+                    viewController,
+                    animated: true
+                )
             }
             .disposed(by: disposeBag)
     }

@@ -38,7 +38,9 @@ final class ShareWriteNoticeCell: BaseCollectionViewCell {
     }
     
     func bind(item: ShareSelectModel) {
-        pencilCountLabel.text = "\(item.rewardPencil)개"
+        if let rewardPencilCount = item.rewardPencil {
+            pencilCountLabel.text = "\(rewardPencilCount)개"
+        }
     }
     
     override func configureView() {

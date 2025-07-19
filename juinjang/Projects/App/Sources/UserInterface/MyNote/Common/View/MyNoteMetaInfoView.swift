@@ -11,7 +11,10 @@ import SnapKit
 import Kingfisher
 
 final class MyNoteMetaInfoView: BaseView {
-    private let profileImageView = UIImageView()
+    private let profileImageView = UIImageView().then {
+        $0.roundCorners(cornerRadius: 9, corner: .all)
+        $0.clipsToBounds = true
+    }
     
     private let stackView = UIStackView().then {
         $0.axis = .horizontal

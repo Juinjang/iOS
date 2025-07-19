@@ -10,6 +10,7 @@ import SnapKit
 import Then
 import Alamofire
 import RxSwift
+import RxRelay
 
 final class EditBasicInfoDetailViewController: BaseViewController {
     private let navigationView = DefaultNavigationView().then {
@@ -18,6 +19,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
+    
+    var checkSaveTimeRelay: PublishRelay<Void>?
     
     var postModel: PostCodeResponseModel? {
         didSet {
@@ -79,8 +82,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     private let floorAndPyungBaseView = UIView().then {
         $0.backgroundColor = .gray100
     }
-    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeHolder: "00")
-    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeHolder: "000")
+    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeholder: "00")
+    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeholder: "000")
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")
@@ -181,7 +184,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         button.layer.masksToBounds = true
         button.contentMode = .scaleAspectFit
         button.addTarget(self, action: action, for: .touchUpInside)
-        button.adjustsImageWhenHighlighted = false // 버튼이 눌릴 때 색상 변경 방지
     }
     
     lazy var saleButton = UIButton().then {
@@ -347,6 +349,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             .retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, response) in
+                self.postModel = response.toPostCodeModel
                 self.setData(detailDto: response)
             }
             .disposed(by: disposeBag)
@@ -370,7 +373,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             fourDigit: fourDigitPriceField.text
         )
 
-        let monthlyRent = fourDigitMonthlyRentField.text ?? ""
+        let monthlyRent = fourDigitMonthlyRentField.text?.isEmpty == true ? "0" : fourDigitMonthlyRentField.text
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
         let nickname = houseNicknameTextField.text ?? ""
@@ -559,7 +562,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         
         // 주소 TextField
         addressTextField.snp.makeConstraints {
-            $0.width.equalTo(225)
+            $0.trailing.equalTo(searchAddressButton.snp.leading).offset(-8)
             $0.height.equalTo(36)
             $0.leading.equalTo(view.snp.leading).offset(24)
             $0.top.equalTo(addressLabel.snp.bottom).offset(12)
@@ -569,7 +572,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         searchAddressButton.snp.makeConstraints {
             $0.width.equalTo(109)
             $0.height.equalTo(36)
-            $0.leading.equalTo(addressTextField.snp.trailing).offset(8)
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
             $0.top.equalTo(addressLabel.snp.bottom).offset(12)
         }
@@ -685,14 +687,12 @@ final class EditBasicInfoDetailViewController: BaseViewController {
 
         if let priceDetailLabel = priceDetailLabel {
             priceDetailLabel.snp.makeConstraints {
-                $0.centerY.equalTo(priceView.snp.centerY)
-                $0.top.equalTo(priceView.snp.top).offset(8)
+                $0.centerY.equalToSuperview()
                 $0.leading.equalTo(priceView.snp.leading).offset(24)
             }
             inputPriceStackView.snp.makeConstraints {
                 $0.leading.equalTo(priceDetailLabel.snp.trailing).offset(16)
                 $0.centerY.equalTo(priceView.snp.centerY)
-                $0.top.equalTo(priceView.snp.top).offset(8)
             }
         }
         
@@ -701,25 +701,12 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         inputMonthlyRentStackView.translatesAutoresizingMaskIntoConstraints = false
         inputMonthlyRentStackView.axis = .horizontal
         inputMonthlyRentStackView.spacing = 5
-    
-        // 가격 입력 받는 TextField
-        threeDigitPriceField.snp.makeConstraints {
-            $0.top.equalTo(priceView.snp.top).offset(4)
-            $0.centerY.equalTo(priceView.snp.centerY)
-        }
-
-        fourDigitPriceField.snp.makeConstraints {
-            $0.top.equalTo(priceView.snp.top).offset(4)
-            $0.centerY.equalTo(priceView.snp.centerY)
-        }
 
         // 저장 버튼
         saveButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.centerX.equalTo(view.snp.centerX).offset(58.5)
-            $0.leading.equalTo(view.snp.leading).offset(24)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
     
@@ -795,18 +782,15 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         if let priceDetailLabel2 = priceDetailLabel2 {
             priceView2.addSubview(priceDetailLabel2)
             priceDetailLabel2.snp.makeConstraints {
-                $0.centerY.equalTo(priceView2.snp.centerY)
-                $0.top.equalTo(priceView2.snp.top).offset(8)
+                $0.centerY.equalToSuperview()
                 $0.leading.equalTo(priceView2.snp.leading).offset(24)
             }
             inputMonthlyRentStackView.snp.makeConstraints {
                 $0.leading.equalTo(priceDetailLabel2.snp.trailing).offset(16)
-                $0.centerY.equalTo(priceView2.snp.centerY)
                 $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.1)
-                $0.top.equalTo(priceView2.snp.top).offset(8)
+                $0.centerY.equalTo(priceView2.snp.centerY)
             }
             fourDigitMonthlyRentField.snp.makeConstraints {
-                $0.top.equalTo(priceView2.snp.top).offset(4)
                 $0.centerY.equalTo(priceView2.snp.centerY)
             }
         }
@@ -817,15 +801,13 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             priceView.addSubview(priceDetailLabel)
             priceView.addSubview(inputPriceStackView)
             priceDetailLabel.snp.makeConstraints {
-                $0.centerY.equalTo(priceView.snp.centerY)
-                $0.top.equalTo(priceView.snp.top).offset(8)
+                $0.centerY.equalToSuperview()
                 $0.leading.equalTo(priceView.snp.leading).offset(24)
             }
             inputPriceStackView.snp.makeConstraints {
                 $0.leading.equalTo(priceDetailLabel.snp.trailing).offset(16)
-                $0.centerY.equalTo(priceView.snp.centerY)
                 $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.5)
-                $0.top.equalTo(priceView.snp.top).offset(8)
+                $0.centerY.equalTo(priceView.snp.centerY)
             }
         }
     }
@@ -844,11 +826,9 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             
             guard let self else { return }
             guard let imjangId, let version = versionInfo?.version else { return }
-            let imjangNoteVC = ImjangNoteViewController(imjangId: imjangId, version: version)
 
             let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
             let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
-            var priceList = [String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)]
             
             let now = Date()
             let formatter = DateFormatter()
@@ -880,9 +860,17 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                     monthlyRent: fourDigitMonthlyRentField.text ?? "",
                     updatedAt: updatedAt,
                     floor: "",
-                    pyong: 0
+                    pyong: 0,
+                    bcode: nil,
+                    sido: nil,
+                    sigungu: nil,
+                    bname1: nil,
+                    bname2: nil
                 )
             )
+            
+            self.checkSaveTimeRelay?.accept(())
+            
             self.navigationController?.popViewController(animated: true)
         }
     }
@@ -893,7 +881,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
         // 필드가 비어있는지 확인
-        let threeDigitPriceFieldEmpty = threeDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let fourDigitPriceFieldEmpty = fourDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         
         let pyungFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true

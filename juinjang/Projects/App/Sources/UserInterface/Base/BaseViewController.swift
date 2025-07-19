@@ -8,6 +8,7 @@
 import UIKit
 
 class BaseViewController: UIViewController {
+    private var loadingView: UIView?
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -53,4 +54,35 @@ class BaseViewController: UIViewController {
         present(alert, animated: true)
     }
     
+    func setLoading(isShow: Bool,
+                    isOverlay: Bool = false) {
+        DispatchQueue.main.async {
+            if isShow {
+                guard self.loadingView == nil else { return } // 이미 있으면 중복 추가 방지
+                
+                let overlay = UIView(frame: self.view.bounds)
+                overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+                overlay.backgroundColor = isOverlay ? UIColor.black.withAlphaComponent(0.3) : .clear
+                overlay.isUserInteractionEnabled = isOverlay
+                
+                let spinner = UIActivityIndicatorView(style: .medium)
+                spinner.translatesAutoresizingMaskIntoConstraints = false
+                spinner.startAnimating()
+                overlay.addSubview(spinner)
+                
+                NSLayoutConstraint.activate([
+                    spinner.centerXAnchor.constraint(equalTo: overlay.centerXAnchor),
+                    spinner.centerYAnchor.constraint(equalTo: overlay.centerYAnchor)
+                ])
+                
+                self.view.addSubview(overlay)
+                self.view.bringSubviewToFront(overlay)
+                
+                self.loadingView = overlay
+            } else {
+                self.loadingView?.removeFromSuperview()
+                self.loadingView = nil
+            }
+        }
+    }
 }

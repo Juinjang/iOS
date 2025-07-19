@@ -38,14 +38,15 @@ extension MyNotePageEventType {
 
 final class MyNotePageCell: UICollectionViewCell {
     private var disposeBag = DisposeBag()
-    
     private let noticeView = MyNoteNoticeView()
     private let filterView = MyNoteDropDownView()
     private let stopShareButton = UIButton().then {
         $0.setImage(.trash, for: .normal)
         $0.isHidden = true
     }
-    private let emptyView = MyNoteEmptyView()
+    private let emptyView = MyNoteEmptyView().then {
+        $0.isHidden = true
+    }
     private lazy var innerCollectionView: UICollectionView = {
         return UICollectionView(frame: .zero,
                                 collectionViewLayout: createCompositionalLayout()).then {
@@ -132,7 +133,7 @@ final class MyNotePageCell: UICollectionViewCell {
                             isShowButton: page.category == .share,
                             buttonTitle: "노트 공유하러 가기")
         configureNoticeLayout(isShowing: page.isShowingNotice)
-        configureCellLayout(isEmpty: page.items.isEmpty)
+        configureCellLayout(isEmpty: page.items.isEmpty, isFirstShowing: page.isFirstShowing)
 
         Observable.just([page])
             .bind(
@@ -291,8 +292,9 @@ extension MyNotePageCell {
 
 // MARK: - Cell Layout Update
 extension MyNotePageCell {
-    private func configureCellLayout(isEmpty: Bool) {
+    private func configureCellLayout(isEmpty: Bool,
+                                     isFirstShowing: Bool) {
         innerCollectionView.isHidden = isEmpty
-        emptyView.isHidden = !isEmpty
+        emptyView.isHidden = isFirstShowing ? true : !isEmpty
     }
 }

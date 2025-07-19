@@ -18,6 +18,8 @@ final class MyNoteViewController: BaseViewController, View {
     
     private let mainView = MyNoteView()
     private let pageCellEventRelay = PublishRelay<MyNotePageEventType>()
+    private let noteLikeEventRelay = PublishRelay<Int>()
+    private let stopShareEventRelay = PublishRelay<Int>()
     
     init(reactor: MyNoteViewReactor) {
         super.init()
@@ -52,9 +54,11 @@ final class MyNoteViewController: BaseViewController, View {
             .subscribe(with: self) { (self, id) in
                 let alertView = MyNoteAlertView()
                 alertView.eventRelay
-                    .map { MyNoteViewReactor.Action.alertEventOccurred(
-                        event: $0,
-                        noteID: id)
+                    .map {
+                        MyNoteViewReactor.Action.alertEventOccurred(
+                            event: $0,
+                            noteID: id
+                        )
                     }
                     .bind(to: reactor.action)
                     .disposed(by: self.disposeBag)
@@ -65,6 +69,8 @@ final class MyNoteViewController: BaseViewController, View {
     
     // MARK: - View Event
     func bindViewEvent() {
+        guard let reactor = self.reactor else { return }
+        
         mainView
             .navigationView
             .itemActionRelay
@@ -74,7 +80,14 @@ final class MyNoteViewController: BaseViewController, View {
                 case .popButtonTap:
                     self.navigationController?.popViewController(animated: true)
                 case .searchButtonTap:
-                    let viewController = MyNoteSearchViewController(reactor: .init(dependency: .init(noteRepository: SharedNoteRepository())))
+                    let viewController = MyNoteSearchViewController(
+                        reactor: .init(
+                            dependency: .init(
+                                noteRepository: SharedNoteRepository(),
+                                noteType: reactor.currentState.categoryState
+                            )
+                        )
+                    )
                     self.navigationController?.pushViewController(viewController, animated: true)
                 default: break
                 }
@@ -85,7 +98,7 @@ final class MyNoteViewController: BaseViewController, View {
             .segmentedView
             .scrollSelectedRelay
             .map { Reactor.Action.categoryButtonDidTap($0) }
-            .bind(to: reactor!.action)
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         mainView
@@ -104,6 +117,16 @@ final class MyNoteViewController: BaseViewController, View {
         
         mainView
             .pageContainerCollectionView.rx.setDelegate(self)
+            .disposed(by: disposeBag)
+        
+        noteLikeEventRelay
+            .map { Reactor.Action.receivedNoteLikeChange($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+        
+        stopShareEventRelay
+            .map { Reactor.Action.receivedStopShareNote($0) }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
     }
     
@@ -127,7 +150,8 @@ final class MyNoteViewController: BaseViewController, View {
                                 id: id,
                                 title: reactor.getNoteTitle(noteID: id),
                                 sharedNoteRepository: SharedNoteRepository(),
-                                pencilShopRepository: PencilShopRepository()
+                                pencilShopRepository: PencilShopRepository(),
+                                likeEventRelay: self.noteLikeEventRelay
                             )
                         )
                     ), animated: true
@@ -159,7 +183,8 @@ final class MyNoteViewController: BaseViewController, View {
                     MyNoteStopShareViewController(
                         reactor: .init(
                             dependency: .init(
-                                noteRepository: SharedNoteRepository()
+                                noteRepository: SharedNoteRepository(),
+                                stopShareNoteRelay: self.stopShareEventRelay
                             )
                         )
                     ),
@@ -181,7 +206,7 @@ extension MyNoteViewController: UICollectionViewDelegateFlowLayout {
 
 // MARK: - MyNote Page DataSource
 extension MyNoteViewController {
-    private func createDataSource() ->RxCollectionViewSectionedReloadDataSource<MyNoteMainSection> {
+    private func createDataSource() -> RxCollectionViewSectionedReloadDataSource<MyNoteMainSection> {
         return .init(configureCell: { [weak self] _, collectionView, indexPath, item in
             guard let self = self else { return UICollectionViewCell() }
             

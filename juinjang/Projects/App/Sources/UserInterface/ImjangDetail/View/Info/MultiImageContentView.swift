@@ -63,34 +63,6 @@ final class MultiImageContentView: BaseView {
                 }
                 .disposed(by: disposeBag)
         }
-        
-        if model.isBuyer {
-            mainImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // relay.accept(index: 0)
-                }
-                .disposed(by: disposeBag)
-            
-            secondImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // relay.accept(index: 1)
-
-                }
-                .disposed(by: disposeBag)
-            
-            thirdImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // relay.accept(index: 2)
-
-                }
-                .disposed(by: disposeBag)
-        } else {
-            mainImageButton.rx.throttleTap
-                .subscribe(with: self) { (self, _) in
-                    // 시스템 알림: "구매하지 않은 임장노트예요."
-                }
-                .disposed(by: disposeBag)
-        }
     }
     
     func prepareForReuse() {
@@ -131,7 +103,7 @@ final class MultiImageContentView: BaseView {
 // MARK: - Setup Layout for Default
 extension MultiImageContentView {
     private func configureImageSection(for model: ImjangDetailInfoModel) {
-        switch model.imageCount {
+        switch model.images.count {
         case 0, 1:
             if let firstImageUrlString = model.images.first {
                 mainImageButton.setImage(
@@ -158,7 +130,7 @@ extension MultiImageContentView {
     }
     
     private func applyImageLayout(for model: ImjangDetailInfoModel) {
-        switch model.imageCount {
+        switch model.images.count {
         case 0, 1:
             setupLayoutForSingleImage()
         default:
@@ -206,12 +178,7 @@ extension MultiImageContentView {
 // MARK: - Setup Layout for Buyer
 extension MultiImageContentView {
     private func configureImageSectionForBuyer(for model: ImjangDetailInfoModel) {
-        switch model.imageCount {
-        case nil:
-            mainImageButton.setImage(
-                urlString: "",
-                placeholder: PropertyType(rawValue: model.propertyType)?.detailImage
-            )
+        switch model.images.count {
         case 0, 1:
             if let firstImageUrlString = model.images.first {
                 mainImageButton.isHiddenExpandButton = false
@@ -257,8 +224,8 @@ extension MultiImageContentView {
     private func applyImageLayoutForBuyer(for model: ImjangDetailInfoModel) {
         checkCountView.isHidden = true
         imageCountView.isHidden = true
-        switch model.imageCount {
-        case nil, 0, 1:
+        switch model.images.count {
+        case 0, 1:
             setupBuyerLayoutForSingleImage()
         case 2:
             setupBuyerLayoutForTwoImages()

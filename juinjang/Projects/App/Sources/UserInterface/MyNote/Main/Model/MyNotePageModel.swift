@@ -13,8 +13,10 @@ struct MyNotePageModel: Equatable {
     var transactionType: TransactionTypeFilter
     var saleType: SaleTypeFilter
     var items: [MyNoteCellModel]
+    var isFirstShowing: Bool
     
-    static func == (lhs: MyNotePageModel, rhs: MyNotePageModel) -> Bool {
+    static func == (lhs: MyNotePageModel,
+                    rhs: MyNotePageModel) -> Bool {
         return lhs.category == rhs.category &&
         lhs.isShowingNotice == rhs.isShowingNotice &&
         lhs.transactionType == rhs.transactionType &&

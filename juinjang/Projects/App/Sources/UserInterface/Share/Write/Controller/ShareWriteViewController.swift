@@ -98,6 +98,30 @@ final class ShareWriteViewController: BaseViewController, View {
                 )
             }
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowErrorAlertView)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, text) in
+                self.showAlert(title: "에러", message: text, actionHandler: nil)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowSafetyAlertView)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, _) in
+                self.present(ShareSafetyAlertView(), animated: true)
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .map(\.isShowLoadingView)
+            .compactMap { $0 }
+            .subscribe(with: self) { (self, bool) in
+                self.setLoading(isShow: bool, isOverlay: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindEvent() {
@@ -110,7 +134,7 @@ final class ShareWriteViewController: BaseViewController, View {
             .disposed(by: disposeBag)
         
         mainView.uploadButton
-            .rx.throttleTap
+            .rx.throttleTap(milliseconds: 1000) // 중복 클릭 방지
             .map { Reactor.Action.uploadButtonDidTap }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
@@ -156,26 +180,13 @@ final class ShareWriteViewController: BaseViewController, View {
                 .subscribe(with: self) { (self, event) in
                     switch event {
                     case .cancel:
-                        self.navigationController?.pushViewController(
-                            LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository()))),
-                            animated: true
-                        )
-                        
+                        self.changeLookAroundVC()
                     case .confirm:
                         let selectedModel = reactor.getShareSelectModel()
                         
-                        self.navigationController?.pushViewController(
-                            ImjangDetailViewController(
-                                reactor: .init(
-                                    dependency: .init(
-                                        id: selectedModel.noteId,
-                                        title: selectedModel.name,
-                                        sharedNoteRepository: SharedNoteRepository(),
-                                        pencilShopRepository: PencilShopRepository()
-                                    )
-                                )
-                            ),
-                            animated: true
+                        self.changeImjangDetailVCFromLookAround(
+                            SharedNoteID: reactor.currentState.sharedNoteId ?? 0,
+                            title: selectedModel.name
                         )
                     default: break
                     }

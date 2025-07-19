@@ -21,6 +21,11 @@ struct NoteDetailModel: Codable {
     let updatedAt: String
     let floor: String?
     let pyong: Int?
+    let bcode: String?
+    let sido: String?
+    let sigungu: String?
+    let bname1: String?
+    let bname2: String?
 }
 
 extension NoteDetailModel {
@@ -67,5 +72,16 @@ extension NoteDetailModel {
         default:
             return ""
         }
+    }
+    
+    var toPostCodeModel: PostCodeResponseModel {
+        return PostCodeResponseModel(
+            bcode: bcode ?? "",
+            address: roadAddress ?? "",
+            sido: sido ?? "",
+            sigungu: sigungu ?? "",
+            bname1: bname1 ?? "",
+            bname2: bname2 ?? ""
+        )
     }
 }

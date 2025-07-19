@@ -20,7 +20,11 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     private let repository = NoteRepository()
     private let disposeBag = DisposeBag()
     
-    var postCodeModel: PostCodeResponseModel? 
+    var postCodeModel: PostCodeResponseModel? {
+        didSet {
+            checkNextButtonActivation()
+        }
+    }
     
     private let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
@@ -57,10 +61,10 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
             nickname: nickname,
             floor: floorTextField.text ?? "",
             pyong: Int(pyungTextField.text ?? "") ?? 0,
-            sido: postCodeModel?.sido ?? "",
-            sigungu: postCodeModel?.sigungu ?? "",
-            bname1: postCodeModel?.bname1 ?? "",
-            bname2: postCodeModel?.bname2 ?? ""
+            sido: postCodeModel?.sido,
+            sigungu: postCodeModel?.sigungu,
+            bname1: postCodeModel?.bname1,
+            bname2: postCodeModel?.bname2
         )
         
         repository.createNote(
@@ -139,12 +143,12 @@ final class OpenNewPage2ViewController: BaseViewController, WarningMessageDelega
     
     private let floorTextField = RoundedPriceTextField(
         unitType: .floor,
-        placeHolder: "00"
+        placeholder: "00"
     )
     
     private let pyungTextField = RoundedPriceTextField(
         unitType: .pyung,
-        placeHolder: "000"
+        placeholder: "000"
     )
 
     lazy var houseNicknameLabel = UILabel().then {

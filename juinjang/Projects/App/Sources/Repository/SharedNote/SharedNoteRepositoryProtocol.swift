@@ -14,7 +14,7 @@ protocol SharedNoteRepositoryProtocol {
     func retrieveNoteDetailReport(noteId id: Int) -> Single<ImjangDetailReportModel>
     func retrieveNoteDetailCheckList(noteId id: Int) -> Single<ImjangDetailCheckListDTO>
     func createNoteLike(noteID id: Int) -> Single<NoteLikeDTO>
-    func createSharedNote(noteID id: Int, param: NoteShareRequestDTO) -> Completable
+    func createSharedNote(noteID id: Int, param: NoteShareRequestDTO) -> Single<BaseResponse<SharedNoteResponseDTO>>
     func purchaseNote(noteID id: Int) -> Completable
     func createNoteReport(param: NoteReportRequestDTO) -> Completable
     func deleteNoteLike(noteID id: Int) -> Single<NoteLikeDTO>

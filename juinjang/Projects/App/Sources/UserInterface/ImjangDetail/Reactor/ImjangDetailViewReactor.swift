@@ -7,6 +7,7 @@
 
 import ReactorKit
 import Foundation
+import RxRelay
 
 final class ImjangDetailViewReactor: Reactor {
     enum Action {
@@ -41,6 +42,7 @@ final class ImjangDetailViewReactor: Reactor {
         case updateTotalRate(Double)
         case updateBuildingName(String)
         case updateDidPurchasePencil(Bool)
+        case updateTappedImageInfo(index: Int, DTOs: [ImageDto])
     }
     
     struct State {
@@ -59,6 +61,7 @@ final class ImjangDetailViewReactor: Reactor {
         var didPurchasePencil: Bool = false
         var totalRate: Double = 0.0
         var buildingName: String = ""
+        var tappedImageInfo: (index: Int, DTOs: [ImageDto])?
     }
         
     struct Dependency {
@@ -66,6 +69,7 @@ final class ImjangDetailViewReactor: Reactor {
         let title: String
         let sharedNoteRepository: SharedNoteRepositoryProtocol
         let pencilShopRepository: PencilShopRepositoryProtocol
+        let likeEventRelay: PublishRelay<Int>?
     }
     
     let initialState: State
@@ -113,10 +117,15 @@ final class ImjangDetailViewReactor: Reactor {
             ))
         case .noteOpenButtonDidTap:
             return .just(.updateIsShowPencilAlert)
-        case .expandImageButtonDidTap(index: _):
-            return self.currentState.isBuyer
+        case .expandImageButtonDidTap(index: let index):
+            return currentState.isBuyer
+            ? {
+                let imageDTOs = extractImageDTO()
+                return imageDTOs.isEmpty
                 ? .empty()
-                : .just(.updateIsShowNotBuyerAlert)
+                : .just(.updateTappedImageInfo(index: index, DTOs: imageDTOs))
+            }()
+            : .just(.updateIsShowNotBuyerAlert)
         case .likeButtonDidTap:
             return likeButtonDidTap()
         case let .screenRecordingChanged(isRecording):
@@ -173,6 +182,8 @@ final class ImjangDetailViewReactor: Reactor {
             newState.buildingName = name
         case .updateDidPurchasePencil(let bool):
             newState.didPurchasePencil = bool
+        case .updateTappedImageInfo(index: let index, DTOs: let urls):
+            newState.tappedImageInfo = (index, urls)
         }
         return newState
     }
@@ -187,10 +198,6 @@ extension ImjangDetailViewReactor {
             .deferred { [weak self] in
                 guard let self = self else { return .empty() }
                 return .concat(
-                    self.currentState.isBuyer
-                    ? .empty()
-                    : .just(.updateIsShowPencilAlert),
-                    
                     self.currentState.isBuyer
                     ? self.createSection(for: .checkList)
                     : self.createCheckListHolderSection()
@@ -241,8 +248,12 @@ extension ImjangDetailViewReactor {
         ? dependency.sharedNoteRepository.deleteNoteLike(noteID: self.dependency.id).asObservable()
         : dependency.sharedNoteRepository.createNoteLike(noteID: self.dependency.id).asObservable()
         
-        return observable.map { response in
-            Mutation.updateIsLikedInInfoSection(isLiked: !isLiked, likedCount: response.count)
+        return observable.map { [weak self] response in
+            if let noteID = self?.dependency.id {
+                self?.dependency.likeEventRelay?.accept(noteID)
+            }
+
+            return Mutation.updateIsLikedInInfoSection(isLiked: !isLiked, likedCount: response.count)
         }
     }
     
@@ -280,7 +291,8 @@ extension ImjangDetailViewReactor {
                         .updateItem(section: .info, item: [item]),
                         .updateIsBuyer(model.isBuyer),
                         .updateIsOneRoom(
-                            model.propertyType == "VILLA" || model.propertyType == "OFFICE_TEL"
+                            model.limjangPurpose == "RESIDENTIAL_PURPOSE" &&
+                            (model.propertyType == "VILLA" || model.propertyType == "OFFICE_TEL")
                         )
                     ])
                 }
@@ -306,10 +318,11 @@ extension ImjangDetailViewReactor {
                 .retrieveNoteDetailCheckList(noteId: self.dependency.id)
                 .asObservable()
                 .flatMap { model -> Observable<Mutation> in
-                    let items = model.checklistAnswers.map {
+                    let items = model.checklistAnswers.filter {
+                        $0.category != "DEADLINE"
+                    }.map {
                         ImjangDetailCheckListCellItem(id: UUID().uuidString, model: $0)
                     }
-                    
                     return Observable.concat([
                         .just(.updateAllCheckListItems(items: items)),
                         .just(.updateItem(
@@ -348,7 +361,9 @@ extension ImjangDetailViewReactor {
             .map { response in
                 return .updateItem(
                     section: .checkList,
-                    item: response.checklistAnswers.prefix(5).map { model in
+                    item: response.checklistAnswers.filter {
+                        $0.category != "DEADLINE"
+                    }.prefix(5).map { model in
                         ImjangDetailBaseCellItem.checkList(
                             ImjangDetailCheckListCellItem(
                                 id: UUID().uuidString,
@@ -358,6 +373,16 @@ extension ImjangDetailViewReactor {
                     }
                 )
             }
+    }
+    
+    private func extractImageDTO() -> [ImageDto] {
+        guard let item = self.currentState.sectionItems[.info]?.first,
+              case let .info(infoCellItem) = item else {
+            return []
+        }
+        return infoCellItem.model.images.enumerated().map { index, url in
+            .init(imageId: index, imageUrl: url)
+        }
     }
 }
 

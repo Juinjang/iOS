@@ -10,6 +10,7 @@ import Alamofire
 import RxSwift
 import SnapKit
 import Then
+import RxRelay
 
 final class EditBasicInfoViewController: BaseViewController {
     private let navigationView = DefaultNavigationView().then {
@@ -18,6 +19,8 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     private let noteRepository = NoteRepository()
     private let disposeBag = DisposeBag()
+    
+    var checkSaveTimeRelay: PublishRelay<Void>?
     var transactionModel = TransactionModel()
     var imjangId: Int? = nil
     var versionInfo: VersionInfo? = nil
@@ -74,8 +77,8 @@ final class EditBasicInfoViewController: BaseViewController {
     private let floorAndPyungBaseView = UIView().then {
         $0.backgroundColor = .gray100
     }
-    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeHolder: "00")
-    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeHolder: "000")
+    private let floorTextField = RoundedPriceTextField(unitType: .floor, placeholder: "00")
+    private let pyungTextField = RoundedPriceTextField(unitType: .pyung, placeholder: "000")
 
     lazy var houseNicknameLabel = UILabel().then {
         configureLabel($0, text: "집 별명")
@@ -287,6 +290,7 @@ final class EditBasicInfoViewController: BaseViewController {
         noteRepository
             .retrieveNoteDetail(noteID: imjangId)
             .subscribe(with: self) { (self, response) in
+                self.postModel = response.toPostCodeModel
                 self.setData(detailDto: response)
             }
             .disposed(by: disposeBag)
@@ -329,6 +333,8 @@ final class EditBasicInfoViewController: BaseViewController {
                 with: self,
                 onCompleted: { _ in
                     completionHandler(nil)
+                    self.checkSaveTimeRelay?.accept(())
+                    
                 }, onError: { (self, error) in
                     completionHandler(error as? NetworkError)
                 }
@@ -638,7 +644,12 @@ final class EditBasicInfoViewController: BaseViewController {
                     monthlyRent: "",
                     updatedAt: updatedAt,
                     floor: "",
-                    pyong: 0
+                    pyong: 0,
+                    bcode: nil,
+                    sido: nil,
+                    sigungu: nil,
+                    bname1: nil,
+                    bname2: nil
                 )
             )
             

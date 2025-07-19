@@ -32,10 +32,15 @@ final class ShareWriteViewReactor: Reactor {
         case updateBuildingName(String)
         case updateReviewContent(String)
         case updateShowCompletedView
+        case updateIsShowErrorAlertView(String)
+        case updateIsShowSafetyAlertView
+        case updateSharedNoteId(Int)
+        case updateIsShowLoadingView(Bool)
     }
     
     // MARK: - State
     struct State {
+        var sharedNoteId: Int? = nil
         var nickname: String = ""
         var popViewTrigger: Observable<Void>? = nil
         var sectionItems: [ShareWriteSection: [ShareWriteBaseCellItem]] = [:]
@@ -45,12 +50,15 @@ final class ShareWriteViewReactor: Reactor {
         var reviewContentText: String = ""
         var isActivatedUploadButton: Bool = false
         var isShowCompletedView: Bool? = nil
+        var isShowErrorAlertView: String? = nil
+        var isShowSafetyAlertView: Bool? = nil
+        var isShowLoadingView: Bool? = nil
         
         mutating func evaluateUploadButtonState() {
             isActivatedUploadButton =
-                !buildingName.isEmpty &&
-                selectImjangPeriod != nil &&
-                !reviewContentText.isEmpty
+            !buildingName.isEmpty &&
+            selectImjangPeriod != nil &&
+            !reviewContentText.isEmpty
         }
     }
     
@@ -93,7 +101,10 @@ final class ShareWriteViewReactor: Reactor {
         case .editingReviewContent(let text):
             return .just(.updateReviewContent(text))
         case .uploadButtonDidTap:
-            return createShareableNote()
+            return .concat(
+                .just(.updateIsShowLoadingView(true)),
+                createShareableNote()
+            )
         }
     }
     
@@ -122,6 +133,14 @@ final class ShareWriteViewReactor: Reactor {
             newState.evaluateUploadButtonState()
         case .updateShowCompletedView:
             newState.isShowCompletedView = true
+        case .updateIsShowErrorAlertView(let text):
+            newState.isShowErrorAlertView = text
+        case .updateIsShowSafetyAlertView:
+            newState.isShowSafetyAlertView.toggle()
+        case .updateSharedNoteId(let sharedNoteId):
+            newState.sharedNoteId = sharedNoteId
+        case .updateIsShowLoadingView(let bool):
+            newState.isShowLoadingView = bool
         }
         
         return newState
@@ -134,17 +153,42 @@ extension ShareWriteViewReactor {
         return dependency
             .sharedNoteRepository
             .createSharedNote(
-                noteID: self.dependency.selectedModel.noteId,
+                noteID: dependency.selectedModel.noteId,
                 param: .init(
-                    buildingName: self.currentState.buildingName,
-                    isImageShared: self.currentState.isPublic,
-                    year: Int(self.currentState.selectImjangPeriod?.year ?? "0") ?? 0,
-                    month: Int(self.currentState.selectImjangPeriod?.month ?? "0") ?? 0,
-                    period: self.currentState.selectImjangPeriod?.phase ?? "",
-                    review: self.currentState.reviewContentText
+                    buildingName: currentState.buildingName,
+                    isImageShared: currentState.isPublic,
+                    year: Int(currentState.selectImjangPeriod?.year ?? "0") ?? 0,
+                    month: Int(currentState.selectImjangPeriod?.month ?? "0") ?? 0,
+                    period: currentState.selectImjangPeriod?.phase ?? "",
+                    review: currentState.reviewContentText
                 )
             )
-            .andThen(.just(.updateShowCompletedView))
+            .asObservable()
+            .flatMap { response -> Observable<Mutation> in
+                let resultObservable: Observable<Mutation>
+                
+                if response.isSuccess {
+                    resultObservable = .concat(
+                        .just(.updateSharedNoteId(response.result?.sharedNoteId ?? 0)),
+                        .just(.updateShowCompletedView)
+                    )
+                } else {
+                    switch response.message {
+                    case "공유가 금지된 노트입니다.":
+                        resultObservable = .just(.updateIsShowSafetyAlertView)
+                    default:
+                        resultObservable = .just(.updateIsShowErrorAlertView(response.message))
+                    }
+                }
+                
+                return .concat(
+                    resultObservable,
+                    .just(.updateIsShowLoadingView(false))
+                )
+            }
+            .catch { error in
+                return .just(.updateIsShowLoadingView(false))
+            }
     }
     
     private func fetchUserNickname() -> Observable<Mutation> {

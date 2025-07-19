@@ -8,8 +8,11 @@
 import UIKit
 import Then
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class ShareSelectEmptyView: BaseView {
+    fileprivate let disposeBag = DisposeBag()
     private let containerView = UIView()
     
     private let emptyImageView = UIImageView().then {
@@ -23,7 +26,7 @@ final class ShareSelectEmptyView: BaseView {
         $0.fontAlignment = .center
     }
     
-    private let noteButton = FilledButton(title: "나의 임장노트 가기")
+    fileprivate let noteButton = FilledButton(title: "나의 임장노트 가기")
     
     override func configureHierarchy() {
         super.configureHierarchy()
@@ -65,5 +68,11 @@ final class ShareSelectEmptyView: BaseView {
             $0.height.equalTo(52)
             $0.width.equalTo(202)
         }
+    }
+}
+
+extension Reactive where Base: ShareSelectEmptyView {
+    var noteButtonTapped: Observable<Void> {
+        return base.noteButton.rx.throttleTap
     }
 }

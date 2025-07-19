@@ -55,9 +55,13 @@ final class BottomTableViewCell: UITableViewCell{
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-        
-    func hasResults(_ isEmpty: Bool) {
-        print(#function, isEmpty)
+    
+    func isHidden(_ isEmpty: Bool, isFirstShowing: Bool) {
+        guard !isFirstShowing else {
+            showLoading()
+            return
+        }
+        hideLoading()
         noImjangLabel.isHidden = !isEmpty
         noImjangImageView.isHidden = !isEmpty
         collectionView.isHidden = isEmpty
@@ -92,6 +96,23 @@ final class BottomTableViewCell: UITableViewCell{
             $0.top.equalTo(recentImjangLabel.snp.bottom).offset(15)
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(204)
+        }
+    }
+    
+    func showLoading() {
+        let spinner = UIActivityIndicatorView(style: .medium)
+        spinner.center = contentView.center
+        spinner.tag = 999
+        spinner.startAnimating()
+        spinner.isUserInteractionEnabled = false // 터치 막을 필요 없으므로 false
+
+        contentView.addSubview(spinner)
+    }
+
+    func hideLoading() {
+        if let spinner = viewWithTag(999) as? UIActivityIndicatorView {
+            spinner.stopAnimating()
+            spinner.removeFromSuperview()
         }
     }
 }

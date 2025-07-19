@@ -99,25 +99,6 @@ final class ImjangListView: UIView {
         newPageButton.isHidden = true
         collectionView.isHidden = true
         
-        // 비었을 때 로고 이미지뷰
-        emptyLogoImageView.design(image: UIImage.Main.nomaemull,
-                         contentMode: .scaleAspectFit)
-        // 비었을 때 추가 권유 메시지 레이블
-        emptyMessageLabel.design(text: "아직 등록된 집이 없어요\n지금 바로 부동산을 추가해 볼까요?",
-                                 textColor: .gray400,
-                                 font: .pretendard(size: 16, weight: .semiBold),
-                                 textAlignment: .center,
-                                 numberOfLines: 0)
-        emptyMessageLabel.setLineSpacing(spacing: 4)
-        emptyMessageLabel.textAlignment = .center
-
-
-        // 새 페이지 펼치기 버튼
-        newPageButton.design(title: "새 페이지 펼치기",
-                             font: .pretendard(size: 16, weight: .semiBold),
-                             backgroundColor: .gray500,
-                             cornerRadius: 10)
-        
         collectionView.backgroundColor = .mainWhite
         collectionView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
         collectionView.register(
@@ -150,10 +131,32 @@ final class ImjangListView: UIView {
         newPageButton.isHidden = hasResults
         collectionView.isHidden = !hasResults
     }
+    
+    func setupEmptyView(isEmpty: Bool) {
+        emptyBackgroundView.isHidden = !isEmpty
+        
+        guard isEmpty else { return }
+        // 비었을 때 로고 이미지뷰
+        emptyLogoImageView.design(image: UIImage.Main.nomaemull,
+                                  contentMode: .scaleAspectFit)
+        // 비었을 때 추가 권유 메시지 레이블
+        emptyMessageLabel.design(text: "아직 등록된 집이 없어요\n지금 바로 부동산을 추가해 볼까요?",
+                                 textColor: .gray400,
+                                 font: .pretendard(size: 16, weight: .semiBold),
+                                 textAlignment: .center,
+                                 numberOfLines: 0)
+        emptyMessageLabel.setLineSpacing(spacing: 4)
+        emptyMessageLabel.textAlignment = .center
+        
+        // 새 페이지 펼치기 버튼
+        newPageButton.design(title: "새 페이지 펼치기",
+                             font: .pretendard(size: 16, weight: .semiBold),
+                             backgroundColor: .gray500,
+                             cornerRadius: 10)
+    }
 }
 
 extension ImjangListView {
-    
     func createCollectionViewLayout(isScrapEmpty: Bool) -> UICollectionViewCompositionalLayout {
         print(#function, isScrapEmpty)
         let layout = UICollectionViewCompositionalLayout { [weak self] sectionIndex, environment -> NSCollectionLayoutSection? in
@@ -167,7 +170,7 @@ extension ImjangListView {
                 case .list:
                     section = listLayout()
                 }
-        
+                
                 return section
             } else {
                 return nil
@@ -216,7 +219,7 @@ extension ImjangListView {
         let sectionBackgroundDecoration = NSCollectionLayoutDecorationItem.background(elementKind: ScrapCellBackground.identifier)
         section.decorationItems = [sectionBackgroundDecoration]
         section.contentInsets = NSDirectionalEdgeInsets(top: 8, leading: 0, bottom: 0, trailing: 0)
-    
+        
         return section
     }
     
@@ -244,7 +247,7 @@ extension ImjangListView {
             alignment: .top
         )
         section.boundarySupplementaryItems = [header]
-    
+        
         return section
     }
     
@@ -262,12 +265,12 @@ extension ImjangListView {
         
         section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 22, bottom: 0, trailing: 22)
         let sectionHeader = NSCollectionLayoutBoundarySupplementaryItem(
-                    layoutSize: NSCollectionLayoutSize(
-                        widthDimension: .fractionalWidth(1.0),
-                        heightDimension: .absolute(49)),
-                    elementKind: UICollectionView.elementKindSectionHeader,
-                    alignment: .top
-                )
+            layoutSize: NSCollectionLayoutSize(
+                widthDimension: .fractionalWidth(1.0),
+                heightDimension: .absolute(49)),
+            elementKind: UICollectionView.elementKindSectionHeader,
+            alignment: .top
+        )
         sectionHeader.pinToVisibleBounds = false
         sectionHeader.zIndex = 2
         section.boundarySupplementaryItems = [sectionHeader]

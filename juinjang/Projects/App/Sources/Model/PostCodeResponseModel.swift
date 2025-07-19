@@ -10,7 +10,7 @@ struct PostCodeResponseModel: Codable {
     let address: String
     let sido: String
     let sigungu: String
-    let bname1: String
+    var bname1: String?
     let bname2: String
     
     enum CodingKeys: String, CodingKey {

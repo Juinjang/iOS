@@ -34,6 +34,7 @@ final class MyNoteSearchViewReactor: Reactor {
     // MARK: - Dependencies
     struct Dependency {
         let noteRepository: SharedNoteRepositoryProtocol
+        let noteType: MyNoteCategoryType
     }
     
     let dependency: Dependency
@@ -51,18 +52,25 @@ final class MyNoteSearchViewReactor: Reactor {
                 dependency.noteRepository
                     .retrieveMyNotes(
                         param: .init(
-                            noteType: "SHARED",
+                            noteType: dependency.noteType.toRequestType,
                             propertyType: nil,
                             priceType: nil,
                             keyword: keyword
                         )
                     )
                     .asObservable()
-                    .map { notes in
-                        return .setList(notes.map { MyNoteCellModel(model: $0) })
-                    },
-                
-                .just(.setLoading(false))
+                    .delay(.seconds(Int(2)), scheduler: MainScheduler.instance)
+                    .flatMap { notes in
+                        Observable.concat([
+                            .just(.setList(notes.map { MyNoteCellModel(model: $0) })),
+                            .just(.setLoading(false))
+                        ])
+                    }
+                    .catch { error in
+                        return Observable.concat([
+                            .just(.setLoading(false))
+                        ])
+                    }
             ])
         }
     }

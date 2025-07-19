@@ -829,6 +829,7 @@ final class OpenNewPageViewController: BaseViewController {
             // 버튼에 따라 사용자 표시
             if sender == realestateInvestmentButton {
                 selectedPurposeType = 0
+                selectedPriceType = 3
                 transactionModel.selectedPurposeButtonImage = investorImageView.image
                 backgroundImageView.addSubview(investorImageView)
                 priceView2.isHidden = true
@@ -845,6 +846,7 @@ final class OpenNewPageViewController: BaseViewController {
                 movingUserImageView.removeFromSuperview()
             } else if sender == moveInDirectlyButton {
                 selectedPurposeType = 1
+                selectedPriceType = 0
                 transactionModel.selectedPurposeButtonImage = movingUserImageView.image
                 backgroundImageView.addSubview(movingUserImageView)
                 priceDetailLabel?.removeFromSuperview()

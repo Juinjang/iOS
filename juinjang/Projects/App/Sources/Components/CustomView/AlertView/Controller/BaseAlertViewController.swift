@@ -13,6 +13,7 @@ enum AlertButtonType: Equatable {
     case confirm(title: String, width: CGFloat?)
     case cancel(title: String, width: CGFloat?)
     case custom(view: UIView)
+    
     var title: String {
         switch self {
         case .cancel(title: let title, _):

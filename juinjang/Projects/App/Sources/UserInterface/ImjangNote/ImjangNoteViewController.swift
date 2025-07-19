@@ -30,6 +30,8 @@ final class ImjangNoteViewController: BaseViewController,
         }
     }()
     
+    private let receivedSaveTimeRelay = PublishRelay<Void>()
+    
     // 스크롤뷰
     let scrollView = UIScrollView().then {
         $0.backgroundColor = .mainWhite
@@ -168,7 +170,6 @@ final class ImjangNoteViewController: BaseViewController,
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .mainWhite
@@ -196,11 +197,13 @@ final class ImjangNoteViewController: BaseViewController,
                     editVC.imjangId = self.imjangId
                     editVC.versionInfo = self.versionInfo
                     editVC.delegate = self
+                    editVC.checkSaveTimeRelay = self.receivedSaveTimeRelay
                     self.navigationController?.pushViewController(editVC, animated: true)
                 } else if self.versionInfo?.editCriteria == 1 {
                     editDetailVC.imjangId = self.imjangId
                     editDetailVC.versionInfo = self.versionInfo
                     editDetailVC.delegate = self
+                    editDetailVC.checkSaveTimeRelay = self.receivedSaveTimeRelay
                     self.navigationController?.pushViewController(editDetailVC, animated: true)
                 }
             }
@@ -210,8 +213,35 @@ final class ImjangNoteViewController: BaseViewController,
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .share:
-                    let viewController = ShareSelectViewController(reactor: .init(dependency: .init(noteRepository: NoteRepository(), userRepository: UserRepository())))
-                    self.navigationController?.pushViewController(viewController, animated: true)
+                    self.noteRepository.retrieveShareableNoteList(
+                        param: .init(
+                            sort: nil,
+                            propertyType: nil,
+                            priceType: nil,
+                            keyword: self.roomNameLabel.text ?? "",
+                            page: 1,
+                            size: 20
+                        )
+                    )
+                    .asObservable()
+                    .map { notes in
+                        notes.first(where: { $0.noteId == self.imjangId })
+                    }
+                    .compactMap { $0 }
+                    .subscribe { model in
+                        let viewController = ShareWriteViewController(
+                            reactor: .init(
+                                dependecy: .init(
+                                    selectedModel: model,
+                                    noteRepository: NoteRepository(),
+                                    userRepository: UserRepository(),
+                                    sharedNoteRepository: SharedNoteRepository()
+                                )
+                            )
+                        )
+                        self.navigationController?.pushViewController(viewController, animated: true)
+                    }
+                    .disposed(by: self.disposeBag)
                 }
             }
             .disposed(by: disposeBag)
@@ -231,6 +261,12 @@ final class ImjangNoteViewController: BaseViewController,
         photoRegisterButton.rx.throttleTap
             .subscribe(with: self) { (self,_) in
                 self.showImjangImageListVC()
+            }
+            .disposed(by: disposeBag)
+        
+        receivedSaveTimeRelay
+            .subscribe(with: self) { (self,_) in
+                self.callRequest()
             }
             .disposed(by: disposeBag)
     }

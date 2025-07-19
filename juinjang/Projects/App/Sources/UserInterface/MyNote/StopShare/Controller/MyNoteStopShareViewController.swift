@@ -84,7 +84,17 @@ final class MyNoteStopShareViewController: BaseViewController, View {
             .distinctUntilChanged()
             .subscribe(with: self) { (self, _) in
                 self.present(
-                    StopShareCompletedView(),
+                    StopShareCompletedView().then {
+                        $0.eventRelay
+                            .subscribe(onNext: { event in
+                                switch event {
+                                case .confirm:
+                                    self.navigationController?.popViewController(animated: true)
+                                default: break
+                                }
+                            })
+                            .disposed(by: self.disposeBag)
+                    },
                     animated: true
                 )
             }
