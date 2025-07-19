@@ -104,9 +104,7 @@ final class LookAroundViewController: BaseViewController, View {
             .compactMap { $0.sectionOfExploreNotes }
             .distinctUntilChanged()
             .map { [weak self] sections in
-                if let notes = sections[3].items as? [ExploreNoteModel] {
-                    self?.mainView.collectionView.collectionViewLayout = self?.mainView.createCollectionViewLayout(isListEmpty: notes.isEmpty) ?? UICollectionViewLayout()
-                }
+                self?.mainView.collectionView.collectionViewLayout = self?.mainView.createCollectionViewLayout(isListEmpty: sections[3].items.isEmpty) ?? UICollectionViewLayout()
                 return sections
             }
             .bind(to: mainView.collectionView.rx.items(dataSource: dataSource))

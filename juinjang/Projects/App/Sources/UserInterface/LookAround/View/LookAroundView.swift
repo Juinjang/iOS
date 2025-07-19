@@ -180,6 +180,8 @@ extension LookAroundView {
             )
             decoration.contentInsets = NSDirectionalEdgeInsets(top: 63, leading: 0, bottom: 0, trailing: 0)
             section.decorationItems = [decoration]
+        } else {
+            section.decorationItems = []
         }
         
         var footer: NSCollectionLayoutBoundarySupplementaryItem?
