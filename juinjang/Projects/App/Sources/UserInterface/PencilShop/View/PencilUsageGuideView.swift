@@ -27,16 +27,47 @@ final class PencilUsageGuideView: BaseView {
     }
     
     private let textView = UITextView().then {
-        $0.text = "Lorem ipsum dolor sit amet consectetur. Sapien eget sagittis sit turpis malesuada nisi tincidunt sed arcu. Neque ultrices risus metus tellus accumsan rhoncus diam sollicitudin. Sed tincidunt viverra scelerisque diam. Morbi venenatis metus vivamus bibendum nunc non. Scelerisque sem id ac mattis nunc neque. Vitae mauris mollis sed suspendisse. Sed libero ultrices netus facilisis elementum enim quis. Pharetra morbi suscipit id pellentesque massa. Metus magna faucibus mattis metus urna nulla pellentesque. Tellus lectus id condimentum lacinia. Pretium sed purus integer tempor lacus. Aliquam placerat erat elementum massa sem purus morbi lorem praesent. Torrksktor eu mauris magna ullamcorper porttitor.\n Accumsan egestas magna dui ut rhoncus accumsan. Risus et risus nunc nunc neque augue dolor cursus diam. Quis mauris at morbi aliquam nec enim id tincidunt tempus. Pulvinar sed felis bibendum sit odio quis facilisis. Lorem enim sed aliquet diam eget turpis sem adipiscing nunc.\n Non blandit sed mattis pulvinar euismod id. Metus faucibus morbi id nisl tincidunt nam convallis. Egestas sollicitudin nec auctor tortor. Egestas sit vitae purus tincidunt etiam hac. Nam massa euismod in venenatis eu rhoncus etiam eu. Dolor massa parturient rutrum "
+        $0.text = """
+        1. 연필 유효기간
+        • 2025년 7월 18일까지 유료로 구매한 연필의 유효기간은 결제 시점을 기준으로 5년입니다.
+        
+        2. 연필 환불
+        • iOS 앱에서 충전한 연필의 환불은 APPLE 고객센터를 통해서만 가능합니다.
+        • 환불 시에는 결제한 수단으로 환불됩니다.
+        • 보너스 연필 및 이벤트로 받은 무료 연필은 환불 대상이 아닙니다.
+        
+        3. 환불 신청 방법
+        • APPLE 고객센터로 정상적인 환불이 진행되지 않았을 시에 아래 메일로 연락해주세요.
+            • [juinjang1227@gmail.com]
+        
+        4. 인앱 결제 및 환불 신청
+        ① 사용자는 Apple App Store(iOS) 인앱 결제 시스템을 통해 별도의 앱 내 유상 재화(이하 '연필')를 구매할 수 있습니다.
+        ② 사용자가 연필 구매 후 환불을 희망하는 경우, Apple 정책에 따라 Apple에 직접 환불을 신청해야 하며, 환불 가능 여부는 Apple의 심사 기준에 따릅니다.
+        
+        5. 환불 처리를 위한 연계 및 서버 연동
+        ① Apple이 환불 처리를 진행하는 경우, 환불 요청 및 처리 관련 정보가 당사(이하 '운영자') 서버에 연동되어 전달됩니다.
+        ② 환불이 승인될 경우, 운영자는 환불 금액에 상응하는 만큼 사용자의 계정에서 구매한 연필을 우선 차감합니다.
+        
+        6. 환불에 따른 연필 차감 방식
+        ① 환불 금액에 해당하는 연필 수만큼, 우선적으로 구매한 연필에서 차감됩니다.
+        ② 만약 구매한 연필 잔여분만으로 환불 금액이 충족되지 않을 경우,
+        운영자는 사용자가 보유한 '얻은 연필'(이벤트/보상 등으로 획득한 무상 연필)에서도 추가로 차감 처리할 수 있습니다.
+        ③ 구매한 연필과 얻은 연필까지 모두 차감하여도 환불 금액에 해당하는 연필 수량이 부족할 경우,
+        사용자의 연필 잔고는 0개로 처리되며, 음수(마이너스)로 차감되지 않습니다.
+        
+        7. 유의 사항
+        ① 환불 처리 후, 환불된 금액에 상응하는 연필 및 관련 콘텐츠 사용권한도 소멸할 수 있습니다.
+        ② 환불 정책 및 재화 차감 규칙 등은 Apple의 정책 변경 또는 운영자 내부 기준에 따라 변경될 수 있으며, 변경 시 사전 공지합니다.
+        """
  
-        $0.textContainerInset = UIEdgeInsets(top: 8, left: 24, bottom: 52, right: 24)
+        $0.textContainerInset = UIEdgeInsets(top: 16, left: 24, bottom: 42, right: 24)
         $0.backgroundColor = .gray200
         
-        let font = UIFont.pretendard(size: 14, weight: .medium)
+        let font = UIFont.pretendard(size: 11, weight: .medium)
         
         let style = NSMutableParagraphStyle()
-        style.maximumLineHeight = 20
-        style.minimumLineHeight = 20
+        style.maximumLineHeight = 14
+        style.minimumLineHeight = 14
         style.lineBreakMode = .byWordWrapping
         
         let attributes: [NSAttributedString.Key: Any] = [
@@ -55,7 +86,7 @@ final class PencilUsageGuideView: BaseView {
     private var disposeBag = DisposeBag()
     private var heightConstraint: Constraint?
     
-    private let expandedHeight: CGFloat = 566 // 펼쳤을 때 높이 (수정 가능)
+    private let expandedHeight: CGFloat = 640 // 펼쳤을 때 높이 (수정 가능)
     private let collapsedHeight: CGFloat = 52 // 접었을 때 기본 높이
     let guideTapRelay = PublishRelay<Void>()
     
@@ -114,7 +145,7 @@ final class PencilUsageGuideView: BaseView {
     
     override func configureView() {
         backgroundColor = .gray200
-        
+        setBold()
         let tapGesture = UITapGestureRecognizer()
         headerView.addGestureRecognizer(tapGesture)
         tapGesture.rx.event
@@ -130,5 +161,42 @@ final class PencilUsageGuideView: BaseView {
                 owner.guideTapRelay.accept(())
             }
             .disposed(by: disposeBag)
+    }
+    
+    private func setBold() {
+        ["1. 연필 유효기간",
+         "2. 연필 환불",
+         "3. 환불 신청 방법",
+         "4. 인앱 결제 및 환불 신청",
+         "5. 환불 처리를 위한 연계 및 서버 연동",
+         "6. 환불에 따른 연필 차감 방식",
+         "7. 유의 사항"
+        ].forEach {
+            applyFont(to: $0, font: .pretendard(size: 11, weight: .semiBold))
+        }
+    }
+    
+    func applyFont(to targetText: String, font: UIFont?) {
+        guard let fullText = textView.text, let font = font else { return }
+        
+        let attributedString: NSMutableAttributedString
+        
+        if let existingAttributedText = textView.attributedText { // 기존 스타일 유지
+            attributedString = NSMutableAttributedString(attributedString: existingAttributedText)
+        } else { // 새로운 AttributedString 생성
+            attributedString = NSMutableAttributedString(string: fullText)
+        }
+        
+        var searchRange = fullText.startIndex..<fullText.endIndex
+        
+        while let range = fullText.range(of: targetText, options: .literal, range: searchRange) {
+            let nsRange = NSRange(range, in: fullText)
+            attributedString.addAttribute(.font, value: font, range: nsRange)
+            
+            // 다음 검색을 위해 범위를 이동
+            searchRange = range.upperBound..<fullText.endIndex
+        }
+        
+        textView.attributedText = attributedString
     }
 }
