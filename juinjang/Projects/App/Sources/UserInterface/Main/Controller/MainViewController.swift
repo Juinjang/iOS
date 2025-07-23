@@ -36,6 +36,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
+        checkAndShowPencilShopTermsPopup()
         bind()
         tableView.delegate = self
         tableView.dataSource = self
@@ -70,17 +71,36 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             .disposed(by: disposeBag)
     }
     
+    private func checkAndShowPencilShopTermsPopup() {
+        // MARK: - API 연동 작업 필요
+        
+        let termsPopupVC = TermsPopupViewController(
+            title: "업데이트된 주인장 앱 이용을 위해\n내용을 확인하고 동의해주세요",
+            titleMain: "내용을 확인하고 동의해주세요",
+            term: "(필수) 연필상점 서비스 이용 및 환불 정책",
+            navigationType: .link("https://rounded-sandalwood-9dc.notion.site/2389e0b3153880858497c433a86fdcfe")
+        )
+        termsPopupVC.modalPresentationStyle = .overFullScreen
+        termsPopupVC.modalTransitionStyle = .crossDissolve
+        present(termsPopupVC, animated: false, completion: nil)
+    }
+    
     private func checkAndShowTermsPopup() {
         print("약관 동의 버전은????\(UserDefaultManager.shared.agreeVersion)")
         let currentVersion = "1.1.0"
         if UserDefaultManager.shared.agreeVersion.compare(currentVersion, options: .numeric) == .orderedAscending {
-            let termsPopupVC = TermsPopupViewController()
+            let termsPopupVC = TermsPopupViewController(
+                title: "주인장 앱을 이용하려면\n업데이트 내용을 확인하고 동의해주세요",
+                titleMain: "업데이트 내용을 확인하고 동의해주세요",
+                term: "(필수) 개인정보 수집 및 이용 동의",
+                navigationType: .view(NewTermsViewController())
+            )
             termsPopupVC.modalPresentationStyle = .overFullScreen
             termsPopupVC.modalTransitionStyle = .crossDissolve
             present(termsPopupVC, animated: false, completion: nil)
         }
     }
-    
+
     @objc private func callMainImjangRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
                                             api: .mainImjang) { [weak self] response, error in

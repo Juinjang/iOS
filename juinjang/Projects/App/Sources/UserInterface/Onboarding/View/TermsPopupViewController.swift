@@ -6,8 +6,15 @@
 //
 
 import UIKit
+import Then
+import SafariServices
 
 final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
+    enum NavigationType {
+        case link(String)
+        case view(UIViewController)
+    }
+    
     func didAgreeToTerms() {
         isAgree = true
         button1.backgroundColor = .main100
@@ -19,18 +26,10 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     private let containerView = UIView()
     
     private let titleLabel = UILabel().then {
-        $0.text = "주인장 앱을 이용하려면\n업데이트 내용을 확인하고 동의해주세요"
         $0.textColor = .gray600
         $0.font = .pretendard(size: 20, weight: .semiBold)
         $0.textAlignment = .left
         $0.numberOfLines = 0
-        let attrString = NSMutableAttributedString(string: $0.text!)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.22
-        let range = ($0.text! as NSString).range(of: "업데이트 내용을 확인하고 동의해주세요")
-        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
-        attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
-        $0.attributedText = attrString
     }
     
     private let descriptionLabel = UILabel().then {
@@ -68,18 +67,9 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     }
     
     private let termLabel = UILabel().then {
-        $0.text = "(필수) 개인정보 수집 및 이용 동의"
         $0.textColor = .gray450
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.numberOfLines = 0
-        
-        let attrString = NSMutableAttributedString(string: $0.text!)
-        let range = ($0.text! as NSString).range(of: "(필수)")
-        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineHeightMultiple = 1.22
-        attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
-        $0.attributedText = attrString
     }
     
     private let termsButton = UIButton().then {
@@ -92,13 +82,42 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         $0.backgroundColor = .null
         $0.layer.cornerRadius = 10
     }
-        
+    
+    private let navigationType: NavigationType
+    
+    init(isAgree: Bool = false,
+         title: String,
+         titleMain: String,
+         term: String,
+         navigationType: NavigationType) {
+        self.isAgree = isAgree
+        self.navigationType = navigationType
+        super.init()
+        titleLabel.attributedText = styledText(title, highlight: titleMain)
+        termLabel.attributedText = styledText(term, highlight: "(필수)")
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black.withAlphaComponent(0.5)
         setupContainerView()
         setupUI()
         setupActions()
+    }
+    
+    private func styledText(_ text: String, highlight: String) -> NSAttributedString {
+        let attr = NSMutableAttributedString(string: text)
+        let range = (text as NSString).range(of: highlight)
+        attr.addAttribute(.foregroundColor, value: UIColor.main, range: range)
+        
+        let style = NSMutableParagraphStyle()
+        style.lineHeightMultiple = 1.22
+        attr.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: attr.length))
+        return attr
     }
 
     private func setupContainerView() {
@@ -231,10 +250,22 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
     }
     
     @objc private func termsButtonTapped() {
-        let termView = NewTermsViewController()
-        termView.delegate = self
-        termView.modalPresentationStyle = .fullScreen
-        present(termView, animated: false, completion: nil)
+        switch navigationType {
+        case .link(let url):
+            if let url = URL(string: url) {
+                let safariVC = SFSafariViewController(url: url)
+                present(safariVC, animated: true, completion: nil)
+            }
+        case .view(let viewController):
+            if let termsVC = viewController as? NewTermsViewController {
+                termsVC.delegate = self
+                termsVC.modalPresentationStyle = .fullScreen
+                termsVC.modalTransitionStyle = .crossDissolve
+                present(termsVC, animated: true)
+            } else {
+                present(viewController, animated: true)
+            }
+        }
     }
 
 }
