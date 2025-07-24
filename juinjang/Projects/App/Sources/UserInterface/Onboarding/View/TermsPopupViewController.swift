@@ -257,10 +257,10 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
                 present(safariVC, animated: true, completion: nil)
             }
         case .view(let viewController):
+            viewController.modalPresentationStyle = .fullScreen
+            viewController.modalTransitionStyle = .crossDissolve
             if let termsVC = viewController as? NewTermsViewController {
                 termsVC.delegate = self
-                termsVC.modalPresentationStyle = .fullScreen
-                termsVC.modalTransitionStyle = .crossDissolve
                 present(termsVC, animated: true)
             } else {
                 present(viewController, animated: true)
