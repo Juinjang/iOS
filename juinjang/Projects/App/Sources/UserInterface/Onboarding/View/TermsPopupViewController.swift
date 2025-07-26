@@ -76,7 +76,7 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         $0.setImage(UIImage.term, for: .normal)
     }
     
-    private let button2 = UIButton().then {
+    let button2 = UIButton().then {
         $0.setTitle("주인장 이용하러 가기", for: .normal)
         $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
         $0.backgroundColor = .null
@@ -95,6 +95,8 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         super.init()
         titleLabel.attributedText = styledText(title, highlight: titleMain)
         termLabel.attributedText = styledText(term, highlight: "(필수)")
+        modalPresentationStyle = .overFullScreen
+        modalTransitionStyle = .crossDissolve
     }
     
     required init?(coder: NSCoder) {
