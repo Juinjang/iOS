@@ -22,6 +22,7 @@ final class ImjangDetailViewReactor: Reactor {
         case reportButtonDidTap
         case purchaseButtonDidTap
         case didPurchasePencil(isSuccess: Bool)
+        case presentPhotoView
     }
     
     enum Mutation {
@@ -43,6 +44,7 @@ final class ImjangDetailViewReactor: Reactor {
         case updateBuildingName(String)
         case updateDidPurchasePencil(Bool)
         case updateTappedImageInfo(index: Int, DTOs: [ImageDto])
+        case clearTappedImageInfo
     }
     
     struct State {
@@ -140,6 +142,8 @@ final class ImjangDetailViewReactor: Reactor {
             return handlePurchase()
         case .didPurchasePencil(let success):
             return .just(.updateDidPurchasePencil(success))
+        case .presentPhotoView:
+            return .just(.clearTappedImageInfo)
         }
     }
     
@@ -184,6 +188,8 @@ final class ImjangDetailViewReactor: Reactor {
             newState.didPurchasePencil = bool
         case .updateTappedImageInfo(index: let index, DTOs: let urls):
             newState.tappedImageInfo = (index, urls)
+        case .clearTappedImageInfo:
+            newState.tappedImageInfo = nil
         }
         return newState
     }
