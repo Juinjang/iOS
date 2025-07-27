@@ -34,7 +34,7 @@ struct ListDto: Codable, Hashable {
     let priceType: Int
     let priceList: [String]
     let totalAverage: String?    // 체크리스트 생선 전일 경우 값은 nil
-    let address: String
+    let address: String?
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -47,7 +47,7 @@ struct ListDto: Codable, Hashable {
         self.priceType = try container.decode(Int.self, forKey: .priceType)
         self.priceList = try container.decode([String].self, forKey: .priceList)
         self.totalAverage = try container.decodeIfPresent(String.self, forKey: .totalAverage)
-        self.address = try container.decode(String.self, forKey: .address)
+        self.address = try container.decode(String?.self, forKey: .address)
     }
 }
 

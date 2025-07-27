@@ -126,6 +126,7 @@ extension ImjangNoteCollectionViewCell {
     private func setScore(score: String?) {
         guard let score, let doubleScore = Double(score) else {
             scoreLabel.text = "0.0"
+            setScoreStyle()
             return
         }
         

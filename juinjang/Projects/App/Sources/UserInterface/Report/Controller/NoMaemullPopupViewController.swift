@@ -13,7 +13,7 @@ final class NoMaemullPopupViewController: BaseViewController {
     private let popupView: NoMaemullPopupView
     
     @objc func btnTap(_ sender: UIButton) {
-        self.dismiss(animated: true)
+        self.dismiss(animated: false)
     }
   
     init(ment: String) {
