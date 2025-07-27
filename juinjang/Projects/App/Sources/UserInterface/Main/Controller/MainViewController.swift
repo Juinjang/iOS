@@ -1,4 +1,5 @@
 import UIKit
+import RxRelay
 import SnapKit
 import Then
 import Lottie
@@ -11,6 +12,7 @@ protocol updateNicknameDelegate: AnyObject {
 }
 
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
+    private let termsRepository = TermsRepository()
     private lazy var navigationView = CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
         $0.leftItem = [.setting]
     }
@@ -31,11 +33,16 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private var disposeBag = DisposeBag()
     private var isFirstShowing: Bool = true
     
+    private let pencilAgreeEventRelay = PublishRelay<Void>()
+    
+    private var termsPopupViewController: TermsPopupViewController?
+    
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
+        checkAndShowPencilShopTermsPopup()
         bind()
         tableView.delegate = self
         tableView.dataSource = self
@@ -68,19 +75,69 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
                 }
             }
             .disposed(by: disposeBag)
+        
+        pencilAgreeEventRelay
+            .subscribe(with: self) { (self, _) in
+                self.termsPopupViewController?.didAgreeToTerms()
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func checkAndShowPencilShopTermsPopup() {
+        termsRepository.retrievePencilShopAgreementStatus()
+            .asObservable()
+            .subscribe(with: self) { (self, response) in
+                if !response.status {
+                    self.termsPopupViewController = TermsPopupViewController(
+                        title: "업데이트된 주인장 앱 이용을 위해\n내용을 확인하고 동의해주세요",
+                        titleMain: "내용을 확인하고 동의해주세요",
+                        term: "(필수) 연필상점 서비스 이용 및 환불 정책",
+                        navigationType: .view(PencilShopTermsViewController(
+                            termFileType: .pencilShop,
+                            relay: self.pencilAgreeEventRelay,
+                            title: "연필상점 서비스 이용 및 환불 정책"
+                        ))
+                    )
+                    
+                    self.termsPopupViewController?.button2
+                        .rx.throttleTap
+                        .subscribe(with: self) { (self, _) in
+                            self.termsRepository.createTermsAgreement(param: .init(termsType: "PENCIL_SHOP_SERVICE", isAgreed: true))
+                                .asObservable()
+                                .subscribe(onNext: { response in
+                                        print("동의 완료: \(response)")
+                                    }, onError: { error in
+                                        self.showAlert(title: "주인장", message: error.localizedDescription, actionHandler: nil)
+                                    })
+                                .disposed(by: self.disposeBag)
+                        }
+                        .disposed(by: self.disposeBag)
+                    
+                    if let viewController = self.termsPopupViewController {
+                        self.present(viewController, animated: true)
+                    }
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func checkAndShowTermsPopup() {
         print("약관 동의 버전은????\(UserDefaultManager.shared.agreeVersion)")
         let currentVersion = "1.1.0"
         if UserDefaultManager.shared.agreeVersion.compare(currentVersion, options: .numeric) == .orderedAscending {
-            let termsPopupVC = TermsPopupViewController()
-            termsPopupVC.modalPresentationStyle = .overFullScreen
-            termsPopupVC.modalTransitionStyle = .crossDissolve
-            present(termsPopupVC, animated: false, completion: nil)
+            termsPopupViewController = TermsPopupViewController(
+                title: "주인장 앱을 이용하려면\n업데이트 내용을 확인하고 동의해주세요",
+                titleMain: "업데이트 내용을 확인하고 동의해주세요",
+                term: "(필수) 개인정보 수집 및 이용 동의",
+                navigationType: .view(NewTermsViewController())
+            )
+            
+            if let viewController = termsPopupViewController {
+                present(viewController, animated: true)
+            }
         }
     }
-    
+
     @objc private func callMainImjangRequest() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
                                             api: .mainImjang) { [weak self] response, error in

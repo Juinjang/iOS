@@ -181,6 +181,7 @@ final class ImjangDetailViewController: BaseViewController, View {
             .map(\.tappedImageInfo)
             .compactMap { $0 }
             .subscribe(with: self) { (self, imageInfo) in
+                // 체크리스트 카테고리 클릭 시에도 불림.
                 let viewController = EnlargePhotoViewController(
                     currentIndex: imageInfo.index,
                     photoList: imageInfo.DTOs
@@ -192,7 +193,9 @@ final class ImjangDetailViewController: BaseViewController, View {
                 self.present(
                     viewController,
                     animated: true
-                )
+                ) {
+                    reactor.action.onNext(.presentPhotoView)
+                }
             }
             .disposed(by: disposeBag)
     }

@@ -39,7 +39,11 @@ final class ShareWriteNoticeCell: BaseCollectionViewCell {
     
     func bind(item: ShareSelectModel) {
         if let rewardPencilCount = item.rewardPencil {
+            contentLabel.text = "임장노트를 공유하면 받을 수 있는 연필"
             pencilCountLabel.text = "\(rewardPencilCount)개"
+        } else {
+            contentLabel.text = "공유했던 임장노트는 리워드 지급이 되지 않아요"
+            pencilCountLabel.text = ""
         }
     }
     
