@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SnapKit
 import Lottie
 import Speech
 import AmplitudeSwift
@@ -34,7 +35,6 @@ final class STTLoadingViewController: BaseViewController {
     }
     
     lazy var animationView = LottieAnimationView(name: "Animation - 1707961785957.json").then {
-        $0.frame = CGRect(x: 156, y: 184, width: 73, height: 76)
         $0.contentMode = .scaleAspectFit
         $0.loopMode = .loop
     }
@@ -157,6 +157,13 @@ final class STTLoadingViewController: BaseViewController {
         sttConversionLabel.snp.makeConstraints {
             $0.centerX.equalTo(bottomSheetView.snp.centerX)
             $0.top.equalTo(bottomSheetView.snp.top).offset(87)
+        }
+        
+        animationView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().offset(26)
+            make.width.equalTo(73)
+            make.height.equalTo(76)
         }
     }
 }
