@@ -188,7 +188,7 @@ final class WarningMessageViewController: BaseViewController {
     
     @objc func cancelButtonTapped(_ sender: UIButton) {
         print("닫기")
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: false, completion: nil)
         //bottomSheetViewController?.hideBottomSheetAndGoBack()
     }
 }
