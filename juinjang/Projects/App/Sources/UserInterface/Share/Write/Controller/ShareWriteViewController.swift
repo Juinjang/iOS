@@ -68,6 +68,7 @@ final class ShareWriteViewController: BaseViewController, View {
         reactor.state
             .map(\.sectionItems)
             .distinctUntilChanged()
+            .observe(on: MainScheduler.instance)
             .bind(to: mainView.writeCollectionView.rx.bindSectionItems(
                 to: dataSource,
                 orderedBy: [

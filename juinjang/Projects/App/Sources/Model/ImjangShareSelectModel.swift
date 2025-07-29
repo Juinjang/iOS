@@ -19,5 +19,5 @@ struct ShareSelectModel: Codable {
     let pyong: Int
     let floor: String
     let shortAddress: String
-    let rewardPencil: Int?
+    var rewardPencil: Int?
 }

@@ -6,7 +6,7 @@
 //
 
 final class ShareWriteNoticeCellItem: BaseCellItem, ShareWriteSectionProvidable {
-    let model: ShareSelectModel
+    var model: ShareSelectModel
     var sectionType: ShareWriteSection { .notice }
     
     init(id: String,
