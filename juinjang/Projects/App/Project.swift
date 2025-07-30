@@ -50,7 +50,7 @@ let project = Project(
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                     "CFBundleDisplayName": "주인장",
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "PROD",
-                    "MARKETING_VERSION": "1.2.0", // Version
+                    "MARKETING_VERSION": "2.0.0", // Version
                     "CURRENT_PROJECT_VERSION": "1" // Build
                 ],
                 configurations: [
