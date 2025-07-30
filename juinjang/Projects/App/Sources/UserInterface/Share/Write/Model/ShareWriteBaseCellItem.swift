@@ -34,7 +34,8 @@ enum ShareWriteBaseCellItem: Hashable {
                    rhs: ShareWriteBaseCellItem) -> Bool {
         switch (lhs, rhs) {
         case (.notice(let l), .notice(let r)):
-            return l.id == r.id
+            return l.id == r.id &&
+            l.model.rewardPencil == r.model.rewardPencil
         case (.share(let l), .share(let r)):
             return l.id == r.id
         case (.building(let l), .building(let r)):

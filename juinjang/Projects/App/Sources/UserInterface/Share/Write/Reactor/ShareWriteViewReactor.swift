@@ -267,12 +267,28 @@ extension ShareWriteViewReactor {
             return state
         }
         
-        let updatedItem = ShareWriteBaseCellItem.photo(.init(
-            id: photoItem.id,
+        let updatedPhotoItem = ShareWriteBaseCellItem.photo(.init(
+            id: UUID().uuidString,
             isPublic: bool
         ))
+         
+        newState.sectionItems[.photo] = [updatedPhotoItem]
         
-        newState.sectionItems[.photo] = [updatedItem]
+        // 리워드 연필 변경 - 사진 공개 == 7, 사진 비공개 == 2
+        if let noticeItem = newState.sectionItems[.notice]?.first,
+            case let .notice(item) = noticeItem,
+            item.model.rewardPencil != nil {
+            
+            bool ? (item.model.rewardPencil = 7) : (item.model.rewardPencil = 2)
+            
+            let updateNoticeItem = ShareWriteBaseCellItem.notice(.init(
+                id: UUID().uuidString,
+                model: item.model
+            ))
+            
+            newState.sectionItems[.notice] = [updateNoticeItem]
+        }
+        
         return newState
     }
     
