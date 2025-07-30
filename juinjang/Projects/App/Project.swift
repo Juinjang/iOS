@@ -76,8 +76,8 @@ let project = Project(
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon-dev",
                     "CFBundleDisplayName": "주인장-개발",
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEV",
-                    "MARKETING_VERSION": "1.2.11", // Version
-                    "CURRENT_PROJECT_VERSION": "2025.07.27.2" // Build
+                    "MARKETING_VERSION": "1.2.12", // Version
+                    "CURRENT_PROJECT_VERSION": "2025.07.30.1" // Build
                 ],
                 configurations: [
                     .debug(name: .debug, xcconfig: debugConfig),
