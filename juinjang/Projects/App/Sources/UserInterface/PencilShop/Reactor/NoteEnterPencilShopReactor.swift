@@ -107,7 +107,7 @@ extension NoteEnterPencilShopReactor {
             }
             .catch { error -> Observable<Mutation> in
                 return .just(.purchaseFailed(error))
-           }
+            }
     }
     
     func transform(mutation: Observable<Mutation>) -> Observable<Mutation> {
