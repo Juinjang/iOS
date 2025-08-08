@@ -28,6 +28,7 @@ final class UserDefaultManager {
         case appleAuthCode
         case agreeVersion
         case isShowShareAlert
+        case isTesting // MARK: Temp 추후 삭제예정
     }
     
     let ud = UserDefaults.standard
@@ -111,6 +112,12 @@ final class UserDefaultManager {
     var isShowShareAlert: Bool? {
         get { ud.object(forKey: UDKey.isShowShareAlert.rawValue) as? Bool }
         set { ud.set(newValue, forKey: UDKey.isShowShareAlert.rawValue) }
+    }
+    
+    // MARK: - Temp 추후 삭제 예정
+    var isTesting: Bool? {
+        get { ud.object(forKey: UDKey.isTesting.rawValue) as? Bool }
+        set { ud.set(newValue, forKey: UDKey.isTesting.rawValue) }
     }
     
     func removeUserInfo() {

@@ -338,8 +338,9 @@ extension MainViewController: SkeletonCollectionViewDataSource {
 extension MainViewController {
     
     // 앱 스토어 최신 정보 확인
-    private func requestLatestVersion(completion: @escaping (String?) -> Void){
-        guard let url = URL(string: APIKey.appStoreVersionURL), let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
+    private func requestLatestVersion(completion: @escaping (String?) -> Void) {
+        guard let url = URL(string: APIKey.appStoreVersionURL),
+              let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             completion(nil)
             return
         }

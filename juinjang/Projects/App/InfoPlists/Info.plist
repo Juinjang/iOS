@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>REVIEW_URL</key>
+	<string>$(REVIEW_URL)</string>
 	<key>AREA_CODE_URL</key>
 	<string>$(AREA_CODE_URL)</string>
 	<key>ADM_KEY</key>
