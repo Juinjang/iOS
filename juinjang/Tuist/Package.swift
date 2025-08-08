@@ -13,6 +13,7 @@ import PackageDescription
             SPM.dsWaveformImage: .staticFramework,
             SPM.dsWaveformImageViews: .staticFramework,
             SPM.firebaseAnalytics: .staticFramework,
+            SPM.firebaseFirestore: .staticFramework,
             SPM.fsCalendar: .staticFramework,
             SPM.iqKeyboardManager: .staticFramework,
             SPM.kakaoCommon: .staticFramework,

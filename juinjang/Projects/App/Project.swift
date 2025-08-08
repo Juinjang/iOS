@@ -27,6 +27,7 @@ let appDependencies: [Module] = [
     .spm(.tabman),
     .spm(.then),
     .spm(.toast),
+    .spm(.firebaseFirestore)
 ]
 
 let project = Project(

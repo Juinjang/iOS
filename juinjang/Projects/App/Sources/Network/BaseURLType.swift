@@ -14,6 +14,15 @@ enum BaseURLType {
     var url: String {
         switch self {
         case .juinjang:
+            // MARK: - TEMP 추후 삭제 예정
+            if UserDefaultManager.shared.isTesting ?? false {
+                guard let baseURL = Bundle.main.infoDictionary?["REVIEW_URL"] as? String else {
+                    fatalError("❌ REVIEW_URL not found in Info.plist")
+                }
+                
+                return baseURL
+            }
+            
             guard let baseURL = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
                 fatalError("❌ BASE_URL not found in Info.plist")
             }

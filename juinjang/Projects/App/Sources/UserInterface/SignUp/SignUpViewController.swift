@@ -248,13 +248,16 @@ extension SignUpViewController{
     private func requestKakaoLogin(email: String, nickname: String?, kakaoTargetId: Int64) {
         print(#function)
         let api = JuinjangAPI.kakaoLogin(kakaoTargetId: kakaoTargetId)
-//        let requestBody = RequestBody(email: email, nickname: nickname)
         let parameter: [String: Any] = [
             "email": email,
-            "nickname": nickname
+            "nickname": nickname ?? ""
         ]
 
-        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self, api: api, parameter: parameter) { [weak self] response, error in
+        JuinjangAPIManager.shared.postData(
+            type: BaseResponse<LoginResponse>.self,
+            api: api,
+            parameter: parameter
+        ) { [weak self] response, error in
 
             guard let self else { return }
             if error == nil {
@@ -263,7 +266,7 @@ extension SignUpViewController{
                     return
                 }
                 UserDefaultManager.shared.isKakaoLogin = true
-                print(response.code, response.result)
+                
                 guard let result = response.result else {
                     switch response.code {
                     case "MEMBER4001":
@@ -277,7 +280,6 @@ extension SignUpViewController{
                         showAlert(message: "이미 KAKAO로 가입한 회원입니다")
                     default:
                         break
-                        print("통과요우")
                     }
                     return
                 }

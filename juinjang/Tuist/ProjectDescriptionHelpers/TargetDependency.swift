@@ -16,6 +16,7 @@ public enum SPM: String, Sendable {
     case dsWaveformImage = "DSWaveformImage"
     case dsWaveformImageViews = "DSWaveformImageViews"
     case firebaseAnalytics = "FirebaseAnalytics"
+    case firebaseFirestore = "FirebaseFirestore"
     case fsCalendar = "FSCalendar"
     case iqKeyboardManager = "IQKeyboardManagerSwift"
     case kakaoCommon = "KakaoSDKCommon"

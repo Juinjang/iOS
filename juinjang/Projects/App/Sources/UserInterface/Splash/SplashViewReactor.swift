@@ -9,7 +9,7 @@ import ReactorKit
 
 final class SplashViewReactor: Reactor {
     enum Action {
-        case checkLoginStatus
+        case viewDidLoad
     }
     
     enum Mutation {
@@ -24,19 +24,24 @@ final class SplashViewReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
-        case .checkLoginStatus:
-            let navigation: SplashNavigation
-            if !UserDefaultManager.shared.userStatus {  // false 일 때 (앱 최초 실행 시)
-                // 온보딩 화면으로 이동
-                navigation = .onbording
-            } else if UserDefaultManager.shared.accessToken.isEmpty {
-                // accessToken 없을 경우 로그인 화면으로 이동
-                navigation = .login
-            } else {
-                // 홈 화면으로 이동
-                navigation = .home
-            }
-            return .just(.setNavigation(navigation)).debug()
+        case .viewDidLoad:
+            return FirebaseStoreManager.shared.fetchIOSSettingAsObservable()
+                .flatMap { setting -> Observable<Mutation> in
+                    UserDefaultManager.shared.isTesting = setting.isTesting
+                    
+                    let navigation: SplashNavigation
+                    if !UserDefaultManager.shared.userStatus {  // false 일 때 (앱 최초 실행 시)
+                        // 온보딩 화면으로 이동
+                        navigation = .onbording
+                    } else if UserDefaultManager.shared.accessToken.isEmpty {
+                        // accessToken 없을 경우 로그인 화면으로 이동
+                        navigation = .login
+                    } else {
+                        // 홈 화면으로 이동
+                        navigation = .home
+                    }
+                    return .just(.setNavigation(navigation)).debug()
+                }
         }
     }
     
@@ -48,7 +53,6 @@ final class SplashViewReactor: Reactor {
             return state
         }
     }
-    
 }
 
 extension SplashViewReactor {

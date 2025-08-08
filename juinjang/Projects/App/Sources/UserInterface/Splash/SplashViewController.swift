@@ -31,7 +31,7 @@ final class SplashViewController: UIViewController, View {
         animationView.center = view.center
 
         animationView.play { [weak self] (finish) in
-            self?.reactor?.action.onNext(.checkLoginStatus)
+            self?.reactor?.action.onNext(.viewDidLoad)
         }
     }
     
