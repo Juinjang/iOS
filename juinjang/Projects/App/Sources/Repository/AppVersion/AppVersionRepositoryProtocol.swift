@@ -1,5 +1,5 @@
 //
-//  AppVersionProtocol.swift
+//  AppVersionRepositoryProtocol.swift
 //  juinjang
 //
 //  Created by 조유진 on 8/9/25.
