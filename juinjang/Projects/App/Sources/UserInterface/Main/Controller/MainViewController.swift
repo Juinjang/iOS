@@ -63,7 +63,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
             self.callMainImjangRequest()
         }
-        checkAndUpdateIfNeeded()
     }
     
     private func bind() {
@@ -330,104 +329,5 @@ extension MainViewController: SkeletonCollectionViewDataSource {
     
     func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return 3
-    }
-}
-
-
-// MARK: 앱 업데이트 안내 팝업
-extension MainViewController {
-    
-    // 앱 스토어 최신 정보 확인
-    private func requestLatestVersion(completion: @escaping (String?) -> Void) {
-        guard let url = URL(string: APIKey.appStoreVersionURL),
-              let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-            completion(nil)
-            return
-        }
-        
-        URLSession.shared.dataTask(with: url) { data, _, _ in
-            guard let data = data,
-                  let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any],
-                  let results = json["results"] as? [[String: Any]],
-                  let appStoreVersion = results.first?["version"] as? String else {
-                completion(nil)
-                return
-            }
-            completion(appStoreVersion)
-        }.resume()
-    }
-   
-    //버전 업데이트 체크
-    private func checkAndUpdateIfNeeded() {
-        requestLatestVersion { [weak self] marketingVersion in
-            guard let self else { return }
-            
-            guard let marketingVersion = marketingVersion, let currentAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
-                print("앱스토어 버전을 찾지 못했습니다.")
-                return
-            }
-            
-            print("앱스토어 버전은 \(marketingVersion)")
-            print("현재 기기 버전은 \(currentAppVersion)")
-            
-            if compareVersion(currentVersion: currentAppVersion, marketVersion: marketingVersion) {
-                DispatchQueue.main.async {
-                    self.showUpdateAlert()
-                }
-            } else {
-                print("현재 최신 버전입니다.")
-            }
-        }
-    }
-    
-    // 업데이트 해야되면 true 반환
-    private func compareVersion(currentVersion: String, marketVersion: String) -> Bool {
-        let currentVersionArray = currentVersion.split(separator: ".").map { $0 }
-        let marketVersionArray = marketVersion.split(separator: ".").map { $0 }
-        
-        // 1.1.2 < 2.0.0
-        if currentVersionArray[0] < marketVersionArray[0] {
-            return true
-        } else if currentVersionArray[0] == marketVersionArray[0] && currentVersionArray[1] < marketVersionArray[1] { // 1.2.0 < 1.3.0
-            return true
-        } else if currentVersionArray[0] == marketVersionArray[0] && currentVersionArray[1] == marketVersionArray[1] && currentVersionArray[2] < marketVersionArray[2] {    // 1.2.2 < 1.2.3
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    private func showUpdateAlert() {
-            
-        // 커스텀 뷰 인스턴스 생성
-        let updateAlertView = UpdateAlertView(frame: CGRect(x: 0, y: 0, width: 342, height: 325))
-        updateAlertView.center = view.center
-        
-        // 커스텀 뷰 배경에 어두운 배경 추가 (배경 어두운 색을 두고 뷰만 강조)
-        let dimmingView = UIView(frame: view.bounds)
-        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
-        
-        view.addSubview(dimmingView)
-        view.addSubview(updateAlertView)
-        
-        // 업데이트 버튼 클릭 시 동작 정의
-        updateAlertView.updateButtonTappedAction = { [weak self] in
-            guard let self else { return }
-            openAppStore()
-        }
-        
-        // 닫기 버튼 클릭 시 동작 정의
-        updateAlertView.closeButtonTappedAction = {
-            dimmingView.removeFromSuperview()
-            updateAlertView.removeFromSuperview()
-        }
-    }
-
-    // 앱 스토어로 이동
-    private func openAppStore() {
-        guard let url = URL(string: APIKey.appStoreOpenUrlString) else { return }
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-        }
     }
 }
