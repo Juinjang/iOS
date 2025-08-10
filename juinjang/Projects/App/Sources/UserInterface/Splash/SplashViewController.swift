@@ -52,5 +52,48 @@ final class SplashViewController: UIViewController, View {
                 }
             })
             .disposed(by: disposeBag)
+        
+        reactor.state
+            .compactMap { $0.showUpdateAppPopup }
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(with: self) { owner, show in
+                guard show else { return }
+                owner.showUpdateAlert()
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func showUpdateAlert() {
+            
+        // 커스텀 뷰 인스턴스 생성
+        let updateAlertView = UpdateAlertView(frame: CGRect(x: 0, y: 0, width: 342, height: 325))
+        updateAlertView.center = view.center
+        
+        // 커스텀 뷰 배경에 어두운 배경 추가 (배경 어두운 색을 두고 뷰만 강조)
+        let dimmingView = UIView(frame: view.bounds)
+        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.6)
+        
+        view.addSubview(dimmingView)
+        view.addSubview(updateAlertView)
+        
+        // 업데이트 버튼 클릭 시 동작 정의
+        updateAlertView.updateButtonTappedAction = { [weak self] in
+            guard let self else { return }
+            openAppStore()
+        }
+        
+        // 닫기 버튼 클릭 시 동작 정의
+        updateAlertView.closeButtonTappedAction = {
+            dimmingView.removeFromSuperview()
+            updateAlertView.removeFromSuperview()
+        }
+    }
+
+    // 앱 스토어로 이동
+    private func openAppStore() {
+        guard let url = URL(string: APIKey.appStoreOpenUrlString) else { return }
+        if UIApplication.shared.canOpenURL(url) {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        }
     }
 }

@@ -20,7 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
 
         let mainViewController = SplashViewController()
-        mainViewController.reactor = SplashViewReactor()
+        mainViewController.reactor = SplashViewReactor(dependency: SplashViewReactor.Dependency(appVersionRepository: AppVersionRepository()))
         mainViewController.navigationController?.navigationBar.isHidden = true
         window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()
