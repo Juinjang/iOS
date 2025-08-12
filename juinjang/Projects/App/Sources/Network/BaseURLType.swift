@@ -33,7 +33,7 @@ enum BaseURLType {
             let isHttpsEnabled = UserDefaultManager.shared.isHttpsEnabled ?? false
             if !isHttpsEnabled {
                 guard let baseURL = Bundle.main.infoDictionary?["HTTP_BASE_URL"] as? String else {
-                    fatalError("❌ BASE_URL not found in Info.plist")
+                    fatalError("❌ HTTP_BASE_URL not found in Info.plist")
                 }
                 return baseURL
             }
