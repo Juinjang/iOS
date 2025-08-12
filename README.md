@@ -21,8 +21,9 @@
 </p>
 
 
-[🔗 주인장 AppStore 설치 링크](https://apps.apple.com/kr/app/%EC%A3%BC%EC%9D%B8%EC%9E%A5-%EB%B6%80%EB%8F%99%EC%82%B0-%EB%A7%A4%EB%AC%BC-%EA%B8%B0%EB%A1%9D/id6605941969)
+[🔗 주인장 iOS App Store 다운로드 링크](https://apps.apple.com/kr/app/%EC%A3%BC%EC%9D%B8%EC%9E%A5-%EB%B6%80%EB%8F%99%EC%82%B0-%EB%A7%A4%EB%AC%BC-%EA%B8%B0%EB%A1%9D/id6605941969)
 
+<br>
 
 # 주요 기능
 
