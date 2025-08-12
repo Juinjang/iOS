@@ -1,8 +1,11 @@
 # 주인장 iOS - 부동산 매물 기록
 
-<img width="500" alt="썸네일" src="https://github.com/user-attachments/assets/c4f9ce2e-5007-429c-bc4a-e39576f4c30f" />
+<img width="500" alt="썸네일" src="https://github.com/user-attachments/assets/c4f9ce2e-5007-429c-bc4a-e39576f4c30f"/>
+
 
 <br>
+<br>
+
 
 # iOS TEAM
 | 김동우 | 조유진 |
