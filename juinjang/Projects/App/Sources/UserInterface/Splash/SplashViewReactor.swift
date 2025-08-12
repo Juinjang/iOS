@@ -39,7 +39,7 @@ final class SplashViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return checkAppVersion()
+            return fetchIOSSetting()
         case .openAppStore:
             return openAppStore()
         }
@@ -58,7 +58,7 @@ final class SplashViewReactor: Reactor {
     
     private func checkAppVersion() -> Observable<Mutation> {
         // 앱 스토어 앱 버전 조회
-        dependency.appVersionRepository.retrieveLatestAppVersion()
+        return dependency.appVersionRepository.retrieveLatestAppVersion()
             .asObservable()
             .flatMap { [weak self] latestAppVersionDTO -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
@@ -69,31 +69,39 @@ final class SplashViewReactor: Reactor {
     
     private func handleAppUpdate(latestVersion: String) -> Observable<Mutation> {
         if InAppUpdateManager.shared.isNeedAppUpdate(latestVersion: latestVersion) {
-            print("showUpdateAppPopup")
             return .just(.setShowUpdateAppPopup(true))
         } else {
-            return handleSetNavigation()
+            return setNavigation()
         }
     }
     
-    private func handleSetNavigation() -> Observable<Mutation> {
-        print(#function)
+    private func setNavigation() -> Observable<Mutation> {
+        let navigation: SplashNavigation
+        if !UserDefaultManager.shared.userStatus {  // false 일 때 (앱 최초 실행 시)
+            // 온보딩 화면으로 이동
+            navigation = .onbording
+        } else if UserDefaultManager.shared.accessToken.isEmpty {
+            // accessToken 없을 경우 로그인 화면으로 이동
+            navigation = .login
+        } else {
+            // 홈 화면으로 이동
+            navigation = .home
+        }
+        return .just(.setNavigation(navigation))
+    }
+    
+    private func fetchIOSSetting() -> Observable<Mutation> {
         return FirebaseStoreManager.shared.fetchIOSSettingAsObservable()
-            .flatMap { setting -> Observable<Mutation> in
+            .flatMap { [weak self] setting -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
                 UserDefaultManager.shared.isTesting = setting.isTesting
+                UserDefaultManager.shared.isHttpsEnabled = setting.isHttpsEnabled
                 
-                let navigation: SplashNavigation
-                if !UserDefaultManager.shared.userStatus {  // false 일 때 (앱 최초 실행 시)
-                    // 온보딩 화면으로 이동
-                    navigation = .onbording
-                } else if UserDefaultManager.shared.accessToken.isEmpty {
-                    // accessToken 없을 경우 로그인 화면으로 이동
-                    navigation = .login
+                if BuildConfig.isDebug {
+                    return setNavigation()
                 } else {
-                    // 홈 화면으로 이동
-                    navigation = .home
+                    return checkAppVersion()
                 }
-                return .just(.setNavigation(navigation)).debug()
             }
     }
     
