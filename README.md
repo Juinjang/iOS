@@ -1,18 +1,26 @@
 # 주인장 iOS
+<img width="500" alt="썸네일" src="https://github.com/user-attachments/assets/6c4f7228-70f4-4de8-abda-391ce4436a40" />
 
 ### 부동산 임장? 폰 하나면 충분해요. 
 노트 쓰고 공유하고 필요한 정보는 바로 손에 주인장이랑 함께해요! 👋
 
 
 
+<p align="left">
+  <img src="https://github.com/user-attachments/assets/84d36d58-b965-45f5-94e0-5c3998683a9f" width="9%" />
+  <img src="https://github.com/user-attachments/assets/3bf08415-310a-4952-b4dd-bf79338f4007" width="9%" />
+  <img src="https://github.com/user-attachments/assets/5ddd501d-2b90-4304-aa1f-8935acbf2b27" width="9%" />
+  <img src="https://github.com/user-attachments/assets/0ce6c612-198b-43bf-8378-e2a1332d4900" width="9%" />
+  <img src="https://github.com/user-attachments/assets/3f156bdb-42b2-4d08-a903-e986aef01af0" width="9%" />
+  <img src="https://github.com/user-attachments/assets/bed1dc05-73ad-4de7-8582-852355e55d03" width="9%" />
+  <img src="https://github.com/user-attachments/assets/177e67a6-6254-492e-9208-e740cf62a8ba" width="9%" />
+  <img src="https://github.com/user-attachments/assets/bae7d9a9-90c3-421e-815e-a553f38c494a" width="9%" />
+  <img src="https://github.com/user-attachments/assets/bcd05526-44ea-4a97-ad51-2c52c8072afb" width="9%" />
+  <img src="https://github.com/user-attachments/assets/c5eee3ed-88cc-4220-95f5-49deb86c83ac" width="9%" />
+</p>
+
 
 [🔗 주인장 AppStore 설치 링크](https://apps.apple.com/kr/app/앱-아이디)
-
-2. 앱 스토어/배포 링크 + 대표 스크린샷
-	•	앱스토어 링크 / TestFlight 링크 (QR 코드도 가능)
-	•	핵심 화면 3~5장만 (GIF 있으면 더 좋음, 기능별 설명은 필요 없음)
-
-
 
 
 
