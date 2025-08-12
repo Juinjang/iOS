@@ -2,11 +2,6 @@
 
 <img width="500" alt="썸네일" src="https://github.com/user-attachments/assets/c4f9ce2e-5007-429c-bc4a-e39576f4c30f" />
 
-### 부동산 임장? 폰 하나면 충분해요. 
-임장 노트 쓰고 공유하고 필요한 정보는 바로 손에!
-
-주인장이랑 함께해요! 👋
-
 <br>
 
 # iOS TEAM
