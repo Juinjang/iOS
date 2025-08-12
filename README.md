@@ -15,7 +15,7 @@
 <br>
 
 # WiKi 바로가기
-### [주인장 위키](https://github.com/kimdongwoo/juinjang-ios/wiki)
+### [주인장 위키](https://github.com/Juinjang/Juinjang_iOS/wiki)
 ☝️ 프로젝트의 자세한 내용은 WiKi 페이지에서 확인할 수 있습니다.
 
 <br>
