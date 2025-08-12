@@ -44,5 +44,9 @@ enum AppVersionAPI: TargetType {
         case .getLatestAppVersion: return nil
         }
     }
+    
+    var baseURL: BaseURLType {
+        return .tempJuinjang
+    }
 }
 
