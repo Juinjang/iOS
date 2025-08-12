@@ -8,15 +8,15 @@
 <br>
 
 # iOS TEAM
-| [비모(ornwoo96)](https://github.com/ornwoo96) | [유즈](https://github.com/yuzzin0121) |
+| 김동우 | 조유진 |
 |:---:|:---:|
-|<img src="https://github.com/user-attachments/assets/542d2856-f13d-4146-bd06-863bbd6d5b62" width="300" height="300">|<img src="이미지URL" width="300" height="300">
-
+|<img src="https://github.com/user-attachments/assets/542d2856-f13d-4146-bd06-863bbd6d5b62" width="150" height="150"><br>[ornwoo96](https://github.com/ornwoo96)|<img src="이미지URL" width="150" height="150"><br>[yuzzin0121](https://github.com/yuzzin0121)|
 
 <br>
 
 # WiKi 바로가기
-프로젝트의 자세한 내용은 WiKi로 확인할 수 있습니다.
+### [주인장 위키](https://github.com/kimdongwoo/juinjang-ios/wiki)
+☝️ 프로젝트의 자세한 내용은 WiKi 페이지에서 확인할 수 있습니다.
 
 <br>
 
