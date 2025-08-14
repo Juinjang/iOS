@@ -69,7 +69,7 @@
 ## 폴더 구조
 ```
 📂 Project
-├── 📂 juinjang
+├── 📂 juinjang : 주인장 메인 모듈
 │   └── 📂 Project
 │       ├── 📂 Application : AppDelegate, SceneDelegate 등 앱 생명주기 관리
 │       ├── 📂 Common : 공통으로 사용하는 Enum, Extensions, Protocol
@@ -82,19 +82,35 @@
 │       └── 📂 UserInterface : UI Scene 모음
 │           ├── 📂 View : ViewController, 메인 뷰, 서브뷰 관리
 │           └── 📂 Reactor : ReactorKit에서 사용하는 Reactor 클래스
-└── 📂 Core
+└── 📂 Core : 프로젝트 전반에서 공통적으로 사용되는 핵심 유틸리티와 서비스 로직을 모아둔 모듈
     └── 📂 Project
         └── 📂 Common
             └── 📂 AnalyticsManager
-                ├── AnalyticsEvent
-                └── AnalyticsManager
+                ├── AnalyticsEvent : 앱 내 주요 이벤트를 정의한 열거형/구조체. 화면 이동, 버튼 클릭, 기능 사용 등 분석 대상 이벤트의 식별자와 속성을 관리
+                └── AnalyticsManager : Firebase Analytics, Amplitude 등 외부 분석 도구와의 연동을 담당. 이벤트 로깅, 사용자 속성 설정, 세션 추적 등의 기능 제공
 ```
 
 <br>
 
-## 아키텍처 및 사용 기술
+## 아키텍처
+현재 Tuist를 활용하여 모듈을 나누고 있으며, 초기에는 Main과 Core 2개 모듈로 구성했습니다.
+추후 총 6개(App, Data, Domain, Presentation, Core, DesignSystem) 모듈로 확장할 예정이며, 이는 클린 아키텍처 원칙을 적용하기 위함입니다.
 
+### 클린 아키텍처 도입 이유
+- 관심사 분리 : UI, 비즈니스 로직, 데이터 접근 계층을 명확히 분리하여 유지보수성을 높임
+- 의존성 방향 통제 : 핵심 도메인 로직이 외부 프레임워크나 UI 계층에 의존하지 않도록 설계
+- 테스트 용이성 : 모듈별 단위 테스트와 독립적인 변경 검증이 가능
+- 확장성 확보 : 기능 추가·변경 시 영향을 최소화하여 장기적으로 안정적인 프로젝트 운영 가능
 
+### ReactorKit 도입 이유
+
+- 현재 앱 구조는 ReactorKit을 중심으로 개편
+- 채택 이유는 앱 내 State 관리의 단순성과 낮은 러닝 커브
+
+### TCA 마이그레이션
+
+- 다만, ReactorKit의 오래된 업데이트 중단으로 인해 Swift 최신 버전 대응과 SwiftUI 도입을 고려해, **TCA(The Composable Architecture)** 로의 전면 마이그레이션을 계획 중
+- TCA는 SwiftUI와의 높은 호환성과 일관된 상태 관리 패턴을 제공해, 장기 유지보수에 유리하다고 판단
 
 <br>
 
@@ -105,7 +121,7 @@
 
 ## WiKi 바로가기
 ### [주인장 위키](https://github.com/Juinjang/Juinjang_iOS/wiki)
-☝️ 이 외에 궁금한점이 있다면 클릭해주세요.
+☝️ 이 외에 궁금한점(주인장 컨벤션, Swift Style Guide)이 있다면 클릭해주세요.
 
 <br>
 
