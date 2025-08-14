@@ -89,6 +89,8 @@ final class ImjangListView: UIView {
             $0.top.equalTo(navigationView.snp.bottom)
             $0.horizontalEdges.bottom.equalToSuperview()
         }
+        
+        bringSubviewToFront(navigationView)
     }
     
     private func configureView() {

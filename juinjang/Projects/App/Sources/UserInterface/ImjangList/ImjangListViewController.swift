@@ -120,6 +120,7 @@ extension ImjangListViewController {
                 owner.mainView.setupEmptyView(isEmpty: notes.isEmpty)
                 owner.imjangList = notes
                 owner.setData(scrapedList: notes)   // 스크랩된것들 scrapList에 추가
+                owner.mainView.hasResults(!self.imjangList.isEmpty)
                 owner.mainView.collectionView.reloadData()
                 owner.setLoading(isShow: false)
             }
