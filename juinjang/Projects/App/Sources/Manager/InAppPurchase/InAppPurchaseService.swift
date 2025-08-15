@@ -61,7 +61,8 @@ final class InAppPurchaseService {
         products.sorted(by: { return $0.displayName < $1.displayName })
     }
 
-    func purchase(_ product: Product, completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
+    func purchase(_ product: Product,
+                  completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
         let myToken = UUID()
         let result = try await product.purchase(options: [.appAccountToken(myToken)])
 
