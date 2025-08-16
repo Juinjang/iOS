@@ -10,6 +10,7 @@ import RxSwift
 
 struct iOSSetting: Decodable {
     let isTesting: Bool
+    let isHttpsEnabled: Bool
 }
 
 final class FirebaseStoreManager {

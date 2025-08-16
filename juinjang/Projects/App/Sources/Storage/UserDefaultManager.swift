@@ -29,6 +29,7 @@ final class UserDefaultManager {
         case agreeVersion
         case isShowShareAlert
         case isTesting // MARK: Temp 추후 삭제예정
+        case isHttpsEnabled
     }
     
     let ud = UserDefaults.standard
@@ -118,6 +119,11 @@ final class UserDefaultManager {
     var isTesting: Bool? {
         get { ud.object(forKey: UDKey.isTesting.rawValue) as? Bool }
         set { ud.set(newValue, forKey: UDKey.isTesting.rawValue) }
+    }
+    
+    var isHttpsEnabled: Bool? {
+        get { ud.object(forKey: UDKey.isHttpsEnabled.rawValue) as? Bool }
+        set { ud.set(newValue, forKey: UDKey.isHttpsEnabled.rawValue) }
     }
     
     func removeUserInfo() {
