@@ -9,6 +9,7 @@ import Foundation
 
 enum BaseURLType {
     case juinjang
+    case tempJuinjang
     case areaCode
     
     var url: String {
@@ -23,6 +24,19 @@ enum BaseURLType {
                 return baseURL
             }
             
+            guard let baseURL = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
+                fatalError("❌ BASE_URL not found in Info.plist")
+            }
+            return baseURL
+            
+        case .tempJuinjang:
+            let isHttpsEnabled = UserDefaultManager.shared.isHttpsEnabled ?? false
+            if !isHttpsEnabled {
+                guard let baseURL = Bundle.main.infoDictionary?["HTTP_BASE_URL"] as? String else {
+                    fatalError("❌ HTTP_BASE_URL not found in Info.plist")
+                }
+                return baseURL
+            }
             guard let baseURL = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
                 fatalError("❌ BASE_URL not found in Info.plist")
             }

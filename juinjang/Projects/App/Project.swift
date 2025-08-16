@@ -52,7 +52,7 @@ let project = Project(
                     "CFBundleDisplayName": "주인장",
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "PROD",
                     "MARKETING_VERSION": "2.0.0", // Version
-                    "CURRENT_PROJECT_VERSION": "2025.08.16.1" // Build
+                    "CURRENT_PROJECT_VERSION": "2025.08.16.2" // Build
                 ],
                 configurations: [
                     .debug(name: .debug, xcconfig: releaseConfig),
@@ -78,7 +78,7 @@ let project = Project(
                     "CFBundleDisplayName": "주인장-개발",
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEV",
                     "MARKETING_VERSION": "2.0.0", // Version
-                    "CURRENT_PROJECT_VERSION": "2025.08.09.1" // Build
+                    "CURRENT_PROJECT_VERSION": "2025.08.12.1" // Build
                 ],
                 configurations: [
                     .debug(name: .debug, xcconfig: debugConfig),
