@@ -56,7 +56,7 @@ final class NoteEnterPencilShopViewController: BaseViewController, View {
             .subscribe(with: self) { (owner, purchasePencilDTO) in
                 guard let reactor = owner.reactor else { return }
                 
-                owner.mainView.setPencilCount(count: purchasePencilDTO.remainQuantity)
+                owner.mainView.setPencilCount(count: purchasePencilDTO.remainQuantity ?? 0)
                 
                 if purchasePencilDTO.status == "SUCCESS" {
                     owner.onPurchaseCompleted?(true)

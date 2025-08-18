@@ -112,7 +112,7 @@ final class PencilShopViewController: BaseViewController, View {
             .bind(with: self) { owner, purchasePencilDTO in
                 guard let purchasePencilDTO else { return }
                 owner.showPurchasedPopupView(response: purchasePencilDTO)
-                owner.mainView.buyingView.setPencilCount(count: purchasePencilDTO.remainQuantity)
+                owner.mainView.buyingView.setPencilCount(count: purchasePencilDTO.remainQuantity ?? 0)
             }
             .disposed(by: disposeBag)
         
@@ -208,7 +208,7 @@ final class PencilShopViewController: BaseViewController, View {
         self.present(
             PurchasePopupViewController(
                 purchasedPencilCount: response.purchaseQuantity,
-                currentPencilCount: response.remainQuantity
+                currentPencilCount: response.remainQuantity ?? 0
             ),
             animated: true
         )
