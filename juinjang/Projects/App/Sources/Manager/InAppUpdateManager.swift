@@ -18,19 +18,19 @@ final class InAppUpdateManager {
         guard let currentAppVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String else {
             return false
         }
-     
+        
         if compareVersion(currentVersion: currentAppVersion, latestVersion: latestVersion) {
             return true
         } else {
             return false
         }
     }
-       
+    
     // 업데이트 해야되면 true 반환
     private func compareVersion(currentVersion: String, latestVersion: String) -> Bool {
         return currentVersion.compare(latestVersion, options: .numeric) == .orderedAscending
     }
-
+    
     // 앱 스토어로 이동
     func openAppStore() {
         guard let url = URL(string: APIKey.appStoreOpenUrlString) else { return }

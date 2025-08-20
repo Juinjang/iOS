@@ -7,12 +7,29 @@ let project = Project(
         .make(
             name: "Common",
             product: .staticLibrary,
-            bundleId: "com.juinjangteam.juinjang.common",
+            productName: "Core.Common",
+            bundleId: "com.juinjangteam.juinjang.core.common",
             sources: ["Common/**"],
             dependencies: [
                 .spm(.firebaseAnalytics),
                 .spm(.iqKeyboardManager)
             ]
+        ),
+        .make(
+            name: "Network",
+            product: .staticLibrary,
+            productName: "Core.Network",
+            bundleId: "com.juinjangteam.juinjang.core.network",
+            sources: ["Network/**"],
+            dependencies: []
+        ),
+        .make(
+            name: "Logging",
+            product: .staticLibrary,
+            productName: "Core.Logging",
+            bundleId: "com.juinjangteam.juinjang.core.logging",
+            sources: ["Logging/**"],
+            dependencies: []
         ),
     ]
 )
