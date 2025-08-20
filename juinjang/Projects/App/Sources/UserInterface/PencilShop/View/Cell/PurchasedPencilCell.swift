@@ -35,19 +35,21 @@ final class PurchasedPencilCell: BaseCollectionViewCell {
             lineHeight: 23,
             charSpacing: -0.02
         )
-        remainingPencilLabel.setAttribute(
-            text: "남은 연필 \(purchasedPencil.remainQuantity)개",
-            color: .gray400,
-            font: .pretendard(size: 14, weight: .medium),
-            lineHeight: 20,
-            charSpacing: -0.02
-        )
         
         priceLabel.setAttribute(
             text: "\(purchasedPencil.price)원",
             color: .gray600,
             font: .pretendard(size: 16, weight: .medium),
             lineHeight: 23,
+            charSpacing: -0.02
+        )
+        
+        guard let remainQuantity = purchasedPencil.remainQuantity else { return }
+        remainingPencilLabel.setAttribute(
+            text: "남은 연필 \(remainQuantity)개",
+            color: .gray400,
+            font: .pretendard(size: 14, weight: .medium),
+            lineHeight: 20,
             charSpacing: -0.02
         )
     }
