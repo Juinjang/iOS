@@ -70,14 +70,12 @@ final class ShareSelectCell: BaseCollectionViewCell {
               relay: PublishRelay<String>) {
         disposeBag = DisposeBag()
         
-        guard let priceType = PriceType(rawValue: item.model.priceType)?.title else { return }
-        
         tumbnailImageView.kf.setImage(
             with: URL(string: item.model.imageUrl ?? ""),
             placeholder: PropertyType(rawValue: item.model.propertyType)?.image
         )
         buildingNameLabel.text = item.model.name
-        priceLabel.text = "\(priceType) \(item.model.price.formattedKoreanCurrency)"
+        setPrice(item.model.price, priceType: item.model.priceType, monthlyRent: item.model.monthlyRent)
         pyungLabel.text = "\(item.model.pyong)평 \(item.model.floor)층"
         addressLabel.text = item.model.shortAddress
         starRateLabel.text = String(format: "%.1f", Double(item.model.rate ?? "0.0") ?? 0.0)
@@ -91,6 +89,26 @@ final class ShareSelectCell: BaseCollectionViewCell {
             .map { item.id }
             .bind(to: relay)
             .disposed(by: disposeBag)
+    }
+    
+    private func setPrice(_ priceString: String, priceType: String, monthlyRent: String?) {
+        guard let priceType = PriceType(rawValue: priceType) else { return }
+        
+        var priceResult = ""
+        
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+        case .MONTHLY_RENT:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+        }
+        
+        priceLabel.setAttribute(
+            text: priceResult,
+            color: .gray450,
+            font: .pretendard(size: 16, weight: .medium),
+            lineHeight: 23
+        )
     }
     
     override func configureHierarchy() {

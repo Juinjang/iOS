@@ -67,12 +67,11 @@ final class BuildingDetailInfoView: BaseView {
         
     func configure(for model: ImjangDetailInfoModel,
                    relay: PublishRelay<ImjangDetailInfoCellEvent>) {
-        guard let priceType = PriceType(rawValue: model.priceType)?.title else { return }
         summaryInfoLabel.text = model.addressShort
         secondSummaryInfoLabel.text = PropertyType(rawValue: model.propertyType)?.title
         likeButton.isSelected = model.isLiked
         likeCountLabel.text = "\(model.likedCount?.viewCountString ?? "0")"
-        priceLabel.text = "\(priceType) \(model.price.formattedKoreanCurrency)"
+        setPrice(model.price, priceType: model.priceType, monthlyRent: model.monthlyRent)
         addressContentLabel.text = model.address
         sharedDateLabel.text = "\(model.period) · 조회 \(model.viewCount)"
         
@@ -88,6 +87,26 @@ final class BuildingDetailInfoView: BaseView {
                 relay.accept(.addressTap(address: model.address))
             }
             .disposed(by: dispoaseBag)
+    }
+    
+    private func setPrice(_ priceString: String, priceType: String, monthlyRent: String?) {
+        guard let priceType = PriceType(rawValue: priceType) else { return }
+        
+        var priceResult = ""
+        
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+        case .MONTHLY_RENT:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+        }
+        
+        priceLabel.setAttribute(
+            text: priceResult,
+            color: .gray450,
+            font: .pretendard(size: 16, weight: .medium),
+            lineHeight: 23
+        )
     }
     
     func prepareForReuse() {

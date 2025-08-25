@@ -69,18 +69,36 @@ final class ShareWriteShareCell: BaseCollectionViewCell {
     }
     
     func bind(item: ShareSelectModel) {
-        guard let priceType = PriceType(rawValue: item.priceType)?.title else { return }
-        
         tumbnailImageView.kf.setImage(
             with: URL(string: item.imageUrl ?? ""),
             placeholder: PropertyType(rawValue: item.propertyType)?.image
         )
         buildingNameLabel.text = item.name
-        priceLabel.text = "\(priceType) \(item.price.formattedKoreanCurrency)"
+        setPrice(item.priceType, priceType: item.priceType, monthlyRent: item.monthlyRent)
         pyungLabel.text = "\(item.pyong)평 \(item.floor)층"
         addressLabel.text = item.shortAddress
         starRateLabel.text = String(format: "%.1f", Double(item.rate ?? "0.0") ?? 0.0)
         bookmarkButton.isSelected = item.isScraped
+    }
+    
+    private func setPrice(_ priceString: String, priceType: String, monthlyRent: String?) {
+        guard let priceType = PriceType(rawValue: priceType) else { return }
+        
+        var priceResult = ""
+        
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+        case .MONTHLY_RENT:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+        }
+        
+        priceLabel.setAttribute(
+            text: priceResult,
+            color: .gray450,
+            font: .pretendard(size: 16, weight: .medium),
+            lineHeight: 23
+        )
     }
     
     override func configureHierarchy() {
