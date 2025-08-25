@@ -14,33 +14,49 @@ let project = Project(
         .make(
             name: "Storage",
             product: .staticLibrary,
-            productName: "Core.Storage",
+            productName: "Data.Storage",
             bundleId: "com.juinjangteam.juinjang.data.storage",
-            sources: ["Storage/**"],
-            dependencies: []
+            sources: ["Storage/**"]
         ),
         .make(
-            name: "API",
+            name: "APIs",
             product: .staticLibrary,
-            productName: "Core.API",
-            bundleId: "com.juinjangteam.juinjang.data.api",
-            sources: ["API/**"],
+            productName: "Data.APIs",
+            bundleId: "com.juinjangteam.juinjang.data.apis",
+            sources: ["APIs/**"],
             dependencies: [
-                .core(.network),
+                .data(.network),
                 .spm(.alamofire)
             ]
         ),
         .make(
-            name: "Repository",
+            name: "Repositories",
             product: .staticLibrary,
-            productName: "Core.Repository",
-            bundleId: "com.juinjangteam.juinjang.data.repository",
-            sources: ["Repository/**"],
+            productName: "Data.Repositories",
+            bundleId: "com.juinjangteam.juinjang.data.repositories",
+            sources: ["Repositories/**"],
             dependencies: [
-                .data(.api),
+                .data(.apis),
                 .data(.storage),
-                .domain(.repositoryInterface)
+                .domain(.repositoryInterfaces)
             ]
         ),
+        .make(
+            name: "Network",
+            product: .staticLibrary,
+            productName: "Data.Network",
+            bundleId: "com.juinjangteam.juinjang.data.network",
+            sources: ["Network/**"],
+            dependencies: [
+                .data(.logging)
+            ]
+        ),
+        .make(
+            name: "Logging",
+            product: .staticLibrary,
+            productName: "Data.Logging",
+            bundleId: "com.juinjangteam.juinjang.data.logging",
+            sources: ["Logging/**"]
+        )
     ]
 )

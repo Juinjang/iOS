@@ -12,28 +12,35 @@ let project = Project(
     name: "Domain",
     targets: [
         .make(
-            name: "RepositoryInterface",
+            name: "RepositoryInterfaces",
             product: .staticLibrary,
-            productName: "Domain.RepositoryInterface",
-            bundleId: "com.juinjangteam.juinjang.domain.repositoryinterface",
-            sources: ["RepositoryInterface/**"]
+            productName: "Domain.RepositoryInterfaces",
+            bundleId: "com.juinjangteam.juinjang.domain.repositoryinterfaces",
+            sources: ["RepositoryInterfaces/**"]
         ),
         .make(
-            name: "Usecase",
+            name: "Services",
             product: .staticLibrary,
-            productName: "Domain.Usecase",
-            bundleId: "com.juinjangteam.juinjang.domain.usecase",
-            sources: ["Usecase/**"],
+            productName: "Domain.Services",
+            bundleId: "com.juinjangteam.juinjang.domain.services",
+            sources: ["Services/**"]
+        ),
+        .make(
+            name: "Usecases",
+            product: .staticLibrary,
+            productName: "Domain.Usecases",
+            bundleId: "com.juinjangteam.juinjang.domain.usecases",
+            sources: ["Usecases/**"],
             dependencies: [
-                .domain(.usecaseInterface)
+                .domain(.usecaseInterfaces)
             ]
         ),
         .make(
-            name: "UsecaseInterface",
+            name: "UsecaseInterfaces",
             product: .staticLibrary,
-            productName: "Domain.UsecaseInterface",
-            bundleId: "com.juinjangteam.juinjang.domain.usecaseinterface",
-            sources: ["UsecaseInterface/**"]
+            productName: "Domain.UsecaseInterfaces",
+            bundleId: "com.juinjangteam.juinjang.domain.usecaseinterfaces",
+            sources: ["UsecaseInterfaces/**"]
         )
     ]
 )

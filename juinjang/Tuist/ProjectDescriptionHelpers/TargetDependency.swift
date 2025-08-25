@@ -11,29 +11,30 @@ public enum Module {
 
 public enum Core: String {
     case common = "Common"
-    case network = "Network"
-    case logging = "Logging"
 }
 
 public enum Data: String {
     case storage = "Storage"
-    case api = "API"
-    case repository = "Repository"
+    case apis = "APIs"
+    case repositories = "Repositories"
+    case network = "Network"
+    case logging = "Logging"
 }
 
 public enum Domain: String {
-    case repositoryInterface = "RepositoryInterface"
-    case usecase = "Usecase"
-    case usecaseInterface = "UsecaseInterface"
+    case repositoryInterfaces = "RepositoryInterfaces"
+    case services = "Services"
+    case usecases = "Usecases"
+    case usecaseInterfaces = "UsecaseInterfaces"
 }
 
 public enum DesignSystem: String {
-    case resource = "Resource"
-    case component = "Component"
+    case resources = "Resources"
+    case components = "Components"
 }
 
 public enum Presentation: String {
-    case scene = "Scene"
+    case scenes = "Scenes"
 }
 
 public enum SPM: String {

@@ -14,22 +14,6 @@ let project = Project(
                 .spm(.firebaseAnalytics),
                 .spm(.iqKeyboardManager)
             ]
-        ),
-        .make(
-            name: "Network",
-            product: .staticLibrary,
-            productName: "Core.Network",
-            bundleId: "com.juinjangteam.juinjang.core.network",
-            sources: ["Network/**"],
-            dependencies: []
-        ),
-        .make(
-            name: "Logging",
-            product: .staticLibrary,
-            productName: "Core.Logging",
-            bundleId: "com.juinjangteam.juinjang.core.logging",
-            sources: ["Logging/**"],
-            dependencies: []
-        ),
+        )
     ]
 )

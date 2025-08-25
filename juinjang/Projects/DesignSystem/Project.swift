@@ -12,20 +12,20 @@ let project = Project(
     name: "DesignSystem",
     targets: [
         .make(
-            name: "Resource",
+            name: "Resources",
             product: .staticLibrary,
-            productName: "DesignSystem.Resource",
-            bundleId: "com.juinjangteam.juinjang.designsystem.resource",
-            sources: ["Resource/**"]
+            productName: "DesignSystem.Resources",
+            bundleId: "com.juinjangteam.juinjang.designsystem.resources",
+            sources: ["Resources/**"]
         ),
         .make(
-            name: "Component",
+            name: "Components",
             product: .staticLibrary,
-            productName: "DesignSystem.Component",
-            bundleId: "com.juinjangteam.juinjang.designsystem.component",
-            sources: ["Component/**"],
+            productName: "DesignSystem.Components",
+            bundleId: "com.juinjangteam.juinjang.designsystem.components",
+            sources: ["Components/**"],
             dependencies: [
-                .designSystem(.resource)
+                .designSystem(.resources)
             ]
         ),
     ]

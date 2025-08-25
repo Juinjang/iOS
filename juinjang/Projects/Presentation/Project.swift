@@ -12,15 +12,15 @@ let project = Project(
     name: "Presentation",
     targets: [
         .make(
-            name: "Scene",
+            name: "Scenes",
             product: .staticLibrary,
-            productName: "Presentation.Scene",
-            bundleId: "com.juinjangteam.juinjang.presentation.scene",
-            sources: ["Scene/**"],
+            productName: "Presentation.Scenes",
+            bundleId: "com.juinjangteam.juinjang.presentation.scenes",
+            sources: ["Scenes/**"],
             dependencies: [
-                .designSystem(.resource),
-                .designSystem(.component),
-                .domain(.usecaseInterface)
+                .designSystem(.resources),
+                .designSystem(.components),
+                .domain(.usecaseInterfaces)
             ]
         ),
     ]
