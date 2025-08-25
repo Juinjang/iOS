@@ -91,9 +91,15 @@ final class SplashViewController: UIViewController, View {
 
     // 앱 스토어로 이동
     private func openAppStore() {
-        guard let url = URL(string: APIKey.appStoreOpenUrlString) else { return }
-        if UIApplication.shared.canOpenURL(url) {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+        guard let url = URL(string: APIKey.appStoreOpenUrlString),
+              UIApplication.shared.canOpenURL(url)
+        else { return }
+        
+        UIApplication.shared.open(url, options: [:]) { _ in
+            UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                exit(0)
+            }
         }
     }
 }

@@ -93,7 +93,7 @@ final class LookAroundCell: BaseCollectionViewCell {
         setScore(exploreNote.rate)
         setRoomName(exploreNote.buildingName)
         setIsPurchase(exploreNote.isPurchase)
-        setPrice(exploreNote.price, priceType: exploreNote.priceType)
+        setPrice(exploreNote.price, priceType: exploreNote.priceType, monthlyRent: exploreNote.monthlyRent)
         setRoomDetail(pyong: exploreNote.pyong, floor: exploreNote.floor)
         setRoomAddress(exploreNote.address)
         setProfileImage(exploreNote.ownerImageUrl)
@@ -261,11 +261,24 @@ extension LookAroundCell {
         purchasedLabel.isHidden = !isPurchase
     }
 
-    private func setPrice(_ priceString: String, priceType: String) {
-        if let priceType = PriceType(rawValue: priceType) {
-            let priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
-            priceLabel.setAttribute(text: priceResult, color: .gray450, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
+    private func setPrice(_ priceString: String, priceType: String, monthlyRent: String?) {
+        guard let priceType = PriceType(rawValue: priceType) else { return }
+        
+        var priceResult = ""
+        
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+        case .MONTHLY_RENT:
+            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
+        
+        priceLabel.setAttribute(
+            text: priceResult,
+            color: .gray450,
+            font: .pretendard(size: 16, weight: .medium),
+            lineHeight: 23
+        )
     }
 
     private func setRoomDetail(pyong: Int?, floor: String?) {

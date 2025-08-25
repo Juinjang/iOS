@@ -118,6 +118,7 @@ final class MyNoteCell: UICollectionViewCell {
         buildingNameLabel.text = model.buildingName
         purchaseLabel.isHidden = !model.isPurchase
         priceLabel.text = "\(model.priceType.priceTypeToViewText) \(model.price.formattedKoreanCurrency)"
+        setPrice(model.price, priceType: model.priceType, monthlyRent: model.monthlyRent)
         spaceInfoLabel.text = "\(model.pyong ?? 0)평 \(model.floor ?? "")층"
         addressLabel.text = "\(model.address)"
         metaInfoView.configure(.init(model))
@@ -132,6 +133,17 @@ final class MyNoteCell: UICollectionViewCell {
             .map { MyNoteCellEventType.cellTap(id: model.sharedNoteId, title: model.buildingName) }
             .bind(to: relay)
             .disposed(by: disposeBag)
+    }
+    
+    private func setPrice(_ priceString: String, priceType: String, monthlyRent: String?) {
+        guard let priceType = PriceType(rawValue: priceType) else { return }
+        
+        switch priceType {
+        case .SALE, .PULL_RENT, .MARKET_PRICE:
+            priceLabel.text = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+        case .MONTHLY_RENT:
+            priceLabel.text = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+        }
     }
 
     private func configureHierarchy() {

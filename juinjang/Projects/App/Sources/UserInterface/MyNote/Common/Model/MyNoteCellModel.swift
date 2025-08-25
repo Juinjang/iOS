@@ -26,6 +26,7 @@ struct MyNoteCellModel {
     var isSelected: Bool = false
     var propertyType: String
     let priceType: String
+    let monthlyRent: String?
     
     init(model: MyNoteModel) {
         sharedNoteId = model.sharedNoteId
@@ -44,6 +45,7 @@ struct MyNoteCellModel {
         viewCount = model.viewCount
         propertyType = model.propertyType
         priceType = model.priceType
+        monthlyRent = model.monthlyRent
     }
 }
 

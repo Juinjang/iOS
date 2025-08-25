@@ -51,8 +51,8 @@ let project = Project(
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon",
                     "CFBundleDisplayName": "주인장",
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "PROD",
-                    "MARKETING_VERSION": "2.0.1", // Version
-                    "CURRENT_PROJECT_VERSION": "2025.08.19.1" // Build
+                    "MARKETING_VERSION": "2.0.2", // Version
+                    "CURRENT_PROJECT_VERSION": "2025.08.25.1" // Build
                 ],
                 configurations: [
                     .debug(name: .debug, xcconfig: releaseConfig),
@@ -77,8 +77,8 @@ let project = Project(
                     "ASSETCATALOG_COMPILER_APPICON_NAME": "AppIcon-dev",
                     "CFBundleDisplayName": "주인장-개발",
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEV",
-                    "MARKETING_VERSION": "2.0.1", // Version
-                    "CURRENT_PROJECT_VERSION": "2025.08.19.1" // Build
+                    "MARKETING_VERSION": "2.0.2", // Version
+                    "CURRENT_PROJECT_VERSION": "2025.08.25.1" // Build
                 ],
                 configurations: [
                     .debug(name: .debug, xcconfig: debugConfig),
