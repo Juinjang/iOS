@@ -13,6 +13,7 @@ protocol updateNicknameDelegate: AnyObject {
 
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private let termsRepository = TermsRepository()
+    private let userRepository = UserRepository()
     private lazy var navigationView = CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
         $0.leftItem = [.setting]
     }
@@ -43,6 +44,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         navigationController?.isNavigationBarHidden = true
         checkAndShowTermsPopup()
         checkAndShowPencilShopTermsPopup()
+        getProfileInfo()
         bind()
         tableView.delegate = self
         tableView.dataSource = self
@@ -60,9 +62,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
         setConstraint()
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
-            self.callMainImjangRequest()
-        }
+        callMainImjangRequest()
     }
     
     private func bind() {
@@ -78,6 +78,16 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         pencilAgreeEventRelay
             .subscribe(with: self) { (self, _) in
                 self.termsPopupViewController?.didAgreeToTerms()
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func getProfileInfo() {
+        userRepository.retrieveProfileInfo()
+            .asObservable()
+            .subscribe(with: self) { owner, profileModel in
+                UserDefaultManager.shared.nickname = profileModel.nickname
+                owner.updateNickname()
             }
             .disposed(by: disposeBag)
     }
