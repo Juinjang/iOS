@@ -7,12 +7,13 @@ let project = Project(
         .make(
             name: "Common",
             product: .staticLibrary,
-            bundleId: "com.juinjangteam.juinjang.common",
+            productName: "Core.Common",
+            bundleId: "com.juinjangteam.juinjang.core.common",
             sources: ["Common/**"],
             dependencies: [
                 .spm(.firebaseAnalytics),
                 .spm(.iqKeyboardManager)
             ]
-        ),
+        )
     ]
 )

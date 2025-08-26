@@ -5,6 +5,18 @@ let debugConfig = Path.relativeToRoot("Projects/XCConfig/App/Debug.xcconfig")
 let releaseConfig = Path.relativeToRoot("Projects/XCConfig/App/Release.xcconfig")
 let appDependencies: [Module] = [
     .core(.common),
+    .data(.network),
+    .data(.logging),
+    .data(.storage),
+    .data(.apis),
+    .data(.repositories),
+    .domain(.repositoryInterfaces),
+    .domain(.services),
+    .domain(.usecases),
+    .domain(.usecaseInterfaces),
+    .designSystem(.resources),
+    .designSystem(.components),
+    .presentation(.scenes),
     .spm(.alamofire),
     .spm(.amplitude),
     .spm(.dgCharts),
@@ -31,7 +43,7 @@ let appDependencies: [Module] = [
 ]
 
 let project = Project(
-    name: "juinjang",
+    name: "App",
     targets: [
         
         // MARK: - PROD
