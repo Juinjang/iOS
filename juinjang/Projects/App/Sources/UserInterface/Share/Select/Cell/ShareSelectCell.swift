@@ -94,21 +94,17 @@ final class ShareSelectCell: BaseCollectionViewCell {
     private func setPrice(_ priceString: String, priceType: String, monthlyRent: String?) {
         guard let priceType = PriceType(rawValue: priceType) else { return }
         
-        var priceResult = ""
+        var price = ""
+        let priceTitle = priceType == .MARKET_PRICE ? "\(priceType.title)" : "\(priceType.title)"
         
         switch priceType {
         case .SALE, .PULL_RENT, .MARKET_PRICE:
-            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero())"
+            price = "\(priceString.formatToKoreanCurrencyWithZero())"
         case .MONTHLY_RENT:
-            priceResult = "\(priceType.title) \(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+            price = "\(priceString.formatToKoreanCurrencyWithZero()) / \(monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
         
-        priceLabel.setAttribute(
-            text: priceResult,
-            color: .gray450,
-            font: .pretendard(size: 16, weight: .medium),
-            lineHeight: 23
-        )
+        priceLabel.text = "\(priceTitle) \(price)"
     }
     
     override func configureHierarchy() {
