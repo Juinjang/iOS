@@ -14,7 +14,7 @@ let project = Project(
         .make(
             name: "Scenes",
             product: .staticLibrary,
-            productName: "Presentation.Scenes",
+            productName: "PresentationScenes",
             bundleId: "com.juinjangteam.juinjang.presentation.scenes",
             sources: ["Scenes/**"],
             dependencies: [

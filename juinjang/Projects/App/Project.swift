@@ -3,6 +3,7 @@ import ProjectDescriptionHelpers
 
 let debugConfig = Path.relativeToRoot("Projects/XCConfig/App/Debug.xcconfig")
 let releaseConfig = Path.relativeToRoot("Projects/XCConfig/App/Release.xcconfig")
+
 let appDependencies: [Module] = [
     .core(.common),
     .data(.network),

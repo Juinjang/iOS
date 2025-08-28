@@ -14,31 +14,33 @@ let project = Project(
         .make(
             name: "RepositoryInterfaces",
             product: .staticLibrary,
-            productName: "Domain.RepositoryInterfaces",
+            productName: "DomainRepositoryInterfaces",
             bundleId: "com.juinjangteam.juinjang.domain.repositoryinterfaces",
             sources: ["RepositoryInterfaces/**"]
         ),
         .make(
             name: "Services",
             product: .staticLibrary,
-            productName: "Domain.Services",
+            productName: "DomainServices",
             bundleId: "com.juinjangteam.juinjang.domain.services",
             sources: ["Services/**"]
         ),
         .make(
             name: "Usecases",
             product: .staticLibrary,
-            productName: "Domain.Usecases",
+            productName: "DomainUsecases",
             bundleId: "com.juinjangteam.juinjang.domain.usecases",
             sources: ["Usecases/**"],
             dependencies: [
-                .domain(.usecaseInterfaces)
+                .domain(.usecaseInterfaces),
+                .domain(.services),
+                .domain(.repositoryInterfaces)
             ]
         ),
         .make(
             name: "UsecaseInterfaces",
             product: .staticLibrary,
-            productName: "Domain.UsecaseInterfaces",
+            productName: "DomainUsecaseInterfaces",
             bundleId: "com.juinjangteam.juinjang.domain.usecaseinterfaces",
             sources: ["UsecaseInterfaces/**"]
         )

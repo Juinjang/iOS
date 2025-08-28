@@ -7,7 +7,7 @@ let project = Project(
         .make(
             name: "Common",
             product: .staticLibrary,
-            productName: "Core.Common",
+            productName: "CoreCommon",
             bundleId: "com.juinjangteam.juinjang.core.common",
             sources: ["Common/**"],
             dependencies: [

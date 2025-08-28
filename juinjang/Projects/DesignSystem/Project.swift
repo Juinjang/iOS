@@ -14,14 +14,14 @@ let project = Project(
         .make(
             name: "Resources",
             product: .staticLibrary,
-            productName: "DesignSystem.Resources",
+            productName: "DesignSystemResources",
             bundleId: "com.juinjangteam.juinjang.designsystem.resources",
             sources: ["Resources/**"]
         ),
         .make(
             name: "Components",
             product: .staticLibrary,
-            productName: "DesignSystem.Components",
+            productName: "DesignSystemComponents",
             bundleId: "com.juinjangteam.juinjang.designsystem.components",
             sources: ["Components/**"],
             dependencies: [
