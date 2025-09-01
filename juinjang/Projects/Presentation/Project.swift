@@ -12,7 +12,7 @@ let project = Project(
     name: "Presentation",
     targets: [
         .make(
-            name: "Scenes",
+            name: Module.presentation(.scenes),
             product: .staticLibrary,
             productName: "PresentationScenes",
             bundleId: "com.juinjangteam.juinjang.presentation.scenes",
