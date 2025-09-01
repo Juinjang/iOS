@@ -9,28 +9,19 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "Data",
+    moduleType: .data,
     targets: [
-        .make(
-            name: "Storage",
-            product: .staticLibrary,
-            productName: "DataStorage",
-            bundleId: "com.juinjangteam.juinjang.data.storage",
-            sources: ["Storage/**"]
+        .makeTarget(
+            module: .data(.storage),
+            product: .staticLibrary
         ),
-        .make(
-            name: "Network",
-            product: .staticLibrary,
-            productName: "DataNetwork",
-            bundleId: "com.juinjangteam.juinjang.data.network",
-            sources: ["Network/**"]
+        .makeTarget(
+            module: .data(.network),
+            product: .staticLibrary
         ),
-        .make(
-            name: "Repositories",
+        .makeTarget(
+            module: .data(.repositories),
             product: .staticLibrary,
-            productName: "DataRepositories",
-            bundleId: "com.juinjangteam.juinjang.data.repositories",
-            sources: ["Repositories/**"],
             dependencies: [
                 .data(.storage),
                 .domain(.repositoryInterfaces)

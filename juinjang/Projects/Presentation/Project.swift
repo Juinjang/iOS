@@ -9,19 +9,16 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "Presentation",
+    moduleType: .presentation,
     targets: [
-        .make(
-            name: Module.presentation(.scenes),
+        .makeTarget(
+            module: .presentation(.scenes),
             product: .staticLibrary,
-            productName: "PresentationScenes",
-            bundleId: "com.juinjangteam.juinjang.presentation.scenes",
-            sources: ["Scenes/**"],
             dependencies: [
                 .designSystem(.resources),
                 .designSystem(.components),
                 .domain(.usecaseInterfaces)
             ]
-        ),
+        )
     ]
 )
