@@ -6,6 +6,8 @@
 	<string>$(AREA_CODE_URL)</string>
 	<key>ADM_KEY</key>
 	<string>$(ADM_KEY)</string>
+	<key>UIRequiresFullScreen</key>
+	<true/>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
 	<key>CFBundleDevelopmentRegion</key>
