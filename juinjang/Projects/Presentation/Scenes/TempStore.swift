@@ -14,6 +14,7 @@ import DataStorage
 
 class TempStore {
     let usecase: TempUsecaseProtocol
+    let usecase2: TempService
     
     init(usecase: TempUsecaseProtocol) {
         self.usecase = usecase

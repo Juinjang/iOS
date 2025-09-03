@@ -11,18 +11,18 @@ extension Module {
     // MARK: - Setup for Target Creation
     public func asDependency(relativeTo currentModule: Module) -> TargetDependency {
         switch (currentModule, self) {
-        case (.core, .core(let m)):
-            return .target(name: m.rawValue)
-        case (.data, .data(let m)):
-            return .target(name: m.rawValue)
-        case (.domain, .domain(let m)):
-            return .target(name: m.rawValue)
-        case (.designSystem, .designSystem(let m)):
-            return .target(name: m.rawValue)
-        case (.presentation, .presentation(let m)):
-            return .target(name: m.rawValue)
+        case (.core, .core(let subModule)):
+            return .target(name: subModule.rawValue)
+        case (.data, .data(let subModule)):
+            return .target(name: subModule.rawValue)
+        case (.domain, .domain(let subModule)):
+            return .target(name: subModule.rawValue)
+        case (.designSystem, .designSystem(let subModule)):
+            return .target(name: subModule.rawValue)
+        case (.presentation, .presentation(let subModule)):
+            return .target(name: subModule.rawValue)
         default:
-            return self.asTargetDependency()
+            return asTargetDependency()
         }
     }
     
@@ -30,29 +30,29 @@ extension Module {
         switch self {
         case .app:
             fatalError("App 모듈은 다른 모듈에서 의존성으로 사용할 수 없습니다.")
-        case .core(let m):
+        case .core(let subModule):
             return .project(
-                target: m.rawValue,
+                target: subModule.rawValue,
                 path: .relativeToRoot(ModuleBasePath.core.rawValue)
             )
-        case .data(let m):
+        case .data(let subModule):
             return .project(
-                target: m.rawValue,
+                target: subModule.rawValue,
                 path: .relativeToRoot(ModuleBasePath.data.rawValue)
             )
-        case .domain(let m):
+        case .domain(let subModule):
             return .project(
-                target: m.rawValue,
+                target: subModule.rawValue,
                 path: .relativeToRoot(ModuleBasePath.domain.rawValue)
             )
-        case .designSystem(let m):
+        case .designSystem(let subModule):
             return .project(
-                target: m.rawValue,
+                target: subModule.rawValue,
                 path: .relativeToRoot(ModuleBasePath.designSystem.rawValue)
             )
-        case .presentation(let m):
+        case .presentation(let subModule):
             return .project(
-                target: m.rawValue,
+                target: subModule.rawValue,
                 path: .relativeToRoot(ModuleBasePath.presentation.rawValue)
             )
         case .spm(let spm):
@@ -62,11 +62,11 @@ extension Module {
     
     public var moduleSubName: String {
         switch self {
-        case .core(let c): return c.rawValue
-        case .data(let d): return d.rawValue
-        case .domain(let d): return d.rawValue
-        case .designSystem(let d): return d.rawValue
-        case .presentation(let p): return p.rawValue
+        case .core(let target): return target.rawValue
+        case .data(let target): return target.rawValue
+        case .domain(let target): return target.rawValue
+        case .designSystem(let target): return target.rawValue
+        case .presentation(let target): return target.rawValue
         default: return ""
         }
     }
