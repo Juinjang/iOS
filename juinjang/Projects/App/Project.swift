@@ -1,37 +1,10 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let project = Project(
-    name: "App",
-    targets: [
-        // MARK: - PROD
-        .makeAppTarget(
-            appType: .prod,
-            appDependencies: appDependencies,
-            appVersion: "2.0.2",
-            build: "2025.08.25.1"
-        ),
-        
-        // MARK: - DEV
-        .makeAppTarget(
-            appType: .dev,
-            appDependencies: appDependencies,
-            appVersion: "2.0.2",
-            build: "2025.08.25.1"
-        )
-    ],
-    additionalFiles: [
-        .glob(pattern: .plist.googleServiceInfoDebug),
-        .folderReference(path: .config.sharedConfig)
-    ]
-)
-
 let appDependencies: [Module] = [
     .core(.common),
-    .data(.network),
-    .data(.logging),
     .data(.storage),
-    .data(.apis),
+    .data(.network),
     .data(.repositories),
     .domain(.repositoryInterfaces),
     .domain(.services),
@@ -62,3 +35,28 @@ let appDependencies: [Module] = [
     .spm(.toast),
     .spm(.firebaseFirestore)
 ]
+
+let project = Project(
+    name: "App",
+    targets: [
+        // MARK: - PROD
+        .makeAppTarget(
+            appType: .prod,
+            appDependencies: appDependencies,
+            appVersion: "2.0.2",
+            build: "2025.08.25.1"
+        ),
+        
+        // MARK: - DEV
+        .makeAppTarget(
+            appType: .dev,
+            appDependencies: appDependencies,
+            appVersion: "2.0.2",
+            build: "2025.08.25.1"
+        )
+    ],
+    additionalFiles: [
+        .glob(pattern: .plist.googleServiceInfoDebug),
+        .folderReference(path: .config.sharedConfig)
+    ]
+)

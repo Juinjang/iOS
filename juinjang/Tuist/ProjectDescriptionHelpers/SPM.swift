@@ -6,7 +6,7 @@
 //
 
 // MARK: - SPM
-public enum SPM: String {
+public enum SPM: String, Sendable {
     case alamofire = "Alamofire"
     case amplitude = "AmplitudeSwift"
     case dgCharts = "DGCharts"

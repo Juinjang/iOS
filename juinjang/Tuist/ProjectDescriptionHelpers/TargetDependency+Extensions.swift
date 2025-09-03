@@ -14,9 +14,10 @@ extension PackageSettings {
         targetSettings: [String : Settings] = [:],
         projectOptions: [String : Project.Options] = [:]
     ) -> PackageSettings {
-        let productTypes: [String : Product] = productTypes.map { [$0.key.rawValue: $0.value] }.first!
         return .init(
-            productTypes: productTypes,
+            productTypes: Dictionary(
+                uniqueKeysWithValues: productTypes.map { ($0.key.rawValue, $0.value) }
+            ),
             productDestinations: productDestinations,
             baseSettings: baseSettings,
             targetSettings: targetSettings,
