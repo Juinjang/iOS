@@ -9,38 +9,28 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "Domain",
+    moduleType: .domain,
     targets: [
-        .make(
-            name: "RepositoryInterfaces",
-            product: .staticLibrary,
-            productName: "Domain.RepositoryInterfaces",
-            bundleId: "com.juinjangteam.juinjang.domain.repositoryinterfaces",
-            sources: ["RepositoryInterfaces/**"]
+        .makeTarget(
+            module: .domain(.repositoryInterfaces),
+            product: .staticLibrary
         ),
-        .make(
-            name: "Services",
-            product: .staticLibrary,
-            productName: "Domain.Services",
-            bundleId: "com.juinjangteam.juinjang.domain.services",
-            sources: ["Services/**"]
+        .makeTarget(
+            module: .domain(.services),
+            product: .staticLibrary
         ),
-        .make(
-            name: "Usecases",
+        .makeTarget(
+            module: .domain(.usecases),
             product: .staticLibrary,
-            productName: "Domain.Usecases",
-            bundleId: "com.juinjangteam.juinjang.domain.usecases",
-            sources: ["Usecases/**"],
             dependencies: [
-                .domain(.usecaseInterfaces)
+                .domain(.usecaseInterfaces),
+                .domain(.services),
+                .domain(.repositoryInterfaces)
             ]
         ),
-        .make(
-            name: "UsecaseInterfaces",
-            product: .staticLibrary,
-            productName: "Domain.UsecaseInterfaces",
-            bundleId: "com.juinjangteam.juinjang.domain.usecaseinterfaces",
-            sources: ["UsecaseInterfaces/**"]
+        .makeTarget(
+            module: .domain(.usecaseInterfaces),
+            product: .staticLibrary
         )
     ]
 )

@@ -2,14 +2,11 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "Core",
+    moduleType: .core,
     targets: [
-        .make(
-            name: "Common",
+        .makeTarget(
+            module: .core(.common),
             product: .staticLibrary,
-            productName: "Core.Common",
-            bundleId: "com.juinjangteam.juinjang.core.common",
-            sources: ["Common/**"],
             dependencies: [
                 .spm(.firebaseAnalytics),
                 .spm(.iqKeyboardManager)

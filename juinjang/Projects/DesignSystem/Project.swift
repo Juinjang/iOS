@@ -9,21 +9,15 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(
-    name: "DesignSystem",
+    moduleType: .designSystem,
     targets: [
-        .make(
-            name: "Resources",
-            product: .staticLibrary,
-            productName: "DesignSystem.Resources",
-            bundleId: "com.juinjangteam.juinjang.designsystem.resources",
-            sources: ["Resources/**"]
+        .makeTarget(
+            module: .designSystem(.resources),
+            product: .staticLibrary
         ),
-        .make(
-            name: "Components",
+        .makeTarget(
+            module: .designSystem(.components),
             product: .staticLibrary,
-            productName: "DesignSystem.Components",
-            bundleId: "com.juinjangteam.juinjang.designsystem.components",
-            sources: ["Components/**"],
             dependencies: [
                 .designSystem(.resources)
             ]
