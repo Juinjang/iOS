@@ -39,7 +39,7 @@ final class SplashViewReactor: Reactor {
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .viewDidLoad:
-            return fetchIOSSetting()
+            return checkAppVersion()
         case .openAppStore:
             return openAppStore()
         }
@@ -88,21 +88,6 @@ final class SplashViewReactor: Reactor {
             navigation = .home
         }
         return .just(.setNavigation(navigation))
-    }
-    
-    private func fetchIOSSetting() -> Observable<Mutation> {
-        return FirebaseStoreManager.shared.fetchIOSSettingAsObservable()
-            .flatMap { [weak self] setting -> Observable<Mutation> in
-                guard let self = self else { return .empty() }
-                UserDefaultManager.shared.isTesting = setting.isTesting
-                UserDefaultManager.shared.isHttpsEnabled = setting.isHttpsEnabled
-                
-                if BuildConfig.isDebug {
-                    return setNavigation()
-                } else {
-                    return checkAppVersion()
-                }
-            }
     }
     
     // 앱 스토어로 이동

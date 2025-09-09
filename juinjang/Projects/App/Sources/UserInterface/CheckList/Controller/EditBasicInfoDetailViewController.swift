@@ -748,6 +748,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             fourDigitMonthlyRentField.text = ""
             setmonthlyRentView()
         }
+        saveButton.isEnabled = false
         selectedPriceTypeButton = sender.isSelected ? sender : nil
         
         // 텍스트 필드 관련
