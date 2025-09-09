@@ -329,7 +329,11 @@ final class ImjangNoteViewController: BaseViewController,
         }
         
         if let address = detailDto.roadAddress {
-            roomAddressLabel.text = address
+            if let addressDetail = detailDto.addressDetail {
+                roomAddressLabel.text = address + " \(addressDetail)"
+            } else {
+                roomAddressLabel.text = address
+            }
         } else {
             roomAddressLabel.attributedText = attributedString
             roomAddressLabel.numberOfLines = 2
