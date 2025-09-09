@@ -749,6 +749,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             setmonthlyRentView()
         }
         saveButton.isEnabled = false
+        saveButton.backgroundColor = .gray300
         selectedPriceTypeButton = sender.isSelected ? sender : nil
         
         // 텍스트 필드 관련
