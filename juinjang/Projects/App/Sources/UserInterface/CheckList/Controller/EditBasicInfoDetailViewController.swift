@@ -373,7 +373,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             fourDigit: fourDigitPriceField.text
         )
 
-        let monthlyRent = fourDigitMonthlyRentField.text?.isEmpty == true ? nil : fourDigitMonthlyRentField.text
+        let monthlyRent = monthlyRentPriceString()
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
         let nickname = houseNicknameTextField.text ?? ""
@@ -859,7 +859,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                     roadAddress: addressTextField.text ?? "",
                     addressDetail: addressDetailTextField.text ?? "",
                     price: String(threeDigitPrice * 100000000 + fourDigitPrice * 10000),
-                    monthlyRent: fourDigitMonthlyRentField.text ?? "",
+                    monthlyRent: monthlyRentPriceString(),
                     updatedAt: updatedAt,
                     floor: "",
                     pyong: 0,
@@ -875,6 +875,12 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             
             self.navigationController?.popViewController(animated: true)
         }
+    }
+    
+    private func monthlyRentPriceString() -> String? {
+        guard let price = Int(fourDigitMonthlyRentField.text ?? "") else { return nil }
+        let priceString = String(price * 10000)
+        return priceString
     }
     
     private func checkNextButtonActivation() {
