@@ -116,7 +116,7 @@ extension SelectNoteCell {
     private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
         switch priceType {
         case .SALE, .PULL_RENT, .MARKET_PRICE:
-            priceLabel.text = "\(priceType.title) \(String(describing: note.price.formatToKoreanCurrencyWithZero()))"
+            priceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero())"
         case .MONTHLY_RENT:
             priceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero()) / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }

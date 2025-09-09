@@ -9,6 +9,6 @@ import ProjectDescription
 
 public enum Environment {
     public static let deploymentTarget: DeploymentTargets = .iOS("16.0")
-    public static let destinations = Destinations.iOS
+    public static let destinations: Destinations = [.iPhone]
     public static let baseBundleId = "com.juinjangteam"
 }

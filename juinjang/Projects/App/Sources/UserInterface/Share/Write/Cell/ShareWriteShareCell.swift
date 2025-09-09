@@ -74,7 +74,7 @@ final class ShareWriteShareCell: BaseCollectionViewCell {
             placeholder: PropertyType(rawValue: item.propertyType)?.image
         )
         buildingNameLabel.text = item.name
-        setPrice(item.priceType, priceType: item.priceType, monthlyRent: item.monthlyRent)
+        setPrice(item.price, priceType: item.priceType, monthlyRent: item.monthlyRent)
         pyungLabel.text = "\(item.pyong)평 \(item.floor)층"
         addressLabel.text = item.shortAddress
         starRateLabel.text = String(format: "%.1f", Double(item.rate ?? "0.0") ?? 0.0)
