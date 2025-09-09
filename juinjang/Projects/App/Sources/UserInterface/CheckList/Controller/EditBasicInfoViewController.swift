@@ -40,6 +40,8 @@ final class EditBasicInfoViewController: BaseViewController {
         }
     }
     
+    var initialEditModel: EditBasicInfoModel? // 초기 정보 수정 모델
+
     let contentView = UIView().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -290,6 +292,7 @@ final class EditBasicInfoViewController: BaseViewController {
         noteRepository
             .retrieveNoteDetail(noteID: imjangId)
             .subscribe(with: self) { (self, response) in
+                self.initialEditModel = EditBasicInfoModel(noteDetailModel: response)
                 self.postModel = response.toPostCodeModel
                 self.setData(detailDto: response)
             }
@@ -662,24 +665,31 @@ final class EditBasicInfoViewController: BaseViewController {
         // 필드가 비어있거나 공백만으로 구성되어 있는지 확인
         let addressTextFieldEmpty = addressTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        
-        // 필드가 비어있는지 확인
-        let fourDigitPriceFieldEmpty = fourDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        
+                
         let floorFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
         let pyungFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        
-        // 가격이 0으로 시작하지 않는지 확인
-        let fourDigitPriceDoesNotStartWithZero = fourDigitPriceField.text?.first != "0"
-        
-        let fourDigitPriceFieldState = !fourDigitPriceFieldEmpty && fourDigitPriceDoesNotStartWithZero
+                
         let pyungAndFloorState = !floorFieldEmpty && !pyungFieldEmpty
-
+        
         // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && fourDigitPriceFieldState && pyungAndFloorState
+        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && pyungAndFloorState
+        
+        // 기존 데이터 비교
+        let isChanged = self.initialEditModel != .init(
+            postModel: postModel,
+            address: addressTextField.text,
+            addressDetail: addressDetailTextField.text,
+            pyung: pyungTextField.text,
+            floor: floorTextField.text,
+            houseNickname: houseNicknameTextField.text,
+            priceType: nil,
+            threeDigitNumber: threeDigitPriceField.text,
+            fourDigitNumber: fourDigitPriceField.text,
+            monthlyRent: nil
+        )
         
         // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
-        if allTextFieldsFilled {
+        if allTextFieldsFilled && isChanged {
             saveButton.isEnabled = true
             saveButton.backgroundColor = .gray500
         } else {
