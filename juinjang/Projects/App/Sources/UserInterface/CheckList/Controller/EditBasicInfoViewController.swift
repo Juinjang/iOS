@@ -376,6 +376,7 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     
     private func setDelegate() {
+        addressDetailTextField.delegate = self
         addressTextField.delegate = self
         houseNicknameTextField.delegate = self
         threeDigitPriceField.delegate = self
@@ -662,20 +663,14 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     
     private func checkNextButtonActivation() {
-        // 필드가 비어있거나 공백만으로 구성되어 있는지 확인
-        let addressTextFieldEmpty = addressTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-                
-        let floorFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        let pyungFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-                
-        let pyungAndFloorState = !floorFieldEmpty && !pyungFieldEmpty
-        
-        // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty && pyungAndFloorState
-        
-        // 기존 데이터 비교
-        let isChanged = self.initialEditModel != .init(
+        let shouldEnable = isFormInputValid() && isEditedComparedToInitial()
+        saveButton.isEnabled = shouldEnable
+        saveButton.backgroundColor = shouldEnable ? .gray500 : .gray300
+    }
+    
+    private func isEditedComparedToInitial() -> Bool {
+        // 현재 값 스냅샷
+        let current = EditBasicInfoModel(
             postModel: postModel,
             address: addressTextField.text,
             addressDetail: addressDetailTextField.text,
@@ -688,14 +683,26 @@ final class EditBasicInfoViewController: BaseViewController {
             monthlyRent: nil
         )
         
-        // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
-        if allTextFieldsFilled && isChanged {
-            saveButton.isEnabled = true
-            saveButton.backgroundColor = .gray500
-        } else {
-            saveButton.isEnabled = false
-            saveButton.backgroundColor = .gray300
-        }
+        // 변경됨 여부(초기값이 없으면 “새 작성”이라 간주해 변경됨 = true)
+        guard let initial = initialEditModel else { return true }
+        return initial != current
+    }
+    
+    private func isFormInputValid() -> Bool {
+        // 공통 필수
+        let commonOK =
+        !(addressTextField.text.isBlank) &&
+        !(addressDetailTextField.text.isBlank) &&
+        !(houseNicknameTextField.text.isBlank) &&
+        !(pyungTextField.text.isBlank) &&
+        !(floorTextField.text.isBlank)
+        
+        // 금액(억/아래 4자리) : 둘 중 하나라도 1 이상이면 OK
+        let three = Int(threeDigitPriceField.text ?? "") ?? 0
+        let four  = Int(fourDigitPriceField.text  ?? "") ?? 0
+        let priceOK = (three > 0 || four > 0)
+        
+        return commonOK && priceOK
     }
 }
 

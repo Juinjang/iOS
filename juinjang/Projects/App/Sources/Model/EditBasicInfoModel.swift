@@ -34,9 +34,9 @@ struct EditBasicInfoModel: Equatable {
         self.floor = floor
         self.houseNickname = houseNickname
         self.priceType = priceType
-        self.threeDigitNumber = threeDigitNumber
-        self.fourDigitNumber = fourDigitNumber
-        self.monthlyRent = monthlyRent
+        self.threeDigitNumber = threeDigitNumber ?? "0"
+        self.fourDigitNumber = fourDigitNumber ?? "0"
+        self.monthlyRent = monthlyRent ?? "0"
     }
     
     init(noteDetailModel: NoteDetailModel) {
@@ -84,9 +84,9 @@ extension EditBasicInfoModel {
         }
     }
     
-    fileprivate func splitPrice(_ price: String?) -> (String?, String?) {
+    fileprivate func splitPrice(_ price: String?) -> (String, String) {
         guard let price = price, let priceInt = Int(price) else {
-            return (nil, nil)
+            return ("0", "0")
         }
         
         // price가 "만원" 단위로 들어옴
@@ -95,13 +95,13 @@ extension EditBasicInfoModel {
         let four  = priceInManwon % 10_000     // 나머지 만원 단위
         
         let threeString = "\(three)"
-        let fourString  = four == 0 ? nil : "\(four)"
+        let fourString  = four == 0 ? "0" : "\(four)"
         
         return (threeString, fourString)
     }
     
-    fileprivate func convertToManwon(_ text: String?) -> String? {
-        guard let text = text, let value = Int(text) else { return nil }
+    fileprivate func convertToManwon(_ text: String?) -> String {
+        guard let text = text, let value = Int(text) else { return "0" }
         let manwon = value / 10_000   // 원 → 만원
         return "\(manwon)"
     }

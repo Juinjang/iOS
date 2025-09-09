@@ -9,8 +9,16 @@ import Foundation
 import UIKit
 import CryptoKit
 
+extension Optional where Wrapped == String {
+    var isBlank: Bool {
+        switch self {
+        case .none: return true
+        case .some(let value): return value.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+}
+
 extension String {
-    
     static func formatSeconds(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let remainingSeconds = seconds % 60
