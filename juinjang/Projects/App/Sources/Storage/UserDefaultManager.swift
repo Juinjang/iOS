@@ -115,17 +115,6 @@ final class UserDefaultManager {
         set { ud.set(newValue, forKey: UDKey.isShowShareAlert.rawValue) }
     }
     
-    // MARK: - Temp 추후 삭제 예정
-    var isTesting: Bool? {
-        get { ud.object(forKey: UDKey.isTesting.rawValue) as? Bool }
-        set { ud.set(newValue, forKey: UDKey.isTesting.rawValue) }
-    }
-    
-    var isHttpsEnabled: Bool? {
-        get { ud.object(forKey: UDKey.isHttpsEnabled.rawValue) as? Bool }
-        set { ud.set(newValue, forKey: UDKey.isHttpsEnabled.rawValue) }
-    }
-    
     func removeUserInfo() {
         let udKeys = UDKey.allCases
         

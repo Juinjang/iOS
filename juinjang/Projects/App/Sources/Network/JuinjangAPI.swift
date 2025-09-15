@@ -54,14 +54,6 @@ enum JuinjangAPI {
     case editRecordContent(recordId: Int, content: String)
     
     var baseURL: String {
-        // MARK: - TEMP 추후 삭제 예정
-        if UserDefaultManager.shared.isTesting ?? false {
-            guard let baseURL = Bundle.main.infoDictionary?["REVIEW_URL"] as? String else {
-                fatalError("❌ REVIEW_URL not found in Info.plist")
-            }
-            
-            return baseURL
-        }
         guard let baseUrl = Bundle.main.infoDictionary?["BASE_URL"] as? String else {
                 fatalError("BASE_URL not found in Info.plist")
             }

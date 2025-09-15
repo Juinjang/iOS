@@ -28,6 +28,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         }
     }
     
+    var initialEditModel: EditBasicInfoModel? // 초기 정보 수정 모델
     var transactionModel = TransactionModel()
     var imjangId: Int? = nil
     var versionInfo: VersionInfo? = nil
@@ -349,6 +350,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             .retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, response) in
+                self.initialEditModel = .init(noteDetailModel: response)
                 self.postModel = response.toPostCodeModel
                 self.setData(detailDto: response)
             }
@@ -373,7 +375,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             fourDigit: fourDigitPriceField.text
         )
 
-        let monthlyRent = fourDigitMonthlyRentField.text?.isEmpty == true ? nil : fourDigitMonthlyRentField.text
+        let monthlyRent = monthlyRentPriceString()
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
         let nickname = houseNicknameTextField.text ?? ""
@@ -444,6 +446,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     private func setDelegate() {
+        addressDetailTextField.delegate = self
         addressTextField.delegate = self
         houseNicknameTextField.delegate = self
         threeDigitPriceField.delegate = self
@@ -469,16 +472,19 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             saleButton.isSelected = true
             isMoveTypeSelected = saleButton.isSelected
             selectedPriceTypeButton = saleButton.isSelected ? saleButton : nil
+            selectedPriceType = 0
             setSaleView()
         } else if priceType == "PULL_RENT" {
             jeonseButton.isSelected = true
             isMoveTypeSelected = jeonseButton.isSelected
             selectedPriceTypeButton = jeonseButton.isSelected ? jeonseButton : nil
+            selectedPriceType = 1
             setJeonseView()
         } else if priceType == "MONTHLY_RENT" {
             monthlyRentButton.isSelected = true
             isMoveTypeSelected = monthlyRentButton.isSelected
             selectedPriceTypeButton = monthlyRentButton.isSelected ? monthlyRentButton : nil
+            selectedPriceType = 2
             setmonthlyRentView()
         }
     }
@@ -736,18 +742,23 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             threeDigitPriceField.text = ""
             fourDigitPriceField.text = ""
             fourDigitMonthlyRentField.text = ""
+            selectedPriceType = 0
             setSaleView()
         } else if sender == jeonseButton {
             threeDigitPriceField.text = ""
             fourDigitPriceField.text = ""
             fourDigitMonthlyRentField.text = ""
+            selectedPriceType = 1
             setJeonseView()
         } else if sender == monthlyRentButton {
             threeDigitPriceField.text = ""
             fourDigitPriceField.text = ""
             fourDigitMonthlyRentField.text = ""
+            selectedPriceType = 2
             setmonthlyRentView()
         }
+        saveButton.isEnabled = false
+        saveButton.backgroundColor = .gray300
         selectedPriceTypeButton = sender.isSelected ? sender : nil
         
         // 텍스트 필드 관련
@@ -859,7 +870,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                     roadAddress: addressTextField.text ?? "",
                     addressDetail: addressDetailTextField.text ?? "",
                     price: String(threeDigitPrice * 100000000 + fourDigitPrice * 10000),
-                    monthlyRent: fourDigitMonthlyRentField.text ?? "",
+                    monthlyRent: monthlyRentPriceString(),
                     updatedAt: updatedAt,
                     floor: "",
                     pyong: 0,
@@ -870,6 +881,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                     bname2: nil
                 )
             )
+            print("월세는", monthlyRentPriceString() ?? "")
             
             self.checkSaveTimeRelay?.accept(())
             
@@ -877,35 +889,63 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         }
     }
     
+    private func monthlyRentPriceString() -> String? {
+        guard let price = Int(fourDigitMonthlyRentField.text ?? "") else { return nil }
+        let priceString = String(price * 10000)
+        return priceString
+    }
+    
     private func checkNextButtonActivation() {
-        // 필드가 비어있거나 공백만으로 구성되어 있는지 확인
-        let addressTextFieldEmpty = addressTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        let houseNicknameTextFieldEmpty = houseNicknameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        let shouldEnable = isFormInputValid() && isEditedComparedToInitial()
+        saveButton.isEnabled = shouldEnable
+        saveButton.backgroundColor = shouldEnable ? .gray500 : .gray300
+    }
+    
+    private func isEditedComparedToInitial() -> Bool {
+        // 현재 값 스냅샷
+        let current = EditBasicInfoModel(
+            postModel: postModel,
+            address: addressTextField.text,
+            addressDetail: addressDetailTextField.text,
+            pyung: pyungTextField.text,
+            floor: floorTextField.text,
+            houseNickname: houseNicknameTextField.text,
+            priceType: selectedPriceType,
+            threeDigitNumber: threeDigitPriceField.text,
+            fourDigitNumber: fourDigitPriceField.text,
+            monthlyRent: fourDigitMonthlyRentField.text
+        )
         
-        // 필드가 비어있는지 확인
-        let fourDigitPriceFieldEmpty = fourDigitPriceField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        // 변경됨 여부(초기값이 없으면 “새 작성”이라 간주해 변경됨 = true)
+        guard let initial = initialEditModel else { return true }
+        return initial != current
+    }
+    
+    private func isFormInputValid() -> Bool {
+        // 공통 필수
+        let commonOK =
+        !(addressTextField.text.isBlank) &&
+        !(addressDetailTextField.text.isBlank) &&
+        !(houseNicknameTextField.text.isBlank) &&
+        !(pyungTextField.text.isBlank) &&
+        !(floorTextField.text.isBlank)
         
-        let pyungFieldEmpty = pyungTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
-        let floorFieldEmpty = floorTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true
+        // 금액(억/아래 4자리) : 둘 중 하나라도 1 이상이면 OK
+        let three = Int(threeDigitPriceField.text ?? "") ?? 0
+        let four  = Int(fourDigitPriceField.text  ?? "") ?? 0
+        let priceOK = (three > 0 || four > 0)
         
-        // 가격이 0으로 시작하지 않는지 확인
-        let fourDigitPriceDoesNotStartWithZero = fourDigitPriceField.text?.first != "0"
+        // 월세: 월세 타입(2)일 때만 체크 (값이 비어있지 않고 1 이상 권장 시 아래 라인 사용)
+        let monthlyOK: Bool = {
+            guard selectedPriceType == 2 else { return true }
+            // 비어있지 않기만 체크하려면:
+            // return !(fourDigitMonthlyRentField.text.isBlank)
+            // 1 이상이어야 한다면:
+            let monthly = Int(fourDigitMonthlyRentField.text ?? "") ?? 0
+            return monthly > 0
+        }()
         
-        let fourDigitPriceFieldState = !fourDigitPriceFieldEmpty && fourDigitPriceDoesNotStartWithZero
-        let pyungAndFloorFieldState = !pyungFieldEmpty && !floorFieldEmpty
-        
-
-        // 텍스트 필드 입력 여부에 따라 다음으로 버튼 활성화 여부 결정
-        let allTextFieldsFilled = !addressTextFieldEmpty && !houseNicknameTextFieldEmpty &&  fourDigitPriceFieldState && pyungAndFloorFieldState
-        
-        // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
-        if allTextFieldsFilled {
-            saveButton.isEnabled = true
-            saveButton.backgroundColor = .gray500
-        } else {
-            saveButton.isEnabled = false
-            saveButton.backgroundColor = .gray300
-        }
+        return commonOK && priceOK && monthlyOK
     }
 }
 
@@ -926,7 +966,9 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
         textField.superview?.layoutIfNeeded()
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
 
         // 각 텍스트 필드에 대한 최소, 최대 너비 설정
@@ -987,6 +1029,7 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
             textField.placeholder = "0000"
             updateTextFieldWidthConstraint(for: textField, constant: 79)
         }
+        checkNextButtonActivation()
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
