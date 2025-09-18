@@ -15,6 +15,7 @@ let project = Project(
             module: .presentation(.scenes),
             product: .staticLibrary,
             dependencies: [
+                .domain(.model),
                 .designSystem(.resources),
                 .designSystem(.components),
                 .domain(.usecaseInterfaces)

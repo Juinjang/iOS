@@ -12,17 +12,28 @@ let project = Project(
     moduleType: .domain,
     targets: [
         .makeTarget(
-            module: .domain(.repositoryInterfaces),
+            module: .domain(.model),
             product: .staticLibrary
         ),
         .makeTarget(
+            module: .domain(.repositoryInterfaces),
+            product: .staticLibrary,
+            dependencies: [
+                .domain(.model)
+            ]
+        ),
+        .makeTarget(
             module: .domain(.services),
-            product: .staticLibrary
+            product: .staticLibrary,
+            dependencies: [
+                .domain(.model)
+            ]
         ),
         .makeTarget(
             module: .domain(.usecases),
             product: .staticLibrary,
             dependencies: [
+                .domain(.model),
                 .domain(.usecaseInterfaces),
                 .domain(.services),
                 .domain(.repositoryInterfaces)
@@ -30,7 +41,10 @@ let project = Project(
         ),
         .makeTarget(
             module: .domain(.usecaseInterfaces),
-            product: .staticLibrary
+            product: .staticLibrary,
+            dependencies: [
+                .domain(.model)
+            ]
         )
     ]
 )

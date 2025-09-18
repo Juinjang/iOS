@@ -23,12 +23,14 @@ public enum Core: String, Sendable{
 }
 
 public enum Data: String, Sendable {
+    case model = "Model"
     case storage = "Storage"
     case network = "Network"
     case repositories = "Repositories"
 }
 
 public enum Domain: String, Sendable {
+    case model = "Model"
     case repositoryInterfaces = "RepositoryInterfaces"
     case services = "Services"
     case usecases = "Usecases"

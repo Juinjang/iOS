@@ -7,6 +7,7 @@
 
 import UIKit
 import KakaoSDKAuth
+import DataNetwork
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
