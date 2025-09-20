@@ -1,9 +1,4 @@
-//
-//  MyNoteRequestDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/12/25.
-//
+import Foundation
 
 public struct MyNoteRequest {
     let noteType: String

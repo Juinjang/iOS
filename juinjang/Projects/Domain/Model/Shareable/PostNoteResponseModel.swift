@@ -1,9 +1,4 @@
-//
-//  PostNoteResponseModel.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/26/25.
-//
+import Foundation
 
 public struct PostNoteResponseModel {
     let noteId: Int

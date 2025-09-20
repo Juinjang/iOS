@@ -1,10 +1,3 @@
-//
-//  AreaCodeRequest.swift
-//  juinjang
-//
-//  Created by 조유진 on 7/5/25.
-//
-
 import Foundation
 
 public struct AreaCodeRequest {

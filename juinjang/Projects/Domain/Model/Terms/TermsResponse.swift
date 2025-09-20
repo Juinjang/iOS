@@ -1,9 +1,4 @@
-//
-//  TermsResponse.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 7/26/25.
-//
+import Foundation
 
 public struct TermsResponse {
     let termsType: String

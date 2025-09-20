@@ -1,9 +1,4 @@
-//
-//  ImjangDetailCheckList.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/16/25.
-//
+import Foundation
 
 public struct ImjangDetailCheckList {
     let checklistAnswers: [ImjangDetailCheckListModel]

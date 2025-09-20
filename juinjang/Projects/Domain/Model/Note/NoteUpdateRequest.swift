@@ -1,9 +1,4 @@
-//
-//  ImjangUpdateRequest.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/17/25.
-//
+import Foundation
 
 public struct NoteUpdateRequest {
     let priceType: String

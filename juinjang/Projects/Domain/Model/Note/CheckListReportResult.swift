@@ -1,9 +1,4 @@
-//
-//  CheckListResponse.swift
-//  juinjang
-//
-//  Created by 임수진 on 2/15/24.
-//
+import Foundation
 
 public struct CheckListReportResult {
     let answerDtoList: [CheckListAnswer]

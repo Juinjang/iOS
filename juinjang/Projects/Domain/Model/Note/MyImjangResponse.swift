@@ -1,10 +1,3 @@
-//
-//  MyImjangResponseModel.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 6/2/25.
-//
-
 import UIKit
 
 public struct MyImjangResponse {

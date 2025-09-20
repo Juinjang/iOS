@@ -1,9 +1,4 @@
-//
-//  Result.swift
-//  Domain
-//
-//  Created by KimDongWoo on 9/20/25.
-//
+import Foundation
 
 public struct ResultDto {
     let answerDtoList: [Answer]

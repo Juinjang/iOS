@@ -1,9 +1,4 @@
-//
-//  NoteShareRequest.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/13/25.
-//
+import Foundation
 
 public struct NoteShareRequest {
     let buildingName: String

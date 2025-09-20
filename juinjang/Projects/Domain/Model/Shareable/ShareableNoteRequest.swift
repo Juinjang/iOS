@@ -1,9 +1,4 @@
-//
-//  ShareableNoteRequest.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 6/11/25.
-//
+import Foundation
 
 public struct ShareableNoteRequest {
     let sort: String?

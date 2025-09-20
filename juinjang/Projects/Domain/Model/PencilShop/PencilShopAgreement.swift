@@ -1,9 +1,4 @@
-//
-//  PencilShopAgreement.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 7/26/25.
-//
+import Foundation
 
 public struct PencilShopAgreement {
     let status: Bool

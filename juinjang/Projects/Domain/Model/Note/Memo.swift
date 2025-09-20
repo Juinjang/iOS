@@ -1,9 +1,4 @@
-//
-//  Memo.swift
-//  Domain
-//
-//  Created by KimDongWoo on 9/20/25.
-//
+import Foundation
 
 public struct Memo {
     let limjangId: Int

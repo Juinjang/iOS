@@ -1,9 +1,4 @@
-//
-//  NoteReportRequest.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/18/25.
-//
+import Foundation
 
 public struct NoteReportRequest {
     let sharedNoteId: Int

@@ -1,9 +1,4 @@
-//
-//  NoteLike.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/14/25.
-//
+import Foundation
 
 public struct NoteLike {
     let count: Int

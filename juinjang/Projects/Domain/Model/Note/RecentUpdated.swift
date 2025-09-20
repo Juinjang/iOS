@@ -1,9 +1,4 @@
-//
-//  RecentUpdated.swift
-//  Domain
-//
-//  Created by KimDongWoo on 9/20/25.
-//
+import Foundation
 
 public struct RecentUpdated {
     let recentUpdatedList: [LimjangDto]

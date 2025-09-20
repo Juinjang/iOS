@@ -1,9 +1,4 @@
-//
-//  EditProfileImage.swift
-//  Domain
-//
-//  Created by KimDongWoo on 9/20/25.
-//
+import Foundation
 
 public struct EditProfileImage {
     let nickname: String
