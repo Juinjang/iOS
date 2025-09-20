@@ -1,11 +1,6 @@
-//
-//  ImjangRequestDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/17/25.
-//
+import Foundation
 
-struct NoteCreateRequestDTO: Encodable {
+public struct NoteCreateRequestDTO: Encodable {
     let purposeType: String
     let propertyType: String
     let priceType: String

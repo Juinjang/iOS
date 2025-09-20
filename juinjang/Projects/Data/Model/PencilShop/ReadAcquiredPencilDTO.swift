@@ -1,11 +1,6 @@
-//
-//  ReadAcquiredPencilDTO.swift
-//  juinjang
-//
-//  Created by 조유진 on 6/17/25.
-//
+import Foundation
 
-struct ReadAcquiredPencilDTO: Codable {
+public struct ReadAcquiredPencilDTO: Codable {
     let isMarked: Bool
     let isTotalRead: Bool
 }

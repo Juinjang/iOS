@@ -1,9 +1,4 @@
-//
-//  PencilShopAgreementDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 7/26/25.
-//
+import Foundation
 
 public struct PencilShopAgreementDTO: Codable {
     let status: Bool

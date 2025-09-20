@@ -1,13 +1,6 @@
-//
-//  DetailDto.swift
-//  juinjang
-//
-//  Created by 조유진 on 2/9/24.
-//
-
 import Foundation
  
-struct DetailDto: Codable {
+public struct DetailDTO: Codable {
     let limjangId: Int
     let checkListVersion: String // 버전 (임장용 체크리스트 - LIMJANG,  원룸용 체크리스트 - NON_LIMJANG)
     let images: [String]
@@ -19,19 +12,4 @@ struct DetailDto: Codable {
     let addressDetail: String?
     let createdAt: String
     let updatedAt: String
-}
-
-struct RecordMemoDto: Codable {
-    let limjangId: Int
-    let memo: String?
-    let createdAt: String
-    let updatedAt: String
-    let recordDto: [RecordResponse]
-}
-
-struct MemoDto: Codable {
-    let limjangId: Int
-    let createdAt: String
-    let updatedAt: String
-    let memo: String?
 }

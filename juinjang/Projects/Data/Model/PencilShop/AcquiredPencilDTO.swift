@@ -1,11 +1,6 @@
-//
-//  AcquiredPencilDTO.swift
-//  juinjang
-//
-//  Created by 조유진 on 6/17/25.
-//
+import Foundation
 
-struct AcquiredPencilDTO: Codable, Hashable {
+public struct AcquiredPencilDTO: Codable, Hashable {
     let acquiredPencilId: Int
     let content: String
     let sharedNoteId: Int

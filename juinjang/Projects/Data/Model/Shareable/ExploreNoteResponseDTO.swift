@@ -1,11 +1,6 @@
-//
-//  ExploreNoteResponseDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/17/25.
-//
+import Foundation
 
-struct ExploreNoteResponseDTO: Codable {
+public struct ExploreNoteResponseDTO: Codable {
     let totalResults: Int
     let notes: [ExploreNoteModel]
 }

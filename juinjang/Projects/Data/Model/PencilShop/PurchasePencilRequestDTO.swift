@@ -1,11 +1,6 @@
-//
-//  PurchasePencilRequestDTO.swift
-//  juinjang
-//
-//  Created by 조유진 on 6/17/25.
-//
+import Foundation
 
-struct PurchasePencilRequestDTO: Encodable {
+public struct PurchasePencilRequestDTO: Encodable {
     let transactionId: String
     let appAccountToken: String
     let pencilQuantity: Int

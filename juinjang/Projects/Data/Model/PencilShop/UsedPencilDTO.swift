@@ -1,11 +1,6 @@
-//
-//  UsedPencilDTO.swift
-//  juinjang
-//
-//  Created by 조유진 on 6/17/25.
-//
+import Foundation
 
-struct UsedPencilDTO: Codable, Hashable {
+public struct UsedPencilDTO: Codable, Hashable {
     let usedPencilId: Int
     let useQuantity: Int
     let type: String

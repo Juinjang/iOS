@@ -1,11 +1,6 @@
-//
-//  ImjangDetailCheckListDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/16/25.
-//
+import Foundation
 
-struct ImjangDetailCheckListDTO: Codable {
+public struct ImjangDetailCheckListDTO: Codable {
     let checklistAnswers: [ImjangDetailCheckListModel]
     let review: String?
     let totalRate: Double?

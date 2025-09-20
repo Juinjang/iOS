@@ -1,13 +1,6 @@
-//
-//  AreaCodeRequestDTO.swift
-//  juinjang
-//
-//  Created by 조유진 on 7/5/25.
-//
-
 import Foundation
 
-struct AreaCodeRequestDTO: Encodable {
+public struct AreaCodeRequestDTO: Encodable {
     let admCode: String?
     let format: String
     let numOfRows: Int?

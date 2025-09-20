@@ -1,11 +1,6 @@
-//
-//  MyNoteRequestDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/12/25.
-//
+import Foundation
 
-struct MyNoteRequestDTO: Encodable {
+public struct MyNoteRequestDTO: Encodable {
     let noteType: String
     let propertyType: String?
     let priceType: String?

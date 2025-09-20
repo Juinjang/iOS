@@ -1,10 +1,5 @@
-//
-//  NoteLikeDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/14/25.
-//
+import Foundation
 
-struct NoteLikeDTO: Codable {
+public struct NoteLikeDTO: Codable {
     let count: Int
 }

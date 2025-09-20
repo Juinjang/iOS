@@ -1,11 +1,6 @@
-//
-//  TermsResponseDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 7/26/25.
-//
+import Foundation
 
-struct TermsResponseDTO: Codable {
+public struct TermsResponseDTO: Codable {
     let termsType: String
     let isAgreed: Bool
 }

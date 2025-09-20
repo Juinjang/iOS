@@ -1,11 +1,6 @@
-//
-//  ExploreNoteRequestDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/17/25.
-//
+import Foundation
 
-struct ExploreNoteRequestDTO: Encodable {
+public struct ExploreNoteRequestDTO: Encodable {
     let code: [String]?
     var sort: String
     var propertyType: String

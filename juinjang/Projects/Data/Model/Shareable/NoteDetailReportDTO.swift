@@ -1,10 +1,5 @@
-//
-//  NoteDetailReportDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 6/13/25.
-//
+import Foundation
 
-struct NoteDetailReportDTO: Codable {
+public struct NoteDetailReportDTO: Codable {
     let reportDTO: ImjangDetailReportModel
 }

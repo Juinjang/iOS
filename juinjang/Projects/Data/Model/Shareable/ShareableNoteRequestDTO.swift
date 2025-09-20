@@ -1,11 +1,6 @@
-//
-//  ShareableNoteRequestDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 6/11/25.
-//
+import Foundation
 
-struct ShareableNoteRequestDTO: Codable {
+public struct ShareableNoteRequestDTO: Codable {
     let sort: String?
     let propertyType: String?
     let priceType: String?

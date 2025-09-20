@@ -1,10 +1,5 @@
-//
-//  PostNoteResponseModel.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/26/25.
-//
+import Foundation
 
-struct PostNoteResponseModel: Codable {
+public struct PostNoteResponseModel: Codable {
     let noteId: Int
 }

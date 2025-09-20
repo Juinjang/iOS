@@ -1,11 +1,6 @@
-//
-//  PurchasePencilDTO.swift
-//  juinjang
-//
-//  Created by 조유진 on 6/17/25.
-//
+import Foundation
 
-struct PurchasePencilDTO: Codable, Equatable {
+public struct PurchasePencilDTO: Codable, Equatable {
     let status: String
     let transactionId: String
     let purchaseQuantity: Int

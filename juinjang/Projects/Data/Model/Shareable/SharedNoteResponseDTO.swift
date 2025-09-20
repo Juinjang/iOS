@@ -1,10 +1,5 @@
-//
-//  SharedNoteResponseDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 7/19/25.
-//
+import Foundation
 
-struct SharedNoteResponseDTO: Codable {
+public struct SharedNoteResponseDTO: Codable {
     let sharedNoteId: Int
 }

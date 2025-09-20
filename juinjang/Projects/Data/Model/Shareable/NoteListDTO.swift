@@ -1,10 +1,5 @@
-//
-//  NoteListDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/3/25.
-//
+import Foundation
 
-struct NoteListDTO<T: Codable>: Codable {
+public struct NoteListDTO<T: Codable>: Codable {
     let notes: [T]
 }

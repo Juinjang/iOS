@@ -1,11 +1,6 @@
-//
-//  NoteShareRequestDTO.swift
-//  juinjang
-//
-//  Created by KimDongWoo on 5/13/25.
-//
+import Foundation
 
-struct NoteShareRequestDTO: Encodable {
+public struct NoteShareRequestDTO: Encodable {
     let buildingName: String
     let isImageShared: Bool
     let year: Int
