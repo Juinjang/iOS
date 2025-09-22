@@ -5,8 +5,8 @@
 //  Created by 조유진 on 8/12/25.
 //
 
-enum BuildConfig {
-    static var isDebug: Bool {
+public enum BuildConfig {
+    public static var isDebug: Bool {
         #if DEBUG || DEV
         return true
         #else
@@ -14,5 +14,5 @@ enum BuildConfig {
         #endif
     }
 
-    static var isRelease: Bool { !isDebug }
+    public static var isRelease: Bool { !isDebug }
 }

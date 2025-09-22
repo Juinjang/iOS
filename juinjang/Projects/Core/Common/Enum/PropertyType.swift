@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum PropertyType: String, CaseIterable {
+public enum PropertyType: String, CaseIterable {
     case APARTMENT
     case VILLA
     case OFFICE_TEL

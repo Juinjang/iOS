@@ -5,7 +5,7 @@
 //  Created by 조유진 on 1/31/25.
 //
 
-enum AmpliEventName: String {
+public enum AmpliEventName: String {
     // 온보딩 -> 회원가입
     case onboarding_start
     case onboarding_step_1
@@ -20,7 +20,7 @@ enum AmpliEventName: String {
 }
 
 
-enum AmpliEventProp: String {
+public enum AmpliEventProp: String {
     // 메인 홈 화면 진입 -> 새 페이지 펼치기_step1
     case info_page_1
     case deal_object
@@ -42,7 +42,7 @@ enum AmpliEventProp: String {
     case record_memo
 }
 
-enum AmpliEventPropValue: String {
+public enum AmpliEventPropValue: String {
     case investment = "부동산 투자"
     case direct_entry = "직접 입주"
     

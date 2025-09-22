@@ -5,7 +5,7 @@
 //  Created by 조유진 on 3/13/25.
 //
 
-protocol FilterType {
+public protocol FilterType {
     var rawValue: String { get }
     var title: String { get }
     var action: FilterActionType { get }
@@ -14,15 +14,15 @@ protocol FilterActionType {
     
 }
 
-enum SortFilter: String, CaseIterable, FilterType, Equatable {
+public enum SortFilter: String, CaseIterable, FilterType, Equatable {
     case popular = "인기순"
     case lateset = "최신순"
     
-    var title: String {
+    public var title: String {
         return self.rawValue
     }
     
-    var action: FilterActionType {
+    public var action: FilterActionType {
         switch self {
         case .popular: SortAction.popularAction
         case .lateset: SortAction.latestAction
@@ -30,20 +30,20 @@ enum SortFilter: String, CaseIterable, FilterType, Equatable {
     }
 }
 
-enum TransactionTypeFilter: String, CaseIterable, FilterType, Equatable {
+public enum TransactionTypeFilter: String, CaseIterable, FilterType, Equatable {
     case total = "전체"
     case monthlyRent = "월세"
     case lease = "전세"
     case sale = "매매"
     
-    var title: String {
+    public var title: String {
         switch self {
         case .total: "거래 전체"
         case .monthlyRent, .lease, .sale: self.rawValue
         }
     }
     
-    var action: FilterActionType {
+    public var action: FilterActionType {
         switch self {
         case .total: TransactionTypeAction.totalTransaction
         case .monthlyRent: TransactionTypeAction.monthlyRent
@@ -53,21 +53,21 @@ enum TransactionTypeFilter: String, CaseIterable, FilterType, Equatable {
     }
 }
 
-enum SaleTypeFilter: String, CaseIterable, FilterType, Equatable {
+public enum SaleTypeFilter: String, CaseIterable, FilterType, Equatable {
     case totalSale = "전체"
     case officetel = "오피스텔"
     case apartment = "아파트"
     case detachedHouse = "단독 주택"
     case villa = "빌라"
     
-    var title: String {
+    public var title: String {
         switch self {
         case .totalSale: "매물 전체"
         case .officetel, .apartment, .detachedHouse, .villa: self.rawValue
         }
     }
     
-    var action: FilterActionType {
+    public var action: FilterActionType {
         switch self {
         case .totalSale: SaleTypeAction.totalSale
         case .officetel: SaleTypeAction.officetel
@@ -78,16 +78,16 @@ enum SaleTypeFilter: String, CaseIterable, FilterType, Equatable {
     }
 }
 
-enum MyNoteFilter: String, CaseIterable, FilterType {
+public enum MyNoteFilter: String, CaseIterable, FilterType {
     case updated = "업데이트순"
     case star = "별점순"
     case created = "등록순"
     
-    var title: String {
+    public  var title: String {
         return self.rawValue
     }
     
-    var action: FilterActionType {
+    public var action: FilterActionType {
         switch self {
         case .updated: MyNoteAction.updated
         case .star: MyNoteAction.star
@@ -95,7 +95,7 @@ enum MyNoteFilter: String, CaseIterable, FilterType {
         }
     }
     
-    var parameterValue: String {
+    public var parameterValue: String {
         switch self {
         case .updated: "UPDATED"
         case .star: "STAR"
@@ -104,24 +104,24 @@ enum MyNoteFilter: String, CaseIterable, FilterType {
     }
 }
 
-enum MyNoteAction: FilterActionType {
+public enum MyNoteAction: FilterActionType {
     case updated
     case created
     case star
 }
 
-enum SortAction: FilterActionType, Equatable {
+public enum SortAction: FilterActionType, Equatable {
     case popularAction
     case latestAction
     
-    var filter: SortFilter {
+    public var filter: SortFilter {
         switch self {
         case .popularAction: .popular
         case .latestAction: .lateset
         }
     }
     
-    var toRequestType: String {
+    public var toRequestType: String {
         switch self {
         case .popularAction: "POPULAR"
         case .latestAction: "LATEST"
@@ -129,13 +129,13 @@ enum SortAction: FilterActionType, Equatable {
     }
 }
 
-enum TransactionTypeAction: FilterActionType, Equatable {
+public enum TransactionTypeAction: FilterActionType, Equatable {
     case totalTransaction
     case monthlyRent
     case lease
     case sale
     
-    var filter: TransactionTypeFilter {
+    public var filter: TransactionTypeFilter {
         switch self {
         case .totalTransaction:
             return .total
@@ -148,7 +148,7 @@ enum TransactionTypeAction: FilterActionType, Equatable {
         }
     }
     
-    var toRequestType: String {
+    public var toRequestType: String {
         switch self {
         case .totalTransaction:
             return "" // 서버에 빈값 전송
@@ -162,14 +162,14 @@ enum TransactionTypeAction: FilterActionType, Equatable {
     }
 }
 
-enum SaleTypeAction: FilterActionType, Equatable {
+public enum SaleTypeAction: FilterActionType, Equatable {
     case totalSale
     case officetel
     case apartment
     case detachedHouse
     case villa
     
-    var filter: SaleTypeFilter {
+    public var filter: SaleTypeFilter {
         switch self {
         case .totalSale:
             return .totalSale
@@ -184,7 +184,7 @@ enum SaleTypeAction: FilterActionType, Equatable {
         }
     }
     
-    var toRequestType: String {
+    public var toRequestType: String {
         switch self {
         case .totalSale:
             return "" // 서버에 빈값 전송

@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PreviousVCType {
+public enum PreviousVCType {
     case createImjangVC
     case imjangList
     case searchedImjangList

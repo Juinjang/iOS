@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum OnboardingType: Int, CaseIterable {
+public enum OnboardingType: Int, CaseIterable {
     case checklist
     case recordImjang
     case report
     
-    var item1: OnboardingItem {
+    public var item1: OnboardingItem {
         switch self {
         case .checklist: OnboardingItem(title: "매물마다\n중요한 포인트는\n따로 있으니까",
                                         keyword: "중요한 포인트",
@@ -26,7 +26,7 @@ enum OnboardingType: Int, CaseIterable {
         }
     }
     
-    var item2: OnboardingItem {
+    public var item2: OnboardingItem {
         switch self {
         case .checklist: OnboardingItem(title: "주인장\n맞춤 체크리스트로\n현명하게",
                                         keyword: "맞춤 체크리스트",
@@ -41,12 +41,12 @@ enum OnboardingType: Int, CaseIterable {
     }
 }
 
-enum JsonURLString {
+public enum JsonURLString {
     case checklist
     case recordImjang
     case report
     
-    var urlString1: String {
+    public var urlString1: String {
         switch self {
         case .checklist: "checklist1"
         case .recordImjang: "recordImjang1"
@@ -54,7 +54,7 @@ enum JsonURLString {
         }
     }
     
-    var urlString2: String {
+    public var urlString2: String {
         switch self {
         case .checklist: "checklist2"
         case .recordImjang: "recordImjang2"

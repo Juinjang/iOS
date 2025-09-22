@@ -5,13 +5,13 @@
 //  Created by KimDongWoo on 4/11/25.
 //
 
-enum PriceType: String {
+public enum PriceType: String {
     case SALE
     case PULL_RENT
     case MONTHLY_RENT
     case MARKET_PRICE
     
-    var title: String {
+    public var title: String {
         switch self {
         case .SALE:
             return "매매"

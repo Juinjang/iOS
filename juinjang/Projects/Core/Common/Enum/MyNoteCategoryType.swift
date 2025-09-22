@@ -5,14 +5,14 @@
 //  Created by KimDongWoo on 5/14/25.
 //
 
-enum MyNoteCategoryType: Int, CaseIterable, Equatable {
+public enum MyNoteCategoryType: Int, CaseIterable, Equatable {
     case share = 0
     case own = 1
     case like = 2
 }
 
-extension MyNoteCategoryType {
-    var toText: String {
+public extension MyNoteCategoryType {
+    public var toText: String {
         switch self {
         case .share:
             return "공유한 노트"
@@ -23,7 +23,7 @@ extension MyNoteCategoryType {
         }
     }
     
-    var toRequestType: String {
+    public var toRequestType: String {
         switch self {
         case .share:
             return "SHARED"

@@ -7,7 +7,7 @@
 
 import UIKit
 
-enum OpenNewPageImageType {
+public enum OpenNewPageImageType {
     case investor
     case userMovingInDirectly
     case apartment
@@ -15,7 +15,8 @@ enum OpenNewPageImageType {
     case officetel
     case house
     
-    var image: UIImage {
+    // DesignSystem으로 이동 필요
+    public var image: UIImage {
         switch self {
         case .investor:
             UIImage.OpenNewPage.investor

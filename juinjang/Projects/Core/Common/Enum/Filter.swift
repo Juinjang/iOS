@@ -7,12 +7,12 @@
 
 import Foundation
 
-enum Filter: Int, CaseIterable {
+public enum Filter: Int, CaseIterable {
     case update
     case star
     case created
     
-    var title: String {
+    public var title: String {
         switch self {
         case .update: return "업데이트순"
         case .star: return "별점순"
@@ -20,7 +20,7 @@ enum Filter: Int, CaseIterable {
         }
     }
     
-    var sortValue: String {
+    public var sortValue: String {
         switch self {
         case .update: return "UPDATED"
         case .star: return "STAR"

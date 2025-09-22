@@ -1,18 +1,18 @@
 import Foundation
 
 public struct Note {
-    let noteId: Int
-    let purposeType: String
-    let propertyType: String
-    let priceType: String
-    let name: String
-    let imageUrl: [String]
-    var isScraped: Bool
-    let rate: String?
-    let price: String
-    let monthlyRent: String?
-    let pyong: Int?
-    let floor: String?
-    let shortAddress: String?
-    let address: String?
+    public let noteId: Int
+    public let purposeType: String
+    public let propertyType: String
+    public let priceType: String
+    public let name: String
+    public let imageUrl: [String]
+    public var isScraped: Bool
+    public let rate: String?
+    public let price: String
+    public let monthlyRent: String?
+    public let pyong: Int?
+    public let floor: String?
+    public let shortAddress: String?
+    public let address: String?
 }

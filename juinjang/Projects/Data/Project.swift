@@ -22,7 +22,8 @@ let project = Project(
             module: .data(.storage),
             product: .staticFramework,
             dependencies: [
-                .data(.model)
+                .data(.model),
+                .spm(.realmSwift)
             ]
         ),
         .makeTarget(
@@ -30,7 +31,8 @@ let project = Project(
             product: .staticLibrary,
             dependencies: [
                 .data(.storage),
-                .data(.model)
+                .data(.model),
+                .spm(.alamofire)
             ]
         ),
         .makeTarget(
