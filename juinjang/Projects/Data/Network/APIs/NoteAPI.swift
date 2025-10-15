@@ -7,16 +7,17 @@
 
 import Foundation
 import Alamofire
+import DataModel
 
 public enum NoteAPI: TargetType {
-    case getShareableNoteList(ShareableNoteRequestDTO)
+    case getShareableNoteList(AddShareableNoteRequest)
     case getNoteChecklistConditionList(Int)
     case getNoteChecklist(Int)
     case getNoteDetail(Int)
     case getNoteList(sort: String, keyword: String)
-    case postNote(NoteCreateRequestDTO)
-    case postCheckList(Int, [CheckListRequestDto])
-    case patchNote(Int, NoteUpdateRequestDTO)
+    case postNote(AddNoteRequest)
+    case postCheckList(Int, [AddNoteCheckListAnswerRequest])
+    case patchNote(Int, EditNoteRequest)
 
     public var path: String {
         switch self {

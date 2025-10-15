@@ -6,14 +6,15 @@
 //
 
 import RxSwift
+import DomainModel
 
 public protocol NoteRepositoryProtocol {
-    func retrieveNoteList(sort: String, keyword: String) -> Single<[NoteDTO]>
-    func retrieveShareableNoteList(param: ShareableNoteRequestDTO) -> Single<[ShareSelectModel]>
-    func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableConditionDTO>
-    func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerDTO]>
-    func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetailModel>
-    func createNote(param: NoteCreateRequestDTO) -> Single<PostNoteResponseModel>
-    func createCheckList(noteID id: Int, params: [CheckListRequestDto]) -> Single<CheckListReportResult>
-    func updateNote(noteID id: Int, param: NoteUpdateRequestDTO) -> Completable
+    func retrieveNoteList(sort: String, keyword: String) -> Single<[Note]>
+    func retrieveShareableNoteList(param: SearchShareableNote) -> Single<[ShareableNoteSelect]>
+    func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableNoteConditionResult>
+    func retrieveCheckList(noteID id: Int) -> Single<[NoteCheckListAnswer]>
+    func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetail>
+    func createNote(param: AddNote) -> Single<NoteAddCompleted>
+    func createCheckList(noteID id: Int, params: [AddNoteCheckListAnswer]) -> Single<NoteCheckListAnswerEvaluationReport>
+    func updateNote(noteID id: Int, param: EditNote) -> Completable
 }

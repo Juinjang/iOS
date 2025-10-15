@@ -8,11 +8,12 @@
 import Foundation
 import Alamofire
 import CoreCommon
+import DataModel
 
 public enum AreaCodeAPI: TargetType {
-    case getAreaCodeSidoList(AreaCodeRequestDTO)
-    case getAreaCodeSigunguList(AreaCodeRequestDTO)
-    case getAreaCodeDongList(AreaCodeRequestDTO)
+    case getAreaCodeSidoList(SearchAreaCodeRequest)
+    case getAreaCodeSigunguList(SearchAreaCodeRequest)
+    case getAreaCodeDongList(SearchAreaCodeRequest)
     
     public var baseURL: BaseURLType {
         return .areaCode
@@ -35,7 +36,9 @@ public enum AreaCodeAPI: TargetType {
 
     public var method: HTTPMethod {
         switch self {
-        case .getAreaCodeSidoList, .getAreaCodeSigunguList, .getAreaCodeDongList:
+        case .getAreaCodeSidoList,
+                .getAreaCodeSigunguList,
+                .getAreaCodeDongList:
             return .get
         }
     }

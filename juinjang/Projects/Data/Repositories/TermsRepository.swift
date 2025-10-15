@@ -10,6 +10,8 @@ import RxSwift
 import DomainRepositoryInterfaces
 import DataNetwork
 import DataStorage
+import DomainModel
+import DataModel
 
 final class TermsRepository: TermsRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
@@ -21,15 +23,17 @@ final class TermsRepository: TermsRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func retrievePencilShopAgreementStatus() -> Single<PencilShopAgreementDTO> {
+    func retrievePencilShopAgreementStatus() -> Single<PencilShopAgreement> {
         return TermsAPI.getPencilShopAgreementStatus
-            .request(BaseResponse<PencilShopAgreementDTO>.self, networkManager)
+            .request(BaseResponse<PencilShopAgreementResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func createTermsAgreement(param: TermsAgreementRequestDTO) -> Single<TermsResponseDTO> {
+    func createTermsAgreement(param: AddTermsAgreement) -> Single<TermsAgreement> {
         return TermsAPI.postTermsAgreement(param)
-            .request(BaseResponse<TermsResponseDTO>.self, networkManager)
+            .request(BaseResponse<TermsAgreementResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
 }

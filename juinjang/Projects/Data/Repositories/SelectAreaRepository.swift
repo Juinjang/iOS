@@ -9,6 +9,7 @@ import RxSwift
 import Alamofire
 import DataNetwork
 import DomainRepositoryInterfaces
+import DataModel
 
 final class SelectAreaRepository: SelectAreaRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
@@ -17,18 +18,21 @@ final class SelectAreaRepository: SelectAreaRepositoryProtocol {
         self.networkManager = networkManager
     }
     
-    func fetchAdmSidoList(param: AreaCodeRequestDTO) -> Single<AreaCodeResponseDTO> {
+    func fetchAdmSidoList(param: SearchAreaCode) -> Single<AreaCode> {
         return AreaCodeAPI.getAreaCodeSidoList(param)
-            .request(AreaCodeResponseDTO.self, networkManager)
+            .request(AreaCodeResponse.self, networkManager)
+            .map { $0.toDomain() }
     }
     
-    func fetchAdmSigunguList(param: AreaCodeRequestDTO) -> Single<AreaCodeResponseDTO> {
+    func fetchAdmSigunguList(param: SearchAreaCode) -> Single<AreaCode> {
         return AreaCodeAPI.getAreaCodeSigunguList(param)
-            .request(AreaCodeResponseDTO.self, networkManager)
+            .request(AreaCodeResponse.self, networkManager)
+            .map { $0.toDomain() }
     }
     
-    func fetchAdmDongList(param: AreaCodeRequestDTO) -> Single<AreaCodeResponseDTO> {
+    func fetchAdmDongList(param: SearchAreaCode) -> Single<AreaCode> {
         return AreaCodeAPI.getAreaCodeDongList(param)
-            .request(AreaCodeResponseDTO.self, networkManager)
+            .request(AreaCodeResponse.self, networkManager)
+            .map { $0.toDomain() }
     }
 }

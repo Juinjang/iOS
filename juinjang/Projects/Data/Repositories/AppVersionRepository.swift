@@ -7,10 +7,12 @@
 
 import RxSwift
 import DataNetwork
-import DomainRepositoryInterfaces
 import DataStorage
+import DataModel
+import DomainModel
+import DomainRepositoryInterfaces
 
-final class AppVersionRepository: AppVersionRepositoryProtocol {
+public final class AppVersionRepository: AppVersionRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
     private var userDefault: UserDefaultManager
     
@@ -20,9 +22,10 @@ final class AppVersionRepository: AppVersionRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func retrieveLatestAppVersion() -> Single<LatestAppVersionDTO> {
+    func retrieveLatestAppVersion() -> Single<LatestAppVersion> {
         return AppVersionAPI.getLatestAppVersion
-            .request(BaseResponse<LatestAppVersionDTO>.self, networkManager)
+            .request(BaseResponse<LatestAppVersionResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
 }

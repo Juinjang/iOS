@@ -9,6 +9,8 @@ import RxSwift
 import DomainRepositoryInterfaces
 import DataNetwork
 import DataStorage
+import DomainModel
+import DataModel
 
 final class UserRepository: UserRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
@@ -24,10 +26,11 @@ final class UserRepository: UserRepositoryProtocol {
         return .just(userDefault.nickname)
     }
     
-    func retrieveProfileInfo() -> Single<ProfileModel> {
+    func retrieveProfileInfo() -> Single<Profile> {
         return UserAPI.getProfileInfo
-            .request(BaseResponse<ProfileModel>.self, networkManager)
+            .request(BaseResponse<ProfileResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
     func updateProfileIntroduction(text: String) -> Completable {
@@ -36,9 +39,16 @@ final class UserRepository: UserRepositoryProtocol {
             .asCompletable()
     }
     
-    func regenerateAccesstoken() -> Single<RefreshDto> {
-        return UserAPI.regenerateAccessToken
-            .request(BaseResponse<RefreshDto>.self, networkManager)
+    func regenerateAccesstoken() -> Single<Refresh> {
+        let refresh = Refresh.init(
+            accessToken: userDefault.accessToken,
+            refreshToken: userDefault.refreshToken,
+            email: userDefault.email
+        )
+        
+        return UserAPI.regenerateAccessToken(refresh)
+            .request(BaseResponse<RefreshResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
 }

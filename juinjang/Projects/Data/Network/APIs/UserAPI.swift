@@ -7,11 +7,12 @@
 
 import Foundation
 import Alamofire
+import DataModel
 
 public enum UserAPI: TargetType {
     case getProfileInfo
     case patchProfileIntroduction(String)
-    case regenerateAccessToken
+    case regenerateAccessToken(Refresh)
 
     public var path: String {
         switch self {
@@ -50,14 +51,8 @@ public enum UserAPI: TargetType {
             return nil
         case .patchProfileIntroduction(let text):
             return ["introduction": text]
-        case .regenerateAccessToken:
-            let dto = RefreshDto(
-                accessToken: UserDefaultManager.shared.accessToken,
-                refreshToken: UserDefaultManager.shared.refreshToken,
-                email: UserDefaultManager.shared.email
-            )
-            dump(dto)
-            return dto.toDictionary()
+        case .regenerateAccessToken(let model):
+            return model.toDictionary()
         }
     }
     

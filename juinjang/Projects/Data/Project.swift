@@ -15,7 +15,8 @@ let project = Project(
             module: .data(.model),
             product: .staticLibrary,
             dependencies: [
-                .domain(.model)
+                .domain(.model),
+                .core(.common)
             ]
         ),
         .makeTarget(

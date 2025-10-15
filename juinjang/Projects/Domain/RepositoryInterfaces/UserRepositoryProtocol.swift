@@ -6,10 +6,11 @@
 //
 
 import RxSwift
+import DomainModel
 
 public protocol UserRepositoryProtocol {
     func retrieveUserNickname() -> Single<String>
-    func retrieveProfileInfo() -> Single<ProfileModel>
+    func retrieveProfileInfo() -> Single<Profile>
     func updateProfileIntroduction(text: String) -> Completable
-    func regenerateAccesstoken() -> Single<RefreshDto> 
+    func regenerateAccesstoken() -> Single<Refresh>
 }

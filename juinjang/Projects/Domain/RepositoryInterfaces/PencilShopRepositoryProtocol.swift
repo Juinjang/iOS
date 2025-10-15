@@ -1,16 +1,12 @@
-//
-//  PencilShopRepositoryProtocol.swift
-//  Data
-//
-//  Created by KimDongWoo on 9/16/25.
-//
+import RxSwift
+import DomainModel
 
 public protocol PencilShopRepositoryProtocol {
-    func retrievePencilTotalBalance() -> Single<PencilBalanceDTO>
-    func purchasePencil(parameter: PurchasePencilRequestDTO) -> Single<PurchasePencilDTO>
-    func readAcquiredPencil(acquiredPencilId: Int) -> Single<ReadAcquiredPencilDTO>
-    func retrieveUsedPencil() -> Single<[UsedPencilDTO]>
-    func retrievePurchasedPencil() -> Single<[PurchasedPencilDTO]>
-    func retrieveAcquiredPencil() -> Single<[AcquiredPencilDTO]>
-    func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencilDTO>
+    func retrievePencilTotalBalance() -> Single<PencilBalance>
+    func purchasePencil(parameter: AddPurchasePencil) -> Single<PurchasePencil>
+    func readAcquiredPencil(acquiredPencilId: Int) -> Single<ReadAcquiredPencil>
+    func retrieveUsedPencil() -> Single<[UsedPencil]>
+    func retrievePurchasedPencil() -> Single<[PurchasedPencil]>
+    func retrieveAcquiredPencil() -> Single<[AcquiredPencil]>
+    func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencil>
 }

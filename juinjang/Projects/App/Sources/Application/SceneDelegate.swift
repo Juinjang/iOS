@@ -9,6 +9,8 @@ import UIKit
 import KakaoSDKAuth
 import DataNetwork
 import PresentationScenes
+import DataRepositories
+import DomainRepositoryInterfaces
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -22,7 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: windowScene)
 
         let mainViewController = SplashViewController()
-        mainViewController.reactor = SplashViewReactor(dependency: SplashViewReactor.Dependency(appVersionRepository: AppVersionRepository()))
+        mainViewController.reactor = SplashViewReactor(dependency: .init(appVersionRepository: AppVersionRepository()))
         mainViewController.navigationController?.navigationBar.isHidden = true
         window?.rootViewController = mainViewController
         window?.makeKeyAndVisible()

@@ -10,6 +10,8 @@ import Foundation
 import StoreKit
 import DataNetwork
 import DomainRepositoryInterfaces
+import DataModel
+import DomainModel
 
 final class PencilShopRepository: PencilShopRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
@@ -21,399 +23,53 @@ final class PencilShopRepository: PencilShopRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func retrievePencilTotalBalance() -> Single<PencilBalanceDTO> {
+    func retrievePencilTotalBalance() -> Single<PencilBalance> {
         return PencilShopAPI.getPencilBalance
-            .request(BaseResponse<PencilBalanceDTO>.self, networkManager)
+            .request(BaseResponse<PencilBalanceResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func purchasePencil(parameter: PurchasePencilRequestDTO) -> Single<PurchasePencilDTO> {
+    func purchasePencil(parameter: AddPurchasePencil) -> Single<PurchasePencil> {
         return PencilShopAPI.purchasePencil(parameter)
-            .request(BaseResponse<PurchasePencilDTO>.self, networkManager)
+            .request(BaseResponse<PurchasePencilResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func readAcquiredPencil(acquiredPencilId: Int) -> Single<ReadAcquiredPencilDTO> {
+    func readAcquiredPencil(acquiredPencilId: Int) -> Single<ReadAcquiredPencil> {
         return PencilShopAPI.readPencil(acquiredPencilId: acquiredPencilId)
-            .request(BaseResponse<ReadAcquiredPencilDTO>.self, networkManager)
+            .request(BaseResponse<ReadAcquiredPencilResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func retrieveUsedPencil() -> Single<[UsedPencilDTO]> {
+    func retrieveUsedPencil() -> Single<[UsedPencil]> {
         return PencilShopAPI.getUsedPencil
-            .request(BaseResponse<[UsedPencilDTO]>.self, networkManager)
+            .request(BaseResponse<[UsedPencilResponse]>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func retrievePurchasedPencil() -> Single<[PurchasedPencilDTO]> {
+    func retrievePurchasedPencil() -> Single<[PurchasedPencil]> {
         return PencilShopAPI.getPurchasedPencil
-            .request(BaseResponse<[PurchasedPencilDTO]>.self, networkManager)
+            .request(BaseResponse<[PurchasedPencilResponse]>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func retrieveAcquiredPencil() -> Single<[AcquiredPencilDTO]> {
+    func retrieveAcquiredPencil() -> Single<[AcquiredPencil]> {
         return PencilShopAPI.getAcquiredPencil
-            .request(BaseResponse<[AcquiredPencilDTO]>.self, networkManager)
+            .request(BaseResponse<[AcquiredPencilResponse]>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencilDTO> {
-        print(#function)
+    func retrieveIsTotalReadAcquiredPencil() -> Single<IsTotalReadAcquiredPencil> {
         return PencilShopAPI.getIsTotalReadAcquiredPencil
-            .request(BaseResponse<IsTotalReadAcquiredPencilDTO>.self, networkManager)
+            .request(BaseResponse<IsTotalReadAcquiredPencilResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
 }
 
-extension [ObtainedPencilModel] {
-    static let mock: [ObtainedPencilModel] = [
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 1,
-            content: "[일이삼사오육칠팔구십...]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: true,
-            type: "공유",
-            sharedNoteId: 1
-        ),
-        ObtainedPencilModel(
-            acquiredPencilId: 2,
-            content: "[판교동아파트..]조회수 100 달성",
-            createdAt: "2025-03-11T15:30:45.123456",
-            acquiredQuantity: 3,
-            isRead: false,
-            type: "공유",
-            sharedNoteId: 2
-        )
-    ]
-}
-
-struct ObtainedPencilModel: Hashable {
-    let id = UUID()
-    let acquiredPencilId: Int
-    let content: String
-    let createdAt: String
-    let acquiredQuantity: Int
-    let isRead: Bool
-    let type: String
-    let sharedNoteId: Int
-}
-
-
-extension [PurchasedPencilModel] {
-    static let mock: [PurchasedPencilModel] = [
-        PurchasedPencilModel(
-            purchasedPencilId: 1,
-            purchaseQuantity: 10,
-            remainQuantity: 20,
-            title: "연필 10개 구매",
-            price: 1200,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        PurchasedPencilModel(
-            purchasedPencilId: 2,
-            purchaseQuantity: 10,
-            remainQuantity: 20,
-            title: "연필 14개 구매",
-            price: 1600,
-            createdAt: "2025-03-06T15:30:45.123456"
-        )
-    ]
-}
-
-struct PurchasedPencilModel: Hashable {
-    let id = UUID()
-    let purchasedPencilId: Int
-    let purchaseQuantity: Int
-    let remainQuantity: Int
-    let title: String
-    let price: Int
-    let createdAt: String
-}
-
-
-extension [UsedPencilModel] {
-    static let mock: [UsedPencilModel] = [
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 1,
-            useQuantity: 3,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "판교로 134길",
-            sharedNoteId: 50,
-            createdAt: "2025-03-11T15:30:45.123456"
-        ),
-        UsedPencilModel(
-            usedPencilId: 2,
-            useQuantity: 6,
-            type: "OWNED",
-            remainQuantity: 20,
-            buildingName: "신림로 125",
-            sharedNoteId: 24,
-            createdAt: "2025-03-06T15:30:45.123456"
-        ),
-    ]
-}
-
-struct UsedPencilModel: Hashable {
-    let id = UUID()
-    let usedPencilId: Int
-    let useQuantity: Int
-    let type: String
-    let remainQuantity: Int
-    let buildingName: String
-    let sharedNoteId: Int
-    let createdAt: String
-}

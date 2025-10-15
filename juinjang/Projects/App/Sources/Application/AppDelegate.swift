@@ -11,6 +11,7 @@ import KakaoSDKAuth
 import Firebase
 import AmplitudeSwift
 import IQKeyboardManagerSwift
+import DataNetwork
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {

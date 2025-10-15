@@ -69,20 +69,9 @@ public final class UserDefaultManager {
         set { ud.set(newValue, forKey: UDKey.email.rawValue) }
     }
     
-    public var profileImage: UIImage? {
-        get {
-            if let imageData = ud.data(forKey: UDKey.profileImage.rawValue) {
-                return UIImage(data: imageData)
-            }
-            return nil
-        }
-        set {
-            if let image = newValue, let imageData = image.pngData() {
-                ud.set(imageData, forKey: UDKey.profileImage.rawValue)
-            } else {
-                ud.removeObject(forKey: UDKey.profileImage.rawValue)
-            }
-        }
+    public var profileImage: Data? {
+        get { ud.data(forKey: UDKey.profileImage.rawValue) }
+        set { ud.set(newValue, forKey: UDKey.profileImage.rawValue) }
     }
     
     public var isKakaoLogin: Bool {

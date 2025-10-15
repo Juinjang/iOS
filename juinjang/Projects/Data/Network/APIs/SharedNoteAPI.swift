@@ -8,17 +8,18 @@
 import Foundation
 import Alamofire
 import CoreCommon
+import DataModel
 
 public enum SharedNoteAPI: TargetType {
-    case getMyNoteList(MyNoteRequestDTO)
-    case getExploreNoteList(ExploreNoteRequestDTO)
+    case getMyNoteList(SearchSharedMyNoteRequest)
+    case getExploreNoteList(SearchSharedNoteRequest)
     case getNoteDetail(Int)
     case getNoteDetailReport(Int)
     case getNoteDetailChecklist(Int)
     case postLikeNote(Int)
-    case postSharedNote(Int, NoteShareRequestDTO)
+    case postSharedNote(Int, AddShareableNoteRequest)
     case postPurchaseNote(Int)
-    case postNoteReport(NoteReportRequestDTO)
+    case postNoteReport(AddSharedNoteReportRequest)
     case deleteLikeNote(Int)
     case deleteSharedNote(Int)
 

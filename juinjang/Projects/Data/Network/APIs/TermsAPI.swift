@@ -7,10 +7,11 @@
 
 import Foundation
 import Alamofire
+import DataModel
 
 public enum TermsAPI: TargetType {
     case getPencilShopAgreementStatus
-    case postTermsAgreement(TermsAgreementRequestDTO)
+    case postTermsAgreement(AddTermsAgreementRequest)
 
     public var path: String {
         switch self {

@@ -7,10 +7,11 @@
 
 import Foundation
 import Alamofire
+import DataModel
 
 public enum PencilShopAPI: TargetType {
     case getPencilBalance
-    case purchasePencil(PurchasePencilRequestDTO)
+    case purchasePencil(AddPurchasePencilRequest)
     case readPencil(acquiredPencilId: Int)
     case getUsedPencil
     case getPurchasedPencil
@@ -35,10 +36,14 @@ public enum PencilShopAPI: TargetType {
             "v2/pencil/acquired/is-total-read"
         }
     }
-
+    
     public var method: HTTPMethod {
         switch self {
-        case .getPencilBalance, .getUsedPencil, .getPurchasedPencil, .getAcquiredPencil, .getIsTotalReadAcquiredPencil:
+        case .getPencilBalance,
+                .getUsedPencil,
+                .getPurchasedPencil,
+                .getAcquiredPencil,
+                .getIsTotalReadAcquiredPencil:
                 .get
         case .purchasePencil:
                 .post

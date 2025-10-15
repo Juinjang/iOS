@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 import UIKit
 import RxSwift
+import DataModel
 
 public final class JuinjangAPIManager {
     public static let shared = JuinjangAPIManager()
@@ -174,7 +175,7 @@ public final class JuinjangAPIManager {
     
     func uploadRecordFile(api: JuinjangAPI,
                           fileURL: URL,
-                          dto: RecordRequestDTO,
+                          dto: RecordRequest,
                           completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
         
         AF.upload(multipartFormData: { [weak self] multipartFormData in
@@ -190,7 +191,7 @@ public final class JuinjangAPIManager {
                   method: api.method,
                   headers: api.header,
                   interceptor: AuthInterceptor())
-        .responseDecodable(of: RecordResponseDTO.self, completionHandler: { response in
+        .responseDecodable(of: NoteRecordResponse.self, completionHandler: { response in
             print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let responseData):
@@ -220,7 +221,7 @@ public final class JuinjangAPIManager {
     func refreshAccessToken(completionHandler: @escaping (Bool) -> Void) {
         let api = JuinjangAPI.regenerateToken
         AF.request(api.endpoint, method: api.method, headers: api.header)
-            .responseDecodable(of: BaseResponse<RefreshDto>.self) { response in
+            .responseDecodable(of: BaseResponse<RefreshResponse>.self) { response in
                 print(#function, "액세스 토큰 재발급 StatusCode: \(String(describing: response.response?.statusCode))")
                 switch response.result {
                 case .success(let success):

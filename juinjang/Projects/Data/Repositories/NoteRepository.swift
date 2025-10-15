@@ -9,6 +9,8 @@ import Foundation
 import RxSwift
 import DomainRepositoryInterfaces
 import DataNetwork
+import DataModel
+import DomainModel
 
 final class NoteRepository: NoteRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
@@ -21,56 +23,58 @@ final class NoteRepository: NoteRepositoryProtocol {
     }
     
     func retrieveNoteList(sort: String,
-                          keyword: String) -> Single<[NoteDTO]> {
+                          keyword: String) -> Single<[Note]> {
         return NoteAPI.getNoteList(sort: sort, keyword: keyword)
-            .request(BaseResponse<NoteListDTO<NoteDTO>>.self, networkManager)
+            .request(BaseResponse<NoteListResultResponse<NoteResponse>>.self, networkManager)
             .map { try $0.unwrap().notes }
+            .map { $0.toDomain() }
     }
     
-    func retrieveShareableNoteList(param: ShareableNoteRequestDTO) -> Single<[ShareSelectModel]> {
+    func retrieveShareableNoteList(param: SearchShareableNote) -> Single<[ShareableNoteSelect]> {
         return NoteAPI.getShareableNoteList(param)
-            .request(BaseResponse<NoteListDTO<ShareSelectModel>>.self, networkManager)
+            .request(BaseResponse<NoteListResultResponse<ShareableNoteSelectResponse>>.self, networkManager)
             .map { try $0.unwrap().notes }
+            .map { $0.toDomain() }
     }
     
-    func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableConditionDTO> {
+    func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableNoteConditionResult> {
         return NoteAPI.getNoteChecklistConditionList(id)
-            .request(BaseResponse<ShareableConditionDTO>.self, networkManager)
+            .request(BaseResponse<ShareableNoteConditionResultResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerDTO]> {
+    func retrieveCheckList(noteID id: Int) -> Single<[NoteCheckListAnswer]> {
         return NoteAPI.getNoteChecklist(id)
-            .request(BaseResponse<[CheckListAnswerDTO]>.self, networkManager)
+            .request(BaseResponse<[NoteCheckListAnswerResponse]>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetailModel> {
+    func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetail> {
         return NoteAPI.getNoteDetail(id)
-            .request(BaseResponse<NoteDetailModel>.self, networkManager)
+            .request(BaseResponse<NoteDetailResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func createNote(param: NoteCreateRequestDTO) -> Single<PostNoteResponseModel> {
+    func createNote(param: AddNote) -> Single<NoteAddCompleted> {
         return NoteAPI.postNote(param)
-            .request(BaseResponse<PostNoteResponseModel>.self, networkManager)
+            .request(BaseResponse<NoteAddCompletedResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func createCheckList(noteID id: Int, params: [CheckListRequestDto]) -> Single<CheckListReportResult> {
+    func createCheckList(noteID id: Int,
+                         params: [AddNoteCheckListAnswer]) -> Single<NoteCheckListAnswerEvaluationReport> {
         return NoteAPI.postCheckList(id, params)
-            .request(BaseResponse<CheckListReportResult>.self, networkManager)
+            .request(BaseResponse<NoteCheckListAnswerEvaluationReportResponse>.self, networkManager)
             .map { try $0.unwrap() }
+            .map { $0.toDomain() }
     }
     
-    func updateImjang(noteID id: Int,
-                      param: NoteUpdateRequestDTO) -> Completable {
-        return NoteAPI.patchNote(id, param)
-            .request(NoResultResponse.self, networkManager)
-            .asCompletable()
-    }
-    
-    func updateNote(noteID id: Int, param: NoteUpdateRequestDTO) -> Completable {
+    func updateNote(noteID id: Int,
+                    param: EditNote) -> Completable {
         return NoteAPI.patchNote(id, param)
             .request(NoResultResponse.self, networkManager)
             .asCompletable()

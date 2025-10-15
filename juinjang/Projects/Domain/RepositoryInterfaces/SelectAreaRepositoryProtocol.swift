@@ -6,9 +6,10 @@
 //
 
 import RxSwift
+import DomainModel
 
 public protocol SelectAreaRepositoryProtocol {
-    func fetchAdmSidoList(param: AreaCodeRequestDTO) -> Single<AreaCodeResponseDTO>
-    func fetchAdmSigunguList(param: AreaCodeRequestDTO) -> Single<AreaCodeResponseDTO>
-    func fetchAdmDongList(param: AreaCodeRequestDTO) -> Single<AreaCodeResponseDTO>
+    func fetchAdmSidoList(param: SearchAreaCode) -> Single<AreaCode>
+    func fetchAdmSigunguList(param: SearchAreaCode) -> Single<AreaCode>
+    func fetchAdmDongList(param: SearchAreaCode) -> Single<AreaCode>
 }
