@@ -261,7 +261,7 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             cell.selectionStyle = .none
             cell.backgroundColor = .clear
             
-            cell.newPageButton.addTarget(self, action: #selector(newPageButtonTapped), for: .touchUpInside)
+            cell.addNewNoteButton.addTarget(self, action: #selector(newPageButtonTapped), for: .touchUpInside)
             cell.myNoteButton.addTarget(self, action: #selector(myNoteButtonTapped), for: .touchUpInside)
             cell.lookAroundButton.addTarget(self, action: #selector(lookAroundButtonTapped), for: .touchUpInside)
             return cell
