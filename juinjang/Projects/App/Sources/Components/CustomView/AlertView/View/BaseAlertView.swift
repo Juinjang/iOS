@@ -95,7 +95,7 @@ extension BaseAlertView {
 
         let hasFixedWidth = types.contains {
             switch $0 {
-            case .confirm(_, let width), .cancel(_, let width):
+            case .confirm(_, let width, _, _), .cancel(_, let width, _, _):
                 return width != nil
             default:
                 return false
@@ -113,19 +113,19 @@ extension BaseAlertView {
         let button = UIButton()
 
         switch type {
-        case .confirm(let title, let width):
+        case .confirm(let title, let width, let color, let backgroundColor):
             button.design(title: title,
                           font: .pretendard(size: 16, weight: .semiBold),
-                          titleColor: .mainWhite,
-                          backgroundColor: .gray500,
+                          titleColor: color,
+                          backgroundColor: backgroundColor,
                           cornerRadius: 10)
             applyWidthIfNeeded(button, width: width)
 
-        case .cancel(let title, let width):
+        case .cancel(let title, let width, let color, let backgroundColor):
             button.design(title: title,
                           font: .pretendard(size: 16, weight: .semiBold),
-                          titleColor: .gray500,
-                          backgroundColor: .gray3,
+                          titleColor: color,
+                          backgroundColor: backgroundColor,
                           cornerRadius: 10)
             applyWidthIfNeeded(button, width: width)
 
