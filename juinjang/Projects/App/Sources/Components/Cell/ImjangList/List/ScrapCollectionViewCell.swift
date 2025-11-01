@@ -73,11 +73,15 @@ extension ScrapCollectionViewCell {
         
         roomPriceLabel.text = note.price
         
+        roomAddressLabel.textColor = .gray400
         if let address = note.address {
             roomAddressLabel.text = address
         } else {
             if let shortAddress = note.shortAddress {
                 roomAddressLabel.text = shortAddress
+            } else {
+                roomAddressLabel.text = "주소 미입력"
+                roomAddressLabel.textColor = .null
             }
         }
 
@@ -284,17 +288,17 @@ extension ScrapCollectionViewCell {
             $0.height.equalTo(117)
         }
         
-        roomNameLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(12)
-            $0.top.equalTo(totalStackView.snp.bottom).offset(8)
-            $0.height.equalTo(24)
-        }
-        
         roomIcon.snp.makeConstraints {
             $0.size.equalTo(18)
-            $0.centerY.equalTo(roomNameLabel)
-            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(2)
-            $0.trailing.lessThanOrEqualTo(starIcon.snp.leading).offset(-2)
+            $0.leading.equalToSuperview().inset(12)
+            $0.top.equalTo(totalStackView.snp.bottom).offset(11)
+        }
+        
+        roomNameLabel.snp.makeConstraints {
+            $0.centerY.equalTo(roomIcon)
+            $0.leading.equalTo(roomIcon.snp.trailing).offset(2)
+            $0.trailing.lessThanOrEqualTo(starIcon.snp.leading).offset(-2).priority(.required)
+            $0.height.equalTo(24)
         }
         
         scoreLabel.snp.makeConstraints {

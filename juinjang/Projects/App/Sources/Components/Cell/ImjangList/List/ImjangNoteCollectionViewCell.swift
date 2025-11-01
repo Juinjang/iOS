@@ -75,18 +75,24 @@ extension ImjangNoteCollectionViewCell {
         priceLabel.text = note.price
         
         if note.pyong == nil || note.floor == nil {
-            pyungAndFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
+            pyungAndFloorLabel.text = "평층 미입력"
+            pyungAndFloorLabel.textColor = .null
         } else {
             if let pyong = note.pyong, let floor = note.floor {
+                pyungAndFloorLabel.textColor = .gray400
                 pyungAndFloorLabel.text = "\(pyong)평 \(floor)층"
             }
         }
         
+        addressLabel.textColor = .gray400
         if let address = note.address {
             addressLabel.text = address
         } else {
             if let shortAddress = note.shortAddress {
                 addressLabel.text = shortAddress
+            } else {
+                addressLabel.text = "주소 미입력"
+                addressLabel.textColor = .null
             }
         }
 
@@ -145,7 +151,7 @@ extension ImjangNoteCollectionViewCell {
            let floor = model.floor {
             pyungAndFloorLabel.text = "\(pyung)평 \(floor)층"
         } else {
-            pyungAndFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
+            pyungAndFloorLabel.text = "평층 미입력"
         }
     }
     
@@ -181,35 +187,36 @@ extension ImjangNoteCollectionViewCell {
             $0.height.equalTo(112)
         }
         
-        roomNameLabel.snp.makeConstraints {
-            $0.top.equalTo(roomThumbnailImageView.snp.top).offset(1)
-            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(12)
-            $0.height.equalTo(23)
-        }
-        
         roomIcon.snp.makeConstraints {
             $0.size.equalTo(18)
-            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(4)
+            $0.top.equalTo(roomThumbnailImageView.snp.top).offset(3.5)
+            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(12)
+        }
+        
+        roomNameLabel.snp.makeConstraints {
+            $0.top.equalTo(roomThumbnailImageView.snp.top).offset(1)
+            $0.leading.equalTo(roomIcon.snp.trailing).offset(4)
+            $0.centerY.equalTo(roomIcon)
             $0.trailing.lessThanOrEqualToSuperview()
-            $0.centerY.equalTo(roomNameLabel)
+            $0.height.equalTo(23)
         }
         
         priceLabel.snp.makeConstraints {
             $0.top.equalTo(roomNameLabel.snp.bottom)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(roomIcon.snp.leading)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(23)
         }
         
         pyungAndFloorLabel.snp.makeConstraints {
             $0.top.equalTo(priceLabel.snp.bottom)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(roomIcon.snp.leading)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(19)
         }
         
         addressLabel.snp.makeConstraints {
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(roomIcon.snp.leading)
             $0.top.equalTo(pyungAndFloorLabel.snp.bottom)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(19)
@@ -229,7 +236,7 @@ extension ImjangNoteCollectionViewCell {
         
         starIcon.snp.makeConstraints {
             $0.size.equalTo(14)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(roomIcon.snp.leading)
             $0.centerY.equalTo(scoreLabel.snp.centerY)
         }
         

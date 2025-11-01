@@ -73,10 +73,12 @@ extension SelectNoteCell {
         priceLabel.text = note.price
         
         if note.pyong == nil || note.floor == nil {
-            pyongFloorLabel.text = "이 집의 평수와 층수를 알려주세요"
+            pyongFloorLabel.text = "평층 미입력"
+            pyongFloorLabel.textColor = .null
         } else {
             if let pyong = note.pyong, let floor = note.floor {
                 pyongFloorLabel.text = "\(pyong)평 \(floor)층"
+                pyongFloorLabel.textColor = .gray400
             }
         }
     
@@ -84,11 +86,15 @@ extension SelectNoteCell {
             setPriceLabel(note: note, priceType: priceType)
         }
         
+        addressLabel.textColor = .gray400
         if let address = note.address {
             addressLabel.text = address
         } else {
             if let shortAddress = note.shortAddress {
                 addressLabel.text = shortAddress
+            } else {
+                addressLabel.text = "주소 미입력"
+                addressLabel.textColor = .null
             }
         }
         
@@ -182,35 +188,35 @@ extension SelectNoteCell {
             $0.height.equalTo(112)
         }
         
-        roomNameLabel.snp.makeConstraints {
-            $0.top.equalTo(roomThumbnailImageView.snp.top).offset(1)
-            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(12)
-            $0.height.equalTo(23)
-        }
-        
         coinIcon.snp.makeConstraints {
             $0.size.equalTo(18)
-            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(4)
+            $0.leading.equalTo(roomThumbnailImageView.snp.trailing).offset(12)
+            $0.top.equalTo(roomThumbnailImageView.snp.top).offset(2.5)
+        }
+        
+        roomNameLabel.snp.makeConstraints {
+            $0.centerY.equalTo(coinIcon)
+            $0.leading.equalTo(coinIcon.snp.trailing).offset(4)
             $0.trailing.lessThanOrEqualToSuperview().inset(12)
-            $0.centerY.equalTo(roomNameLabel)
+            $0.height.equalTo(23)
         }
         
         priceLabel.snp.makeConstraints {
             $0.top.equalTo(roomNameLabel.snp.bottom)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(coinIcon.snp.leading)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(23)
         }
         
         pyongFloorLabel.snp.makeConstraints {
             $0.top.equalTo(priceLabel.snp.bottom)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(coinIcon.snp.leading)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(19)
         }
         
         addressLabel.snp.makeConstraints {
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(coinIcon.snp.leading)
             $0.top.equalTo(pyongFloorLabel.snp.bottom)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(19)
@@ -229,7 +235,7 @@ extension SelectNoteCell {
         
         starIcon.snp.makeConstraints {
             $0.size.equalTo(14)
-            $0.leading.equalTo(roomNameLabel.snp.leading)
+            $0.leading.equalTo(coinIcon.snp.leading)
             $0.centerY.equalTo(scoreLabel.snp.centerY)
         }
     }
