@@ -14,7 +14,7 @@ enum NoteAPI: TargetType {
     case getNoteChecklist(Int)
     case getNoteDetail(Int)
     case getNoteList(sort: String, keyword: String)
-    case postNote(NoteCreateRequestDTO)
+    case postAddNote(AddNoteRequestDTO)
     case postCheckList(Int, [CheckListRequestDto])
     case patchNote(Int, NoteUpdateRequestDTO)
 
@@ -30,8 +30,8 @@ enum NoteAPI: TargetType {
             return "v2/users/notes/\(noteID)"
         case .getNoteList:
             return "v2/users/notes"
-        case .postNote:
-            return "v2/users/notes"
+        case .postAddNote:
+            return "v2/users/notes/init"
         case .postCheckList(let noteID, _):
             return "v2/checklist/\(noteID)"
         case .patchNote(let noteID,_):
@@ -47,7 +47,7 @@ enum NoteAPI: TargetType {
                 .getNoteDetail,
                 .getNoteList:
             return .get
-        case .postNote,
+        case .postAddNote,
                 .postCheckList:
             return .post
         case .patchNote:
@@ -60,7 +60,7 @@ enum NoteAPI: TargetType {
         case .getNoteChecklistConditionList,
                 .getNoteChecklist,
                 .getNoteDetail,
-                .postNote,
+                .postAddNote,
                 .postCheckList,
                 .patchNote:
             return []
@@ -80,7 +80,7 @@ enum NoteAPI: TargetType {
                 .getNoteDetail,
                 .getNoteList:
             return nil
-        case .postNote(let param as Encodable),
+        case .postAddNote(let param as Encodable),
                 .patchNote(_, let param as Encodable):
             return param.toDictionary()
         default:
