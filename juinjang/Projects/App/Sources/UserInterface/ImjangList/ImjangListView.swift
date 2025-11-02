@@ -151,7 +151,7 @@ final class ImjangListView: UIView {
         emptyMessageLabel.textAlignment = .center
         
         // 새 페이지 펼치기 버튼
-        newPageButton.design(title: "새 페이지 펼치기",
+        newPageButton.design(title: "새 노트 생성하기",
                              font: .pretendard(size: 16, weight: .semiBold),
                              backgroundColor: .gray500,
                              cornerRadius: 10)
