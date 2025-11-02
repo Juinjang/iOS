@@ -568,7 +568,7 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
     
                     cell.configure(category: category)
                 
-                    let arrowImage = category.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandItems
+                    let arrowImage = category.isExpanded ? UIImage.CheckList.contractionItems : UIImage.CheckList.expandGray
                     cell.expandButton.setImage(arrowImage, for: .normal)
                     
                     return cell
