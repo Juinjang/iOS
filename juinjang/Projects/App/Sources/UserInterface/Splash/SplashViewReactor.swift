@@ -58,12 +58,12 @@ final class SplashViewReactor: Reactor {
     
     private func checkAppVersion() -> Observable<Mutation> {
         // 앱 스토어 앱 버전 조회
-        return dependency.appVersionRepository.retrieveLatestAppVersion()
+        InAppUpdateManager.shared.requestLatestVersion()
             .asObservable()
-            .flatMap { [weak self] latestAppVersionDTO -> Observable<Mutation> in
-                guard let self = self else { return .empty() }
-                let version = latestAppVersionDTO.version
-                return handleAppUpdate(latestVersion: version)
+            .flatMap { [weak self] appVersion -> Observable<Mutation> in
+                guard let self = self, let latestVersion = appVersion else { return .empty() }
+                print("@@@ Latest AppVersion: \(latestVersion)")
+                return handleAppUpdate(latestVersion: latestVersion)
             }
     }
     
