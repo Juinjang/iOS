@@ -282,7 +282,6 @@ extension ScrapCollectionViewCell {
     }
     
     private func configureLayout() {
-
         totalStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(12)
             $0.height.equalTo(117)
@@ -301,17 +300,26 @@ extension ScrapCollectionViewCell {
             $0.height.equalTo(24)
         }
         
+        roomNameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        roomNameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        
         scoreLabel.snp.makeConstraints {
             $0.top.equalTo(totalStackView.snp.bottom).offset(8)
             $0.trailing.equalToSuperview().inset(12)
             $0.height.equalTo(23)
         }
         
+        scoreLabel.setContentHuggingPriority(.required, for: .horizontal)
+        scoreLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
         starIcon.snp.makeConstraints {
             $0.size.equalTo(16)
-            $0.centerY.equalTo(scoreLabel)
+            $0.centerY.equalTo(roomIcon)
             $0.trailing.equalTo(scoreLabel.snp.leading).offset(-2)
         }
+        
+        starIcon.setContentHuggingPriority(.required, for: .horizontal)
+        starIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         roomPriceLabel.snp.makeConstraints {
             $0.horizontalEdges.equalTo(totalStackView)
