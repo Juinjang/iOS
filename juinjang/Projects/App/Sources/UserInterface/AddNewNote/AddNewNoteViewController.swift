@@ -1083,10 +1083,6 @@ final class AddNewNoteViewController: BaseViewController {
         label.text = "*필수"
         return label
     }
-    
-    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        view.endEditing(true)
-    }
 }
 
 extension AddNewNoteViewController: UITextFieldDelegate {
