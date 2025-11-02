@@ -330,9 +330,9 @@ final class AddNewNoteViewController: BaseViewController {
         amplitude.track(
             event: BaseEvent(
                 eventType: AmpliEventName.page_viewed.rawValue,
-                eventProperties: [AmpliEventProp.info_page_1.rawValue:"true"]
+                eventProperties: [AmpliEventProp.newPage.rawValue:"true"]
             )
-        )  // 페이지 진입
+        )
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -938,6 +938,10 @@ final class AddNewNoteViewController: BaseViewController {
     }
     
     @objc func buttonTapped(_ sender: UIButton) {
+        amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
+            AmpliEventProp.next_button_clicked.rawValue: "true"
+        ]))
+        
         setVersionInfo()
         // 데이터 전달
         let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
@@ -966,7 +970,7 @@ final class AddNewNoteViewController: BaseViewController {
                 eventType: AmpliEventName.button_clicked.rawValue,
                 eventProperties: [
                     AmpliEventProp.deal_object.rawValue: selectedPurposeType == .INVESTMENT ?
-                    AmpliEventPropValue.investment.rawValue :
+                        AmpliEventPropValue.investment.rawValue :
                         AmpliEventPropValue.direct_entry.rawValue,
                     AmpliEventProp.deal_price.rawValue: selectedPrice
                 ]
@@ -1070,7 +1074,7 @@ final class AddNewNoteViewController: BaseViewController {
         amplitude.track(
             event: BaseEvent(
                 eventType: AmpliEventName.page_viewed.rawValue,
-                eventProperties: [AmpliEventProp.info_page_1.rawValue:"false"]
+                eventProperties: [AmpliEventProp.newPage.rawValue:"false"]
             )
         )
         

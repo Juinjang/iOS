@@ -22,7 +22,7 @@ enum AmpliEventName: String {
 
 enum AmpliEventProp: String {
     // 메인 홈 화면 진입 -> 새 페이지 펼치기_step1
-    case info_page_1
+    case newPage
     case deal_object
     case deal_category
     case deal_price
@@ -33,6 +33,7 @@ enum AmpliEventProp: String {
     case address_name
     
     // 새 페이지 펼치기_step2 -> 체크리스트 화면
+    case next_button_clicked
     case checklist_page
     case floating_button
     case moving_date
