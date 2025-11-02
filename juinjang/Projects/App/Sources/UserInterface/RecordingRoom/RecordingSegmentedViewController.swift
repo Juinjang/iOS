@@ -55,11 +55,11 @@ final class RecordingSegmentedViewController: TabmanViewController, MoveWarningM
         if let userInfo = notification.userInfo, let status = userInfo["status"] as? Bool {
             if (status) {
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations: {
-                    self.imjangNoteViewController?.editButton.alpha = 0.0
+                    self.imjangNoteViewController?.checkListActionButton.alpha = 0.0
                 }, completion: nil)
             } else {
                 UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseIn, animations: {
-                    self.imjangNoteViewController?.editButton.alpha = 1.0
+                    self.imjangNoteViewController?.checkListActionButton.alpha = 1.0
                 }, completion: nil)
             }
         }

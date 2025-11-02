@@ -33,66 +33,63 @@ final class ImjangNoteViewController: BaseViewController,
     private let receivedSaveTimeRelay = PublishRelay<Void>()
     
     // 스크롤뷰
-    let scrollView = UIScrollView().then {
+    private let scrollView = UIScrollView().then {
         $0.backgroundColor = .mainWhite
         $0.showsVerticalScrollIndicator = false
     }
     
     // 스크롤할 컨텐트뷰
-    let contentView = UIView()
+    private let contentView = UIView()
     
     // 하우스 이미지뷰
-    let noImageBackgroundView = UIImageView()
-    let photoRegisterButton = PhotoRegisterButton()
+    private let noImageBackgroundView = UIImageView()
+    private let photoRegisterButton = PhotoRegisterButton()
     
-    lazy var firstImage = UIImageView()
-    lazy var secondImage = UIImageView()
-    lazy var thirdImage = UIImageView()
+    private lazy var firstImage = UIImageView()
+    private lazy var secondImage = UIImageView()
+    private lazy var thirdImage = UIImageView()
     
     // 이미지 개수 레이블
-    var maximizeImageView = UIImageView()
+    private var maximizeImageView = UIImageView()
     
     //이미지 배치할 스택뷰
-    var stackView = UIStackView().then {
+    private var stackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
         $0.distribution = .equalSpacing
         $0.spacing = 8
     }
-    var vStackView = UIStackView().then {
+    private var vStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
         $0.distribution = .equalSpacing
         $0.spacing = 8
     }
     
-    let roomNameLabel = UILabel()
+    private let roomNameLabel = UILabel()
+    private let roomPriceLabel = UILabel()
     
-    let houseImageView = UIImageView()
-    let roomStackView = UIStackView()
-    let roomPriceLabel = UILabel()
-    
-    let roomLocationIcon = UIImageView()
-    let roomAddressLabel = UILabel().then {
+    private let roomLocationIcon = UIImageView()
+    private let roomAddressLabel = UILabel().then {
         $0.lineBreakMode = .byCharWrapping
         $0.isUserInteractionEnabled = false
     }
-    let addressStackView = UIStackView().then {
+    private let addressStackView = UIStackView().then {
         $0.isUserInteractionEnabled = false
     }
-    let addressBackgroundView = UIButton().then {
+    private let addressBackgroundView = UIButton().then {
         $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
         $0.isEnabled = false
     }
     
-    let showReportLabel = UILabel()
-    let reportImageView = UIImageView()
-    let reportStackView = UIStackView()
+    private let showReportLabel = UILabel()
+    private let reportImageView = UIImageView()
+    private let reportStackView = UIStackView()
     
-    let modifiedDateStringLabel = UILabel()
-    let modifiedDate = UILabel()
-    let modifiedDateStackView = UIStackView().then {
+    private let modifiedDateStringLabel = UILabel()
+    private let modifiedDate = UILabel()
+    private let modifiedDateStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
         $0.distribution = .equalSpacing
@@ -107,58 +104,52 @@ final class ImjangNoteViewController: BaseViewController,
     
     private let imageBlockView = UIView()
     
-    let infoStackView = UIStackView().then {
+    private let infoStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
         $0.distribution = .equalCentering
         $0.spacing = 4
     }
     
-    let containerView = UIView().then {
+    private let containerView = UIView().then {
         $0.backgroundColor = .mainWhite
         $0.layer.cornerRadius = 5
     }
     
-    let upButton = UIButton().then {
-        $0.setImage(UIImage.ImjangNote.floating, for: .normal)
+    lazy var checkListActionButton = UIButton().then {
+        var config = UIButton.Configuration.plain()
+        config.image = .inputCircleCheck.resized(toWidth: 24)
+        config.attributedTitle = AttributedString("입력하기", attributes: AttributeContainer([
+            .font: UIFont.pretendard(size: 18, weight: .bold),
+            .foregroundColor: UIColor.mainWhite
+        ]))
+        config.imagePadding = 4
+        config.cornerStyle = .capsule
+        config.background.backgroundColor = .main
+        config.contentInsets = NSDirectionalEdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)
+        $0.configuration = config
+        $0.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
     }
     
-    let editButton = UIButton().then {
-        $0.roundCorners(cornerRadius: 28.5, corner: .all)
-        $0.backgroundColor = .main
-        $0.layer.masksToBounds = false
-        $0.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
-        $0.layer.shadowOffset = CGSize(width: 0, height: 4)
-        $0.layer.shadowOpacity = 1
-        $0.addTarget(
-            self,
-            action: #selector(editButtonTapped),
-            for: .touchUpInside
-        )
-    }
+    private lazy var recordingSegmentedVC = RecordingSegmentedViewController(imjangId: imjangId, version: versionDetail)
     
-    let editImageView = UIImageView().then {
-        $0.image = .CheckList.editButton
-    }
+    private var completionHandler: (() -> Void)?
+    private var checkListItems: [CheckListAnswer] = []
+    private var existingItems = [Int: CheckListAnswer]()
     
-    lazy var recordingSegmentedVC = RecordingSegmentedViewController(imjangId: imjangId, version: versionDetail)
-    
-    var completionHandler: (() -> Void)?
-    var checkListItems: [CheckListAnswer] = []
-    var existingItems = [Int: CheckListAnswer]()
-    
-    lazy var images: [String] = []
+    private lazy var images: [String] = []
     var imjangId: Int
-    var detailDto: NoteDetailModel? = nil
-    var reportDto: ReportDTO?
+    private var detailDto: NoteDetailModel? = nil
+    private var reportDto: ReportDTO?
     var previousVCType: PreviousVCType = .createImjangVC
     var versionInfo: VersionInfo?
-    var versionDetail: Int
-    var editCriteria: Int?
-    var isEditMode: Bool = false // 수정 모드 여부
+    private var versionDetail: Int
+    private var editCriteria: Int?
+    private var isEditMode: Bool = false // 수정 모드 여부
     
     private let clickPyungFloorRelay = PublishRelay<Void>()
     private let conditionEventRelay = PublishRelay<ImjangNoteShareConditionViewEventType>()
+    private var roomName: String = ""
     
     init(imjangId: Int, version: Int) {
         self.imjangId = imjangId
@@ -218,7 +209,7 @@ final class ImjangNoteViewController: BaseViewController,
                             sort: nil,
                             propertyType: nil,
                             priceType: nil,
-                            keyword: self.roomNameLabel.text ?? "",
+                            keyword: self.roomName ?? "",
                             page: 1,
                             size: 20
                         )
@@ -269,14 +260,23 @@ final class ImjangNoteViewController: BaseViewController,
                 self.callRequest()
             }
             .disposed(by: disposeBag)
+        
+        noteShareConditionView.infoButtonDidTapRelay
+            .bind(with: self) { owner, _ in
+                let infoPopup = NoteConditionInfoPopup()
+                infoPopup.modalTransitionStyle = .crossDissolve
+                infoPopup.modalPresentationStyle = .overFullScreen
+                owner.present(infoPopup, animated: true)
+            }
+            .disposed(by: disposeBag)
     }
     
     @objc private func handlePageChange(notification: Notification) {
         if let userInfo = notification.userInfo, let currentVC = userInfo["currentVC"] as? UIViewController {
             if currentVC is CheckListViewController {
-                editButton.isHidden = false
+                checkListActionButton.isHidden = false
             } else if currentVC is RecordingRoomViewController {
-                editButton.isHidden = true
+                checkListActionButton.isHidden = true
             }
         }
     }
@@ -293,12 +293,43 @@ final class ImjangNoteViewController: BaseViewController,
         }
     }
     
+    private func configureRoomName(name: String, purposeType: String) {
+        let font = UIFont.pretendard(size: 20, weight: .extraBold)
+        let attachment = NSTextAttachment()
+        attachment.image = (purposeType == PurposeType.INVESTMENT.title) ? .coin : .ImjangNote.house
+        attachment.bounds = CGRect(x: 0, y: -2, width: 20, height: 20)
+
+        let icon = NSAttributedString(attachment: attachment)
+
+        let spacing: CGFloat = 6
+        let paragraph = NSMutableParagraphStyle()
+        paragraph.firstLineHeadIndent = 0
+        paragraph.headIndent = 0
+        paragraph.lineBreakMode = .byWordWrapping
+        paragraph.minimumLineHeight = 28
+        paragraph.maximumLineHeight = 28
+
+        let result = NSMutableAttributedString()
+        result.append(icon)
+        result.append(NSAttributedString(string: " " + name, attributes: [
+            .font: font,
+            .foregroundColor: UIColor.gray600
+        ]))
+
+        result.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: result.length))
+
+        roomNameLabel.attributedText = result
+        roomNameLabel.numberOfLines = 0
+        roomNameLabel.lineBreakMode = .byWordWrapping
+    }
+
     
     private func callRequest() {
         noteRepository.retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, detailData) in
                 self.setData(detailDto: detailData)
+                self.roomName = self.detailDto?.buildingName ?? ""
                 self.updateConditionViewLayout(model: detailData)
             }
             .disposed(by: disposeBag)
@@ -308,11 +339,10 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func setData(detailDto: NoteDetailModel) {
         self.navigationItem.title = detailDto.buildingName
-        roomNameLabel.text = detailDto.buildingName
+        configureRoomName(name: detailDto.buildingName, purposeType: detailDto.purposeType)
         setPriceLabel(model: detailDto)
         
-        
-        let fullText = "임장노트 공유를 위해서는 주소를 재입력 해주세요."
+        let fullText = "눌러서 주소 입력하기"
         let underlinedText = "재입력"
 
         let font = UIFont.pretendard(size: 16, weight: .medium)
@@ -335,18 +365,16 @@ final class ImjangNoteViewController: BaseViewController,
                 roomAddressLabel.text = address
             }
         } else {
-            roomAddressLabel.attributedText = attributedString
-            roomAddressLabel.numberOfLines = 2
+            roomAddressLabel.text = "눌러서 주소 입력하기"
         }
-        
-        
         
         modifiedDate.text = detailDto.updatedAt
         images = detailDto.images
         noImageBackgroundView.image = detailDto.propertyTypeImage
         noteDetailInfoView.configure(model: detailDto, relay: clickPyungFloorRelay)
-        navigationView.title = detailDto.buildingName
-        editButton.isHidden = detailDto.isShared
+        navigationView.title = detailDto.buildingName.count > 15 ? "\(detailDto.buildingName.prefix(14))..." :
+            detailDto.buildingName
+        checkListActionButton.isHidden = detailDto.isShared
         photoRegisterButton.isHidden = detailDto.isShared
         imageBlockView.isHidden = !detailDto.isShared
         navigationView.rightItem = detailDto.isShared ? [] : [.text(title: "편집")]
@@ -377,11 +405,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     func sendData(imjangId: Int,
                   model: NoteDetailModel) {
-        self.navigationItem.title = model.buildingName
-        roomNameLabel.text = model.buildingName
-        setPriceLabel(model: model)
-        roomAddressLabel.text = model.roadAddress
-        modifiedDate.text = model.updatedAt
+        callRequest()
         
         NotificationCenter.default.post(name: .refreshImjangList, object: nil)
         NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
@@ -389,11 +413,7 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     func sendDetailData(imjangId: Int, model: NoteDetailModel) {
-        self.navigationItem.title = model.buildingName
-        roomNameLabel.text = model.buildingName
-        setPriceLabel(model: model)
-        roomAddressLabel.text = model.roadAddress
-        modifiedDate.text = model.updatedAt
+        callRequest()
         
         NotificationCenter.default.post(name: .refreshImjangList, object: nil)
         NotificationCenter.default.post(name: .refreshMainImjang, object: nil)
@@ -434,7 +454,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     func updateButtonState(isSelected: Bool) {
         self.makeEditMode()
-        editButton.isSelected = isSelected
+        checkListActionButton.isSelected = isSelected
     }
     
     // 방 사진 클릭했을 때 - showImjangImageListVC. 호출
@@ -448,17 +468,16 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func setUserInteraction(isEmpty: Bool) {
-        stackView.isUserInteractionEnabled = isEmpty ? false : true
-        vStackView.isUserInteractionEnabled = isEmpty ? false : true
-        firstImage.isUserInteractionEnabled = isEmpty ? false : true
-        secondImage.isUserInteractionEnabled = isEmpty ? false : true
-        thirdImage.isUserInteractionEnabled = isEmpty ? false : true
-        noImageBackgroundView.isUserInteractionEnabled = isEmpty ? true : false
+        stackView.isUserInteractionEnabled = !isEmpty
+        vStackView.isUserInteractionEnabled = !isEmpty
+        firstImage.isUserInteractionEnabled = !isEmpty
+        secondImage.isUserInteractionEnabled = !isEmpty
+        thirdImage.isUserInteractionEnabled = !isEmpty
+        noImageBackgroundView.isUserInteractionEnabled = isEmpty 
     }
     
     // 이미지 리스트 화면으로 이동
     @objc private func showImjangImageListVC() {
-        //        guard let imjangId = imjangId else { return }
         let imjangImageListVC = ImjangImageListViewController()
         imjangImageListVC.imjangId = imjangId
         imjangImageListVC.completionHandler = { imageStrings in
@@ -478,12 +497,6 @@ final class ImjangNoteViewController: BaseViewController,
         }
     }
     
-    @objc private func upToTop() {
-        UIView.animate(withDuration: 0.5) {
-            self.scrollView.contentOffset.y = 0
-        }
-    }
-    
     private func setDelegate() {
         scrollView.delegate = self
     }
@@ -492,9 +505,6 @@ final class ImjangNoteViewController: BaseViewController,
     @objc private func popView() {
         switch previousVCType {
         case .createImjangVC:
-            amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
-                AmpliEventProp.checklist_page.rawValue: "false"
-            ]))
             changeImjangListVC()
         case .imjangList, .main:
             navigationController?.popViewController(animated: true)
@@ -503,18 +513,17 @@ final class ImjangNoteViewController: BaseViewController,
         }
     }
     
-    override func swipeAction(_ sender: UISwipeGestureRecognizer) {
-        if sender.direction == .right { // 뒤로가기
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        if isMovingFromParent {
             switch previousVCType {
             case .createImjangVC:
                 amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
                     AmpliEventProp.checklist_page.rawValue: "false"
                 ]))
                 changeImjangListVC()
-            case .imjangList, .main:
-                navigationController?.popViewController(animated: true)
-            default:
-                navigationController?.popViewController(animated: true)
+            default: break
             }
         }
     }
@@ -539,13 +548,14 @@ final class ImjangNoteViewController: BaseViewController,
     private func addSubView() {
         [navigationView,
          scrollView,
-         editButton.with(editImageView)].forEach {
+         checkListActionButton
+        ].forEach {
             view.addSubview($0)
         }
         
         scrollView.addSubview(contentView)
         
-        [roomStackView,
+        [roomNameLabel,
          roomPriceLabel,
          noteDetailInfoView,
          noteShareConditionView,
@@ -581,30 +591,10 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 뷰들 디자인
     private func designViews() {
-        //        upButton.alpha = 0
         designImageView(maximizeImageView, image: UIImage.ImjangNote.maximize, contentMode: .scaleAspectFit)
         
         // 방 이미지뷰 설정
         setRoomImages()
-        
-        // 집 아이콘 이미지뷰
-        designImageView(houseImageView,
-                        image: UIImage.ImjangNote.house,
-                        contentMode: .scaleAspectFit)
-        
-        // 방 이름 레이블
-        designLabel(roomNameLabel,
-                    alignment: .left,
-                    font: UIFont.pretendard(size: 20, weight: .extraBold),
-                    textColor: .gray600)
-        
-        // 방 이름 스택뷰
-        setStackView(roomStackView,
-                     label: roomNameLabel,
-                     image: houseImageView,
-                     axis: .horizontal,
-                     spacing: 6,
-                     isImageRight: true)
         
         // 방 가격 레이블
         designLabel(roomPriceLabel,
@@ -760,11 +750,10 @@ final class ImjangNoteViewController: BaseViewController,
         
         photoRegisterButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().offset(-9)
-            $0.right.equalToSuperview().offset(-10)
+            $0.trailing.equalToSuperview().offset(-10)
             $0.height.equalTo(27)
             $0.width.equalTo(94)
         }
-        
     }
     
     // constraints 설정
@@ -791,19 +780,13 @@ final class ImjangNoteViewController: BaseViewController,
             $0.width.height.equalTo(24)
         }
         
-        editButton.snp.makeConstraints {
+        checkListActionButton.snp.makeConstraints {
             $0.bottom.equalTo(view.snp.bottom).offset(-28)
             $0.trailing.equalTo(view.snp.trailing).offset(-24)
-            $0.size.equalTo(57)
+            $0.height.equalTo(48)
         }
         
-        editImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(12)
-            $0.left.equalToSuperview().offset(13)
-            $0.size.equalTo(32)
-        }
-        
-        view.bringSubviewToFront(editButton)
+        view.bringSubviewToFront(checkListActionButton)
         
         navigationView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -838,22 +821,17 @@ final class ImjangNoteViewController: BaseViewController,
             $0.edges.equalTo(noImageBackgroundView.snp.edges)
         }
         
-        // 하우스 아이콘 크기 설정
-        houseImageView.snp.makeConstraints {
-            $0.width.equalTo(20)
-            $0.height.equalTo(20)
-        }
-        
         // 방 이름 스택뷰
-        roomStackView.snp.makeConstraints {
+        roomNameLabel.snp.makeConstraints {
             $0.leading.equalTo(topView!.snp.leading)
+            $0.trailing.equalTo(topView!.snp.trailing)
             $0.top.equalTo(topView!.snp.bottom).offset(12)
         }
         
         // 방 가격 레이블
         roomPriceLabel.snp.makeConstraints {
             $0.leading.equalTo(topView!.snp.leading)
-            $0.top.equalTo(roomStackView.snp.bottom).offset(6)
+            $0.top.equalTo(roomNameLabel.snp.bottom).offset(6)
         }
         
         addressBackgroundView.snp.makeConstraints {
@@ -869,12 +847,9 @@ final class ImjangNoteViewController: BaseViewController,
             $0.bottom.equalTo(addressBackgroundView.snp.bottom).offset(-8)
         }
         
-        
-        // 위치 아이콘
         roomLocationIcon.snp.makeConstraints {
             $0.width.height.equalTo(18)
         }
-        
         
         // MARK: - 노트 디테일 뷰
         noteDetailInfoView.snp.makeConstraints {
@@ -882,16 +857,13 @@ final class ImjangNoteViewController: BaseViewController,
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(161)
         }
-        
-        
-        // info 스택뷰
+    
         infoStackView.snp.makeConstraints {
             $0.leading.equalTo(noImageBackgroundView.snp.leading)
             $0.trailing.equalTo(noImageBackgroundView.snp.trailing)
             $0.top.equalTo(noteDetailInfoView.snp.bottom).offset(12)
         }
         
-        // containerView
         containerView.snp.makeConstraints {
             $0.top.equalTo(infoStackView.snp.bottom).offset(12)
             $0.leading.trailing.equalTo(contentView)
@@ -950,8 +922,8 @@ final class ImjangNoteViewController: BaseViewController,
         imageView.contentMode = contentMode
         imageView.clipsToBounds = true
         
-        if cornerRadius != nil {
-            imageView.layer.cornerRadius = cornerRadius!
+        if let cornerRadius {
+            imageView.layer.cornerRadius = cornerRadius
         }
     }
     
@@ -1118,7 +1090,7 @@ final class ImjangNoteViewController: BaseViewController,
                     }
                 } else {
                     print("체크리스트 값이 입력되지 않았습니다.")
-                    editButton.setImage(UIImage.CheckList.editButton, for: .normal)
+                    makeDefaultMode()
                     NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
                 }
                 
@@ -1179,29 +1151,21 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func makeEditMode() {
-        editButton.backgroundColor = .clear
-        editButton.layer.masksToBounds = false
-        editButton.layer.shadowColor = UIColor.clear.cgColor
-        editButton.layer.shadowOffset = CGSize(width: 0, height: 4)
-        editButton.layer.shadowOpacity = 1
-        editImageView.image = .CheckList.completedButton
-        editImageView.snp.remakeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(57)
-        }
+        checkListActionButton.configuration?.image = .completedCircleCheck.resized(toWidth: 24)
+        checkListActionButton.configuration?.attributedTitle = AttributedString("입력 완료", attributes: AttributeContainer([
+            .font: UIFont.pretendard(size: 18, weight: .bold),
+            .foregroundColor: UIColor.mainWhite
+        ]))
+        checkListActionButton.configuration?.background.backgroundColor = .gray500
     }
     
     private func makeDefaultMode() {
-        editButton.backgroundColor = .main
-        editButton.layer.shadowColor = UIColor.black.withAlphaComponent(0.13).cgColor
-        editButton.layer.shadowOffset = CGSize(width: 0, height: 4)
-        editButton.layer.shadowOpacity = 1
-        editImageView.image = .CheckList.editButton
-        editImageView.snp.remakeConstraints {
-            $0.top.equalToSuperview().offset(12)
-            $0.left.equalToSuperview().offset(13)
-            $0.size.equalTo(32)
-        }
+        checkListActionButton.configuration?.image = .inputCircleCheck.resized(toWidth: 24)
+        checkListActionButton.configuration?.attributedTitle = AttributedString("입력하기", attributes: AttributeContainer([
+            .font: UIFont.pretendard(size: 18, weight: .bold),
+            .foregroundColor: UIColor.mainWhite
+        ]))
+        checkListActionButton.configuration?.background.backgroundColor = .main
     }
 }
 
