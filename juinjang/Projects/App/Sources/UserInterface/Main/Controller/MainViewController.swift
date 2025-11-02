@@ -199,8 +199,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func newPageButtonTapped() {
-        let vc = OpenNewPageViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        let viewController = AddNewNoteViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     @objc private func myNoteButtonTapped() {
