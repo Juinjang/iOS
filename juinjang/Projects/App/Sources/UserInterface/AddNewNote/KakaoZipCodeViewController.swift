@@ -66,10 +66,7 @@ extension KakaoZipCodeViewController: WKScriptMessageHandler {
         // 현재 뷰 컨트롤러를 present한 뷰 컨트롤러가 UINavigationController인지 검사
         if let navigationController = presentingViewController as? UINavigationController {
             // navigationController의 topViewController를 검사
-            if let openNewPage2VC = navigationController.topViewController as? OpenNewPage2ViewController {
-                openNewPage2VC.addressTextField.text = model?.address
-                openNewPage2VC.postCodeModel = model
-            } else if let editBasicInfoVC = navigationController.topViewController as? EditBasicInfoViewController {
+            if let editBasicInfoVC = navigationController.topViewController as? EditBasicInfoViewController {
                 editBasicInfoVC.addressTextField.text = model?.address
                 editBasicInfoVC.postModel = model
             } else if let editBasicInfoDetailVC = navigationController.topViewController as? EditBasicInfoDetailViewController {
