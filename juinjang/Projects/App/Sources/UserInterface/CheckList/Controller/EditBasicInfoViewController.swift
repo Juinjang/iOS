@@ -155,32 +155,30 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     
     lazy var houseNicknameTextField = UITextField().then {
-        let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
         let attributes: [NSAttributedString.Key: Any] = [
             .foregroundColor: UIColor.gray300,
-            .font: customFont
+            .font: UIFont.pretendard(size: 16, weight: .medium)
         ]
-        $0.attributedPlaceholder = NSAttributedString(string: "12자 이내", attributes: attributes)
+        $0.attributedPlaceholder = NSAttributedString(string: "30자 이내", attributes: attributes)
         $0.layer.backgroundColor = UIColor.mainWhite.cgColor
         $0.layer.cornerRadius = 10
         $0.layer.borderWidth = 1.5
         $0.layer.borderColor = UIColor.stroke2.cgColor
         $0.textColor = .gray500
-        $0.font = customFont
+        $0.font = .pretendard(size: 16, weight: .medium)
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
-        $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.rightView = paddingView
+        $0.rightViewMode = .always
     }
     
     lazy var priceView = UIView().then {
         $0.layer.backgroundColor = UIColor.gray100.cgColor
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     lazy var priceView2 = UIView().then {
         $0.layer.backgroundColor = UIColor.gray100.cgColor
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func configurePriceLabel(_ label: UILabel, text: String) {
@@ -456,7 +454,7 @@ final class EditBasicInfoViewController: BaseViewController {
         
         // 주소 Label
         addressLabel.snp.makeConstraints {
-            $0.top.equalTo(navigationView.snp.bottom).offset(40)
+            $0.top.equalTo(navigationView.snp.bottom).offset(14)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
@@ -562,7 +560,6 @@ final class EditBasicInfoViewController: BaseViewController {
                  fourDigitPriceField,
                  priceDetailLabels[6]])
 
-        inputPriceStackView.translatesAutoresizingMaskIntoConstraints = false
         inputPriceStackView.axis = .horizontal
         inputPriceStackView.spacing = 5
 
@@ -754,7 +751,7 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
         
         // textField에 따라 글자 수 제한
         if textField == houseNicknameTextField {
-            guard text.count + string.count - range.length <= 12 else { return false }
+            guard text.count + string.count - range.length <= 30 else { return false }
         } else if textField == threeDigitPriceField || textField == fourDigitPriceField {
             // 숫자만 허용
             let allowedCharacters = CharacterSet.decimalDigits
