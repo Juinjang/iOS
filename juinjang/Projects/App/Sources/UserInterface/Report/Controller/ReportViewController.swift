@@ -34,26 +34,21 @@ final class ReportViewController : BaseViewController {
     
     //MARK: - 총 평점 멘트, 가격, 주소
     var totalGradeLabel = UILabel().then {
-        $0.text = "판교푸르지오월드마크"
         $0.textColor = .gray600
         $0.numberOfLines = 0
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.font = UIFont(name: "Pretendard-Bold", size: 24)
+        $0.font = .pretendard(size: 24, weight: .bold)
     }
-    var imjangLabel = UILabel().then {
-        $0.text = "판교푸르지오월드마크"
-    }
+    var imjangLabel = UILabel()
     var priceLabel = UILabel().then {
-        $0.text = "30억 1천만원"
         $0.textColor = .gray450
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.font = UIFont(name: "Pretendard-SemiBold", size: 20)
+        $0.font = .pretendard(size: 20, weight: .semiBold)
     }
     var addressLabel = UILabel().then {
-        $0.text = "경기도 성남시 분당구 삼평동 741"
         $0.textColor = .gray400
         $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.font = UIFont(name: "Pretendard-Medium", size: 16)
+        $0.font = .pretendard(size: 16, weight: .medium)
     }
     
     var imjangId: Int
@@ -126,24 +121,24 @@ final class ReportViewController : BaseViewController {
         }
         
         totalGradeLabel.snp.makeConstraints{
-            $0.top.equalTo(navigationView.snp.bottom).offset(28)
-            $0.left.equalToSuperview().offset(24)
+            $0.top.equalTo(navigationView.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview().inset(24)
         }
         
         priceLabel.snp.makeConstraints{
             $0.top.equalTo(totalGradeLabel.snp.bottom).offset(13)
-            $0.left.equalToSuperview().offset(24)
+            $0.leading.equalToSuperview().offset(24)
         }
         
         addressLabel.snp.makeConstraints{
             $0.top.equalTo(priceLabel.snp.bottom).offset(6)
-            $0.left.equalToSuperview().offset(24)
-            $0.right.equalToSuperview().offset(-24)
+            $0.leading.equalToSuperview().offset(24)
+            $0.trailing.equalToSuperview().offset(-24)
         }
        
         tabViewController.view.snp.makeConstraints{
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(190)
-            $0.left.right.bottom.equalToSuperview()
+            $0.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
@@ -164,12 +159,15 @@ final class ReportViewController : BaseViewController {
     
     func setData(detailDto: DetailDto) {
         imjangLabel.text = detailDto.nickname
+        imjangLabel.numberOfLines = 0
+        
         let star = NSTextAttachment()
         star.image = UIImage.Report.bigStar
+        
         let attrString = NSMutableAttributedString(string: "\(String(format: "%.2f", totalRate))점입니다")
         let range = ("\(String(format: "%.2f", totalRate))점입니다" as NSString).range(of: "\(String(format: "%.2f", totalRate))점")
         attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
-        let text3 = NSMutableAttributedString(string: "\(imjangLabel.text ?? "판교푸르지오월드마크")의\n총점은 ")
+        let text3 = NSMutableAttributedString(string: "\(imjangLabel.text ?? "") \n의 총점은")
         text3.append(NSAttributedString(attachment: star))
         text3.append(NSAttributedString(attributedString: attrString))
         
@@ -179,23 +177,25 @@ final class ReportViewController : BaseViewController {
         totalGradeLabel.attributedText = text3
         let priceTypeString: String
         switch detailDto.priceType {
-        case 0:
-            priceTypeString = "매매"
-        case 1:
-            priceTypeString = "전세"
-        case 2:
-            priceTypeString = "월세"
-        case 3:
-            priceTypeString = "실거래가"
+        case 0: priceTypeString = "매매"
+        case 1: priceTypeString = "전세"
+        case 2: priceTypeString = "월세"
+        case 3: priceTypeString = "실거래가"
         default:
             priceTypeString = "" // 값이 없을 경우 공백 처리
         }
         setPriceLabel(priceList: detailDto.priceList, priceType: priceTypeString)
+        if let address = detailDto.address {
+            addressLabel.text = "\(address) \(detailDto.addressDetail ?? "")"
+        } else {
+            addressLabel.text = "주소 미입력"
+            addressLabel.textColor = .null
+        }
         addressLabel.text = "\(detailDto.address ?? "") \(detailDto.addressDetail ?? "")"
         addressLabel.numberOfLines = 0
         
-        tabViewController.compareVC.compareLabel1.text = detailDto.nickname
-        tabViewController.compareVC.chartCompareLabel1.text = detailDto.nickname
+        tabViewController.compareVC.compareLabel1.text = detailDto.nickname.count > 12 ? "\(detailDto.nickname.prefix(11))﹒﹒﹒" : detailDto.nickname
+        tabViewController.compareVC.chartCompareLabel1.text = detailDto.nickname.count > 12 ? "\(detailDto.nickname.prefix(11))﹒﹒﹒" : detailDto.nickname
     }
     
     func setData(reportDto: ReportDTO) {
