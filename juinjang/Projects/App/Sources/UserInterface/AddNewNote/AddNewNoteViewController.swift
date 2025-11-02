@@ -339,6 +339,11 @@ final class AddNewNoteViewController: BaseViewController {
         view.endEditing(true)
     }
     
+    override func setPopSwipe() {
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+    }
+    
     func setupScrollView() {
         view.add(navigationView, scrollView)
         scrollView.addSubview(contentView)
@@ -1151,5 +1156,11 @@ extension AddNewNoteViewController: UITextFieldDelegate {
             textField.placeholder = "0000"
             updateTextFieldWidthConstraint(for: textField, constant: 74)
         }
+    }
+}
+
+extension AddNewNoteViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
     }
 }
