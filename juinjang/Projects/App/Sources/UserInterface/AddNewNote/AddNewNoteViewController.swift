@@ -933,12 +933,8 @@ final class AddNewNoteViewController: BaseViewController {
     }
     
     @objc func buttonTapped(_ sender: UIButton) {
-        let newPageViewController = OpenNewPage2ViewController()
         setVersionInfo()
         // 데이터 전달
-        newPageViewController.transactionModel = transactionModel
-        newPageViewController.versionInfo = versionInfo
-        // threeDigitPriceField와 fourDigitPriceField의 값을 합쳐서 selectedPrice에 저장
         let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
         let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
         selectedPrice = String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)
