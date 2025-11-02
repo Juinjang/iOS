@@ -24,7 +24,7 @@ final class CancelAddNewNotePopupController: BaseAlertViewController {
         super.init(
             height: 234,
             contentViews: [titleLabel],
-            buttons: [.confirm(title: "홈으로 가기", color: .gray500, backgroundColor: .gray3), .cancel(title: "계속하기", color: .mainWhite, backgroundColor: .gray500)]
+            buttons: [.confirm(title: "그만두기", color: .gray500, backgroundColor: .gray3), .cancel(title: "계속하기", color: .mainWhite, backgroundColor: .gray500)]
         )
         configureView()
     }
