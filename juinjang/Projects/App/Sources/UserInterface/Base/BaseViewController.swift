@@ -22,19 +22,11 @@ class BaseViewController: UIViewController {
         super.viewDidLoad()
         navigationController?.navigationBar.isHidden = true
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
-        setSwipe()
+        setPopSwipe()
     }
     
-    private func setSwipe() {
-        let swipeRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(swipeAction))
-        swipeRecognizer.direction = .right
-        view.addGestureRecognizer(swipeRecognizer)
-    }
-    
-    @objc func swipeAction(_ sender: UISwipeGestureRecognizer) {
-        if sender.direction == .right {
-            self.navigationController?.popViewController(animated: true)
-        }
+    func setPopSwipe() {
+        navigationController?.interactivePopGestureRecognizer?.delegate = nil
     }
     
     @objc func showLoginVC(notification: Notification) {
