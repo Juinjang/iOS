@@ -167,7 +167,7 @@ final class ReportViewController : BaseViewController {
         let attrString = NSMutableAttributedString(string: "\(String(format: "%.2f", totalRate))점입니다")
         let range = ("\(String(format: "%.2f", totalRate))점입니다" as NSString).range(of: "\(String(format: "%.2f", totalRate))점")
         attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
-        let text3 = NSMutableAttributedString(string: "\(imjangLabel.text ?? "") \n의 총점은")
+        let text3 = NSMutableAttributedString(string: "\(imjangLabel.text ?? "")의\n총점은")
         text3.append(NSAttributedString(attachment: star))
         text3.append(NSAttributedString(attributedString: attrString))
         
