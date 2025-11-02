@@ -945,6 +945,10 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         
         return commonOK && priceOK && monthlyOK
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
 }
 
 
