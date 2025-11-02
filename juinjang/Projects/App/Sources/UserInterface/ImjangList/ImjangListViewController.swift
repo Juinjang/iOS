@@ -68,7 +68,7 @@ final class ImjangListViewController: BaseViewController {
         setDelegate()
         fetchImjangList(sort: .updated, setScrap: true)
         mainView.collectionView.isHidden = imjangList.isEmpty
-        mainView.newPageButton.addTarget(self, action: #selector(openNewPageVC), for: .touchUpInside)
+        mainView.newPageButton.addTarget(self, action: #selector(navigateToAddNewNoteVC), for: .touchUpInside)
         NotificationCenter.default.addObserver(self, selector: #selector(refreshImjangList), name: .refreshImjangList, object: nil)
     }
     
@@ -91,7 +91,7 @@ final class ImjangListViewController: BaseViewController {
                 case .searchButtonTap:
                     self.showSearchVC()
                 case .addButtonTap:
-                    self.openNewPageVC()
+                    self.navigateToAddNewNoteVC()
                 default:
                     break
                 }
@@ -174,9 +174,9 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     }
     
     // 새 페이지 만들기
-    @objc private func openNewPageVC() {
-        let openNewPageVC = OpenNewPageViewController()
-        self.navigationController?.pushViewController(openNewPageVC, animated: true)
+    @objc private func navigateToAddNewNoteVC() {
+        let viewController = AddNewNoteViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     // 검색 화면으로 이동
