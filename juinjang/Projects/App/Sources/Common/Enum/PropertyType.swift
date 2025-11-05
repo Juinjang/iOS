@@ -39,4 +39,13 @@ enum PropertyType: String, CaseIterable {
         case .DETACHED_HOUSE: return "주택"
         }
     }
+    
+    var index: Int {
+        switch self {
+        case .APARTMENT: 0
+        case .VILLA: 1
+        case .OFFICE_TEL: 2
+        case .DETACHED_HOUSE: 3
+        }
+    }
 }

@@ -40,15 +40,15 @@ final class TopTableViewCell: UITableViewCell {
         $0.image = UIImage.Main.threeLogo
     }
     
-    let newPageButton = UIButton().then {
+    let addNewNoteButton = UIButton().then {
         var config = UIButton.Configuration.plain()
         config.background.image = .Main.newPage.resize(newHeight: 136)
         config.background.imageContentMode = .scaleToFill
         config.background.cornerRadius = 10
         $0.configuration = config
     }
-    private let newPageLabel = UILabel().then {
-        $0.text = "새 페이지 펼치기"
+    private let addNewNoteLabel = UILabel().then {
+        $0.text = "새 노트 생성하기"
         $0.textColor = .mainWhite
         $0.font = .pretendard(size: 20, weight: .extraBold)
     }
@@ -70,7 +70,6 @@ final class TopTableViewCell: UITableViewCell {
     //MARK: - init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        print("TopTableViewCell init")
         addContentView()
         autoLayout()
     }
@@ -101,8 +100,8 @@ final class TopTableViewCell: UITableViewCell {
         myNoteButton.addSubview(myNoteLabel)
         myNoteButton.addSubview(myNoteImageView)
         
-        contentView.addSubview(newPageButton)
-        newPageButton.addSubview(newPageLabel)
+        contentView.addSubview(addNewNoteButton)
+        addNewNoteButton.addSubview(addNewNoteLabel)
         contentView.addSubview(lookAroundButton)
         lookAroundButton.addSubview(lookAroundLabel)
     }
@@ -133,22 +132,20 @@ final class TopTableViewCell: UITableViewCell {
             $0.trailing.equalTo(myNoteButton.snp.trailing).offset(-28)
         }
         
-        
-        //새 페이지 구현
-        newPageButton.snp.makeConstraints{
+        addNewNoteButton.snp.makeConstraints{
             $0.top.equalTo(myNoteButton.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(24)
             $0.trailing.equalTo(contentView.snp.centerX).offset(-4)
             $0.height.equalTo(136)
         }
     
-        newPageLabel.snp.makeConstraints{
-            $0.bottom.equalTo(newPageButton.snp.bottom).offset(-14)
+        addNewNoteLabel.snp.makeConstraints{
+            $0.bottom.equalTo(addNewNoteButton.snp.bottom).offset(-14)
             $0.centerX.equalToSuperview().offset(-4)
         }
         
         lookAroundButton.snp.makeConstraints { make in
-            make.top.equalTo(newPageButton.snp.top)
+            make.top.equalTo(addNewNoteButton.snp.top)
             make.trailing.equalToSuperview().inset(24)
             make.leading.equalTo(contentView.snp.centerX).offset(4)
             make.height.equalTo(136)

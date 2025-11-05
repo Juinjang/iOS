@@ -10,15 +10,15 @@ import RxSwift
 import RxCocoa
 
 enum AlertButtonType: Equatable {
-    case confirm(title: String, width: CGFloat?)
-    case cancel(title: String, width: CGFloat?)
+    case confirm(title: String, width: CGFloat?, color: UIColor = .mainWhite, backgroundColor: UIColor = .gray500)
+    case cancel(title: String, width: CGFloat?, color: UIColor = .gray500, backgroundColor: UIColor = .gray3)
     case custom(view: UIView)
     
     var title: String {
         switch self {
-        case .cancel(title: let title, _):
+        case .cancel(title: let title, _, _, _):
             return title
-        case .confirm(title: let title, _):
+        case .confirm(title: let title, _, _, _):
             return title
         default:
             return ""
@@ -27,21 +27,21 @@ enum AlertButtonType: Equatable {
 
     var event: AlertEventType {
         switch self {
-        case .confirm(_,_):
+        case .confirm:
             return .confirm
-        case .cancel(_,_):
+        case .cancel:
             return .cancel
-        case .custom(_):
+        case .custom:
             return .custom
         }
     }
 
-    static func confirm(title: String) -> AlertButtonType {
-        return .confirm(title: title, width: nil)
+    static func confirm(title: String, color: UIColor = .mainWhite, backgroundColor: UIColor = .gray500) -> AlertButtonType {
+        return .confirm(title: title, width: nil, color: color, backgroundColor: backgroundColor)
     }
 
-    static func cancel(title: String) -> AlertButtonType {
-        return .cancel(title: title, width: nil)
+    static func cancel(title: String, color: UIColor = .gray500, backgroundColor: UIColor = .gray3) -> AlertButtonType {
+        return .cancel(title: title, width: nil, color: color, backgroundColor: backgroundColor)
     }
 }
 

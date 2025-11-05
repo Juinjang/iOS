@@ -23,7 +23,7 @@ final class DeleteNoteAlertViewController: BaseAlertViewController {
         let label = DSLabel(.body)
         label.fontColor = .gray600
         label.textAlignment = .center
-        
+        label.numberOfLines = 0
         return label
     }()
     
@@ -93,6 +93,7 @@ final class DeleteNoteAlertViewController: BaseAlertViewController {
         super.configureContentLayout()
         roomNameLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
+            make.horizontalEdges.equalToSuperview().inset(24)
             make.top.equalToSuperview().inset(40)
             make.height.equalTo(23)
         }
@@ -115,6 +116,7 @@ final class DeleteNoteAlertViewController: BaseAlertViewController {
             messageLabel.text = "를 정말 삭제할까요?"
         } else {
             messageLabel.text = "외 \(selectedCount - 1)건을 정말 삭제할까요?"
+            messageLabel.asFont(targetString: "외 \(selectedCount - 1)건을 정말 삭제할까요?", font: .pretendard(size: 16, weight: .medium))
         }
         messageLabel.asColor(targetString: "외 \(selectedCount - 1)건", color: .main)
         messageLabel.textAlignment = .center

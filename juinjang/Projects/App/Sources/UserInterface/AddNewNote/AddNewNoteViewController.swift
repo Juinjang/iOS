@@ -1,18 +1,16 @@
 //
-//  OpenNewPageViewController.swift
-//  juinjang
+//  AddNewNoteViewController.swift
+//  App
 //
-//  Created by 임수진 on 2023/12/30.
+//  Created by 조유진 on 10/16/25.
 //
 
 import UIKit
-import Then
-import SnapKit
-import AmplitudeSwift
 import RxSwift
+import AmplitudeSwift
+import SnapKit
 
-final class OpenNewPageViewController: BaseViewController {
-    
+final class AddNewNoteViewController: BaseViewController {
     var purposeButtons: [UIButton] = [] // "거래 목적"을 나타내는 선택지
     var propertyTypeButtons: [UIButton] = [] // "매물 유형"을 나타내는 선택지
     var moveTypeButtons: [UIButton] = [] // "입주 유형"을 나타내는 선택지
@@ -40,9 +38,9 @@ final class OpenNewPageViewController: BaseViewController {
     var transactionModel = TransactionModel()
     var versionInfo: VersionInfo?
     var newImjang: PostDto?
-    var selectedPurposeType: Int?
-    var selectedPropertyType: Int?
-    var selectedPriceType: Int = 3 // 기본값 실거래가로 설정
+    var selectedPurposeType: PurposeType?
+    var selectedPropertyType: PropertyType?
+    var selectedPriceType: PriceType = .MARKET_PRICE // 기본값 실거래가로 설정
     var selectedPrice: String = ""
     var selectedMonthlyRent: String? = nil
     
@@ -95,8 +93,7 @@ final class OpenNewPageViewController: BaseViewController {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 66, height: 24)
         label.textColor = .gray600
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 18)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .pretendard(size: 18, weight: .semiBold)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.13
@@ -105,19 +102,23 @@ final class OpenNewPageViewController: BaseViewController {
         label.minimumScaleFactor = 0.5
     }
     
-    lazy var purposeLabel = UILabel().then {
+    private lazy var purposeLabel = UILabel().then {
         configureLabel($0, text: "거래 목적")
     }
     
-    lazy var typeLabel = UILabel().then {
+    private lazy var typeLabel = UILabel().then {
         configureLabel($0, text: "매물 유형")
     }
     
-    lazy var priceLabel = UILabel().then {
+    private lazy var priceLabel = UILabel().then {
         configureLabel($0, text: "가격")
     }
     
-    func configureButton(_ button: UIButton, normalImage: UIImage?, selectedImage: UIImage?, action: Selector) {
+    private lazy var requiredLabel1 = makeRequiredLabel()
+    private lazy var requiredLabel2 = makeRequiredLabel()
+    private lazy var requiredLabel3 = makeRequiredLabel()
+    
+    private func configureButton(_ button: UIButton, normalImage: UIImage?, selectedImage: UIImage?, action: Selector) {
         button.frame = CGRect(x: 0, y: 0, width: 200, height: 50)
         button.setBackgroundImage(normalImage, for: .normal)
         button.setBackgroundImage(selectedImage, for: .selected)
@@ -166,20 +167,17 @@ final class OpenNewPageViewController: BaseViewController {
     
     lazy var priceView = UIView().then {
         $0.layer.backgroundColor = UIColor.gray100.cgColor
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     lazy var priceView2 = UIView().then {
         $0.layer.backgroundColor = UIColor.gray100.cgColor
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     func configurePriceLabel(_ label: UILabel, text: String) {
         label.text = text
         label.frame = CGRect(x: 0, y: 0, width: 55, height: 22)
         label.textColor = .gray500
-        label.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = .pretendard(size: 16, weight: .semiBold)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineHeightMultiple = 1.13
@@ -219,20 +217,17 @@ final class OpenNewPageViewController: BaseViewController {
             string: "000",
             attributes: [
                 .foregroundColor: UIColor.gray300,
-                .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
+                .font: UIFont.pretendard(size: 24, weight: .medium)
             ]
         )
         $0.textColor = .main
         $0.keyboardType = .numberPad
-        if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
-            $0.font = customFont
-        }
+        $0.font = .pretendard(size: 24, weight: .semiBold)
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
         $0.leftView = paddingView
         $0.rightView = paddingView
         $0.rightViewMode = .always
         $0.leftViewMode = .always
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     lazy var fourDigitPriceField = UITextField().then {
@@ -242,20 +237,17 @@ final class OpenNewPageViewController: BaseViewController {
             string: "0000",
             attributes: [
                 .foregroundColor: UIColor.gray300,
-                .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
+                .font: UIFont.pretendard(size: 24, weight: .medium)
             ]
         )
         $0.textColor = .main
         $0.keyboardType = .numberPad
-        if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
-            $0.font = customFont
-        }
+        $0.font = .pretendard(size: 24, weight: .semiBold)
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
         $0.leftView = paddingView
         $0.rightView = paddingView
         $0.rightViewMode = .always
         $0.leftViewMode = .always
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
     lazy var fourDigitMonthlyRentField = UITextField().then {
@@ -265,45 +257,43 @@ final class OpenNewPageViewController: BaseViewController {
             string: "0000",
             attributes: [
                 .foregroundColor: UIColor.gray300,
-                .font: UIFont(name: "Pretendard-Medium", size: 24) ?? UIFont.systemFont(ofSize: 24)
+                .font: UIFont.pretendard(size: 24, weight: .medium)
             ]
         )
         $0.textColor = .main
         $0.keyboardType = .numberPad
-        if let customFont = UIFont(name: "Pretendard-SemiBold", size: 24) {
-            $0.font = customFont
-        }
+        $0.font = .pretendard(size: 24, weight: .semiBold)
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 8, height: $0.frame.height))
         $0.leftView = paddingView
         $0.rightView = paddingView
         $0.rightViewMode = .always
         $0.leftViewMode = .always
-        $0.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    lazy var nextButtonContainerView = UIView().then {
+    lazy var addNoteButtonContainerView = UIView().then {
         $0.backgroundColor = .mainWhite
     }
     
-    lazy var nextButton = UIButton().then {
-        $0.setTitle("다음으로", for: .normal)
+    lazy var addNoteButton = UIButton().then {
+        $0.setTitle("노트 생성하기", for: .normal)
         $0.setTitleColor(.mainWhite, for: .normal)
         
         $0.backgroundColor = .null
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         
-        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
         $0.titleLabel?.adjustsFontSizeToFitWidth = true
         $0.titleLabel?.minimumScaleFactor = 0.5
         $0.titleLabel?.lineBreakMode = .byTruncatingTail
     }
     
+    private let repository = NoteRepository()
     private let disposeBag = DisposeBag()
     
     private let navigationView = DefaultNavigationView().then {
         $0.leftItem = [.pop]
-        $0.title = "새 페이지 펼치기"
+        $0.title = "새 노트 생성하기"
     }
     
     // MARK: - viewDidLoad()
@@ -336,26 +326,34 @@ final class OpenNewPageViewController: BaseViewController {
         fourDigitPriceField.delegate = self
         fourDigitMonthlyRentField.delegate = self
         checkNextButtonActivation()
-        nextButton.isEnabled = false
+        addNoteButton.isEnabled = false
         amplitude.track(
             event: BaseEvent(
                 eventType: AmpliEventName.page_viewed.rawValue,
-                eventProperties: [AmpliEventProp.info_page_1.rawValue:"true"]
+                eventProperties: [AmpliEventProp.newPage.rawValue:"true"]
             )
-        )  // 페이지 진입
+        )
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         view.endEditing(true)
     }
     
+    override func setPopSwipe() {
+        navigationController?.interactivePopGestureRecognizer?.isEnabled = false
+        navigationController?.interactivePopGestureRecognizer?.delegate = self
+    }
+    
     func setupScrollView() {
         view.add(navigationView, scrollView)
         scrollView.addSubview(contentView)
-        // 위젯들을 서브뷰로 추가
+        
         [purposeLabel,
+        requiredLabel1,
         typeLabel,
+        requiredLabel2,
         priceLabel,
+        requiredLabel3,
         backgroundImageView,
         apartmentImageView,
         villaImageView,
@@ -363,40 +361,15 @@ final class OpenNewPageViewController: BaseViewController {
         houseImageView,
         priceView,
         priceView2].forEach { contentView.addSubview($0) }
-        view.addSubview(nextButtonContainerView)
-        nextButtonContainerView.addSubview(nextButton)
+        view.addSubview(addNoteButtonContainerView)
+        addNoteButtonContainerView.addSubview(addNoteButton)
         setupScrollLayout()
         setButton()
         
         view.bringSubviewToFront(navigationView)
     }
     
-    func setupWidgets() {
-        // 위젯들을 서브뷰로 추가
-        [purposeLabel,
-        typeLabel,
-        priceLabel,
-        backgroundImageView,
-        apartmentImageView,
-        villaImageView,
-        officetelImageView,
-        houseImageView,
-        priceView,
-        priceView2,
-        nextButtonContainerView,
-        nextButton].forEach { view.addSubview($0) }
-        setupLayout()
-        setButton()
-    }
-    
     func setupScrollLayout() {
-        // 비율
-        let screenWidth = UIScreen.main.bounds.width
-        let screenHeight = UIScreen.main.bounds.height
-        
-        let buttonWidth = screenWidth * 0.8769 // 너비 비율
-        let buttonHeight = screenHeight * 0.07 // 높이 비율
-        
         navigationView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
             $0.horizontalEdges.equalToSuperview()
@@ -407,20 +380,13 @@ final class OpenNewPageViewController: BaseViewController {
             $0.top.equalTo(navigationView.snp.bottom)
             $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(view.snp.width)
-//            $0.height.equalTo(view.snp.height).multipliedBy(0.75)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
         
         contentView.snp.makeConstraints {
-//            $0.top.equalTo(scrollView.snp.top)
-//            $0.leading.trailing.equalToSuperview()
             $0.width.equalTo(scrollView.frameLayoutGuide)
-//            $0.height.equalTo(view.snp.height).multipliedBy(1.1)
-//            $0.bottom.equalTo(nextButton.snp.top).offset(10)
             $0.edges.equalTo(scrollView.contentLayoutGuide)
         }
-        
-//        setupLayout()
         
         // 배경 ImageView
         backgroundImageView.snp.makeConstraints {
@@ -474,10 +440,13 @@ final class OpenNewPageViewController: BaseViewController {
             $0.leading.equalTo(contentView.snp.leading).offset(24)
         }
         
+        requiredLabel1.snp.makeConstraints { make in
+            make.centerY.equalTo(purposeLabel)
+            make.leading.equalTo(purposeLabel.snp.trailing).offset(4)
+        }
+        
         // 거래 목적 Stack View
         let purposeButtonsStackView = UIStackView(arrangedSubviews: [realestateInvestmentButton, moveInDirectlyButton])
-        
-        purposeButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
         purposeButtonsStackView.axis = .horizontal
         purposeButtonsStackView.spacing = 8
         
@@ -497,10 +466,13 @@ final class OpenNewPageViewController: BaseViewController {
             $0.leading.equalTo(contentView.snp.leading).offset(24)
         }
         
+        requiredLabel2.snp.makeConstraints { make in
+            make.centerY.equalTo(typeLabel)
+            make.leading.equalTo(typeLabel.snp.trailing).offset(4)
+        }
+        
         // 매물 유형 Stack View
         let propertyTypeStackView = UIStackView(arrangedSubviews: [apartmentButton, villaButton, officetelButton, houseButton])
-        
-        propertyTypeStackView.translatesAutoresizingMaskIntoConstraints = false
         propertyTypeStackView.axis = .horizontal
         propertyTypeStackView.spacing = 8
         
@@ -515,9 +487,14 @@ final class OpenNewPageViewController: BaseViewController {
         // 가격 Label
         priceLabel.snp.makeConstraints {
             $0.top.equalTo(propertyTypeStackView.snp.bottom).offset(27)
-            $0.width.equalToSuperview().multipliedBy(0.18)
+            $0.width.equalTo(31)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(contentView.snp.leading).offset(24)
+        }
+        
+        requiredLabel3.snp.makeConstraints { make in
+            make.centerY.equalTo(priceLabel)
+            make.leading.equalTo(priceLabel.snp.trailing).offset(4)
         }
         
         // 가격 View
@@ -542,7 +519,6 @@ final class OpenNewPageViewController: BaseViewController {
                  jeonseButton,
                  monthlyRentButton])
         
-        moveTypeStackView.translatesAutoresizingMaskIntoConstraints = false
         moveTypeStackView.axis = .horizontal
         moveTypeStackView.spacing = 8
         
@@ -557,7 +533,6 @@ final class OpenNewPageViewController: BaseViewController {
                  fourDigitPriceField,
                  priceDetailLabels[6]])
 
-        inputPriceStackView.translatesAutoresizingMaskIntoConstraints = false
         inputPriceStackView.axis = .horizontal
         inputPriceStackView.spacing = 5
 
@@ -584,7 +559,6 @@ final class OpenNewPageViewController: BaseViewController {
         
         // 월세 가격 입력칸 Stack View
         inputMonthlyRentStackView = UIStackView()
-        inputMonthlyRentStackView.translatesAutoresizingMaskIntoConstraints = false
         inputMonthlyRentStackView.axis = .horizontal
         inputMonthlyRentStackView.spacing = 5
     
@@ -599,207 +573,19 @@ final class OpenNewPageViewController: BaseViewController {
             $0.centerY.equalTo(priceView.snp.centerY)
         }
         
-        nextButtonContainerView.snp.makeConstraints {
-//            $0.top.equalTo(scrollView.snp.bottom)
+        addNoteButtonContainerView.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(view.snp.bottom)
             $0.height.equalTo(97)
         }
-        scrollView.bringSubviewToFront(nextButtonContainerView)
+        scrollView.bringSubviewToFront(addNoteButtonContainerView)
         
         // 다음으로 버튼
-        nextButton.snp.makeConstraints {
-//            $0.width.equalTo(view.snp.width).multipliedBy(0.87)
+        addNoteButton.snp.makeConstraints {
             $0.height.equalTo(52)
-//            $0.top.equalTo(nextButtonContainerView.snp.top).offset(12)
-            $0.leading.equalTo(nextButtonContainerView.snp.leading).offset(24)
-            $0.trailing.equalTo(nextButtonContainerView.snp.trailing).offset(-24)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-33)
-            $0.bottom.equalTo(nextButtonContainerView.snp.bottom).offset(-33)
-        }
-    }
-    
-    
-    func setupLayout() {
-        // 위젯에 관한 Auto Layout 설정
-        
-        // 배경 ImageView
-        backgroundImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(view.snp.height).multipliedBy(0.28)
-        }
-        
-        // 건물 ImageView
-        apartmentImageView.snp.makeConstraints {
-            $0.bottom.equalTo(backgroundImageView.snp.bottom).offset(-13)
-            $0.trailing.equalTo(backgroundImageView.snp.trailing).offset(-95)
-            $0.top.equalTo(backgroundImageView.snp.top).offset(30)
-        }
-        
-        villaImageView.snp.makeConstraints {
-            $0.bottom.equalTo(backgroundImageView.snp.bottom).offset(-14.5)
-            $0.trailing.equalTo(backgroundImageView.snp.trailing).offset(-95)
-            $0.top.equalTo(backgroundImageView.snp.top).offset(82)
-        }
-        
-        officetelImageView.snp.makeConstraints {
-            $0.bottom.equalTo(backgroundImageView.snp.bottom).offset(-14.5)
-            $0.trailing.equalTo(backgroundImageView.snp.trailing).offset(-95)
-            $0.top.equalTo(backgroundImageView.snp.top).offset(37)
-        }
-        
-        houseImageView.snp.makeConstraints {
-            $0.bottom.equalTo(backgroundImageView.snp.bottom).offset(-14.84)
-            $0.trailing.equalTo(backgroundImageView.snp.trailing).offset(-91)
-            $0.top.equalTo(backgroundImageView.snp.top).offset(102)
-        }
-        
-        apartmentImageView.isHidden = true
-        villaImageView.isHidden = true
-        officetelImageView.isHidden = true
-        houseImageView.isHidden = true
-        
-        // 거래 목적 Label
-        purposeLabel.snp.makeConstraints {
-            $0.top.equalTo(backgroundImageView.snp.bottom).offset(21)
-            $0.width.equalToSuperview().multipliedBy(0.18)
-            $0.height.equalToSuperview().multipliedBy(0.03)
-            $0.leading.equalTo(view.snp.leading).offset(24)
-        }
-        
-        // 거래 목적 Stack View
-        let purposeButtonsStackView = UIStackView(arrangedSubviews: [realestateInvestmentButton, moveInDirectlyButton])
-        
-        purposeButtonsStackView.translatesAutoresizingMaskIntoConstraints = false
-        purposeButtonsStackView.axis = .horizontal
-        purposeButtonsStackView.spacing = 8
-        
-        view.addSubview(purposeButtonsStackView)
-        
-        purposeButtonsStackView.snp.makeConstraints {
-            $0.top.equalTo(purposeLabel.snp.bottom).offset(12)
-            $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.08)
-            $0.leading.equalTo(view).offset(24)
-        }
-        
-        // 매물 유형 Label
-        typeLabel.snp.makeConstraints {
-            $0.top.equalTo(realestateInvestmentButton.snp.bottom).offset(27)
-            $0.width.equalToSuperview().multipliedBy(0.18)
-            $0.height.equalToSuperview().multipliedBy(0.03)
-            $0.leading.equalTo(view.snp.leading).offset(24)
-        }
-        
-        // 매물 유형 Stack View
-        let propertyTypeStackView = UIStackView(arrangedSubviews: [apartmentButton, villaButton, officetelButton, houseButton])
-        
-        propertyTypeStackView.translatesAutoresizingMaskIntoConstraints = false
-        propertyTypeStackView.axis = .horizontal
-        propertyTypeStackView.spacing = 8
-        
-        view.addSubview(propertyTypeStackView)
-        
-        propertyTypeStackView.snp.makeConstraints {
-            $0.top.equalTo(typeLabel.snp.bottom).offset(12)
-            $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.08)
-            $0.leading.equalTo(view).offset(24)
-        }
-        
-        // 가격 Label
-        priceLabel.snp.makeConstraints {
-            $0.top.equalTo(propertyTypeStackView.snp.bottom).offset(27)
-            $0.width.equalToSuperview().multipliedBy(0.18)
-            $0.height.equalToSuperview().multipliedBy(0.03)
-            $0.leading.equalTo(view.snp.leading).offset(24)
-        }
-        
-        // 가격 View
-        priceView.snp.makeConstraints {
-            $0.top.equalTo(priceLabel.snp.bottom).offset(12)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(view.snp.height).multipliedBy(0.05)
-        }
-        
-        priceView2.snp.makeConstraints {
-            $0.top.equalTo(priceView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(view.snp.height).multipliedBy(0.05)
-        }
-        
-        priceView2.isHidden = true
-        
-        // 입주 유형 Stack View
-        moveTypeStackView = UIStackView(
-            arrangedSubviews:
-                [saleButton,
-                 jeonseButton,
-                 monthlyRentButton])
-        
-        moveTypeStackView.translatesAutoresizingMaskIntoConstraints = false
-        moveTypeStackView.axis = .horizontal
-        moveTypeStackView.spacing = 8
-        
-        // 매매 버튼이 기본으로 선택되어 있음
-        saleButton.isSelected = true
-
-        // 가격 입력칸 Stack View
-        inputPriceStackView = UIStackView(
-            arrangedSubviews:
-                [threeDigitPriceField,
-                 priceDetailLabels[4],
-                 fourDigitPriceField,
-                 priceDetailLabels[6]])
-
-        inputPriceStackView.translatesAutoresizingMaskIntoConstraints = false
-        inputPriceStackView.axis = .horizontal
-        inputPriceStackView.spacing = 5
-
-        priceView.addSubview(inputPriceStackView)
-
-        if let priceDetailLabel = priceDetailLabel {
-            priceDetailLabel.snp.makeConstraints {
-                $0.centerY.equalTo(priceView.snp.centerY)
-                $0.top.equalTo(priceView.snp.top).offset(8)
-                $0.leading.equalTo(priceView.snp.leading).offset(24)
-            }
-            inputPriceStackView.snp.makeConstraints {
-                $0.leading.equalTo(priceDetailLabel.snp.trailing).offset(16)
-                $0.centerY.equalTo(priceView.snp.centerY)
-                $0.top.equalTo(priceView.snp.top).offset(8)
-            }
-        }
-        
-        propertyTypeStackView.snp.makeConstraints {
-            $0.top.equalTo(typeLabel.snp.bottom).offset(12)
-            $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.07)
-            $0.leading.equalTo(view).offset(24)
-        }
-        
-        // 월세 가격 입력칸 Stack View
-        inputMonthlyRentStackView = UIStackView()
-        inputMonthlyRentStackView.translatesAutoresizingMaskIntoConstraints = false
-        inputMonthlyRentStackView.axis = .horizontal
-        inputMonthlyRentStackView.spacing = 5
-    
-        // 가격 입력 받는 TextField
-        threeDigitPriceField.snp.makeConstraints {
-            $0.top.equalTo(priceView.snp.top).offset(4)
-            $0.centerY.equalTo(priceView.snp.centerY)
-        }
-
-        fourDigitPriceField.snp.makeConstraints {
-            $0.top.equalTo(priceView.snp.top).offset(4)
-            $0.centerY.equalTo(priceView.snp.centerY)
-        }
-        
-        // 다음으로 버튼
-        nextButton.snp.makeConstraints {
-            $0.width.equalTo(view.snp.width).multipliedBy(0.87)
-            $0.height.equalTo(52)
-            $0.centerX.equalTo(view.snp.centerX)
-//            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).offset(-33)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.leading.equalTo(addNoteButtonContainerView.snp.leading).offset(24)
+            $0.trailing.equalTo(addNoteButtonContainerView.snp.trailing).offset(-24)
+            $0.bottom.equalTo(addNoteButtonContainerView.snp.bottom).offset(-33)
         }
     }
     
@@ -828,8 +614,8 @@ final class OpenNewPageViewController: BaseViewController {
             
             // 버튼에 따라 사용자 표시
             if sender == realestateInvestmentButton {
-                selectedPurposeType = 0
-                selectedPriceType = 3
+                selectedPurposeType = .INVESTMENT
+                selectedPriceType = .MARKET_PRICE
                 transactionModel.selectedPurposeButtonImage = investorImageView.image
                 backgroundImageView.addSubview(investorImageView)
                 priceView2.isHidden = true
@@ -845,8 +631,8 @@ final class OpenNewPageViewController: BaseViewController {
                 }
                 movingUserImageView.removeFromSuperview()
             } else if sender == moveInDirectlyButton {
-                selectedPurposeType = 1
-                selectedPriceType = 0
+                selectedPurposeType = .RESIDENTIAL_PURPOSE
+                selectedPriceType = .SALE
                 transactionModel.selectedPurposeButtonImage = movingUserImageView.image
                 backgroundImageView.addSubview(movingUserImageView)
                 priceDetailLabel?.removeFromSuperview()
@@ -870,22 +656,22 @@ final class OpenNewPageViewController: BaseViewController {
             
             // 버튼에 따라 집 표시
             if sender == apartmentButton {
-                selectedPropertyType = 0
+                selectedPropertyType = .APARTMENT
                 transactionModel.selectedPropertyTypeButtonImage = apartmentImageView.image
                 RemovePropertyImageViews()
                 apartmentImageView.isHidden = false
             } else if sender == villaButton {
-                selectedPropertyType = 1
+                selectedPropertyType = .VILLA
                 transactionModel.selectedPropertyTypeButtonImage = villaImageView.image
                 RemovePropertyImageViews()
                 villaImageView.isHidden = false
             } else if sender == officetelButton {
-                selectedPropertyType = 2
+                selectedPropertyType = .OFFICE_TEL
                 transactionModel.selectedPropertyTypeButtonImage = officetelImageView.image
                 RemovePropertyImageViews()
                 officetelImageView.isHidden = false
             } else if sender == houseButton {
-                selectedPropertyType = 3
+                selectedPropertyType = .DETACHED_HOUSE
                 transactionModel.selectedPropertyTypeButtonImage = houseImageView.image
                 RemovePropertyImageViews()
                 houseImageView.isHidden = false
@@ -906,7 +692,7 @@ final class OpenNewPageViewController: BaseViewController {
             
             // 버튼에 따라 가격 View 표시
             if sender == saleButton {
-                selectedPriceType = 0
+                selectedPriceType = .SALE
                 threeDigitPriceField.text = ""
                 fourDigitPriceField.text = ""
                 priceView2.isHidden = true
@@ -914,7 +700,7 @@ final class OpenNewPageViewController: BaseViewController {
                 priceDetailLabel = priceDetailLabels[1]
                 checkPriceDetailLabel()
             } else if sender == jeonseButton {
-                selectedPriceType = 1
+                selectedPriceType = .PULL_RENT
                 threeDigitPriceField.text = ""
                 fourDigitPriceField.text = ""
                 priceView2.isHidden = true
@@ -922,7 +708,7 @@ final class OpenNewPageViewController: BaseViewController {
                 priceDetailLabel = priceDetailLabels[3]
                 checkPriceDetailLabel()
             } else if sender == monthlyRentButton {
-                selectedPriceType = 2
+                selectedPriceType = .MONTHLY_RENT
                 threeDigitPriceField.text = ""
                 fourDigitPriceField.text = ""
                 fourDigitMonthlyRentField.text = ""
@@ -1080,11 +866,11 @@ final class OpenNewPageViewController: BaseViewController {
                 
                 // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
                 if allCategoriesSelected && allTextFieldsFilled {
-                    nextButton.isEnabled = true
-                    nextButton.backgroundColor = .gray500
+                    addNoteButton.isEnabled = true
+                    addNoteButton.backgroundColor = .gray500
                 } else {
-                    nextButton.isEnabled = false
-                    nextButton.backgroundColor = .null
+                    addNoteButton.isEnabled = false
+                    addNoteButton.backgroundColor = .null
                 }
             } else if moveInDirectlyButton.isSelected {
                 if saleButton.isSelected || jeonseButton.isSelected {
@@ -1109,11 +895,11 @@ final class OpenNewPageViewController: BaseViewController {
                     
                     // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
                     if allCategoriesSelected && allTextFieldsFilled {
-                        nextButton.isEnabled = true
-                        nextButton.backgroundColor = .gray500
+                        addNoteButton.isEnabled = true
+                        addNoteButton.backgroundColor = .gray500
                     } else {
-                        nextButton.isEnabled = false
-                        nextButton.backgroundColor = .null
+                        addNoteButton.isEnabled = false
+                        addNoteButton.backgroundColor = .null
                     }
                 } else if monthlyRentButton.isSelected {
                     // 매물 유형 버튼과 이사 유형 버튼이 선택되었는지 확인
@@ -1140,11 +926,11 @@ final class OpenNewPageViewController: BaseViewController {
                     
                     // 모든 조건이 충족되었을 때 다음으로 버튼 활성화
                     if allCategoriesSelected && allTextFieldsFilled {
-                        nextButton.isEnabled = true
-                        nextButton.backgroundColor = .gray500
+                        addNoteButton.isEnabled = true
+                        addNoteButton.backgroundColor = .gray500
                     } else {
-                        nextButton.isEnabled = false
-                        nextButton.backgroundColor = .null
+                        addNoteButton.isEnabled = false
+                        addNoteButton.backgroundColor = .null
                     }
                 }
             }
@@ -1152,12 +938,12 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     @objc func buttonTapped(_ sender: UIButton) {
-        let newPageViewController = OpenNewPage2ViewController()
+        amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
+            AmpliEventProp.next_button_clicked.rawValue: "true"
+        ]))
+        
         setVersionInfo()
         // 데이터 전달
-        newPageViewController.transactionModel = transactionModel
-        newPageViewController.versionInfo = versionInfo
-        // threeDigitPriceField와 fourDigitPriceField의 값을 합쳐서 selectedPrice에 저장
         let threeDigitPrice = Int(threeDigitPriceField.text ?? "") ?? 0
         let fourDigitPrice = Int(fourDigitPriceField.text ?? "") ?? 0
         selectedPrice = String(threeDigitPrice * 100000000 + fourDigitPrice * 10000)
@@ -1169,13 +955,12 @@ final class OpenNewPageViewController: BaseViewController {
             }
         }
         
-        
         // deal_category
         switch selectedPropertyType {
-        case 0: trackEventPropertyType(eventPropValue: AmpliEventPropValue.apart.rawValue)
-        case 1: trackEventPropertyType(eventPropValue: AmpliEventPropValue.villa.rawValue)
-        case 2: trackEventPropertyType(eventPropValue: AmpliEventPropValue.officetel.rawValue)
-        case 3: trackEventPropertyType(eventPropValue: AmpliEventPropValue.detached_house.rawValue)
+        case .APARTMENT: trackEventPropertyType(eventPropValue: AmpliEventPropValue.apart.rawValue)
+        case .VILLA: trackEventPropertyType(eventPropValue: AmpliEventPropValue.villa.rawValue)
+        case .OFFICE_TEL: trackEventPropertyType(eventPropValue: AmpliEventPropValue.officetel.rawValue)
+        case .DETACHED_HOUSE: trackEventPropertyType(eventPropValue: AmpliEventPropValue.detached_house.rawValue)
         default: break
         }
         
@@ -1184,27 +969,80 @@ final class OpenNewPageViewController: BaseViewController {
             event: BaseEvent(
                 eventType: AmpliEventName.button_clicked.rawValue,
                 eventProperties: [
-                    AmpliEventProp.deal_object.rawValue: selectedPurposeType == 0 ?
-                    AmpliEventPropValue.investment.rawValue :
+                    AmpliEventProp.deal_object.rawValue: selectedPurposeType == .INVESTMENT ?
+                        AmpliEventPropValue.investment.rawValue :
                         AmpliEventPropValue.direct_entry.rawValue,
                     AmpliEventProp.deal_price.rawValue: selectedPrice
                 ]
             )
         )
         
-        newImjang = PostDto(
-            purposeType: selectedPurposeType!,
-            propertyType: selectedPropertyType!,
-            priceType: selectedPriceType,
-            price: selectedPrice,
-            monthlyRent: selectedMonthlyRent,
-            address: "",
-            roadAddress: "",  // 다음 뷰에서 사용할 값
-            addressDetail: "",  // 다음 뷰에서 사용할 값
-            nickname: ""  // 다음 뷰에서 사용할 값
+        postAddNewNote { [weak self] noteId, error in
+            guard let self = self else { return }
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            guard let noteId, let purposeType = selectedPurposeType, let propertyType = selectedPropertyType else { return }
+            
+            let version = determineVersion(purposeType: purposeType.index, propertyType: propertyType.index)
+            
+            let ImjangNoteVC = ImjangNoteViewController(imjangId: noteId, version: version)
+            ImjangNoteVC.previousVCType = .createImjangVC
+            ImjangNoteVC.imjangId = noteId
+            ImjangNoteVC.versionInfo = self.versionInfo
+            
+            navigationItem.backBarButtonItem = UIBarButtonItem(title: "새 노트", style: .plain, target: nil, action: nil)
+            navigationController?.pushViewController(ImjangNoteVC, animated: true)
+            
+            amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
+                AmpliEventProp.checklist_page.rawValue: "true"
+            ]))
+        }
+    }
+    
+    private func postAddNewNote(completionHandler: @escaping (Int?, NetworkError?) -> Void) {
+        guard let request = addNewNoteRequest() else { return }
+        
+        repository.createNote(
+            param: request
+        ).asObservable()
+            .subscribe(with: self) { (self, responseModel) in
+                completionHandler(responseModel.noteId, nil)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func addNewNoteRequest() -> AddNoteRequestDTO? {
+        guard let purposeType = selectedPurposeType,
+              let propertyType = selectedPropertyType else { return nil }
+                
+        return AddNoteRequestDTO(
+            purposeType: purposeType.title,
+            propertyType: propertyType.rawValue,
+            priceType: selectedPriceType.rawValue,
+            price: String(selectedPrice),
+            monthlyRent: selectedMonthlyRent != nil ? String(selectedMonthlyRent!) : nil
         )
-        newPageViewController.newImjang = newImjang
-        navigationController?.pushViewController(newPageViewController, animated: true)
+    }
+    
+    
+    func determineVersion(purposeType: Int, propertyType: Int) -> Int {
+        if purposeType == 0 {
+            // 부동산 투자 - version: 0
+            return 0
+        } else if purposeType == 1 {
+            // 직접 입주
+            if propertyType == 0 || propertyType == 3 {
+                // 아파트, 단독주택 - version: 0
+                return 0
+            } else if propertyType == 1 || propertyType == 2 {
+                // 빌라, 오피스텔 - version: 1
+                return 1
+            }
+        }
+        return -1 // 예외 처리
     }
     
     private func trackEventPropertyType(eventPropValue: String) {
@@ -1217,17 +1055,41 @@ final class OpenNewPageViewController: BaseViewController {
     }
     
     @objc func backButtonTapped() {
+        let cancelPopupViewController = CancelAddNewNotePopupController()
+        cancelPopupViewController.eventRelay
+            .bind(with: self) { owner, eventType in
+                switch eventType {
+                case .confirm:
+                    owner.handlePop()
+                default: break
+                }
+            }
+            .disposed(by: cancelPopupViewController.disposeBag)
+        
+        cancelPopupViewController.modalPresentationStyle = .overFullScreen
+        present(cancelPopupViewController, animated: false)
+    }
+    
+    private func handlePop() {
         amplitude.track(
             event: BaseEvent(
                 eventType: AmpliEventName.page_viewed.rawValue,
-                eventProperties: [AmpliEventProp.info_page_1.rawValue:"false"]
+                eventProperties: [AmpliEventProp.newPage.rawValue:"false"]
             )
         )
+        
         navigationController?.popViewController(animated: true)
+    }
+    
+    private func makeRequiredLabel() -> DSLabel {
+        let label = DSLabel(.body2)
+        label.fontColor = .main
+        label.text = "*필수"
+        return label
     }
 }
 
-extension OpenNewPageViewController: UITextFieldDelegate {
+extension AddNewNoteViewController: UITextFieldDelegate {
     
     func updateTextFieldWidthConstraint(for textField: UITextField, constant: CGFloat) {
         guard let text = textField.text else { return }
@@ -1298,5 +1160,11 @@ extension OpenNewPageViewController: UITextFieldDelegate {
             textField.placeholder = "0000"
             updateTextFieldWidthConstraint(for: textField, constant: 74)
         }
+    }
+}
+
+extension AddNewNoteViewController: UIGestureRecognizerDelegate {
+    func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return false
     }
 }

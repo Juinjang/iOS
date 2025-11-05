@@ -40,7 +40,7 @@ final class ReportCompletedAlertView: BaseAlertViewController {
         $0.backgroundColor = .gray500
     }
     
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
     
     init() {
         super.init(

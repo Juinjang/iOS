@@ -77,7 +77,7 @@ final class ShareWriteView: BaseView {
         uploadButton.snp.makeConstraints {
             $0.height.equalTo(52)
             $0.horizontalEdges.equalToSuperview().inset(24)
-            $0.bottom.equalTo(safeAreaLayoutGuide)
+            $0.bottom.equalTo(safeAreaLayoutGuide).inset(20)
         }
     }
 }

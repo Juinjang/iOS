@@ -215,8 +215,11 @@ final class LookAroundImjangCell: BaseCollectionViewCell {
         infoStackView.snp.makeConstraints { make in
             make.leading.equalTo(imjangImageView.snp.trailing).offset(12)
             make.top.equalTo(roomAddressLabel.snp.bottom).offset(2)
-            make.trailing.lessThanOrEqualToSuperview()
+            make.trailing.lessThanOrEqualToSuperview().offset(-24)
         }
+        
+        ownerNicknameLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        ownerNicknameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
         profileImageView.snp.makeConstraints { make in
             make.size.equalTo(18)
@@ -308,7 +311,7 @@ extension LookAroundImjangCell {
     private func setRoomDetail(pyong: Int?, floor: String?) {
         let roomDetail: String
         if pyong == nil || floor == nil {
-            roomDetail = "평수와 층수가 입력되지 않음"
+            roomDetail = "평층 미입력"
         } else {
             guard let pyong, let floor else { return }
             roomDetail = "\(pyong)평 \(floor)층"
@@ -331,6 +334,7 @@ extension LookAroundImjangCell {
     }
     
     private func setOwnerNickname(_ userName: String) {
+//        let userName = userName.count < 5 ? userName : "\(userName.prefix(4)).."
         ownerNicknameLabel.setAttribute(text: userName, color: .gray400, font: .pretendard(size: 13, weight: .regular), lineHeight: 19)
     }
     

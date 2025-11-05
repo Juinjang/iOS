@@ -7,11 +7,43 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 final class InAppUpdateManager {
     static let shared = InAppUpdateManager()
     
     private init() { }
+    
+    private struct AppStoreLookupResponse: Decodable {
+        struct Result: Decodable { let version: String? }
+        let results: [Result]
+    }
+
+    func requestLatestVersion() -> Single<String?> {
+        return Single<String?>.create { observer in
+            guard
+                let url = URL(string: APIKey.appStoreVersionURL),
+                let _ = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+            else {
+                observer(.success(nil))
+                return Disposables.create()
+            }
+
+            let task = URLSession.shared.dataTask(with: url) { data, _, _ in
+                guard let data = data,
+                      let response = try? JSONDecoder().decode(AppStoreLookupResponse.self, from: data),
+                      let appStoreVersion = response.results.first?.version else {
+                    observer(.success(nil))
+                    return
+                }
+                observer(.success(appStoreVersion))
+            }
+            task.resume()
+
+            return Disposables.create { task.cancel() }
+        }
+    }
+
       
     //버전 업데이트 체크
     func isNeedAppUpdate(latestVersion: String) -> Bool {

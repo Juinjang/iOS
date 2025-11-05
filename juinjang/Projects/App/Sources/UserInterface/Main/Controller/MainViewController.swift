@@ -199,8 +199,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func newPageButtonTapped() {
-        let vc = OpenNewPageViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        let viewController = AddNewNoteViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     @objc private func myNoteButtonTapped() {
@@ -232,7 +232,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         
         tableView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom)
-            $0.left.right.bottom.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview()
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(20)
         }
     }
 }
@@ -261,7 +262,7 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
             cell.selectionStyle = .none
             cell.backgroundColor = .clear
             
-            cell.newPageButton.addTarget(self, action: #selector(newPageButtonTapped), for: .touchUpInside)
+            cell.addNewNoteButton.addTarget(self, action: #selector(newPageButtonTapped), for: .touchUpInside)
             cell.myNoteButton.addTarget(self, action: #selector(myNoteButtonTapped), for: .touchUpInside)
             cell.lookAroundButton.addTarget(self, action: #selector(lookAroundButtonTapped), for: .touchUpInside)
             return cell

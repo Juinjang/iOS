@@ -13,7 +13,7 @@ protocol NoteRepositoryProtocol {
     func retrieveChecklistConditionList(noteID id: Int) -> Single<ShareableConditionDTO>
     func retrieveCheckList(noteID id: Int) -> Single<[CheckListAnswerDTO]>
     func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetailModel>
-    func createNote(param: NoteCreateRequestDTO) -> Single<PostNoteResponseModel>
+    func createNote(param: AddNoteRequestDTO) -> Single<PostNoteResponseModel>
     func createCheckList(noteID id: Int, params: [CheckListRequestDto]) -> Single<CheckListReportResult>
     func updateNote(noteID id: Int, param: NoteUpdateRequestDTO) -> Completable
 }

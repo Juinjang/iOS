@@ -191,8 +191,7 @@ final class DeleteImjangViewController: BaseViewController {
     private func configureHierarchy() {
         view.addSubview(navigationView)
         view.addSubview(collectionView)
-        view.addSubview(deleteButtonBackgroundView)
-        deleteButtonBackgroundView.addSubview(deleteButton)
+        view.addSubview(deleteButton)
     }
     
     private func configureLayout() {
@@ -203,18 +202,13 @@ final class DeleteImjangViewController: BaseViewController {
         collectionView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom)
             $0.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
-            $0.bottom.equalTo(deleteButtonBackgroundView.snp.top)
-        }
-        
-        deleteButtonBackgroundView.snp.makeConstraints {
-            $0.bottom.horizontalEdges.equalTo(view)
-            $0.height.equalTo(98)
+            $0.bottom.equalTo(deleteButton.snp.top).offset(-20)
         }
         
         deleteButton.snp.makeConstraints {
-            $0.top.equalTo(deleteButtonBackgroundView.snp.top).offset(12)
-            $0.horizontalEdges.equalTo(deleteButtonBackgroundView).inset(24)
-            $0.bottom.equalTo(deleteButtonBackgroundView.safeAreaLayoutGuide)
+            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom).inset(10)
+            $0.height.equalTo(52)
         }
     }
     

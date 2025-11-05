@@ -29,6 +29,13 @@ final class ImjangNoteShareConditionView: BaseView {
     
     private let shareButton = RoundedShareButton()
     
+    private let infoButton = UIButton().then {
+        $0.setImage(UIImage.infoCircle.withRenderingMode(.alwaysTemplate)
+            .withTintColor(.gray450).resized(toWidth: 20), for: .normal)
+        $0.backgroundColor = .clear
+        $0.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+    
     private let conditionBaseView = UIView().then {
         $0.roundCorners(cornerRadius: 8, corner: .all)
     }
@@ -40,6 +47,7 @@ final class ImjangNoteShareConditionView: BaseView {
     }
     
     private let disposeBag = DisposeBag()
+    let infoButtonDidTapRelay = PublishRelay<Void>()
     
     func configure(model: ShareableConditionDTO,
                    relay: PublishRelay<ImjangNoteShareConditionViewEventType>) {
@@ -56,6 +64,7 @@ final class ImjangNoteShareConditionView: BaseView {
         secondTitleLabel.fontColor = model.isTotalSatisfied ? .main : .gray500
         conditionBaseView.backgroundColor = model.isTotalSatisfied ? .gray100 : .mainWhite
         shareButton.isHidden = !model.isTotalSatisfied
+        infoButton.isHidden = model.isTotalSatisfied
         
         model.conditions.forEach { item in
             conditionStackView.addArrangedSubview(
@@ -75,6 +84,13 @@ final class ImjangNoteShareConditionView: BaseView {
         super.configureView()
         roundCorners(cornerRadius: 8, corner: .all)
         layer.borderWidth = 1
+        
+        infoButton.rx.throttleTap
+            .subscribe(with: self) { owner, _ in
+                print("@@@ infoButton Did Tap")
+                owner.infoButtonDidTapRelay.accept(())
+            }
+            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {
@@ -83,6 +99,7 @@ final class ImjangNoteShareConditionView: BaseView {
         add(mainTitleLabel,
             secondTitleLabel,
             shareButton,
+            infoButton,
             conditionBaseView.with(
                 conditionStackView
             )
@@ -107,6 +124,11 @@ final class ImjangNoteShareConditionView: BaseView {
             $0.right.equalToSuperview().offset(-16)
             $0.width.equalTo(68)
             $0.height.equalTo(32)
+        }
+        
+        infoButton.snp.makeConstraints { make in
+            make.top.trailing.equalToSuperview().inset(16)
+            make.size.equalTo(20)
         }
         
         conditionBaseView.snp.makeConstraints {

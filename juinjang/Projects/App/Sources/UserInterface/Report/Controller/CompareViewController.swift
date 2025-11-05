@@ -17,8 +17,8 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         isCompared = isSelected
         getReportInfo(limjangId: compareImjangId)
         isCompare()
-        compareLabel2.text = compareImjangName
-        chartCompareLabel2.text = compareImjangName
+        compareLabel2.text = compareImjangName.count > 12 ? "\(compareImjangName.prefix(11))﹒﹒﹒" : compareImjangName
+        chartCompareLabel2.text = compareImjangName.count > 12 ? "\(compareImjangName.prefix(11))﹒﹒﹒" : compareImjangName
     }
     
     var isCompared : Bool = false

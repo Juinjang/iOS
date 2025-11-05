@@ -285,7 +285,7 @@ extension LookAroundCell {
         let roomDetail: String
         
         if pyong == nil || floor == nil {
-            roomDetail = "평수 또는 층수가 입력되지 않음"
+            roomDetail = "평층 미입력"
         } else {
             guard let pyong, let floor else { return }
             roomDetail = "\(pyong)평 \(floor)층"

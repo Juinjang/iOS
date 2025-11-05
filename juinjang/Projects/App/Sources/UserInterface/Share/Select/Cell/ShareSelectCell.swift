@@ -135,53 +135,54 @@ final class ShareSelectCell: BaseCollectionViewCell {
         
         tumbnailImageView.snp.makeConstraints {
             $0.verticalEdges.equalToSuperview().inset(12)
-            $0.left.equalToSuperview().offset(12)
+            $0.leading.equalToSuperview().offset(12)
             $0.width.equalTo(144)
         }
         
-        buildingNameLabel.snp.makeConstraints {
-            $0.top.equalTo(tumbnailImageView.snp.top)
-            $0.left.equalTo(tumbnailImageView.snp.right).offset(12)
-            $0.height.equalTo(23)
-        }
-        
         coinIconView.snp.makeConstraints {
-            $0.left.equalTo(buildingNameLabel.snp.right)
-            $0.centerY.equalTo(buildingNameLabel.snp.centerY)
+            $0.leading.equalTo(tumbnailImageView.snp.trailing).offset(12)
+            $0.top.equalTo(tumbnailImageView.snp.top)
             $0.size.equalTo(18)
         }
         
+        buildingNameLabel.snp.makeConstraints {
+            $0.centerY.equalTo(coinIconView.snp.centerY)
+            $0.leading.equalTo(coinIconView.snp.trailing).offset(2)
+            $0.trailing.lessThanOrEqualToSuperview().inset(12)
+            $0.height.equalTo(23)
+        }
+        
         priceLabel.snp.makeConstraints {
-            $0.left.equalTo(tumbnailImageView.snp.right).offset(12)
+            $0.leading.equalTo(tumbnailImageView.snp.trailing).offset(12)
             $0.top.equalTo(buildingNameLabel.snp.bottom)
             $0.height.equalTo(23)
         }
         
         pyungLabel.snp.makeConstraints {
-            $0.left.equalTo(tumbnailImageView.snp.right).offset(12)
+            $0.leading.equalTo(tumbnailImageView.snp.trailing).offset(12)
             $0.top.equalTo(priceLabel.snp.bottom)
             $0.height.equalTo(19)
         }
         
         addressLabel.snp.makeConstraints {
-            $0.left.equalTo(tumbnailImageView.snp.right).offset(12)
+            $0.leading.equalTo(tumbnailImageView.snp.trailing).offset(12)
             $0.top.equalTo(pyungLabel.snp.bottom)
             $0.height.equalTo(19)
         }
         
         starIconView.snp.makeConstraints {
-            $0.left.equalTo(tumbnailImageView.snp.right).offset(12)
+            $0.leading.equalTo(tumbnailImageView.snp.trailing).offset(12)
             $0.top.equalTo(addressLabel.snp.bottom).offset(9)
             $0.size.equalTo(12)
         }
         
         starRateLabel.snp.makeConstraints {
-            $0.left.equalTo(starIconView.snp.right).offset(4)
+            $0.leading.equalTo(starIconView.snp.trailing).offset(4)
             $0.centerY.equalTo(starIconView.snp.centerY)
         }
         
         bookmarkButton.snp.makeConstraints {
-            $0.right.equalToSuperview().inset(12)
+            $0.trailing.equalToSuperview().inset(12)
             $0.centerY.equalTo(starRateLabel.snp.centerY)
             $0.size.equalTo(22)
         }

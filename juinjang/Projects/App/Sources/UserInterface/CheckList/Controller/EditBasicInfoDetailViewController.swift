@@ -159,22 +159,23 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     lazy var houseNicknameTextField = UITextField().then {
-        let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
-            let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor.gray300,
-                .font: customFont
-            ]
-            $0.attributedPlaceholder = NSAttributedString(string: "12자 이내", attributes: attributes)
+        let customFont = UIFont.pretendard(size: 16, weight: .medium)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray300,
+            .font: customFont
+        ]
+        $0.attributedPlaceholder = NSAttributedString(string: "12자 이내", attributes: attributes)
         $0.layer.backgroundColor = UIColor.mainWhite.cgColor
-            $0.layer.cornerRadius = 10
-            $0.layer.borderWidth = 1.5
-            $0.layer.borderColor = UIColor.stroke2.cgColor
+        $0.layer.cornerRadius = 10
+        $0.layer.borderWidth = 1.5
+        $0.layer.borderColor = UIColor.stroke2.cgColor
         $0.textColor = .gray500
-            $0.font = customFont
-            let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
-            $0.leftView = paddingView
-            $0.leftViewMode = .always
-            $0.translatesAutoresizingMaskIntoConstraints = false
+        $0.font = customFont
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
+        $0.leftView = paddingView
+        $0.leftViewMode = .always
+        $0.rightView = paddingView
+        $0.rightViewMode = .always
     }
     
     func configureButton(_ button: UIButton, normalImage: UIImage?, selectedImage: UIImage?, action: Selector) {
@@ -562,7 +563,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         
         // 주소 Label
         addressLabel.snp.makeConstraints {
-            $0.top.equalTo(navigationView.snp.bottom).offset(40)
+            $0.top.equalTo(navigationView.snp.bottom).offset(14)
             $0.width.equalToSuperview().multipliedBy(0.18)
             $0.height.equalToSuperview().multipliedBy(0.03)
             $0.leading.equalTo(view.snp.leading).offset(24)
@@ -652,7 +653,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                  jeonseButton,
                  monthlyRentButton])
         
-        moveTypeStackView.translatesAutoresizingMaskIntoConstraints = false
         moveTypeStackView.axis = .horizontal
         moveTypeStackView.spacing = 8
         
@@ -687,7 +687,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                  fourDigitPriceField,
                  priceDetailLabels[5]])
 
-        inputPriceStackView.translatesAutoresizingMaskIntoConstraints = false
         inputPriceStackView.axis = .horizontal
         inputPriceStackView.spacing = 5
 
@@ -706,7 +705,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         
         // 월세 가격 입력칸 Stack View
         inputMonthlyRentStackView = UIStackView()
-        inputMonthlyRentStackView.translatesAutoresizingMaskIntoConstraints = false
         inputMonthlyRentStackView.axis = .horizontal
         inputMonthlyRentStackView.spacing = 5
 
@@ -714,7 +712,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         saveButton.snp.makeConstraints {
             $0.height.equalTo(52)
             $0.horizontalEdges.equalToSuperview().inset(24)
-            $0.bottom.equalTo(view.safeAreaLayoutGuide)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
     }
     
@@ -947,6 +945,10 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         
         return commonOK && priceOK && monthlyOK
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        view.endEditing(true)
+    }
 }
 
 
@@ -999,7 +1001,7 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
         
         // textField에 따라 글자 수 제한
         if textField == houseNicknameTextField {
-            guard text.count + string.count - range.length <= 12 else { return false }
+            guard text.count + string.count - range.length <= 30 else { return false }
         } else if textField == threeDigitPriceField || textField == fourDigitPriceField || textField == fourDigitMonthlyRentField {
             // 숫자만 허용
             let allowedCharacters = CharacterSet.decimalDigits

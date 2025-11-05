@@ -155,7 +155,7 @@ extension Reactive where Base: ShareSelectView {
                 view.nextButton.snp.makeConstraints {
                     $0.height.equalTo(52)
                     $0.horizontalEdges.equalToSuperview().inset(24)
-                    $0.bottom.equalTo(view.safeAreaLayoutGuide)
+                    $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
                 }
                 
                 view.shareCollectionView.snp.remakeConstraints {

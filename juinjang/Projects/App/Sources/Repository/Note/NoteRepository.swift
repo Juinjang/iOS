@@ -49,8 +49,8 @@ final class NoteRepository: NoteRepositoryProtocol {
             .map { try $0.unwrap() }
     }
     
-    func createNote(param: NoteCreateRequestDTO) -> Single<PostNoteResponseModel> {
-        return NoteAPI.postNote(param)
+    func createNote(param: AddNoteRequestDTO) -> Single<PostNoteResponseModel> {
+        return NoteAPI.postAddNote(param)
             .request(BaseResponse<PostNoteResponseModel>.self, networkManager)
             .map { try $0.unwrap() }
     }

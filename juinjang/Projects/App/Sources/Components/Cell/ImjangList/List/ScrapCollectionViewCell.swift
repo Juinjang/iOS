@@ -73,11 +73,15 @@ extension ScrapCollectionViewCell {
         
         roomPriceLabel.text = note.price
         
+        roomAddressLabel.textColor = .gray400
         if let address = note.address {
             roomAddressLabel.text = address
         } else {
             if let shortAddress = note.shortAddress {
                 roomAddressLabel.text = shortAddress
+            } else {
+                roomAddressLabel.text = "주소 미입력"
+                roomAddressLabel.textColor = .null
             }
         }
 
@@ -278,24 +282,26 @@ extension ScrapCollectionViewCell {
     }
     
     private func configureLayout() {
-
         totalStackView.snp.makeConstraints {
             $0.top.leading.trailing.equalToSuperview().inset(12)
             $0.height.equalTo(117)
         }
         
-        roomNameLabel.snp.makeConstraints {
+        roomIcon.snp.makeConstraints {
+            $0.size.equalTo(18)
             $0.leading.equalToSuperview().inset(12)
-            $0.top.equalTo(totalStackView.snp.bottom).offset(8)
+            $0.top.equalTo(totalStackView.snp.bottom).offset(11)
+        }
+        
+        roomNameLabel.snp.makeConstraints {
+            $0.centerY.equalTo(roomIcon)
+            $0.leading.equalTo(roomIcon.snp.trailing).offset(2)
+            $0.trailing.lessThanOrEqualTo(starIcon.snp.leading).offset(-2).priority(.required)
             $0.height.equalTo(24)
         }
         
-        roomIcon.snp.makeConstraints {
-            $0.size.equalTo(18)
-            $0.centerY.equalTo(roomNameLabel)
-            $0.leading.equalTo(roomNameLabel.snp.trailing).offset(2)
-            $0.trailing.lessThanOrEqualTo(starIcon.snp.leading).offset(-2)
-        }
+        roomNameLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        roomNameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         
         scoreLabel.snp.makeConstraints {
             $0.top.equalTo(totalStackView.snp.bottom).offset(8)
@@ -303,11 +309,17 @@ extension ScrapCollectionViewCell {
             $0.height.equalTo(23)
         }
         
+        scoreLabel.setContentHuggingPriority(.required, for: .horizontal)
+        scoreLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        
         starIcon.snp.makeConstraints {
             $0.size.equalTo(16)
-            $0.centerY.equalTo(scoreLabel)
+            $0.centerY.equalTo(roomIcon)
             $0.trailing.equalTo(scoreLabel.snp.leading).offset(-2)
         }
+        
+        starIcon.setContentHuggingPriority(.required, for: .horizontal)
+        starIcon.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         roomPriceLabel.snp.makeConstraints {
             $0.horizontalEdges.equalTo(totalStackView)

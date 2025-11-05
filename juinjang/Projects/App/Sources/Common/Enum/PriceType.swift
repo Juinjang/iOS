@@ -23,4 +23,13 @@ enum PriceType: String {
             return "시세"
         }
     }
+    
+    var number: Int {
+        switch self {
+        case .SALE: 0
+        case .PULL_RENT: 1
+        case .MONTHLY_RENT: 2
+        case .MARKET_PRICE: 3
+        }
+    }
 }
