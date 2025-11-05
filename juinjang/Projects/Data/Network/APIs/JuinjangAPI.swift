@@ -68,12 +68,10 @@ public enum JuinjangAPI {
             return URL(string: baseURL + "auth/v2/kakao/callback")!
         case .appleLogin:
             return URL(string: baseURL + "auth/v2/apple/login")!
-            
         case .signUpKakao:
             return URL(string: baseURL + "auth/v2/kakao/signup")!
         case .signUpApple:
             return URL(string: baseURL + "auth/v2/apple/signup")!
-            
         case .withdrawKakao:
             return URL(string: baseURL + "auth/withdraw/kakao")!
         case .withdrawApple:

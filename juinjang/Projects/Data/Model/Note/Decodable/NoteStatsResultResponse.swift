@@ -2,7 +2,7 @@ import Foundation
 import CoreCommon
 import DomainModel
 
-public struct NoteEvaluationReportResultResponse: Codable, DomainMappable {
+public struct NoteStatsResultResponse: Codable, DomainMappable {
     let reportDTO: NoteEvaluationReportResponse
     let limjangDto: NoteDetailResponse
     

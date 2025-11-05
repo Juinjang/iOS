@@ -2,9 +2,9 @@ import Foundation
 import CoreCommon
 import DomainModel
 
-public struct NoteCheckListAnswerEvaluationReportResponse: Codable, DomainMappable {
+public struct NoteCheckListAnswerStatsResponse: Codable, DomainMappable {
     let answerDtoList: [NoteCheckListAnswerResponse]
-    let reportDto: NoteEvaluationReportResultResponse
+    let reportDto: NoteStatsResultResponse
     
     public func toDomain() -> NoteCheckListAnswerEvaluationReport {
         return NoteCheckListAnswerEvaluationReport.init(
