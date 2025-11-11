@@ -20,8 +20,9 @@ import SafariServices
 import Alamofire
 import RxSwift
 
+import DomainModel
+
 final class ReportViewController : BaseViewController {
-    
     let templateId = 103560
     var safariViewController : SFSafariViewController?
     var checkListViewController: CheckListViewController?
@@ -162,7 +163,7 @@ final class ReportViewController : BaseViewController {
         self.navigationItem.rightBarButtonItem = .none
     }
     
-    func setData(detailDto: DetailDto) {
+    func setData(detailDto: MainNoteDetail) {
         imjangLabel.text = detailDto.nickname
         let star = NSTextAttachment()
         star.image = UIImage.Report.bigStar

@@ -1,9 +1,9 @@
 import Foundation
 
 public struct RecentUpdatedNoteResult {
-    let recentUpdatedNoteList: [Note]
+    public let recentUpdatedNoteList: [MainNote]
     
-    public init(recentUpdatedList: [Note]) {
+    public init(recentUpdatedList: [MainNote]) {
         self.recentUpdatedNoteList = recentUpdatedList
     }
 }

@@ -11,6 +11,7 @@ import DomainRepositoryInterfaces
 import DataNetwork
 import DataModel
 import DomainModel
+import DataStorage
 
 final class NoteRepository: NoteRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
@@ -54,6 +55,20 @@ final class NoteRepository: NoteRepositoryProtocol {
     func retrieveNoteDetail(noteID id: Int) -> Single<NoteDetail> {
         return NoteAPI.getNoteDetail(id)
             .request(BaseResponse<NoteDetailResponse>.self, networkManager)
+            .map { try $0.unwrap() }
+            .map { $0.toDomain() }
+    }
+    
+    func retrieveMainNotes() -> Single<RecentUpdatedNoteResult> {
+        return NoteAPI.getMainNotes
+            .request(BaseResponse<RecentUpdatedNoteResultResponse>.self, networkManager)
+            .map { try $0.unwrap() }
+            .map { $0.toDomain() }
+    }
+    
+    func retrieveMainNoteDetail(noteID: Int) -> Single<MainNoteDetail> {
+        return NoteAPI.getMainNoteDetail(noteID: noteID)
+            .request(BaseResponse<MainNoteDetailResponse>.self, networkManager)
             .map { try $0.unwrap() }
             .map { $0.toDomain() }
     }

@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 4/10/25.
 //
 
-struct SharedNoteDetailInfo: Codable {
+public struct SharedNoteDetailInfo: Codable {
     var isBuyer: Bool
     let isImageShared: Bool
     let requiredPencils: Int?

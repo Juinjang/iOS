@@ -1,6 +1,6 @@
 import Foundation
 
-struct SharedNoteDetailEvaluationReport: Codable {
+public struct SharedNoteDetailEvaluationReport: Codable {
     let indoorKeyword: String
     let publicSpaceKeyword: String
     let locationConditionsKeyword: String

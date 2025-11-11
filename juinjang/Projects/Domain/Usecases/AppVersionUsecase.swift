@@ -8,6 +8,7 @@
 import DomainModel
 import DomainUsecaseInterfaces
 import DomainRepositoryInterfaces
+import RxSwift
 
 public final class AppVersionUsecase: AppVersionUsecaseProtocol {
     private let repository: AppVersionRepositoryProtocol

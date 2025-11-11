@@ -8,6 +8,8 @@
 import RxSwift
 import DataModel
 import DomainRepositoryInterfaces
+import Foundation
+import DataStorage
 
 public final class UserSettingsRepository: UserSettingsRepositoryProtocol {
     private let manager: UserDefaultManager
@@ -183,18 +185,6 @@ public final class UserSettingsRepository: UserSettingsRepositoryProtocol {
     public func setShowShareAlert(_ value: Bool?) -> Completable {
         .create { [weak self] o in
             self?.manager.isShowShareAlert = value
-            o(.completed)
-            return Disposables.create()
-        }
-    }
-    
-    public func isHttpsEnabled() -> Single<Bool> {
-        .just(manager.isHttpsEnabled)
-    }
-    
-    public func saveHttpsEnabled(_ value: Bool) -> Completable {
-        .create { [weak self] o in
-            self?.manager.isHttpsEnabled = value
             o(.completed)
             return Disposables.create()
         }

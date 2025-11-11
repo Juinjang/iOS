@@ -1098,11 +1098,11 @@ final class ImjangNoteViewController: BaseViewController,
         sender.isSelected.toggle()
         isEditMode.toggle()
         if sender.isSelected {
-            self.makeEditMode()
+            makeEditMode()
             
             NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: true)
         } else {
-            self.makeDefaultMode()
+            makeDefaultMode()
             NotificationCenter.default.post(name: Notification.Name("EditModeChanged"), object: false)
             
             saveAnswer { [weak self] detailDto, reportDto in

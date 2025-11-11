@@ -5,9 +5,11 @@
 //  Created by KimDongWoo on 10/15/25.
 //
 
+import Foundation
 import DomainModel
 import DomainUsecaseInterfaces
 import DomainRepositoryInterfaces
+import RxSwift
 
 public final class UserSettingsUsecase: UserSettingsUsecaseProtocol {
     private let repository: UserSettingsRepositoryProtocol
@@ -56,11 +58,11 @@ public final class UserSettingsUsecase: UserSettingsUsecaseProtocol {
         repository.saveNickname(value)
     }
 
-    public func loadProfileImage() -> Single<UIImage?> {
+    public func loadProfileImage() -> Single<Data?> {
         repository.profileImage()
     }
     
-    public func updateProfileImage(_ image: UIImage?) -> Completable {
+    public func updateProfileImage(_ image: Data?) -> Completable {
         repository.saveProfileImage(image)
     }
 
@@ -126,14 +128,6 @@ public final class UserSettingsUsecase: UserSettingsUsecaseProtocol {
     
     public func setShareAlertFlag(_ value: Bool?) -> Completable {
         repository.setShowShareAlert(value)
-    }
-
-    public func loadHttpsEnabled() -> Single<Bool> {
-        repository.isHttpsEnabled()
-    }
-    
-    public func updateHttpsEnabled(_ value: Bool) -> Completable {
-        repository.saveHttpsEnabled(value)
     }
 
     public func clearAll() -> Completable {

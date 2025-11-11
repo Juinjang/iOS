@@ -12,17 +12,9 @@ final class TopTableViewCell: UITableViewCell {
     static let id = "TopTableViewCell"
     
     private let greetLabel = UILabel().then {
-        $0.text = "반가워요, \(UserDefaultManager.shared.nickname)님 \n오늘은 어떤 집으로 가볼까요?"
+        $0.text = "반가워요, 님 \n오늘은 어떤 집으로 가볼까요?"
         $0.numberOfLines = 0
         $0.textColor = .gray600
-        
-        let attrString = NSMutableAttributedString(string: $0.text!)
-        let range = ($0.text! as NSString).range(of: UserDefaultManager.shared.nickname)
-        attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.lineSpacing = 8.0
-        attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
-        $0.attributedText = attrString
         $0.font = .pretendard(size: 24, weight: .bold)
         $0.alpha = 0.0
     }
@@ -79,12 +71,12 @@ final class TopTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureNickname() {
-        let message = "반가워요, \(UserDefaultManager.shared.nickname)님 \n오늘은 어떤 집으로 가볼까요?"
+    func configureNickname(nickname: String) {
+        let message = "반가워요, \(nickname)님 \n오늘은 어떤 집으로 가볼까요?"
         greetLabel.text = message
         
         let attrString = NSMutableAttributedString(string: message)
-        let range = (message as NSString).range(of: UserDefaultManager.shared.nickname)
+        let range = (message as NSString).range(of: nickname)
         attrString.addAttribute(.foregroundColor, value: UIColor.main, range: range)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 8.0
@@ -113,6 +105,7 @@ final class TopTableViewCell: UITableViewCell {
             $0.top.equalToSuperview().inset(60)
             $0.horizontalEdges.equalToSuperview().inset(24)
         }
+        
         UIView.animate(withDuration: 0.8, delay: 0.3, options: .curveEaseIn, animations: {
             self.greetLabel.alpha = 1.0
         }, completion: nil)

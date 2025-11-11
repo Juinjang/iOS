@@ -3,7 +3,7 @@ import CoreCommon
 import DomainModel
 
 public struct RecentUpdatedNoteResultResponse: Codable, DomainMappable {
-    let recentUpdatedList: [NoteResponse]
+    let recentUpdatedList: [MainNoteResponse]
     
     public func toDomain() -> RecentUpdatedNoteResult {
         return RecentUpdatedNoteResult.init(

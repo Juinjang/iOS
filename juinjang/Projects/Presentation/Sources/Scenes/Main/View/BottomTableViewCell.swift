@@ -56,7 +56,8 @@ final class BottomTableViewCell: UITableViewCell{
         fatalError("init(coder:) has not been implemented")
     }
     
-    func isHidden(_ isEmpty: Bool, isFirstShowing: Bool) {
+    func isHidden(_ isEmpty: Bool,
+                  isFirstShowing: Bool) {
         guard !isFirstShowing else {
             showLoading()
             return
@@ -68,7 +69,10 @@ final class BottomTableViewCell: UITableViewCell{
     }
     
     private func addContentView() {
-        [recentImjangLabel, noImjangImageView, noImjangLabel, collectionView].forEach {
+        [recentImjangLabel,
+         noImjangImageView,
+         noImjangLabel,
+         collectionView].forEach {
             contentView.addSubview($0)
         }
     }

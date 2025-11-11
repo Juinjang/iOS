@@ -1,6 +1,6 @@
 import Foundation
 
-struct ShareableNoteSelect {
+public struct ShareableNoteSelect {
     let noteId: Int
     let purposeType: String
     let propertyType: String

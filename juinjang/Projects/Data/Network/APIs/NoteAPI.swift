@@ -15,6 +15,8 @@ public enum NoteAPI: TargetType {
     case getNoteChecklist(Int)
     case getNoteDetail(Int)
     case getNoteList(sort: String, keyword: String)
+    case getMainNotes
+    case getMainNoteDetail(noteID: Int)
     case postNote(AddNoteRequest)
     case postCheckList(Int, [AddNoteCheckListAnswerRequest])
     case patchNote(Int, EditNoteRequest)
@@ -31,6 +33,10 @@ public enum NoteAPI: TargetType {
             return "v2/users/notes/\(noteID)"
         case .getNoteList:
             return "v2/users/notes"
+        case .getMainNotes:
+            return "limjang/v2/main"
+        case .getMainNoteDetail(let noteID):
+            return "limjang/detail/\(noteID)"
         case .postNote:
             return "v2/users/notes"
         case .postCheckList(let noteID, _):
@@ -46,7 +52,9 @@ public enum NoteAPI: TargetType {
                 .getNoteChecklistConditionList,
                 .getNoteChecklist,
                 .getNoteDetail,
-                .getNoteList:
+                .getNoteList,
+                .getMainNotes,
+                .getMainNoteDetail:
             return .get
         case .postNote,
                 .postCheckList:
@@ -63,7 +71,9 @@ public enum NoteAPI: TargetType {
                 .getNoteDetail,
                 .postNote,
                 .postCheckList,
-                .patchNote:
+                .patchNote,
+                .getMainNotes,
+                .getMainNoteDetail:
             return []
         case let .getNoteList(sort, keyword):
             return [URLQueryItem(name: "sort", value: sort),
@@ -79,7 +89,9 @@ public enum NoteAPI: TargetType {
                 .getNoteChecklistConditionList,
                 .getNoteChecklist,
                 .getNoteDetail,
-                .getNoteList:
+                .getNoteList,
+                .getMainNotes,
+                .getMainNoteDetail:
             return nil
         case .postNote(let param as Encodable),
                 .patchNote(_, let param as Encodable):

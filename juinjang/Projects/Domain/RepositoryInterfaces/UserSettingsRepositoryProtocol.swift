@@ -5,6 +5,7 @@
 //  Created by KimDongWoo on 10/15/25.
 //
 
+import Foundation
 import RxSwift
 import DomainModel
 
@@ -50,9 +51,6 @@ public protocol UserSettingsRepositoryProtocol {
     
     func isShowShareAlert() -> Single<Bool?>
     func setShowShareAlert(_ value: Bool?) -> Completable
-    
-    func isHttpsEnabled() -> Single<Bool>
-    func saveHttpsEnabled(_ value: Bool) -> Completable
     
     func clearAllUserData() -> Completable
 }

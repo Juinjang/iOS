@@ -1,5 +1,7 @@
 import DomainUsecaseInterfaces
 import DomainRepositoryInterfaces
+import DomainModel
+import RxSwift
 
 public final class UserUsecase: UserUsecaseProtocol {
     private let repository: UserRepositoryProtocol

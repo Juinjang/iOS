@@ -5,6 +5,7 @@
 //  Created by KimDongWoo on 10/15/25.
 //
 
+import Foundation
 import RxSwift
 import DomainModel
 
@@ -50,9 +51,6 @@ public protocol UserSettingsUsecaseProtocol {
 
     func loadShareAlertFlag() -> Single<Bool?>
     func setShareAlertFlag(_ value: Bool?) -> Completable
-
-    func loadHttpsEnabled() -> Single<Bool>
-    func updateHttpsEnabled(_ value: Bool) -> Completable
 
     func clearAll() -> Completable
 }

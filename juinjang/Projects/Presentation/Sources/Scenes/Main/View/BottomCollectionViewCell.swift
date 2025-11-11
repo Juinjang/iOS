@@ -37,7 +37,7 @@ final class BottomCollectionViewCell: UICollectionViewCell {
         configureCell(listDto: nil)
     }
     
-    func configureCell(listDto: LimjangDto?) {
+    func configureCell(listDto: MainNoteViewModel?) {
         guard let listDto = listDto else { return }
         var priceType: String
         var price: String

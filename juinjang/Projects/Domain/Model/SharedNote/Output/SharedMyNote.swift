@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 3/15/25.
 //
 
-struct SharedMyNote: Codable {
+public struct SharedMyNote: Codable {
     let sharedNoteId: Int
     let buildingName: String
     let imageUrl: String?

@@ -1,6 +1,6 @@
 import Foundation
 
-struct AddNoteCheckListAnswer {
+public struct AddNoteCheckListAnswer {
     let questionId: Int
     let answer: String
 }

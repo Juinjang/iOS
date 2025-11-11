@@ -8,9 +8,9 @@
 import DomainModel
 import DomainUsecaseInterfaces
 import DomainRepositoryInterfaces
+import RxSwift
 
 public final class ShareNoteUsecase: ShareNoteUsecaseProtocol {
-    
     private let repository: ShareNoteRepositoryProtocol
     
     public init(repository: ShareNoteRepositoryProtocol) {
@@ -37,10 +37,6 @@ public final class ShareNoteUsecase: ShareNoteUsecaseProtocol {
         repository.retrieveNoteDetailCheckList(noteId: id)
     }
     
-    public func likeNote(id: Int) -> Single<SharedNoteLikeCompleted> {
-        repository.createNoteLike(noteID: id)
-    }
-    
     public func shareNote(id: Int, with param: AddShareableNote) -> Single<ShareableNoteShareCompleted> {
         repository.createSharedNote(noteID: id, param: param)
     }
@@ -53,7 +49,11 @@ public final class ShareNoteUsecase: ShareNoteUsecaseProtocol {
         repository.createNoteReport(param: param)
     }
     
-    public func unlikeNote(id: Int) -> Single<NoteLikeDTO> {
+    public func likeNote(id: Int) -> Single<SharedNoteLikeCompleted> {
+        repository.createNoteLike(noteID: id)
+    }
+    
+    public func unlikeNote(id: Int) -> Single<SharedNoteLikeCompleted> {
         repository.deleteNoteLike(noteID: id)
     }
     

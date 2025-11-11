@@ -1,7 +1,7 @@
 import Foundation
 
-struct Profile {
-    let nickname: String
+public struct Profile {
+    public let nickname: String
     let introduction: String?
     let email: String
     let image: String?

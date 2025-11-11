@@ -1,6 +1,6 @@
 import Foundation
 
-public struct MainNote: Codable {
+public struct MainNote {
     let limjangId: Int
     let priceType: Int
     let image: String?

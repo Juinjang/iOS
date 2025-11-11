@@ -1,6 +1,7 @@
 import DomainUsecaseInterfaces
 import DomainRepositoryInterfaces
 import DomainModel
+import RxSwift
 
 public final class PencilShopUsecase: PencilShopUseCaseProtocol {
     private let repository: PencilShopRepositoryProtocol
