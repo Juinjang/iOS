@@ -8,9 +8,9 @@
 import UIKit
 import SnapKit
 import Then
+import DesignSystem
 
 final class BottomTableViewCell: UITableViewCell{
-    
     static let id = "BottomTableViewCell"
     static let cellHeight = 250.0
     //MARK: - 변수 설정

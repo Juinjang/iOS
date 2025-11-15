@@ -6,7 +6,8 @@ import Lottie
 import Alamofire
 import SkeletonView
 import RxSwift
-import DomainUsecaseInterfaces
+import Domain
+import DesignSystem
 
 protocol updateNicknameDelegate: AnyObject {
     func updateNickname()

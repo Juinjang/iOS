@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import Then
+import DesignSystem
 
 final class TopTableViewCell: UITableViewCell {
     static let id = "TopTableViewCell"

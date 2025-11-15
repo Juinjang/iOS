@@ -9,6 +9,7 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
+import DesignSystem
 
 final class BottomCollectionViewCell: UICollectionViewCell {
     var recentImjangImageView = UIImageView()
@@ -19,7 +20,7 @@ final class BottomCollectionViewCell: UICollectionViewCell {
     var starIcon = UIImageView()
     var rateLabel = UILabel()
     
-//MARK: - init
+    //MARK: - init
     override init(frame: CGRect) {
         super.init(frame: frame)
         configureHierarchy()
