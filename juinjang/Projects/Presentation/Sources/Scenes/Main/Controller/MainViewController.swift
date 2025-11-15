@@ -37,9 +37,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private var mainImjangList: [MainNoteViewModel] = []
     private var disposeBag = DisposeBag()
     private var isFirstShowing: Bool = true
-    
     private let pencilAgreeEventRelay = PublishRelay<Void>()
-    
     private var termsPopupViewController: TermsPopupViewController?
     
     init(termsUsecase: TermsUsecaseProtocol,

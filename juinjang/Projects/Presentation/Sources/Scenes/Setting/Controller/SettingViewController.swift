@@ -11,6 +11,7 @@ import SnapKit
 import Alamofire
 import RxSwift
 import Kingfisher
+import DomainUsecaseInterfaces
 
 struct YourResponseModel: Codable {
     let isSuccess: Bool
@@ -30,7 +31,7 @@ protocol LogoutDelegate: AnyObject {
     func logout()
 }
 
-final class SettingViewController : BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
+final class SettingViewController: BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
     static let id = "SettingViewController"
     
     private let userRepository = UserRepository()
@@ -272,7 +273,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         }
         picker.dismiss(animated: true, completion: nil)
     }
-        
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
@@ -290,11 +291,13 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             }
         }
     }
+    
     private func loadProfileImage() {
         if let savedImage = UserDefaultManager.shared.profileImage {
             profileImageView.image = savedImage
         }
     }
+    
     private func saveProfileImage(_ image: UIImage) {
         UserDefaultManager.shared.profileImage = image
     }
@@ -338,7 +341,9 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     @objc private func logoutButtonTap() {
-        let popupViewController = LogoutPopupViewController(name: UserDefaultManager.shared.nickname, email: logInfoMailLabel.text!, ment: "계정에서 로그아웃할까요?")
+        let popupViewController = LogoutPopupViewController(name: UserDefaultManager.shared.nickname,
+                                                            email: logInfoMailLabel.text!,
+                                                            ment: "계정에서 로그아웃할까요?")
         popupViewController.logoutDelegate = self
         popupViewController.modalPresentationStyle = .overFullScreen
         self.present(popupViewController, animated: false)

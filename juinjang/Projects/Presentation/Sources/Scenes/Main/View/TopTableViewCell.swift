@@ -82,7 +82,6 @@ final class TopTableViewCell: UITableViewCell {
         paragraphStyle.lineSpacing = 8.0
         attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
         greetLabel.attributedText = attrString
-        
         greetLabel.translatesAutoresizingMaskIntoConstraints = false
     }
     
@@ -92,13 +91,12 @@ final class TopTableViewCell: UITableViewCell {
         contentView.addSubview(myNoteButton)
         myNoteButton.addSubview(myNoteLabel)
         myNoteButton.addSubview(myNoteImageView)
-        
         contentView.addSubview(newPageButton)
         newPageButton.addSubview(newPageLabel)
         contentView.addSubview(lookAroundButton)
         lookAroundButton.addSubview(lookAroundLabel)
     }
-        
+    
     private func autoLayout() {
         //환영멘트
         greetLabel.snp.makeConstraints{

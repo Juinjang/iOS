@@ -2,15 +2,10 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let appDependencies: [Module] = [
-    .core(.common),
-    .data(.storage),
-    .data(.network),
-    .data(.repositories),
-    .domain(.repositoryInterfaces),
-    .domain(.services),
-    .domain(.usecases),
-    .domain(.usecaseInterfaces),
-    .presentation(.scenes),
+    .core,
+    .data,
+    .domain,
+    .presentation,
     .spm(.amplitude),
     .spm(.dgCharts),
     .spm(.dsWaveformImage),

@@ -12,38 +12,11 @@ let project = Project(
     moduleType: .data,
     targets: [
         .makeTarget(
-            module: .data(.model),
+            module: .data,
             product: .staticLibrary,
             dependencies: [
-                .domain(.model),
-                .core(.common)
-            ]
-        ),
-        .makeTarget(
-            module: .data(.storage),
-            product: .staticFramework,
-            dependencies: [
-                .data(.model),
-                .spm(.realmSwift)
-            ]
-        ),
-        .makeTarget(
-            module: .data(.network),
-            product: .staticLibrary,
-            dependencies: [
-                .data(.storage),
-                .data(.model),
-                .spm(.alamofire)
-            ]
-        ),
-        .makeTarget(
-            module: .data(.repositories),
-            product: .staticLibrary,
-            dependencies: [
-                .data(.model),
-                .data(.storage),
-                .data(.network),
-                .domain(.repositoryInterfaces)
+                .domain,
+                .core
             ]
         )
     ]

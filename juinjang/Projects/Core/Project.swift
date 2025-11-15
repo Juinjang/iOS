@@ -5,7 +5,7 @@ let project = Project(
     moduleType: .core,
     targets: [
         .makeTarget(
-            module: .core(.common),
+            module: .core,
             product: .staticLibrary,
             dependencies: [
                 .spm(.firebaseAnalytics),

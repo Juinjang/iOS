@@ -32,13 +32,17 @@ final class AccountDeleteFinalViewController: BaseViewController {
         $0.font = UIFont(name: "Pretendard-Bold", size: 20)
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.textColor = .gray600
-        
         let attrString = NSMutableAttributedString(string: $0.text!)
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 3.0
-        attrString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attrString.length))
+        attrString.addAttribute(
+            .paragraphStyle,
+            value: paragraphStyle,
+            range: NSRange(location: 0, length: attrString.length)
+        )
         $0.attributedText = attrString
     }
+    
     var smallMent = UILabel().then {
         $0.text = "불편했던 점을 남겨주시면 주인장 팀에 큰 도움이 됩니다. \n다음에 또 만나요!"
         $0.numberOfLines = 0
@@ -58,6 +62,7 @@ final class AccountDeleteFinalViewController: BaseViewController {
     let textMapping : [String: String] = ["더 이상 쓸 일이 없어요": "NOT_USE", "앱 사용법을 모르겠어요": "CANNOT_USE", "임장에 도움이 되지 않아요": "NOT_HELP", "앱이 정상적으로 작동하지 않아요": "CANNOT_FUNCTION", "보안이 걱정돼요": "CONCERN_SECURITY", "다른 서비스가 더 좋아요": "OTHER_SERVICE"]
     
     var btnArry : [UIButton] = []
+    
     var selectedTexts: [String] = []
     
     var noButton = UIButton().then {
@@ -68,6 +73,7 @@ final class AccountDeleteFinalViewController: BaseViewController {
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.layer.cornerRadius = 10
     }
+    
     var yesButton = UIButton().then {
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.backgroundColor = .main
@@ -138,10 +144,14 @@ final class AccountDeleteFinalViewController: BaseViewController {
             }
         }
     }
-    @objc private  func no(_ sender: Any) {
+    
+    @objc
+    private func no(_ sender: Any) {
         dismiss(animated: false, completion: nil)
     }
-    @objc private  func yes(_ sender: Any) {
+    
+    @objc
+    private func yes(_ sender: Any) {
         if UserDefaultManager.shared.isKakaoLogin {
             withdrawKakaoAccount(accessToken: UserDefaultManager.shared.accessToken, kakaoTargetId: UserDefaultManager.shared.kakaoTargetId)
         } else {
@@ -158,7 +168,8 @@ final class AccountDeleteFinalViewController: BaseViewController {
     }
     
     // 카카오톡 탈퇴 API를 호출하는 함수
-    private func withdrawKakaoAccount(accessToken: String, kakaoTargetId: Int64) {
+    private func withdrawKakaoAccount(accessToken: String,
+                                      kakaoTargetId: Int64) {
         
         let mappedTexts = selectedTexts.compactMap { textMapping[$0] }
         print("탈퇴 사유 : \(mappedTexts)")
@@ -184,16 +195,17 @@ final class AccountDeleteFinalViewController: BaseViewController {
     
     // apple 탈퇴 API를 호출하는 함수
     private func withdrawAppleAccount(accessToken: String, xAppleCode: String) {
-        
         let mappedTexts = selectedTexts.compactMap { textMapping[$0] }
-        
         let requestBody: [String: Any] = ["withdrawReason": mappedTexts]
 
         print("access : \(accessToken)")
         print("apple 토큰 : \(xAppleCode)")
         
-        JuinjangAPIManager.shared.postData(type: BaseResponseString.self, api: .withdrawApple(xAppleCode: xAppleCode), parameter: requestBody) { [weak self] response, error in
+        JuinjangAPIManager.shared.postData(type: BaseResponseString.self,
+                                           api: .withdrawApple(xAppleCode: xAppleCode),
+                                           parameter: requestBody) { [weak self] response, error in
             guard let self else { return }
+            
             if error == nil {
                 guard let response else {
                     print("withdrawAppleAccount response Empty")

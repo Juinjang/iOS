@@ -19,18 +19,18 @@ extension Target {
         settings: Settings? = nil
     ) -> Target {
         return .target(
-            name: name ?? module.moduleSubName,
+            name: name ?? module.moduleName,
             destinations: Environment.destinations,
             product: product,
             productName: productName ?? module.defaultProductName,
             bundleId: bundleId ?? module.defaultBundleID,
             deploymentTargets: Environment.deploymentTarget,
             infoPlist: infoPlist,
-            sources: sources ?? module.defaultSources,
+            sources: sources ?? "Sources/**",
             resources: resources,
             entitlements: entitlements,
             dependencies: dependencies.map {
-                $0.asDependency(relativeTo: module)
+                $0.asDependency()
             },
             settings: settings
         )

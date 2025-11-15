@@ -12,39 +12,8 @@ let project = Project(
     moduleType: .domain,
     targets: [
         .makeTarget(
-            module: .domain(.model),
+            module: .domain,
             product: .staticLibrary
-        ),
-        .makeTarget(
-            module: .domain(.repositoryInterfaces),
-            product: .staticLibrary,
-            dependencies: [
-                .domain(.model)
-            ]
-        ),
-        .makeTarget(
-            module: .domain(.services),
-            product: .staticLibrary,
-            dependencies: [
-                .domain(.model)
-            ]
-        ),
-        .makeTarget(
-            module: .domain(.usecases),
-            product: .staticLibrary,
-            dependencies: [
-                .domain(.model),
-                .domain(.usecaseInterfaces),
-                .domain(.services),
-                .domain(.repositoryInterfaces)
-            ]
-        ),
-        .makeTarget(
-            module: .domain(.usecaseInterfaces),
-            product: .staticLibrary,
-            dependencies: [
-                .domain(.model)
-            ]
         )
     ]
 )

@@ -12,15 +12,9 @@ let project = Project(
     moduleType: .designSystem,
     targets: [
         .makeTarget(
-            module: .designSystem(.resources),
-            product: .staticLibrary
-        ),
-        .makeTarget(
-            module: .designSystem(.components),
+            module: .designSystem,
             product: .staticLibrary,
-            dependencies: [
-                .designSystem(.resources)
-            ]
-        ),
+            resources: "Resources/**"
+        )
     ]
 )
