@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-final class SelectNoteCell: UICollectionViewCell {
+public final class SelectNoteCell: UICollectionViewCell {
     private let roomThumbnailImageView = UIImageView()
     private let roomNameLabel = UILabel()
     private let coinIcon = UIImageView()
@@ -24,15 +24,15 @@ final class SelectNoteCell: UICollectionViewCell {
     private let starIcon = UIImageView()
     private let scoreLabel = UILabel()
     
-    let bookMarkButton = UIButton()
+    public let bookMarkButton = UIButton()
     
-    var isClicked = false {
+    public var isClicked = false {
         didSet {
             setSelectStyle(isSelected: isClicked)
         }
     }
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         configureHierarchy()
         configureLayout()
@@ -54,7 +54,7 @@ final class SelectNoteCell: UICollectionViewCell {
 
 // MARK: - Configure Cell
 extension SelectNoteCell {
-    func configureCell(note: NoteDTO?) {
+    public func configureCell(note: NoteDTO?) {
         guard let note else { return }
 
         roomNameLabel.text = note.name
@@ -144,7 +144,7 @@ extension SelectNoteCell {
         scoreLabel.textColor = empty ? .null : .main
     }
     
-    func setSelectStyle(isSelected: Bool) {
+    public func setSelectStyle(isSelected: Bool) {
         if isSelected {
             contentView.layer.borderColor = UIColor.main.cgColor
             contentView.layer.borderWidth = 1

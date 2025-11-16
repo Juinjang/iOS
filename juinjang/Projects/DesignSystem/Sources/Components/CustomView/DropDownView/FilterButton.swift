@@ -9,11 +9,11 @@ import UIKit
 import RxSwift
 import RxRelay
 
-final class FilterButton: UIButton {
+public final class FilterButton: UIButton {
     private var padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     private var disposeBag = DisposeBag()
     
-    init(filterType: FilterType) {
+    public init(filterType: FilterType) {
         super.init(frame: .zero)
         configureView(filterType: filterType)
     }
@@ -34,7 +34,7 @@ final class FilterButton: UIButton {
         layoutIfNeeded()
     }
     
-    func updateColor(isSelected: Bool) {
+    public func updateColor(isSelected: Bool) {
         if isSelected {
             setTitleColor(.gray450, for: .normal)
             titleLabel?.setAttribute(text: titleLabel?.text, color: .gray450, font: .pretendard(size: 14, weight: .semiBold), lineHeight: 19)
@@ -44,11 +44,11 @@ final class FilterButton: UIButton {
         }
     }
     
-     override var intrinsicContentSize: CGSize {
-         var contentSize = super.intrinsicContentSize
-         contentSize.height += padding.top + padding.bottom
-         contentSize.width += padding.left + padding.right
-
-         return contentSize
-     }
+    public override var intrinsicContentSize: CGSize {
+        var contentSize = super.intrinsicContentSize
+        contentSize.height += padding.top + padding.bottom
+        contentSize.width += padding.left + padding.right
+        
+        return contentSize
+    }
 }

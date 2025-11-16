@@ -10,29 +10,28 @@ import SnapKit
 import Then
 import SkeletonView
 
-final class RecordingFileViewCell: UITableViewCell {
-    
-    let recordingFileNameLabel = UILabel().then {
+public final class RecordingFileViewCell: UITableViewCell {
+    public let recordingFileNameLabel = UILabel().then {
         $0.font = .pretendard(size: 18, weight: .semiBold)
         $0.textColor = .gray500
     }
     
-    let recordedDateLabel = UILabel().then {
+    public let recordedDateLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.textColor = .gray300
     }
     
-    var recordedTimeLabel = UILabel().then {
+    public var recordedTimeLabel = UILabel().then {
         $0.font = .pretendard(size: 16, weight: .medium)
         $0.textColor = .gray500
         $0.textAlignment = .right
     }
     
-    var playButton = UIButton().then {
+    public var playButton = UIButton().then {
         $0.setImage(UIImage.ImjangNote.play, for: .normal)
     }
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         [recordingFileNameLabel, recordedDateLabel, recordedTimeLabel, playButton].forEach {
@@ -51,7 +50,7 @@ final class RecordingFileViewCell: UITableViewCell {
     }
     
     //데이터 넣기
-    func setData(fileItem: RecordResponse?) {
+    public func setData(fileItem: RecordResponse?) {
         guard let fileItem = fileItem else { return }
         print(#function)
         recordingFileNameLabel.text = fileItem.recordName

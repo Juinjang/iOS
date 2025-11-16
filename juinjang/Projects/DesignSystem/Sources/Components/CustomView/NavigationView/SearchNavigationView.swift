@@ -11,7 +11,7 @@ import SnapKit
 import RxCocoa
 import RxSwift
 
-final class SearchNavigationView: DefaultNavigationView {
+public final class SearchNavigationView: DefaultNavigationView {
     private let searchBar = UIView().then {
         $0.backgroundColor = .gray200
         $0.layer.cornerRadius = 20
@@ -28,7 +28,7 @@ final class SearchNavigationView: DefaultNavigationView {
     
     private let isSearchActiveRelay = BehaviorRelay<Bool>(value: false)
 
-    var searchPlaceHolder: String? {
+    public var searchPlaceHolder: String? {
         didSet {
             self.searchTextField.placeholder = self.searchPlaceHolder ?? ""
         }
@@ -111,18 +111,18 @@ final class SearchNavigationView: DefaultNavigationView {
             .disposed(by: disposeBag)
     }
     
-    func setSearchTextFieldBecomeResponder() {
+    public func setSearchTextFieldBecomeResponder() {
         searchTextField.becomeFirstResponder()
     }
     
-    func setSearchTextFieldText(_ text: String) {
+    public func setSearchTextFieldText(_ text: String) {
         searchTextField.text = text
     }
 }
 
 
 fileprivate extension Reactive where Base: UIButton {
-    var isSearchActive: Binder<Bool> {
+    public var isSearchActive: Binder<Bool> {
         return Binder(self.base) { button, isActive in
             let image: UIImage = isActive ? .x24 : .ImjangList.search
             button.setImage(image.withRenderingMode(.alwaysTemplate), for: .normal)

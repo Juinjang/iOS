@@ -8,16 +8,16 @@
 import UIKit
 import SnapKit
 
-final class BlurImageView: UIImageView {
+public final class BlurImageView: UIImageView {
     private let blurView = UIVisualEffectView()
     
-    var blurStyle: UIBlurEffect.Style = .dark {
+    public var blurStyle: UIBlurEffect.Style = .dark {
         didSet {
             blurView.effect = UIBlurEffect(style: blurStyle)
         }
     }
 
-    init() {
+    public init() {
         super.init(frame: .zero)
         setupView()
     }

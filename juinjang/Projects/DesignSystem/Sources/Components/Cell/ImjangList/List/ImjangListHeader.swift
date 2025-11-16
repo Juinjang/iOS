@@ -12,7 +12,7 @@ import RxSwift
 import RxRelay
 import CoreCommon
 
-final class ImjangListHeader: UICollectionReusableView {
+public final class ImjangListHeader: UICollectionReusableView {
     let noteFilterDropDownView = DropDownView(filterList: MyNoteFilter.allCases)
     
     let deleteButton = UIButton()
@@ -21,9 +21,9 @@ final class ImjangListHeader: UICollectionReusableView {
     var menuChildren: [UIMenuElement] = []
     var disposeBag = DisposeBag()
     
-    let filterActionRelay = PublishRelay<MyNoteAction>()
+    public let filterActionRelay = PublishRelay<MyNoteAction>()
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         
         configureHierarchy()
@@ -40,7 +40,7 @@ final class ImjangListHeader: UICollectionReusableView {
         disposeBag = DisposeBag()
     }
     
-    func bindAction() {
+    public func bindAction() {
         noteFilterDropDownView.filterActionRelay
             .bind(with: self) { owner, action in
                 owner.filterActionRelay.accept(action as! MyNoteAction)
@@ -99,7 +99,7 @@ extension ImjangListHeader {
         }
     }
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         let view = super.hitTest(point, with: event)
         if view != nil {
             return view

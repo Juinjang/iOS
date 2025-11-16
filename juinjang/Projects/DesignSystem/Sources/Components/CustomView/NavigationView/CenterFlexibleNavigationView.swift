@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class CenterFlexibleNavigationView: DefaultNavigationView {
+public final class CenterFlexibleNavigationView: DefaultNavigationView {
     private let centerView: UIView
     
     init(centerView: UIView) {

@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class RecordFileSkeletonTableViewCell: UITableViewCell {
+public final class RecordFileSkeletonTableViewCell: UITableViewCell {
     private let nameLabel = UILabel()
     private let playImageView = UIImageView()
 
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+    public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureHierarchy()
         configureLayout()

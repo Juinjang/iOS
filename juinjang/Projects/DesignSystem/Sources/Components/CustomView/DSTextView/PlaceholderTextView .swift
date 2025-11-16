@@ -11,7 +11,7 @@ import SnapKit
 import RxSwift
 import RxCocoa
 
-final class PlaceholderTextView: BaseView {
+public final class PlaceholderTextView: BaseView {
     private let textView = UITextView().then {
         $0.font = .systemFont(ofSize: 16)
         $0.textColor = .label
@@ -32,7 +32,7 @@ final class PlaceholderTextView: BaseView {
     
     private let disposeBag = DisposeBag()
 
-    init(placeholder: String,
+    public init(placeholder: String,
          maxLength: Int = 500) {
         self.maxLength = maxLength
         super.init(frame: .zero)
@@ -44,7 +44,7 @@ final class PlaceholderTextView: BaseView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(relay: PublishRelay<String>) {
+    public func configure(relay: PublishRelay<String>) {
         textView.rx.text
             .orEmpty
             .bind(to: relay)

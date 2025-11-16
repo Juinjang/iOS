@@ -11,7 +11,7 @@ import SnapKit
 import RxRelay
 import RxSwift
 
-final class CountingTextView: BaseView {
+public final class CountingTextView: BaseView {
     private lazy var textView: PlaceholderTextView = {
         return PlaceholderTextView(
             placeholder: placeholder,
@@ -29,7 +29,7 @@ final class CountingTextView: BaseView {
     private let placeholder: String
     private let disposeBag = DisposeBag()
     
-    init(maxLength: Int = 500,
+    public init(maxLength: Int = 500,
          placeholder: String) {
         self.maxLength = maxLength
         self.placeholder = placeholder
@@ -41,7 +41,7 @@ final class CountingTextView: BaseView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(relay: PublishRelay<String>) {
+    public func configure(relay: PublishRelay<String>) {
         textView.configure(relay: relay)
         
         relay

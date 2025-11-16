@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class UpdateAlertView: UIView {
-    var updateButtonTappedAction: (() -> Void)?
-    var closeButtonTappedAction: (() -> Void)?
+public final class UpdateAlertView: UIView {
+    public var updateButtonTappedAction: (() -> Void)?
+    public var closeButtonTappedAction: (() -> Void)?
     
     private let backgroundImage = UIImageView().then {
         $0.image = UIImage.updateBackground

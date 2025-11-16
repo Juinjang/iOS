@@ -9,7 +9,7 @@ import UIKit
 import Then
 import Kingfisher
 
-final class ScrapCollectionViewCell: UICollectionViewCell {
+public final class ScrapCollectionViewCell: UICollectionViewCell {
     var totalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
@@ -56,7 +56,7 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
     
 // MARK: - Configure Cell
 extension ScrapCollectionViewCell {
-    func setData(note: NoteDTO?) {
+    public func setData(note: NoteDTO?) {
         guard let note else { return }
         roomNameLabel.text = note.name
         

@@ -9,7 +9,7 @@ import UIKit
 import Then
 import SnapKit
 
-struct TriangleGraphModel {
+public struct TriangleGraphModel {
     let rates: [Double]
     var fillColor: UIColor = .mainWhite
     var cornerRadius: CGFloat = 1.5
@@ -20,7 +20,7 @@ struct TriangleGraphModel {
     ]
 }
 
-final class TriangleGraphView: BaseView {
+public final class TriangleGraphView: BaseView {
     private let baseTriangleView = UIImageView().then {
         $0.image = .graph
         $0.contentMode = .scaleAspectFit
@@ -28,7 +28,7 @@ final class TriangleGraphView: BaseView {
     
     private var rateTriangleViews: [RateTriangleView] = []
 
-    func configure(for models: [TriangleGraphModel]) {
+    public func configure(for models: [TriangleGraphModel]) {
         rateTriangleViews.forEach { $0.removeFromSuperview() }
         rateTriangleViews = []
         

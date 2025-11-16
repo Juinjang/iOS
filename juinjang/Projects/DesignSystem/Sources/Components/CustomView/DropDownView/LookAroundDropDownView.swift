@@ -9,14 +9,14 @@ import UIKit
 import RxRelay
 import RxSwift
 
-final class LookAroundDropDownView: BaseView {
+public final class LookAroundDropDownView: BaseView {
     private let sortDropDownView = DropDownView(filterList: SortFilter.allCases)
     private let transactionTypeDropDownView = DropDownView(filterList: TransactionTypeFilter.allCases)
     private let saleTypeDropDownView = DropDownView(filterList: SaleTypeFilter.allCases)
 
-    let sortActionRelay = PublishRelay<SortAction>()
-    let transactionTypeActionRelay = PublishRelay<TransactionTypeAction>()
-    let saleTypeActionRelay = PublishRelay<SaleTypeAction>()
+    public let sortActionRelay = PublishRelay<SortAction>()
+    public let transactionTypeActionRelay = PublishRelay<TransactionTypeAction>()
+    public let saleTypeActionRelay = PublishRelay<SaleTypeAction>()
     
     private var disposeBag = DisposeBag()
     

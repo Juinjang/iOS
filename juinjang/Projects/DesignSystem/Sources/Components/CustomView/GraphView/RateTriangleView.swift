@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class RateTriangleView: UIView {
+public final class RateTriangleView: UIView {
     var fillColor: UIColor = .mainWhite
     var cornerRadius: CGFloat = 1.5
     var isGradient: Bool = false
@@ -104,7 +104,7 @@ extension RateTriangleView {
 
 // MARK: - Rouneded Corner
 fileprivate extension UIBezierPath {
-    func moveRounded(from p0: CGPoint, to p1: CGPoint, next p2: CGPoint, radius: CGFloat) {
+    public func moveRounded(from p0: CGPoint, to p1: CGPoint, next p2: CGPoint, radius: CGFloat) {
         let v1 = CGVector(dx: p1.x - p0.x, dy: p1.y - p0.y)
         let v2 = CGVector(dx: p2.x - p1.x, dy: p2.y - p1.y)
         

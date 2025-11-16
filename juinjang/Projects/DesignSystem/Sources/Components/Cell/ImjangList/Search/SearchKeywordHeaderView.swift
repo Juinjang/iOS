@@ -8,10 +8,10 @@
 import UIKit
 import SnapKit
 
-final class SearchKeywordHeaderView: UITableViewHeaderFooterView {
+public final class SearchKeywordHeaderView: UITableViewHeaderFooterView {
 
-    let recentKeywordLabel = UILabel()
-    let removeAllButton = UIButton()
+    public let recentKeywordLabel = UILabel()
+    public let removeAllButton = UIButton()
     
     override init(reuseIdentifier: String?) {
         super.init(reuseIdentifier: reuseIdentifier)

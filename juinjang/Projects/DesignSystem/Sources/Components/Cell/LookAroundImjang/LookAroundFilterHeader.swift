@@ -9,7 +9,7 @@ import UIKit
 import RxSwift
 import RxRelay
 
-final class LookAroundFilterHeader: BaseCollectionReusableView {
+public final class LookAroundFilterHeader: BaseCollectionReusableView {
     private let filterView = LookAroundDropDownView()
     private var disposeBag = DisposeBag()
     
@@ -18,7 +18,7 @@ final class LookAroundFilterHeader: BaseCollectionReusableView {
         disposeBag = DisposeBag()
     }
     
-    func bind(relay: PublishRelay<LookAroundEventType>) {
+    public func bind(relay: PublishRelay<LookAroundEventType>) {
         filterView.sortActionRelay
             .subscribe(with: self) { (self, action) in
                 relay.accept(.filterItemTap(action, nil, nil))
@@ -57,7 +57,7 @@ final class LookAroundFilterHeader: BaseCollectionReusableView {
         super.configureView()
     }
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if let hitView = super.hitTest(point, with: event) {
             return hitView
         }

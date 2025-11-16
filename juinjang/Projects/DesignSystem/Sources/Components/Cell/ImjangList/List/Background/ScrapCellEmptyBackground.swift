@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-final class ScrapCellEmptyBackground: UICollectionReusableView {
+public final class ScrapCellEmptyBackground: UICollectionReusableView {
     private let backgroundView = UIView()
     private let messageLabel: UILabel = {
         let label = UILabel()
@@ -28,7 +28,7 @@ final class ScrapCellEmptyBackground: UICollectionReusableView {
         return label
     }()
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         print("ScrapCellEmptyBackground")
         self.applyGradientBackground()

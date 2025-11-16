@@ -7,12 +7,12 @@
 
 import UIKit
 
-enum DSFontStyle {
+public enum DSFontStyle {
     case h1, h2, h3, h4
     case title, body, body2
     case reguler
     
-    var size: CGFloat {
+    public var size: CGFloat {
         switch self {
         case .h1: return 24
         case .h2, .h4: return 20
@@ -23,7 +23,7 @@ enum DSFontStyle {
         }
     }
     
-    var weight: UIFont.PretendardWeight {
+    public var weight: UIFont.PretendardWeight {
         switch self {
         case .h1, .h2, .h3: return .bold
         case .h4, .title: return .semiBold
@@ -33,12 +33,12 @@ enum DSFontStyle {
     }
 }
 
-final class DSLabel: UILabel {
-    var fontColor: UIColor = .gray600 { didSet { updateAttributedText() } }
-    var fontAlignment: NSTextAlignment = .left { didSet { updateAttributedText() } }
-    var fontSize: CGFloat = 14 { didSet { updateAttributedText() } }
-    var fontWeight: UIFont.PretendardWeight = .bold { didSet { updateAttributedText() }}
-    var maxTextWidth: CGFloat? { didSet { updateAttributedText() } }
+public final class DSLabel: UILabel {
+    public var fontColor: UIColor = .gray600 { didSet { updateAttributedText() } }
+    public var fontAlignment: NSTextAlignment = .left { didSet { updateAttributedText() } }
+    public var fontSize: CGFloat = 14 { didSet { updateAttributedText() } }
+    public var fontWeight: UIFont.PretendardWeight = .bold { didSet { updateAttributedText() }}
+    public var maxTextWidth: CGFloat? { didSet { updateAttributedText() } }
     
     private var _lineHeight: CGFloat?
     
@@ -58,7 +58,7 @@ final class DSLabel: UILabel {
          didSet { updateAttributedText() }
      }
     
-    var textInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    public var textInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     
     init(_ style: DSFontStyle) {
         self.fontSize = style.size
@@ -82,17 +82,17 @@ final class DSLabel: UILabel {
                       height: size.height + textInsets.top + textInsets.bottom)
     }
     
-    func commonInit() {
+    public func commonInit() {
         numberOfLines = 0
         lineBreakMode = .byTruncatingTail
     }
     
-    func setLineHeight(_ height: CGFloat) {
+    public func setLineHeight(_ height: CGFloat) {
         self._lineHeight = height
         updateAttributedText()
     }
     
-    func updateAttributedText() {
+    public func updateAttributedText() {
         setAttribute(
             text: maxTextWidth.flatMap {
                 truncatedText(for: text, maxWidth: $0)
@@ -106,7 +106,7 @@ final class DSLabel: UILabel {
         )
     }
     
-    func setHighlightedText(fullText: String,
+    public func setHighlightedText(fullText: String,
                             highlightText: String,
                             highlightColor: UIColor) {
         let attributedString = NSMutableAttributedString(string: fullText)

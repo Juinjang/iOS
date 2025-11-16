@@ -7,9 +7,9 @@
 
 import UIKit
 
-final class ScrapCellBackground: UICollectionReusableView {
+public final class ScrapCellBackground: UICollectionReusableView {
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         self.applyGradientBackground()
     }

@@ -9,8 +9,8 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-class ImageButton: UIButton {
-    override var contentMode: UIView.ContentMode {
+public class ImageButton: UIButton {
+    public override var contentMode: UIView.ContentMode {
         didSet {
             self.customImageView.contentMode = contentMode
         }
@@ -18,25 +18,25 @@ class ImageButton: UIButton {
     
     private var customImageView = UIImageView()
     
-    var selectedImage: UIImage? {
+    public var selectedImage: UIImage? {
         didSet {
             self.commonInit()
         }
     }
     
-    var image: UIImage? {
+    public var image: UIImage? {
         didSet {
             self.commonInit()
         }
     }
     
-    override var isSelected: Bool {
+    public override var isSelected: Bool {
         didSet {
             self.updateImage()
         }
     }
     
-    init(normalImage: UIImage? = nil,
+    public init(normalImage: UIImage? = nil,
          selectedImage: UIImage? = nil,
          isAlwaysTemplate: Bool = true) {
         self.image = normalImage
@@ -69,7 +69,7 @@ class ImageButton: UIButton {
 }
 
 extension ImageButton {
-    func setImage(urlString: String?,
+    public func setImage(urlString: String?,
                   placeholder: UIImage? = nil) {
         guard let urlString = urlString,
               let url = URL(string: urlString) else {

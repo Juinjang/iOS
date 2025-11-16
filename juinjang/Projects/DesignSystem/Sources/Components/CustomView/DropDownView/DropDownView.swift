@@ -10,7 +10,7 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-final class DropDownView<T: FilterType & RawRepresentable>: BaseView where T.RawValue == String {
+public final class DropDownView<T: FilterType & RawRepresentable>: BaseView where T.RawValue == String {
     private lazy var filterTitleButton = FilterTitleButton(title: filterList[0].title)
     
     // 펼칠 목록(필터 메뉴)을 쌓아둘 스택뷰
@@ -26,10 +26,10 @@ final class DropDownView<T: FilterType & RawRepresentable>: BaseView where T.Raw
     private var filterStackViewContentHeight: CGFloat = 0
     private var disposeBag = DisposeBag()
     private var isExpanded = false  // 현재 펼쳐진 상태인지 여부
-    lazy var filterActionRelay = BehaviorRelay<FilterActionType>(value: filterList[0].action)
+    public lazy var filterActionRelay = BehaviorRelay<FilterActionType>(value: filterList[0].action)
     private var filterList: [T]
     
-    init(filterList: [T]) {
+    public init(filterList: [T]) {
         self.filterList = filterList
         super.init(frame: .zero)
         setFilterView()
@@ -41,7 +41,7 @@ final class DropDownView<T: FilterType & RawRepresentable>: BaseView where T.Raw
     }
     
     // MARK: - 외부에서 선택된 필터를 설정하는 메서드
-    func configureSelectedFilter(_ filter: T) {
+    public func configureSelectedFilter(_ filter: T) {
         filterTitleButton.updateTitle(title: filter.title)
 
         guard let selectedIndex = filterList.firstIndex(where: { $0 == filter }) else { return }

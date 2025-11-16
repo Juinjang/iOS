@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class LookAroundImjangCountCell: BaseCollectionViewCell {
+public final class LookAroundImjangCountCell: BaseCollectionViewCell {
     private let stackView = UIStackView().then {
         $0.backgroundColor = .white
         $0.axis = .horizontal
@@ -25,7 +25,7 @@ final class LookAroundImjangCountCell: BaseCollectionViewCell {
         $0.setAttribute(text: title, color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
     
-    func configureCell(imjangCount: Int) {
+    public func configureCell(imjangCount: Int) {
         countLabel.setAttribute(text: "\(imjangCount)", color: .gray300, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
     }
      

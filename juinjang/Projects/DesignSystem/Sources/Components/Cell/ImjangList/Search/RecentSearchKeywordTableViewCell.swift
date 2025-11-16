@@ -7,10 +7,10 @@
 
 import UIKit
 
-final class RecentSearchKeywordTableViewCell: UITableViewCell {
-    let clockIcon = UIImageView()
-    let searchKeywordLabel = UILabel()
-    let deleteButton = UIButton()
+public final class RecentSearchKeywordTableViewCell: UITableViewCell {
+    public let clockIcon = UIImageView()
+    public let searchKeywordLabel = UILabel()
+    public let deleteButton = UIButton()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -23,7 +23,7 @@ final class RecentSearchKeywordTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setData(keyword: String) {
+    public func setData(keyword: String) {
         searchKeywordLabel.text = keyword
     }
     

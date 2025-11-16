@@ -9,12 +9,12 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-enum AlertButtonType: Equatable {
+public enum AlertButtonType: Equatable {
     case confirm(title: String, width: CGFloat?)
     case cancel(title: String, width: CGFloat?)
     case custom(view: UIView)
     
-    var title: String {
+    public var title: String {
         switch self {
         case .cancel(title: let title, _):
             return title
@@ -25,7 +25,7 @@ enum AlertButtonType: Equatable {
         }
     }
 
-    var event: AlertEventType {
+    public var event: AlertEventType {
         switch self {
         case .confirm(_,_):
             return .confirm
@@ -36,30 +36,30 @@ enum AlertButtonType: Equatable {
         }
     }
 
-    static func confirm(title: String) -> AlertButtonType {
+    public static func confirm(title: String) -> AlertButtonType {
         return .confirm(title: title, width: nil)
     }
 
-    static func cancel(title: String) -> AlertButtonType {
+    public static func cancel(title: String) -> AlertButtonType {
         return .cancel(title: title, width: nil)
     }
 }
 
-enum AlertEventType {
+public enum AlertEventType {
     case confirm
     case cancel
     case custom
 }
 
-class BaseAlertViewController: UIViewController {
+public class BaseAlertViewController: UIViewController {
     private let disposeBag = DisposeBag()
-    let eventRelay = PublishRelay<AlertEventType>()
+    public let eventRelay = PublishRelay<AlertEventType>()
 
-    lazy var mainView: BaseAlertView = {
+    public lazy var mainView: BaseAlertView = {
         return BaseAlertView()
     }()
         
-    init(height: CGFloat,
+    public init(height: CGFloat,
          isShowDismissButton: Bool = false,
          isBackgroundDismissEnabled: Bool = false,
          contentViews: [UIView],
@@ -83,15 +83,6 @@ class BaseAlertViewController: UIViewController {
         modalTransitionStyle = .crossDissolve
         bind()
     }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        configureContentHierarchy()
-        configureContentLayout()
-    }
-    
-    func configureContentHierarchy() {}
-    func configureContentLayout() {}
     
     private func bind() {
         mainView

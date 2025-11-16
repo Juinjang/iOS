@@ -8,10 +8,10 @@
 import UIKit
 import SnapKit
 
-final class FilterTitleButton: UIButton {
+public final class FilterTitleButton: UIButton {
     private var padding = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
     
-    init(title: String) {
+    public init(title: String) {
         super.init(frame: .zero)
         configureView(title: title)
     }
@@ -38,7 +38,7 @@ final class FilterTitleButton: UIButton {
         contentHorizontalAlignment = .left
     }
     
-    func updateTitle(title: String) {
+    public func updateTitle(title: String) {
         setTitle(title, for: .normal)
     }
     

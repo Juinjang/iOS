@@ -12,7 +12,7 @@ import Kingfisher
 import CoreCommon
 import DomainModel
 
-final class ImjangNoteCollectionViewCell: UICollectionViewCell {
+public final class ImjangNoteCollectionViewCell: UICollectionViewCell {
     let roomThumbnailImageView = UIImageView()
     let roomNameLabel = UILabel()
     let roomIcon = UIImageView()
@@ -56,7 +56,7 @@ final class ImjangNoteCollectionViewCell: UICollectionViewCell {
 
 // MARK: - Configure Cell
 extension ImjangNoteCollectionViewCell {
-    func configureCell(note: Note?) {
+    public func configureCell(note: Note?) {
         guard let note else { return }
         roomThumbnailImageView.kf.setImage(with: URL(string: ""))
         roomThumbnailImageView.image = nil

@@ -7,11 +7,11 @@
 
 import UIKit
 
-final class ImjangSkeletonCollectionViewCell: UICollectionViewCell {
+public final class ImjangSkeletonCollectionViewCell: UICollectionViewCell {
     private let roomImageView = UIImageView()
     private let nameLabel = UILabel()
     
-    override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         super.init(frame: frame)
         configureHierarchy()
         configureLayout()

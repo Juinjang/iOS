@@ -9,8 +9,8 @@ import UIKit
 import Then
 import SnapKit
 
-final class ChatBubbleView: BaseView {
-    var onDismiss: (() -> Void)?
+public final class ChatBubbleView: BaseView {
+    public var onDismiss: (() -> Void)?
     
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .light)).then {
         $0.contentView.backgroundColor = .gray500.withAlphaComponent(0.7)
@@ -33,7 +33,7 @@ final class ChatBubbleView: BaseView {
         $0.image = .polygon
     }
     
-    init(text: String) {
+    public init(text: String) {
         super.init(frame: .zero)
         contentLabel.text = text
     }

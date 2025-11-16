@@ -8,8 +8,8 @@
 import UIKit
 import SnapKit
 
-final class ImageCollectionViewCell: UICollectionViewCell {
-    let imageView = UIImageView()
+public final class ImageCollectionViewCell: UICollectionViewCell {
+    private let imageView = UIImageView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -23,7 +23,7 @@ final class ImageCollectionViewCell: UICollectionViewCell {
         configureCell(image: nil)
     }
     
-    func configureCell(image: UIImage?) {
+    public func configureCell(image: UIImage?) {
         guard let image else { return }
         imageView.image = image
     }

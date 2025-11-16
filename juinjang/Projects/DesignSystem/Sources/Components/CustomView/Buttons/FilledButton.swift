@@ -9,13 +9,13 @@ import UIKit
 import Then
 import SnapKit
 
-final class FilledButton: PaddingButton {
+public final class FilledButton: PaddingButton {
     private let padding = UIEdgeInsets(top: 15.0, left: 0.0, bottom: 15.0, right: 0.0)
     private let contentLabel = DSLabel(.title).then {
         $0.fontColor = .mainWhite
     }
     
-    var isActivated: Bool = true {
+    public var isActivated: Bool = true {
         didSet {
             isActivated
             ? (backgroundColor = .gray500)
@@ -23,7 +23,7 @@ final class FilledButton: PaddingButton {
         }
     }
     
-    init(title: String) {
+    public init(title: String) {
         super.init(padding: padding)
         contentLabel.text = title
         configureView()

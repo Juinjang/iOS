@@ -12,7 +12,7 @@ import RxSwift
 import RxRelay
 import RxCocoa
 
-enum NavigationButton {
+public enum NavigationButton {
     case pop
     case search
     case setting
@@ -24,7 +24,7 @@ enum NavigationButton {
     case report
     case startRecord
     
-    var image: UIImage? {
+    public var image: UIImage? {
         switch self {
         case .pop:
             return .arrowLeft
@@ -49,7 +49,7 @@ enum NavigationButton {
         }
     }
     
-    var action: NavigationAction {
+    public var action: NavigationAction {
         switch self {
         case .pop:
             return .popButtonTap
@@ -75,7 +75,7 @@ enum NavigationButton {
     }
 }
 
-enum NavigationAction: Equatable {
+public enum NavigationAction: Equatable {
     case popButtonTap
     case searchButtonTap
     case searchSummit(keyword: String)
@@ -90,62 +90,62 @@ enum NavigationAction: Equatable {
     case startRecordButtonTap
 }
 
-class DefaultNavigationView: BaseView {
+public class DefaultNavigationView: BaseView {
     var disposeBag = DisposeBag()
     private let titleLabel = DSLabel(.title).then {
         $0.fontColor = .gray600
         $0.fontAlignment = .center
     }
     
-    var title: String? {
+    public var title: String? {
         didSet {
             self.titleLabel.text = self.title
         }
     }
     
-    var titleColor: UIColor? {
+    public var titleColor: UIColor? {
         didSet {
             self.titleLabel.fontColor = self.titleColor ?? .gray600
         }
     }
     
-    var titleSize: CGFloat? {
+    public var titleSize: CGFloat? {
         didSet {
             self.titleLabel.fontSize = self.titleSize ?? 16
         }
     }
     
-    var isTitleHidden: Bool? {
+    public var isTitleHidden: Bool? {
         didSet {
             self.titleLabel.isHidden = self.isTitleHidden ?? false
         }
     }
     
-    let rightItemStackView = UIStackView().then {
+    public let rightItemStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .trailing
         $0.spacing = 16
     }
     
-    let leftItemStackView = UIStackView().then {
+    public let leftItemStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .leading
         $0.spacing = 16
     }
     
-    var rightItem: [NavigationButton]? {
+    public var rightItem: [NavigationButton]? {
         didSet {
             self.setupItem(isLeftItem: false)
         }
     }
     
-    var leftItem: [NavigationButton]? {
+    public var leftItem: [NavigationButton]? {
         didSet {
             self.setupItem(isLeftItem: true)
         }
     }
     
-    var itemActionRelay = PublishRelay<NavigationAction>()
+    public var itemActionRelay = PublishRelay<NavigationAction>()
     
     override func configureHierarchy() {
         super.configureHierarchy()
