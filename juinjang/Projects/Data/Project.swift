@@ -17,7 +17,8 @@ let project = Project(
             dependencies: [
                 .domain,
                 .core,
-                .spm(.rxSwift)
+                .spm(.rxSwift),
+                .spm(.realmSwift)
             ]
         )
     ]

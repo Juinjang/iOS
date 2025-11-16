@@ -26,6 +26,7 @@ let project = Project(
                 .spm(.reactorKit),
                 .spm(.dsWaveformImage),
                 .spm(.dsWaveformImageViews),
+                .spm(.dgCharts)
             ]
         )
     ]
