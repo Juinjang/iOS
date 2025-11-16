@@ -9,7 +9,6 @@ import Foundation
 import StoreKit
 import RxSwift
 
-
 final class InAppPurchaseService {
     private let productIdList: [String: String]
     private var pencilProductList: [Product] = []
@@ -18,9 +17,9 @@ final class InAppPurchaseService {
     var updateListenerTask: Task<Void, Never>? = nil
     let completedPurchasePencilDTO = PublishSubject<PurchasePencilDTO?>() // 외부에 알림용
     
-    let pencilShopRepository: PencilShopRepository
+    let pencilShopRepository: PencilShopRepositoryProtocol
     
-    init(pencilShopRepository: PencilShopRepository) {
+    init(pencilShopRepository: PencilShopRepositoryProtocol) {
         self.pencilShopRepository = pencilShopRepository
         self.productIdList = InAppPurchaseService.loadProductIdList()
         

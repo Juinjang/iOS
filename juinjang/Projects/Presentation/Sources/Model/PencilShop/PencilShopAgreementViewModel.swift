@@ -1,4 +1,4 @@
-import DomainModel
+import Domain
 
 public struct PencilShopAgreementViewModel {
     let status: Bool

@@ -5,7 +5,7 @@
 //  Created by KimDongWoo on 11/11/25.
 //
 
-import DomainModel
+import Domain
 
 struct MainNoteViewModel {
     let limjangId: Int

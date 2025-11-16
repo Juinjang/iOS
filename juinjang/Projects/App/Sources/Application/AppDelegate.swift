@@ -12,6 +12,7 @@ import Firebase
 import AmplitudeSwift
 import IQKeyboardManagerSwift
 import Data
+import Core
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
