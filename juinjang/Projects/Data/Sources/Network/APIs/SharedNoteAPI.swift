@@ -7,8 +7,7 @@
 
 import Foundation
 import Alamofire
-import CoreCommon
-import DataModel
+import Core
 
 public enum SharedNoteAPI: TargetType {
     case getMyNoteList(SearchSharedMyNoteRequest)

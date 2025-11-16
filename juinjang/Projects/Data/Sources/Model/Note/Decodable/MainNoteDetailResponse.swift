@@ -5,8 +5,8 @@
 //  Created by KimDongWoo on 11/11/25.
 //
 
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct MainNoteDetailResponse: Codable, DomainMappable {
     public let limjangId: Int

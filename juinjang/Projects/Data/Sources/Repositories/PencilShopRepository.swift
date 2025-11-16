@@ -8,10 +8,8 @@
 import RxSwift
 import Foundation
 import StoreKit
-import DataNetwork
-import DomainRepositoryInterfaces
-import DataModel
-import DomainModel
+import Data
+import Domain
 
 final class PencilShopRepository: PencilShopRepositoryProtocol {
     private var networkManager: JuinjangAPIManager

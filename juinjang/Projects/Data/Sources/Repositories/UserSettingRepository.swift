@@ -6,10 +6,8 @@
 //
 
 import RxSwift
-import DataModel
-import DomainRepositoryInterfaces
-import Foundation
-import DataStorage
+import Data
+import Domain
 
 public final class UserSettingsRepository: UserSettingsRepositoryProtocol {
     private let manager: UserDefaultManager

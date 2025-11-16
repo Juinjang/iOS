@@ -7,10 +7,9 @@
 
 import UIKit
 import KakaoSDKAuth
-import DataNetwork
-import PresentationScenes
-import DataRepositories
-import DomainRepositoryInterfaces
+import Data
+import Domain
+import Presentation
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 

@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct LoginResponse: Codable, DomainMappable {
     let accessToken: String

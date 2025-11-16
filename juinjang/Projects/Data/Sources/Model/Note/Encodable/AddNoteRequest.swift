@@ -1,5 +1,5 @@
 import Foundation
-import DomainModel
+import Domain
 
 public struct AddNoteRequest: Encodable {
     let purposeType: String

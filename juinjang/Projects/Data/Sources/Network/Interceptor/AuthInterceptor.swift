@@ -7,8 +7,8 @@
 
 import Foundation
 import Alamofire
-import DataStorage
-import CoreCommon
+import Data
+import Core
 
 public final class AuthInterceptor: RequestInterceptor {
     // 네트워크 요청 직전 호출

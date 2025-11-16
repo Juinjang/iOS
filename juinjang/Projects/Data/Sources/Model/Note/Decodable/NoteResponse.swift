@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct NoteResponse: Codable, DomainMappable {
     let noteId: Int

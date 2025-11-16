@@ -7,6 +7,7 @@
 
 import Foundation
 import Alamofire
+import Core
 
 public enum JuinjangAPI {
     case kakaoLogin(kakaoTargetId: Int64)

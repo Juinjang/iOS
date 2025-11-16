@@ -151,7 +151,7 @@ extension ImjangNoteCollectionViewCell {
         }
     }
     
-    func setScoreStyle(empty: Bool = true) {
+    public func setScoreStyle(empty: Bool = true) {
         starIcon.image = empty ? UIImage.starEmpty : UIImage.star.withRenderingMode(.alwaysOriginal)
         scoreLabel.textColor = empty ? .null : .main
     }
@@ -159,7 +159,6 @@ extension ImjangNoteCollectionViewCell {
 
 // MARK: - Configure UI
 extension ImjangNoteCollectionViewCell {
-    
     private func configureHierarchy() {
         contentView.add(
             roomThumbnailImageView,

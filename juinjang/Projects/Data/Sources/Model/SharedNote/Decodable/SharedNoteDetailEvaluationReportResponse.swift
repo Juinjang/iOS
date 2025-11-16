@@ -1,12 +1,6 @@
-//
-//  SharedNoteDetailEvaluationReportResponse.swift
-//  Data
-//
-//  Created by KimDongWoo on 10/12/25.
-//
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct SharedNoteDetailEvaluationReportResponse: Codable, DomainMappable {
     let indoorKeyWord: String

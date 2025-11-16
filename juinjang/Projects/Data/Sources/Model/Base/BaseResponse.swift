@@ -1,5 +1,5 @@
 import Foundation
-import DataNetwork
+import Data
 
 public struct BaseResponse<T: Codable>: Codable {
     let isSuccess: Bool

@@ -6,11 +6,8 @@
 //
 
 import RxSwift
-import DomainRepositoryInterfaces
-import DataNetwork
-import DataStorage
-import DomainModel
-import DataModel
+import Data
+import Domain
 
 final class UserRepository: UserRepositoryProtocol {
     private var networkManager: JuinjangAPIManager

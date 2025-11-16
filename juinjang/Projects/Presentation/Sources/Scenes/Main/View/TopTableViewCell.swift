@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import SnapKit
 import Then
 import DesignSystem
 
@@ -25,11 +24,13 @@ final class TopTableViewCell: UITableViewCell {
         $0.backgroundColor = .main
         $0.layer.cornerRadius = 10
     }
+    
     private let myNoteLabel = UILabel().then {
         $0.text = "나의 임장노트"
         $0.textColor = .mainWhite
         $0.font = .pretendard(size: 20, weight: .extraBold)
     }
+    
     private let myNoteImageView = UIImageView().then {
         $0.image = UIImage.Main.threeLogo
     }
@@ -41,6 +42,7 @@ final class TopTableViewCell: UITableViewCell {
         config.background.cornerRadius = 10
         $0.configuration = config
     }
+    
     private let newPageLabel = UILabel().then {
         $0.text = "새 페이지 펼치기"
         $0.textColor = .mainWhite
@@ -55,6 +57,7 @@ final class TopTableViewCell: UITableViewCell {
         config.background.cornerRadius = 10
         $0.configuration = config
     }
+    
     private let lookAroundLabel = UILabel().then {
         $0.text = "임장노트 둘러보기"
         $0.textColor = .gray600

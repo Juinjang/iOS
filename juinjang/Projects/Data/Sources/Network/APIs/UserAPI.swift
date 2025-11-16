@@ -7,7 +7,7 @@
 
 import Foundation
 import Alamofire
-import DataModel
+import Core
 
 public enum UserAPI: TargetType {
     case getProfileInfo

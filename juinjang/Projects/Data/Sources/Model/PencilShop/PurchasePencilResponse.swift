@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct PurchasePencilResponse: Codable, DomainMappable {
     let status: String

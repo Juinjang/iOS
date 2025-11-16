@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct NoteAddCompletedResponse: Codable, DomainMappable {
     let limjangId: Int

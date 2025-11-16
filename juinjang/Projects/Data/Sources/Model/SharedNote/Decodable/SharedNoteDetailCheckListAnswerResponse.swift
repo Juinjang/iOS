@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 struct SharedNoteCheckListAnswerResponse: Codable, DomainMappable {
     let answerId: Int

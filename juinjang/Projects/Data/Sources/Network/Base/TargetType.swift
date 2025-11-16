@@ -8,7 +8,7 @@
 import Foundation
 import Alamofire
 import RxSwift
-import DataStorage
+import Data
 
 public protocol TargetType: URLRequestConvertible {
     var baseURL: BaseURLType { get }

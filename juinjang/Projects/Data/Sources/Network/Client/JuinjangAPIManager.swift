@@ -9,7 +9,6 @@ import Foundation
 import Alamofire
 import UIKit
 import RxSwift
-import DataModel
 
 public final class JuinjangAPIManager {
     public static let shared = JuinjangAPIManager()

@@ -7,9 +7,8 @@
 
 import RxSwift
 import Alamofire
-import DataNetwork
-import DomainRepositoryInterfaces
-import DataModel
+import Data
+import Domain
 
 final class SelectAreaRepository: SelectAreaRepositoryProtocol {
     private var networkManager: JuinjangAPIManager

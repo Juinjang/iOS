@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct ShareableNoteShareCompletedResponse: Codable, DomainMappable {
     let sharedNoteId: Int

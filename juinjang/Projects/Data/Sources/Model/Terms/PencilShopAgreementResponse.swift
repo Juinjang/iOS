@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 public struct PencilShopAgreementResponse: Codable, DomainMappable {
     let status: Bool

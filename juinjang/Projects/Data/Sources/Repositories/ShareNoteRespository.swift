@@ -6,10 +6,8 @@
 //
 
 import RxSwift
-import DomainRepositoryInterfaces
-import DataModel
-import DataNetwork
-import DomainModel
+import Data
+import Domain
 
 final class ShareNoteRepository: ShareNoteRepositoryProtocol {
     private var networkManager: JuinjangAPIManager

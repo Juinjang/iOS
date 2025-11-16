@@ -6,13 +6,12 @@
 //
 
 import UIKit
-import SnapKit
-import Then
+import DesignSystem
 
 public final class CenterFlexibleNavigationView: DefaultNavigationView {
     private let centerView: UIView
     
-    init(centerView: UIView) {
+    public init(centerView: UIView) {
         self.centerView = centerView
         super.init(frame: .zero)
     }

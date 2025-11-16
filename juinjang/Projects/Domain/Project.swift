@@ -13,7 +13,10 @@ let project = Project(
     targets: [
         .makeTarget(
             module: .domain,
-            product: .staticLibrary
+            product: .staticLibrary,
+            dependencies: [
+                .spm(.rxSwift)
+            ]
         )
     ]
 )

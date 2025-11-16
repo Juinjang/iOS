@@ -1,6 +1,6 @@
 import Foundation
-import CoreCommon
-import DomainModel
+import Core
+import Domain
 
 struct ShareableNoteConditionResponse: Codable, DomainMappable {
     let category: String

@@ -7,11 +7,8 @@
 
 import Foundation
 import RxSwift
-import DomainRepositoryInterfaces
-import DataNetwork
-import DataModel
-import DomainModel
-import DataStorage
+import Data
+import Domain
 
 final class NoteRepository: NoteRepositoryProtocol {
     private var networkManager: JuinjangAPIManager

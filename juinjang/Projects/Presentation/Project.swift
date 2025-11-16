@@ -16,7 +16,16 @@ let project = Project(
             product: .staticLibrary,
             dependencies: [
                 .domain,
-                .designSystem
+                .designSystem,
+                .spm(.fsCalendar),
+                .spm(.tabman),
+                .spm(.toast),
+                .spm(.rxSwift),
+                .spm(.rxCocoa),
+                .spm(.rxDataSources),
+                .spm(.reactorKit),
+                .spm(.dsWaveformImage),
+                .spm(.dsWaveformImageViews),
             ]
         )
     ]

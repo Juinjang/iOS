@@ -1,5 +1,5 @@
 import Foundation
-import DomainModel
+import Domain
 
 public struct AddTermsAgreementRequest: Codable {
     let termsType: String // 연필 상점 : "PENCIL_SHOP_SERVICE"

@@ -1,6 +1,5 @@
 import UIKit
 import RxRelay
-import SnapKit
 import Then
 import Lottie
 import Alamofire

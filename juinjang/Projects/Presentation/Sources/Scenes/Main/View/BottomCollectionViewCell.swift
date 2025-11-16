@@ -6,9 +6,7 @@
 //
 
 import UIKit
-import SnapKit
 import Then
-import Kingfisher
 import DesignSystem
 
 final class BottomCollectionViewCell: UICollectionViewCell {

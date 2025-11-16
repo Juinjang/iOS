@@ -14,7 +14,14 @@ let project = Project(
         .makeTarget(
             module: .designSystem,
             product: .staticLibrary,
-            resources: "Resources/**"
+            resources: "Resources/**",
+            dependencies: [
+                .spm(.snapKit),
+                .spm(.kingfisher),
+                .spm(.skeletonView),
+                .spm(.lottie),
+                .spm(.rxSwift)
+            ]
         )
     ]
 )

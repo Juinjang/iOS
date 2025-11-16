@@ -16,7 +16,8 @@ let project = Project(
             product: .staticLibrary,
             dependencies: [
                 .domain,
-                .core
+                .core,
+                .spm(.rxSwift)
             ]
         )
     ]
