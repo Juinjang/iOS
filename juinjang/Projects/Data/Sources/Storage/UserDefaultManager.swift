@@ -29,8 +29,7 @@ public final class UserDefaultManager {
         case appleAuthCode
         case agreeVersion
         case isShowShareAlert
-        case isTesting // MARK: Temp 추후 삭제예정
-        case isHttpsEnabled
+        case pending_transactions
     }
     
     private let ud = UserDefaults.standard
@@ -103,6 +102,11 @@ public final class UserDefaultManager {
     public var isShowShareAlert: Bool? {
         get { ud.object(forKey: UDKey.isShowShareAlert.rawValue) as? Bool }
         set { ud.set(newValue, forKey: UDKey.isShowShareAlert.rawValue) }
+    }
+    
+    public var pendingTansactions: Data? {
+        get { ud.object(forKey: UDKey.pending_transactions.rawValue) }
+        set { ud.set(newValue, forKey: UDKey.pending_transactions.rawValue) }
     }
     
     public func removeUserInfo() {

@@ -7,7 +7,6 @@
 
 import Foundation
 import RxSwift
-import DomainModel
 
 public protocol UserSettingsRepositoryProtocol {
     func searchKeywords() -> Single<[String]>

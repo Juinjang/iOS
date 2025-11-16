@@ -6,9 +6,6 @@
 //
 
 import Foundation
-import DomainModel
-import DomainUsecaseInterfaces
-import DomainRepositoryInterfaces
 import RxSwift
 
 public final class UserSettingsUsecase: UserSettingsUsecaseProtocol {

@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol NoteRepositoryProtocol {
     func retrieveNoteList(sort: String, keyword: String) -> Single<[Note]>

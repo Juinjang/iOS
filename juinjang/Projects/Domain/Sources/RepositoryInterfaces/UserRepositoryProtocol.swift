@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol UserRepositoryProtocol {
     func retrieveUserNickname() -> Single<String>

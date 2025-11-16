@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol ShareNoteUsecaseProtocol {
     func fetchMyNotes(_ param: SearchSharedMyNote) -> Single<[SharedMyNote]>

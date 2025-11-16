@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol NoteUsecaseProtocol {
     func fetchNotes(sort: String, keyword: String) -> Single<[Note]>

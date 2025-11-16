@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol UserUsecaseProtocol {
     func fetchNickname() -> Single<String>

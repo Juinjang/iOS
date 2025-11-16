@@ -7,39 +7,42 @@
 
 import Foundation
 
-struct PendingTransaction: Codable, Equatable {
-    let jws: String
-    let createdAt: Date
+protocol PendingTransactionStoreProtocol {
+    func save(_ pendingTransaction: PendingTransactionRequest)
+    func loadAll() -> [PendingTransactionResponse]
+    func remove(_ pendingTransaction: PendingTransactionRequest)
 }
 
-final class PendingTransactionStore {
+final class PendingTransactionStore: PendingTransactionStoreProtocol {
     static let shared = PendingTransactionStore()
-    private let key = "pending_transactions"
+    private let userDefault: UserDefaultManager
 
-    private init() { }
+    private init(userDefault: UserDefaultManager = .shared) {
+        self.userDefault = userDefault
+    }
     
-    func save(_ pendingTransaction: PendingTransaction) {
+    func save(_ pendingTransaction: PendingTransactionRequest) {
         var list = loadAll()
         guard !list.contains(pendingTransaction) else { return }
         list.append(pendingTransaction)
         persist(list)
     }
 
-    func loadAll() -> [PendingTransaction] {
-        guard let data = UserDefaults.standard.data(forKey: key),
-              let list = try? JSONDecoder().decode([PendingTransaction].self, from: data) else {
+    func loadAll() -> [PendingTransactionResponse] {
+        guard let data = userDefault.pendingTansactions,
+              let list = try? JSONDecoder().decode([PendingTransactionResponse].self, from: data) else {
             return []
         }
         return list
     }
 
-    func remove(_ pendingTransaction: PendingTransaction) {
+    func remove(_ pendingTransaction: PendingTransactionRequest) {
         var list = loadAll()
         list.removeAll { $0 == pendingTransaction }
         persist(list)
     }
 
-    private func persist(_ list: [PendingTransaction]) {
+    private func persist(_ list: [PendingTransactionRequest]) {
         if let data = try? JSONEncoder().encode(list) {
             UserDefaults.standard.set(data, forKey: key)
         }

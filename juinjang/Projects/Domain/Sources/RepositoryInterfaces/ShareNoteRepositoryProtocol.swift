@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol ShareNoteRepositoryProtocol {
     func retrieveMyNotes(param: SearchSharedMyNote) -> Single<[SharedMyNote]>

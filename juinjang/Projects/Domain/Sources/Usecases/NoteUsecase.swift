@@ -6,10 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
-import DomainUsecaseInterfaces
-import DomainRepositoryInterfaces
-import RxSwift
 
 public final class NoteUsecase: NoteUsecaseProtocol {
     private let repository: NoteRepositoryProtocol

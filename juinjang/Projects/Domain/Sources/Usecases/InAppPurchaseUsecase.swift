@@ -9,18 +9,21 @@ import Foundation
 import StoreKit
 import RxSwift
 
-final class InAppPurchaseService {
+final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
     private let productIdList: [String: String]
     private var pencilProductList: [Product] = []
     
     private var disposeBag = DisposeBag()
     var updateListenerTask: Task<Void, Never>? = nil
-    let completedPurchasePencilDTO = PublishSubject<PurchasePencilDTO?>() // 외부에 알림용
+    let completedPurchasePencilDTO = PublishSubject<PurchasePencil?>() // 외부에 알림용
     
-    let pencilShopRepository: PencilShopRepositoryProtocol
+    private let pencilShopRepository: PencilShopRepositoryProtocol
+    private let pendingTransactionRepository: PendingTransactionRepositoryProtocol
     
-    init(pencilShopRepository: PencilShopRepositoryProtocol) {
+    init(pencilShopRepository: PencilShopRepositoryProtocol,
+         pendingTransactionRepository: PendingTransactionRepositoryProtocol) {
         self.pencilShopRepository = pencilShopRepository
+        self.pendingTransactionRepository = pendingTransactionRepository
         self.productIdList = InAppPurchaseService.loadProductIdList()
         
         updateListenerTask = listenForTransactions()
@@ -31,7 +34,9 @@ final class InAppPurchaseService {
     }
     
     static func loadProductIdList() -> [String: String] {
-        guard let products = Bundle.main.object(forInfoDictionaryKey: "Products") as? [String: String] else { return [:] }
+        guard let products = Bundle.main.object(forInfoDictionaryKey: "Products") as? [String: String] else {
+            return [:]
+        }
         return products
     }
     
@@ -47,7 +52,6 @@ final class InAppPurchaseService {
                     break
                 }
             }
-            
             pencilProductList = sortByName(newPencils)
             return pencilProductList
         } catch {
@@ -55,22 +59,22 @@ final class InAppPurchaseService {
             throw StoreError.failedRequestProducts
         }
     }
-        
+    
     private func sortByName(_ products: [Product]) -> [Product] {
         products.sorted(by: { return $0.displayName < $1.displayName })
     }
-
-    func purchase(_ product: Product,
-                  completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
+    
+    private func purchase(_ product: Product,
+                          completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
         let myToken = UUID()
         let result = try await product.purchase(options: [.appAccountToken(myToken)])
-
+        
         switch result {
         case .success(let verificationResult):
             do {
                 let transaction = try checkVerified(verificationResult)
                 
-                let purchasePencilRequest = PurchasePencilRequestDTO(
+                let purchasePencilRequest = AddPurchasePencil(
                     transactionId: "\(transaction.id)",
                     appAccountToken: transaction.appAccountToken?.uuidString ?? "",
                     pencilQuantity: product.displayName.pencilQuantity,
@@ -88,7 +92,7 @@ final class InAppPurchaseService {
                         completionHandler(purchasePencilDTO)
                     }
                     .disposed(by: disposeBag)
-
+                
                 await transaction.finish()
             } catch {
                 completionHandler(nil)
@@ -98,16 +102,16 @@ final class InAppPurchaseService {
         }
     }
     
-    func listenForTransactions() -> Task<Void, Never> {
+    private func listenForTransactions() -> Task<Void, Never> {
         Task.detached { [weak self] in
             guard let self else { return }
-
+            
             for await result in Transaction.updates {
                 do {
                     let transaction = try checkVerified(result)
-
+                    
                     do {
-                        let purchasePencilRequest = PurchasePencilRequestDTO(
+                        let purchasePencilRequest = AddPurchasePencil(
                             transactionId: "\(transaction.id)",
                             appAccountToken: transaction.appAccountToken?.uuidString ?? "",
                             pencilQuantity: transaction.productID.pencilQuantity,
@@ -133,7 +137,7 @@ final class InAppPurchaseService {
         }
     }
     
-    func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
+    private func checkVerified<T>(_ result: VerificationResult<T>) throws -> T {
         switch result {
         case .unverified:
             throw StoreError.failedVerification
@@ -144,8 +148,7 @@ final class InAppPurchaseService {
 }
 
 extension InAppPurchaseService {
-    func requestProductList() -> Single<[Product]> {
-        
+    public func requestProductList() -> Single<[Product]> {
         return Single.create { single in
             let task = Task { [weak self] in
                 guard let self else {
@@ -164,7 +167,7 @@ extension InAppPurchaseService {
         }
     }
     
-    func requestPurchase(product: Product) -> Single<PurchasePencilDTO?> {
+    public func requestPurchase(product: Product) -> Single<PurchasePencil?> {
         return Single.create { single in
             let task = Task.detached { [weak self] in
                 guard let self else { return }
@@ -184,7 +187,7 @@ extension InAppPurchaseService {
     
     private func storePendingTransaction(jws: String) {
         let pendingTransaction = PendingTransaction(jws: jws, createdAt: Date())
-        PendingTransactionStore.shared.save(pendingTransaction)
+        pendingTransactionRepository.save(pendingTransaction)
     }
     
     private func productPrice(productId: String) -> Int {

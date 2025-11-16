@@ -1,5 +1,4 @@
 import RxSwift
-import DomainModel
 
 public protocol PencilShopRepositoryProtocol {
     func retrievePencilTotalBalance() -> Single<PencilBalance>

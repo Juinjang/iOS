@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol SelectAreaUsecaseProtocol {
     func fetchSidoList(_ param: SearchAreaCode) -> Single<AreaCode>

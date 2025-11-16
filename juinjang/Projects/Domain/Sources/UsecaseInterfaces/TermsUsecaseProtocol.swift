@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol TermsUsecaseProtocol {
     func fetchPencilShopAgreementStatus() -> Single<PencilShopAgreement>

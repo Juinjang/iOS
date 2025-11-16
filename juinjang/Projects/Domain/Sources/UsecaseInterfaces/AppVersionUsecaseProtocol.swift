@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol AppVersionUsecaseProtocol {
     func fetchLatestVersion() -> Single<LatestAppVersion>

@@ -7,7 +7,6 @@
 
 import Foundation
 import RxSwift
-import DomainModel
 
 public protocol UserSettingsUsecaseProtocol {
     func loadSearchKeywords() -> Single<[String]>

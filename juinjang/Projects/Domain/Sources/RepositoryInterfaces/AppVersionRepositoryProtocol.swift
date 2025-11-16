@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import Domain
 
 public protocol AppVersionRepositoryProtocol {
     func retrieveLatestAppVersion() -> Single<LatestAppVersion>

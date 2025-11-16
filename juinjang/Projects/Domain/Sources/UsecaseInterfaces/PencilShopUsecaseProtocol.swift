@@ -6,7 +6,6 @@
 //
 
 import RxSwift
-import DomainModel
 
 public protocol PencilShopUseCaseProtocol {
     func fetchTotalBalance() -> Single<PencilBalance>

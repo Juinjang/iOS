@@ -10,6 +10,7 @@ import KakaoSDKAuth
 import Data
 import Domain
 import Presentation
+import DesignSystem
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
