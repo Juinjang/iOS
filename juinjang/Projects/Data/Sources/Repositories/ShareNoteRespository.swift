@@ -13,7 +13,7 @@ final class ShareNoteRepository: ShareNoteRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
     private var userDefault: UserDefaultManager
     
-    init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared,
+    init(networkManager: JuinjangAPIManager,
          userDefault: UserDefaultManager = UserDefaultManager.shared) {
         self.networkManager = networkManager
         self.userDefault = userDefault

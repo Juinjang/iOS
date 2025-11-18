@@ -12,19 +12,19 @@ import RxSwift
 import Core
 
 public final class JuinjangAPIManager {
-    public static let shared = JuinjangAPIManager()
-    
     private let configProvider: AppConfigProviderProtocol
     
-    public init(configProvider: AppConfigProviderProtocol = AppConfigProvider.shared) {
+    public init(configProvider: AppConfigProviderProtocol) {
         self.configProvider = configProvider
     }
     
     func fetchData<T: Decodable>(type: T.Type,
                                  api: JuinjangAPI,
                                  completionHandler: @escaping (T?, NetworkError?) -> Void) {
-        print(api.header)
-        AF.request(api.endpoint,
+        let baseUrl = configProvider.getBaseURL(for: api.baseURL)
+        let url = URL(string: baseUrl + api.path)
+        
+        AF.request(url,
                    method: api.method,
                    parameters: api.parameter,
                    headers: api.header,
@@ -98,7 +98,10 @@ public final class JuinjangAPIManager {
                                 api: JuinjangAPI,
                                 parameter: [String:Any],
                                 completionHandler: @escaping (T?, NetworkError?) -> Void) {
-        AF.request(api.endpoint,
+        let baseUrl = configProvider.getBaseURL(for: api.baseURL)
+        let url = URL(string: baseUrl + api.path)
+        
+        AF.request(url,
                    method: api.method,
                    parameters: parameter,
                    encoding: JSONEncoding.default,
@@ -134,12 +137,15 @@ public final class JuinjangAPIManager {
             return
         }
         
+        let baseUrl = configProvider.getBaseURL(for: api.baseURL)
+        let url = URL(string: baseUrl + api.path)
+        
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append(imageData,
                                      withName: "multipartFile",
                                      fileName: "image.jpg",
                                      mimeType: "image/jpeg")
-        }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor())
+        }, to: url, method: api.method, headers: api.header, interceptor: AuthInterceptor())
         .validate()
         .responseDecodable(of: type) { response in
             switch response.result {
@@ -157,6 +163,9 @@ public final class JuinjangAPIManager {
                       images: [UIImage],
                       api: JuinjangAPI,
                       completion: @escaping (Result<Void, Error>) -> Void) {
+        let baseUrl = configProvider.getBaseURL(for: api.baseURL)
+        let url = URL(string: baseUrl + api.path)
+        
         AF.upload(multipartFormData: { multipartFormData in
             multipartFormData.append("\(imjangId)".data(using: .utf8)!, withName: "limjangId")
             for (index, image) in images.enumerated() {
@@ -164,7 +173,7 @@ public final class JuinjangAPIManager {
                 // "imgUrl" 키에 대한 배열 형식으로 이미지 데이터를 전송
                 multipartFormData.append(imageData, withName: "images", fileName: "image\(index).jpeg", mimeType: "image/jpeg")
             }
-        }, to: api.endpoint, method: api.method, headers: api.header, interceptor: AuthInterceptor())
+        }, to: url, method: api.method, headers: api.header, interceptor: AuthInterceptor())
         .validate()
         .response { response in
             print("StatusCode: \(String(describing: response.response?.statusCode))")
@@ -181,8 +190,10 @@ public final class JuinjangAPIManager {
     
     func uploadRecordFile(api: JuinjangAPI,
                           fileURL: URL,
-                          dto: RecordRequest,
-                          completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
+                          dto: AddRecordRequest,
+                          completionHandler: @escaping (Result<NoteRecordResponse>, NetworkError>) -> Void) {
+        let baseUrl = configProvider.getBaseURL(for: api.baseURL)
+        let url = URL(string: baseUrl + api.path)
         
         AF.upload(
             multipartFormData: { [weak self] multipartFormData in
@@ -194,11 +205,11 @@ public final class JuinjangAPIManager {
                     multipartFormData.append(jsonData, withName: "recordRequestDTO", mimeType: "application/json")
                 }
             },
-            to: api.endpoint,
+            to: url,
             method: api.method,
             headers: api.header,
             interceptor: AuthInterceptor()
-        ).responseDecodable(of: NoteRecordResponse.self, completionHandler: { response in
+        ).responseDecodable(of: BaseResponse<NoteRecordResponse>.self, completionHandler: { response in
             print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let responseData):
@@ -226,9 +237,11 @@ public final class JuinjangAPIManager {
     }
     
     func refreshAccessToken(completionHandler: @escaping (Bool) -> Void) {
+        let baseUrl = configProvider.getBaseURL(for: api.baseURL)
+        let url = URL(string: baseUrl + api.path)
         let api = JuinjangAPI.regenerateToken
         AF.request(
-            api.endpoint,
+            url,
             method: api.method,
             headers: api.header
         ).responseDecodable(of: BaseResponse<RefreshResponse>.self) { response in

@@ -13,7 +13,7 @@ public final class AppVersionRepository: AppVersionRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
     private var userDefault: UserDefaultManager
     
-    public init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared,
+    public init(networkManager: JuinjangAPIManager,
                 userDefault: UserDefaultManager = UserDefaultManager.shared) {
         self.networkManager = networkManager
         self.userDefault = userDefault

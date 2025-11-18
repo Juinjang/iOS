@@ -13,7 +13,7 @@ import Domain
 final class SelectAreaRepository: SelectAreaRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
 
-    init(networkManager: JuinjangAPIManager = JuinjangAPIManager.shared) {
+    init(networkManager: JuinjangAPIManager) {
         self.networkManager = networkManager
     }
     

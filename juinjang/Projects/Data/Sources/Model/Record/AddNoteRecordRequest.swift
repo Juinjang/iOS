@@ -1,7 +1,7 @@
 import Foundation
 import Domain
 
-public struct AddRecordRequestDTO: Codable {
+public struct AddNoteRecordRequest: Codable {
     var limjangId: Int
     var recordTime: Int
     var recordScript: String
