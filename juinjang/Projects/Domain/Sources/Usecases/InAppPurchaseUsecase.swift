@@ -8,23 +8,26 @@
 import Foundation
 import StoreKit
 import RxSwift
+import Core
 
 final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
-    private let productIdList: [String: String]
-    private var pencilProductList: [Product] = []
-    
     private var disposeBag = DisposeBag()
-    var updateListenerTask: Task<Void, Never>? = nil
-    let completedPurchasePencilDTO = PublishSubject<PurchasePencil?>() // 외부에 알림용
-    
+    private let productIdList: [String]
+    private var pencilProductList: [Product] = []
+    private let appConfigProvider: AppConfigProviderProtocol
     private let pencilShopRepository: PencilShopRepositoryProtocol
     private let pendingTransactionRepository: PendingTransactionRepositoryProtocol
     
+    var updateListenerTask: Task<Void, Never>? = nil
+    let completedPurchasePencilDTO = PublishSubject<PurchasePencil?>()
+    
     init(pencilShopRepository: PencilShopRepositoryProtocol,
-         pendingTransactionRepository: PendingTransactionRepositoryProtocol) {
+         pendingTransactionRepository: PendingTransactionRepositoryProtocol,
+         appConfigProvider: AppConfigProviderProtocol) {
         self.pencilShopRepository = pencilShopRepository
         self.pendingTransactionRepository = pendingTransactionRepository
-        self.productIdList = InAppPurchaseService.loadProductIdList()
+        self.appConfigProvider = appConfigProvider
+        self.productIdList = appConfigProvider.productIdentifiers()
         
         updateListenerTask = listenForTransactions()
         
@@ -33,16 +36,9 @@ final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
         }
     }
     
-    static func loadProductIdList() -> [String: String] {
-        guard let products = Bundle.main.object(forInfoDictionaryKey: "Products") as? [String: String] else {
-            return [:]
-        }
-        return products
-    }
-    
     private func requestProducts() async throws -> [Product] {
         do {
-            let storeProducts = try await Product.products(for: productIdList.keys)
+            let storeProducts = try await Product.products(for: productIdList)
             var newPencils: [Product] = []
             for product in storeProducts {
                 switch product.type {
@@ -65,7 +61,7 @@ final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
     }
     
     private func purchase(_ product: Product,
-                          completionHandler: @escaping (PurchasePencilDTO?) -> Void) async throws {
+                          completionHandler: @escaping (PurchasePencil?) -> Void) async throws {
         let myToken = UUID()
         let result = try await product.purchase(options: [.appAccountToken(myToken)])
         
@@ -78,7 +74,7 @@ final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
                     transactionId: "\(transaction.id)",
                     appAccountToken: transaction.appAccountToken?.uuidString ?? "",
                     pencilQuantity: product.displayName.pencilQuantity,
-                    price: productPrice(productId: product.id),
+                    price: appConfigProvider.productPrice(for: product.id),
                     productId: transaction.productID,
                     playTime: Int(PlayTimeTracker.shared.getPlayTime())
                 )
@@ -115,7 +111,7 @@ final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
                             transactionId: "\(transaction.id)",
                             appAccountToken: transaction.appAccountToken?.uuidString ?? "",
                             pencilQuantity: transaction.productID.pencilQuantity,
-                            price: productPrice(productId: transaction.productID),
+                            price: appConfigProvider.productPrice(for: transaction.productID),
                             productId: transaction.productID,
                             playTime: Int(PlayTimeTracker.shared.getPlayTime())
                         )
@@ -148,7 +144,7 @@ final class InAppPurchaseUsecase: InAppPurchaseUseCaseProtocol {
 }
 
 extension InAppPurchaseService {
-    public func requestProductList() -> Single<[Product]> {
+    func requestProductList() -> Single<[Product]> {
         return Single.create { single in
             let task = Task { [weak self] in
                 guard let self else {
@@ -167,7 +163,7 @@ extension InAppPurchaseService {
         }
     }
     
-    public func requestPurchase(product: Product) -> Single<PurchasePencil?> {
+    func requestPurchase(product: Product) -> Single<PurchasePencil?> {
         return Single.create { single in
             let task = Task.detached { [weak self] in
                 guard let self else { return }
@@ -188,14 +184,6 @@ extension InAppPurchaseService {
     private func storePendingTransaction(jws: String) {
         let pendingTransaction = PendingTransaction(jws: jws, createdAt: Date())
         pendingTransactionRepository.save(pendingTransaction)
-    }
-    
-    private func productPrice(productId: String) -> Int {
-        guard let infoDict = Bundle.main.infoDictionary,
-              let products = infoDict["Products"] as? [String: String] else {
-            return 0
-        }
-        return Int(products[productId] ?? "") ?? 0
     }
 }
 

@@ -9,6 +9,7 @@ import Foundation
 import Alamofire
 import RxSwift
 import Data
+import Core
 
 public protocol TargetType: URLRequestConvertible {
     var baseURL: BaseURLType { get }
@@ -46,16 +47,16 @@ extension TargetType {
         return provider.fetchData<T>(api: self, interceptor: interceptor)
     }
     
-    public func createURL() -> URL? {
-        var components = URLComponents(string: baseURL.url + path)
+    public func createURL(_ baseUrl: String) -> URL? {
+        var components = URLComponents(string: baseUrl + path)
         if !queryItems.isEmpty {
             components?.queryItems = queryItems
         }
         return components?.url
     }
     
-    public func asURLRequest() throws -> URLRequest {
-        guard let url = createURL() else {
+    public func asURLRequest(for baseUrl: String) throws -> URLRequest {
+        guard let url = createURL(baseUrl) else {
             throw URLError(.badURL)
         }
         

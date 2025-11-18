@@ -9,10 +9,16 @@ import Foundation
 import Alamofire
 import UIKit
 import RxSwift
+import Core
 
 public final class JuinjangAPIManager {
     public static let shared = JuinjangAPIManager()
-    public init() { }
+    
+    private let configProvider: AppConfigProviderProtocol
+    
+    public init(configProvider: AppConfigProviderProtocol = AppConfigProvider.shared) {
+        self.configProvider = configProvider
+    }
     
     func fetchData<T: Decodable>(type: T.Type,
                                  api: JuinjangAPI,
@@ -51,38 +57,39 @@ public final class JuinjangAPIManager {
                                  interceptor: RequestInterceptor?) -> Single<T> {
         return Single.create { observer in
             do {
-                let request = try api.asURLRequest()
-
+                let baseUrl = self.configProvider.getBaseURL(for: api.baseURL)
+                let request = try api.asURLRequest(for: baseUrl)
+                
                 AF.request(request,
                            interceptor: interceptor)
-                    .responseDecodable(of: T.self) { response in
-                        if let url = response.request?.url {
-                            print("🌐 Final Request URL: \(url.absoluteString)")
-                        }
-                        
-                        if let statusCode = response.response?.statusCode {
-                            print("📡 Status Code: \(statusCode)")
-                        }
-                        
-                        if let data = response.data,
-                           let responseBody = String(data: data, encoding: .utf8) {
-                            print("📦 Response Body:\n\(responseBody)")
-                        }
-                        
-                        switch response.result {
-                        case .success(let data):
-                            observer(.success(data))
-                        case .failure(let error):
-                            print(error)
-                            observer(.failure(NetworkError.failedRequest))
-                        }
+                .responseDecodable(of: T.self) { response in
+                    if let url = response.request?.url {
+                        print("🌐 Final Request URL: \(url.absoluteString)")
                     }
-
+                    
+                    if let statusCode = response.response?.statusCode {
+                        print("📡 Status Code: \(statusCode)")
+                    }
+                    
+                    if let data = response.data,
+                       let responseBody = String(data: data, encoding: .utf8) {
+                        print("📦 Response Body:\n\(responseBody)")
+                    }
+                    
+                    switch response.result {
+                    case .success(let data):
+                        observer(.success(data))
+                    case .failure(let error):
+                        print(error)
+                        observer(.failure(NetworkError.failedRequest))
+                    }
+                }
+                
             } catch {
                 print(error)
                 observer(.failure(error))
             }
-
+            
             return Disposables.create()
         }
     }
@@ -177,20 +184,21 @@ public final class JuinjangAPIManager {
                           dto: RecordRequest,
                           completionHandler: @escaping (Result<RecordResponse, NetworkError>) -> Void) {
         
-        AF.upload(multipartFormData: { [weak self] multipartFormData in
-            guard let self else { return }
-            multipartFormData.append(fileURL, withName: "file", fileName: "record_1.m4a", mimeType: "audio/mp4")
-            
-            if let jsonData = encodeToJSONData(dto) {
-                print(dto)
-                multipartFormData.append(jsonData, withName: "recordRequestDTO", mimeType: "application/json")
-            }
-        },
-                  to: api.endpoint,
-                  method: api.method,
-                  headers: api.header,
-                  interceptor: AuthInterceptor())
-        .responseDecodable(of: NoteRecordResponse.self, completionHandler: { response in
+        AF.upload(
+            multipartFormData: { [weak self] multipartFormData in
+                guard let self else { return }
+                multipartFormData.append(fileURL, withName: "file", fileName: "record_1.m4a", mimeType: "audio/mp4")
+                
+                if let jsonData = encodeToJSONData(dto) {
+                    print(dto)
+                    multipartFormData.append(jsonData, withName: "recordRequestDTO", mimeType: "application/json")
+                }
+            },
+            to: api.endpoint,
+            method: api.method,
+            headers: api.header,
+            interceptor: AuthInterceptor()
+        ).responseDecodable(of: NoteRecordResponse.self, completionHandler: { response in
             print("StatusCode: \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let responseData):
@@ -219,24 +227,27 @@ public final class JuinjangAPIManager {
     
     func refreshAccessToken(completionHandler: @escaping (Bool) -> Void) {
         let api = JuinjangAPI.regenerateToken
-        AF.request(api.endpoint, method: api.method, headers: api.header)
-            .responseDecodable(of: BaseResponse<RefreshResponse>.self) { response in
-                print(#function, "액세스 토큰 재발급 StatusCode: \(String(describing: response.response?.statusCode))")
-                switch response.result {
-                case .success(let success):
-                    guard let result = success.result else {
-                        print("액세스토큰 재발급 response에 result가 비어있음,,!")
-                        completionHandler(false)
-                        return
-                    }
-                    print("액세스토큰 재발급 결과 \(success.code) \(success.message)")
-                    UserDefaultManager.shared.accessToken = result.accessToken
-                    UserDefaultManager.shared.refreshToken = result.refreshToken
-                    completionHandler(true)
-                case .failure(let failure):
-                    print("액세스토큰 재발급 실패 \(failure)")
+        AF.request(
+            api.endpoint,
+            method: api.method,
+            headers: api.header
+        ).responseDecodable(of: BaseResponse<RefreshResponse>.self) { response in
+            print(#function, "액세스 토큰 재발급 StatusCode: \(String(describing: response.response?.statusCode))")
+            switch response.result {
+            case .success(let success):
+                guard let result = success.result else {
+                    print("액세스토큰 재발급 response에 result가 비어있음,,!")
                     completionHandler(false)
+                    return
                 }
+                print("액세스토큰 재발급 결과 \(success.code) \(success.message)")
+                UserDefaultManager.shared.accessToken = result.accessToken
+                UserDefaultManager.shared.refreshToken = result.refreshToken
+                completionHandler(true)
+            case .failure(let failure):
+                print("액세스토큰 재발급 실패 \(failure)")
+                completionHandler(false)
             }
+        }
     }
 }
