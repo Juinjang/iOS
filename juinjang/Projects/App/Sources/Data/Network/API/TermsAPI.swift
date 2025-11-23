@@ -10,7 +10,7 @@ import Alamofire
 
 enum TermsAPI: TargetType {
     case getPencilShopAgreementStatus
-    case postTermsAgreement(TermsAgreementRequestDTO)
+    case postTermsAgreement(AddTermsAgreementRequest)
 
     var path: String {
         switch self {

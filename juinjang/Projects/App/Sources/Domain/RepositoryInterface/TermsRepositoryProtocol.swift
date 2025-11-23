@@ -7,7 +7,7 @@
 
 import RxSwift
 
-protocol TermsRepositoryProtocol {
-    func retrievePencilShopAgreementStatus() -> Single<PencilShopAgreementDTO>
-    func createTermsAgreement(param: TermsAgreementRequestDTO) -> Single<TermsResponseDTO>
+public protocol TermsRepositoryProtocol {
+    func retrievePencilShopAgreementStatus() -> Single<PencilShopAgreement>
+    func createTermsAgreement(param: AddTermsAgreement) -> Single<TermsAgreement>
 }

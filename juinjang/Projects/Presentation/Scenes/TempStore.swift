@@ -8,9 +8,9 @@
 import DomainUsecaseInterfaces
 
 class TempStore {
-    let usecase: TempUsecaseProtocol
+    let useCase: TempUsecaseProtocol
     
-    init(usecase: TempUsecaseProtocol) {
-        self.usecase = usecase
+    init(useCase: TempUsecaseProtocol) {
+        self.useCase = useCase
     }
 }

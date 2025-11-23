@@ -109,13 +109,13 @@ final class ShareSelectViewController: BaseViewController, View {
             .subscribe(with: self) { (self, _) in
                 if let selectedCellItem = self.reactor?.currentState.selectItem {
                     let userRepository = UserRepository()
-                    let userUsecase = UserUsecase(repository: userRepository)
+                    let userUseCase = UserUseCase(repository: userRepository)
                     let viewController = ShareWriteViewController(
                         reactor: .init(
                             dependecy: .init(
                                 selectedModel: selectedCellItem.model,
                                 noteRepository: NoteRepository(),
-                                userUsecase: userUsecase,
+                                userUseCase: userUseCase,
                                 sharedNoteRepository: SharedNoteRepository()
                             )
                         )

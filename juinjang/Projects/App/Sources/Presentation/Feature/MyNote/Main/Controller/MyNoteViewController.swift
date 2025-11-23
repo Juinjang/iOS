@@ -163,13 +163,13 @@ final class MyNoteViewController: BaseViewController, View {
             .filter { $0 == .shareButtonTap }
             .subscribe(with: self) { (self, _) in
                 let userRepository = UserRepository()
-                let userUsecase = UserUsecase(repository: userRepository)
+                let userUseCase = UserUseCase(repository: userRepository)
                 self.navigationController?.pushViewController(
                     ShareSelectViewController(
                         reactor: .init(
                             dependency: .init(
                                 noteRepository: NoteRepository(),
-                                userUsecase: userUsecase
+                                userUseCase: userUseCase
                             )
                         )
                     ),

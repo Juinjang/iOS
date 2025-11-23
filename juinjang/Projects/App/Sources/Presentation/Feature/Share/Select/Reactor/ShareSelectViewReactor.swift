@@ -42,7 +42,7 @@ final class ShareSelectViewReactor: Reactor {
     
     struct Dependency {
         let noteRepository: NoteRepositoryProtocol
-        let userUsecase: UserUsecaseProtocol
+        let userUseCase: UserUseCaseProtocol
     }
     
     // MARK: - Properties
@@ -126,7 +126,7 @@ final class ShareSelectViewReactor: Reactor {
 extension ShareSelectViewReactor {
     private func fetchUserNickname() -> Observable<Mutation> {
         return dependency
-            .userUsecase.fetchNickname()
+            .userUseCase.fetchNickname()
             .asObservable()
             .map { .updateNickname(nickname: $0) }
     }

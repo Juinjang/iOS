@@ -7,7 +7,7 @@
 
 import RxSwift
 
-public final class SearchAreaUsecase: SearchAreaUsecaseProtocol {
+public final class SearchAreaUseCase: SearchAreaUseCaseProtocol {
     private let repository: SearchAreaRepositoryProtocol
 
     public init(repository: SearchAreaRepositoryProtocol) {

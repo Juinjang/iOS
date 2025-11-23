@@ -12,8 +12,6 @@ protocol updateNicknameDelegate: AnyObject {
 }
 
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
-    private let termsRepository = TermsRepository()
-    private let userRepository = UserRepository()
     private lazy var navigationView = CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
         $0.leftItem = [.setting]
     }
@@ -37,6 +35,22 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private let pencilAgreeEventRelay = PublishRelay<Void>()
     
     private var termsPopupViewController: TermsPopupViewController?
+    
+    struct Dependency {
+        let termsUseCase: TermsUseCaseProtocol
+        let userUseCase: UserUseCaseProtocol
+    }
+    
+    private let dependency: Dependency
+    
+    init(dependency: Dependency) {
+        self.dependency = dependency
+        super.init()
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     // MARK: - viewDidLoad()
     override func viewDidLoad() {
@@ -83,7 +97,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func getProfileInfo() {
-        userRepository.retrieveProfileInfo()
+        dependency.userUseCase.fetchProfile()
             .asObservable()
             .subscribe(with: self) { owner, profileModel in
                 UserDefaultManager.shared.nickname = profileModel.nickname
@@ -93,7 +107,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func checkAndShowPencilShopTermsPopup() {
-        termsRepository.retrievePencilShopAgreementStatus()
+        dependency.termsUseCase.fetchPencilShopAgreementStatus()
             .asObservable()
             .subscribe(with: self) { (self, response) in
                 if !response.status {
@@ -111,7 +125,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
                     self.termsPopupViewController?.button2
                         .rx.throttleTap
                         .subscribe(with: self) { (self, _) in
-                            self.termsRepository.createTermsAgreement(param: .init(termsType: "PENCIL_SHOP_SERVICE", isAgreed: true))
+                            let addTermsAgreement = AddTermsAgreement(termsType: "PENCIL_SHOP_SERVICE", isAgreed: true)
+                            self.dependency.termsUseCase.addTermsAgreement(addTermsAgreement)
                                 .asObservable()
                                 .subscribe(onNext: { response in
                                         print("동의 완료: \(response)")
@@ -217,7 +232,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
     @objc private func setttingBtnTap() {
         let repository = UserRepository()
-        let usecase = UserUsecase(repository: repository)
+        let usecase = UserUseCase(repository: repository)
         let settingVC = SettingViewController(
             dependency: SettingViewController.Dependency(
                 userUsecase: usecase

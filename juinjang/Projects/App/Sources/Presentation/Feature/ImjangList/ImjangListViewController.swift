@@ -198,12 +198,12 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     
     @objc private func showShareSelectVC() {
         let userRepository = UserRepository()
-        let userUsecase = UserUsecase(repository: userRepository)
+        let userUseCase = UserUseCase(repository: userRepository)
         let viewController = ShareSelectViewController(
             reactor: .init(
                 dependency: .init(
                     noteRepository: NoteRepository(),
-                    userUsecase: userUsecase
+                    userUseCase: userUseCase
                 )
             )
         )

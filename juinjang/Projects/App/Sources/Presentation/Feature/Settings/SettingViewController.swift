@@ -149,7 +149,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     private lazy var withdrawalButton = makeButton(title: "계정 삭제하기", color: .gray400)
     
     struct Dependency {
-        let userUsecase: UserUsecaseProtocol
+        let userUsecase: UserUseCaseProtocol
     }
     
     private let dependency: Dependency

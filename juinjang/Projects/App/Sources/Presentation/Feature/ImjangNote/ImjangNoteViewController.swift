@@ -221,13 +221,13 @@ final class ImjangNoteViewController: BaseViewController,
                     .compactMap { $0 }
                     .subscribe { model in
                         let userRepository = UserRepository()
-                        let userUsecase = UserUsecase(repository: userRepository)
+                        let userUseCase = UserUseCase(repository: userRepository)
                         let viewController = ShareWriteViewController(
                             reactor: ShareWriteViewReactor(
                                 dependecy: ShareWriteViewReactor.Dependency(
                                     selectedModel: model,
                                     noteRepository: NoteRepository(),
-                                    userUsecase: userUsecase,
+                                    userUseCase: userUseCase,
                                     sharedNoteRepository: SharedNoteRepository()
                                 )
                             )

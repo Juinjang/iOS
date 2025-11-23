@@ -1,5 +1,5 @@
 //
-//  UserUsecase.swift
+//  UserUseCase.swift
 //  App
 //
 //  Created by 조유진 on 11/23/25.
@@ -7,7 +7,7 @@
 
 import RxSwift
 
-public final class UserUsecase: UserUsecaseProtocol {
+public final class UserUseCase: UserUseCaseProtocol {
     private let repository: UserRepositoryProtocol
     
     public init(repository: UserRepositoryProtocol) {

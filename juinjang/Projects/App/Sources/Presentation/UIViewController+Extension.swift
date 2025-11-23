@@ -17,13 +17,27 @@ extension UIViewController {
         sceneDelegate?.window?.rootViewController = vc
         sceneDelegate?.window?.makeKey()
     }
+    
+    private func makeMainViewController() -> MainViewController {
+        let termsRepository = TermsRepository(networkManager: .shared)
+        let termsUseCase = TermsUseCase(repository: termsRepository)
+        
+        let userRepository = UserRepository()
+        let userUseCase = UserUseCase(repository: userRepository)
+        let mainViewController = MainViewController(dependency: MainViewController.Dependency(
+            termsUseCase: termsUseCase,
+            userUseCase: userUseCase
+        ))
+        
+        return mainViewController
+    }
 
     func changeHome() {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
         let sceneDelegate = windowScene.delegate as? SceneDelegate,
         let window = sceneDelegate.window else { return }
         
-        let mainViewController = MainViewController()
+        let mainViewController = makeMainViewController()
         let nav = UINavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve], animations: nil, completion: nil)
@@ -37,7 +51,7 @@ extension UIViewController {
         let window = sceneDelegate.window else { return }
         
         let imjangListViewController = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
-        let mainViewController = MainViewController()
+        let mainViewController = makeMainViewController()
         let nav = UINavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         DispatchQueue.main.async {
@@ -54,7 +68,7 @@ extension UIViewController {
         let window = sceneDelegate.window else { return }
         
         let lookAroundViewController = LookAroundViewController(reactor: .init(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
-        let mainViewController = MainViewController()
+        let mainViewController = makeMainViewController()
         let nav = UINavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         DispatchQueue.main.async {
@@ -70,7 +84,7 @@ extension UIViewController {
               let sceneDelegate = windowScene.delegate as? SceneDelegate,
               let window = sceneDelegate.window else { return }
         
-        let mainVC = MainViewController()
+        let mainVC = makeMainViewController()
         
         let lookAroundVC = LookAroundViewController(reactor: .init(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
                 
