@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 import RxSwift
 
-protocol TargetType: URLRequestConvertible {
+public protocol TargetType: URLRequestConvertible {
     var baseURL: BaseURLType { get }
     var header: [String: String] { get }
     var path: String { get }
@@ -21,7 +21,7 @@ protocol TargetType: URLRequestConvertible {
 }
 
 extension TargetType {
-    var header: [String : String] {
+    public var header: [String : String] {
         return [
             "Content-Type": "application/json",
             "Authorization": "Bearer \(UserDefaultManager.shared.accessToken)"
@@ -36,7 +36,7 @@ extension TargetType {
         return nil
     }
     
-    var bodyData: Data? {
+    public var bodyData: Data? {
         return nil
     }
     
@@ -53,7 +53,7 @@ extension TargetType {
         return components?.url
     }
     
-    func asURLRequest() throws -> URLRequest {
+    public func asURLRequest() throws -> URLRequest {
         guard let url = createURL() else {
             throw URLError(.badURL)
         }

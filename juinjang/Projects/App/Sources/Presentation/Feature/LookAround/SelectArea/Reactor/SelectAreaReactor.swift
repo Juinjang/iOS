@@ -36,7 +36,7 @@ final class SelectAreaReactor: Reactor {
     }
     
     struct Dependency {
-        let selectAreaRepository: SelectAreaRepositoryProtocol
+        let selectAreaRepository: SearchAreaRepositoryProtocol
     }
     
     private let dependency: Dependency
@@ -86,15 +86,16 @@ final class SelectAreaReactor: Reactor {
 extension SelectAreaReactor{
     // 화면 진입 시 시도 조회 및 서울 선택
     private func fetchInitialSidoList() -> Observable<Mutation> {
-        let admRequestDto = AreaCodeRequestDTO()
+        let searchAreaCode = SearchAreaCode()
+        
         return dependency.selectAreaRepository
-            .fetchAdmSidoList(param: admRequestDto)
+            .fetchAdmSidoList(param: searchAreaCode)
             .asObservable()
-            .flatMap { [weak self] admResponseDto -> Observable<Mutation> in
+            .flatMap { [weak self] areaCode -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
                 return .concat([
-                    selectInitialSido(list: admResponseDto.admVOList.admVOList),
-                    fetchSigunguList(admCode: admResponseDto.admVOList.admVOList[0].admCode),
+                    selectInitialSido(list: areaCode.admVOList.admVOList),
+                    fetchSigunguList(admCode: areaCode.admVOList.admVOList[0].admCode),
                 ])
             }
     }
@@ -102,14 +103,15 @@ extension SelectAreaReactor{
     // 선택된 시도 기준 시군구 조회
     private func fetchSigunguList(admCode: String?) -> Observable<Mutation> {
         guard let admCode else { return .empty() }
-        let admRequestDto = AreaCodeRequestDTO(admCode: admCode)
+ 
+        let searchAreaCode = SearchAreaCode(admCode: admCode)
         
         return dependency.selectAreaRepository
-            .fetchAdmSigunguList(param: admRequestDto)
+            .fetchAdmSigunguList(param: searchAreaCode)
             .asObservable()
-            .flatMap { [weak self] admResponseDto -> Observable<Mutation> in
+            .flatMap { [weak self] areaCode -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
-                let list = admResponseDto.admVOList.admVOList
+                let list = areaCode.admVOList.admVOList
                 return setSigunguList(list: list)
             }
     }
@@ -117,14 +119,15 @@ extension SelectAreaReactor{
     // 선택된 시군구 기준 동읍면 조회
     private func fetchDongList(signugu: SigunguCellItem?) -> Observable<Mutation> {
         guard let signugu else { return .empty() }
-        let admRequestDto = AreaCodeRequestDTO(admCode: signugu.admCode)
+        
+        let searchAreaCode = SearchAreaCode(admCode: signugu.admCode)
         
         return dependency.selectAreaRepository
-            .fetchAdmDongList(param: admRequestDto)
+            .fetchAdmDongList(param: searchAreaCode)
             .asObservable()
-            .flatMap { [weak self] admResponseDto -> Observable<Mutation> in
+            .flatMap { [weak self] areaCode -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
-                var list = admResponseDto.admVOList.admVOList
+                var list = areaCode.admVOList.admVOList
 
                 let totalDong = AdmVO(admCode: signugu.admCode, lowestAdmCodeNm: "\(signugu.name) 전체")
                 list.insert(totalDong, at: 0)

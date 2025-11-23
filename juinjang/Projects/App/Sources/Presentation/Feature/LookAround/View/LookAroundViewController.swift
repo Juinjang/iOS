@@ -180,7 +180,7 @@ final class LookAroundViewController: BaseViewController, View {
     
     private func showSelectAreaVC() {
         let selectAreaVC = SelectAreaViewController(
-            reactor: SelectAreaReactor(dependency: .init(selectAreaRepository:SelectAreaRepository())
+            reactor: SelectAreaReactor(dependency: .init(selectAreaRepository:SelectAreaRepository(networkManager: .shared))
             )
         )
         selectAreaVC.sendSelectedAreasDelegate = self

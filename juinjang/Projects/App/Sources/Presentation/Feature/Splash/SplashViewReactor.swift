@@ -26,15 +26,7 @@ final class SplashViewReactor: Reactor {
     
     let initialState: State = State()
     
-    struct Dependency {
-        let appVersionRepository: AppVersionRepositoryProtocol
-    }
-    
-    private let dependency: Dependency
-    
-    init(dependency: Dependency) {
-        self.dependency = dependency
-    }
+    init() { }
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {

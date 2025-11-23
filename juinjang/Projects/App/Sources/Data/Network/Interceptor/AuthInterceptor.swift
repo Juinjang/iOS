@@ -8,9 +8,9 @@
 import Foundation
 import Alamofire
 
-final class AuthInterceptor: RequestInterceptor {
+public final class AuthInterceptor: RequestInterceptor {
     // 네트워크 요청 직전 호출
-    func adapt(_ urlRequest: URLRequest,
+    public func adapt(_ urlRequest: URLRequest,
                for session: Session,
                completion: @escaping (Result<URLRequest, any Error>) -> Void) {
         var urlRequest = urlRequest
@@ -20,7 +20,7 @@ final class AuthInterceptor: RequestInterceptor {
     }
     
     // 네트워크 요청에 대해 에러 발생 시 호출
-    func retry(_ request: Request,
+    public func retry(_ request: Request,
                for session: Session,
                dueTo error: any Error,
                completion: @escaping (RetryResult) -> Void) {

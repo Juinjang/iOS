@@ -7,11 +7,11 @@
 
 import Foundation
 
-enum BaseURLType {
+public enum BaseURLType {
     case juinjang
     case areaCode
     
-    var url: String {
+    public var url: String {
         switch self {
         case .juinjang:
             guard let baseURL = Bundle.main.infoDictionary?["BASE_URL"] as? String else {

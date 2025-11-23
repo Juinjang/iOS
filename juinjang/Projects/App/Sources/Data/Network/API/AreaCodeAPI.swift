@@ -8,21 +8,20 @@
 import Foundation
 import Alamofire
 
-enum AreaCodeAPI: TargetType {
+public enum AreaCodeAPI: TargetType {
+    case getAreaCodeSidoList(SearchAreaCodeRequest)
+    case getAreaCodeSigunguList(SearchAreaCodeRequest)
+    case getAreaCodeDongList(SearchAreaCodeRequest)
     
-    case getAreaCodeSidoList(AreaCodeRequestDTO)
-    case getAreaCodeSigunguList(AreaCodeRequestDTO)
-    case getAreaCodeDongList(AreaCodeRequestDTO)
-    
-    var baseURL: BaseURLType {
+    public var baseURL: BaseURLType {
         return .areaCode
     }
     
-    var interceptor: AuthInterceptor? {
+    public var interceptor: AuthInterceptor? {
         return nil
     }
 
-    var path: String {
+    public var path: String {
         switch self {
         case .getAreaCodeSidoList:
             return "admCodeList"
@@ -33,14 +32,16 @@ enum AreaCodeAPI: TargetType {
         }
     }
 
-    var method: HTTPMethod {
+    public var method: HTTPMethod {
         switch self {
-        case .getAreaCodeSidoList, .getAreaCodeSigunguList, .getAreaCodeDongList:
+        case .getAreaCodeSidoList,
+                .getAreaCodeSigunguList,
+                .getAreaCodeDongList:
             return .get
         }
     }
     
-    var queryItems: [URLQueryItem] {
+    public var queryItems: [URLQueryItem] {
         switch self {
         case .getAreaCodeSidoList(let request),
                 .getAreaCodeSigunguList(let request),
@@ -49,14 +50,14 @@ enum AreaCodeAPI: TargetType {
         }
     }
 
-    var parameters: [String : Any]? {
+    public var parameters: [String : Any]? {
         return nil
     }
 }
 
 
 extension Encodable {
-    var dictionary: [String: Any]? {
+    public var dictionary: [String: Any]? {
         guard let data = try? JSONEncoder().encode(self) else { return nil }
         return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
     }
