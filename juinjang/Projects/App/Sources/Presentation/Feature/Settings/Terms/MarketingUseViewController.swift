@@ -24,13 +24,6 @@ final class MarketingUseViewController : BaseViewController {
         $0.backgroundColor = .gray100
     }
     
-//    private let contentLabel1 = UILabel().then {
-//        $0.text = "마케팅 활용동의"
-//        $0.font = UIFont(name: "Pretendard-SemiBold", size: 16)
-//        $0.numberOfLines = 0
-//        $0.textAlignment = .center
-//    }
-    
     private let contentLabel2 = UILabel().then {
         $0.text = "1. 마케팅 활용 동의 (선택)\n주인장은 개인정보 보호법 제 22조 제4항과 제39조의 3에 따라 사용자의 광고성 정보 수신과 이에 따른 개인정보 처리에 대한 동의를 받고 있습니다. 약관에 동의하지 않으셔도 주인장의 모든 서비스를 이용하실 수 있습니다. 다만, 이벤트, 혜택 등의 제한이 있을 수 있습니다."
         $0.font = UIFont(name: "Pretendard-Light", size: 14)
