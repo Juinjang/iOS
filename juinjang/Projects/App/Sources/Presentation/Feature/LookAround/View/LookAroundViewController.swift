@@ -179,9 +179,10 @@ final class LookAroundViewController: BaseViewController, View {
     }
     
     private func showSelectAreaVC() {
+        let repository = SearchAreaRepository(networkManager: .shared)
+        let usecase = SearchAreaUsecase(repository: repository)
         let selectAreaVC = SelectAreaViewController(
-            reactor: SelectAreaReactor(dependency: .init(selectAreaRepository:SelectAreaRepository(networkManager: .shared))
-            )
+            reactor: .init(dependency: .init(searchAreaUsecase: usecase))
         )
         selectAreaVC.sendSelectedAreasDelegate = self
         DispatchQueue.main.async {

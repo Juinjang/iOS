@@ -36,7 +36,7 @@ final class SelectAreaReactor: Reactor {
     }
     
     struct Dependency {
-        let selectAreaRepository: SearchAreaRepositoryProtocol
+        let searchAreaUsecase: SearchAreaUsecaseProtocol
     }
     
     private let dependency: Dependency
@@ -88,8 +88,8 @@ extension SelectAreaReactor{
     private func fetchInitialSidoList() -> Observable<Mutation> {
         let searchAreaCode = SearchAreaCode()
         
-        return dependency.selectAreaRepository
-            .fetchAdmSidoList(param: searchAreaCode)
+        return dependency.searchAreaUsecase
+            .fetchSidoList(searchAreaCode)
             .asObservable()
             .flatMap { [weak self] areaCode -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
@@ -106,8 +106,7 @@ extension SelectAreaReactor{
  
         let searchAreaCode = SearchAreaCode(admCode: admCode)
         
-        return dependency.selectAreaRepository
-            .fetchAdmSigunguList(param: searchAreaCode)
+        return dependency.searchAreaUsecase.fetchSigunguList(searchAreaCode)
             .asObservable()
             .flatMap { [weak self] areaCode -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
@@ -122,8 +121,7 @@ extension SelectAreaReactor{
         
         let searchAreaCode = SearchAreaCode(admCode: signugu.admCode)
         
-        return dependency.selectAreaRepository
-            .fetchAdmDongList(param: searchAreaCode)
+        return dependency.searchAreaUsecase.fetchDongList(searchAreaCode)
             .asObservable()
             .flatMap { [weak self] areaCode -> Observable<Mutation> in
                 guard let self = self else { return .empty() }

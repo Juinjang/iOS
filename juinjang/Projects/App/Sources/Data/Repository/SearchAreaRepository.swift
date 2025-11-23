@@ -8,7 +8,7 @@
 import RxSwift
 import Alamofire
 
-final class SelectAreaRepository: SearchAreaRepositoryProtocol {
+final class SearchAreaRepository: SearchAreaRepositoryProtocol {
     private var networkManager: JuinjangAPIManager
 
     init(networkManager: JuinjangAPIManager) {
