@@ -205,11 +205,11 @@ final class ImjangNoteViewController: BaseViewController,
                 switch event {
                 case .share:
                     self.noteRepository.retrieveShareableNoteList(
-                        param: .init(
+                        param: ShareableNoteRequestDTO(
                             sort: nil,
                             propertyType: nil,
                             priceType: nil,
-                            keyword: self.roomName ?? "",
+                            keyword: self.roomName,
                             page: 1,
                             size: 20
                         )
@@ -220,12 +220,14 @@ final class ImjangNoteViewController: BaseViewController,
                     }
                     .compactMap { $0 }
                     .subscribe { model in
+                        let userRepository = UserRepository()
+                        let userUsecase = UserUsecase(repository: userRepository)
                         let viewController = ShareWriteViewController(
-                            reactor: .init(
-                                dependecy: .init(
+                            reactor: ShareWriteViewReactor(
+                                dependecy: ShareWriteViewReactor.Dependency(
                                     selectedModel: model,
                                     noteRepository: NoteRepository(),
-                                    userRepository: UserRepository(),
+                                    userUsecase: userUsecase,
                                     sharedNoteRepository: SharedNoteRepository()
                                 )
                             )

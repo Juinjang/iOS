@@ -108,12 +108,14 @@ final class ShareSelectViewController: BaseViewController, View {
             .nextButton.rx.throttleTap
             .subscribe(with: self) { (self, _) in
                 if let selectedCellItem = self.reactor?.currentState.selectItem {
+                    let userRepository = UserRepository()
+                    let userUsecase = UserUsecase(repository: userRepository)
                     let viewController = ShareWriteViewController(
                         reactor: .init(
                             dependecy: .init(
                                 selectedModel: selectedCellItem.model,
                                 noteRepository: NoteRepository(),
-                                userRepository: UserRepository(),
+                                userUsecase: userUsecase,
                                 sharedNoteRepository: SharedNoteRepository()
                             )
                         )

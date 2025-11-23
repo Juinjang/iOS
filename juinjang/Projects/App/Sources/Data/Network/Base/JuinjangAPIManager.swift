@@ -222,7 +222,7 @@ final class JuinjangAPIManager {
     func refreshAccessToken(completionHandler: @escaping (Bool) -> Void) {
         let api = JuinjangAPI.regenerateToken
         AF.request(api.endpoint, method: api.method, headers: api.header)
-            .responseDecodable(of: BaseResponse<RefreshDto>.self) { response in
+            .responseDecodable(of: BaseResponse<RefreshAccessTokenResponse>.self) { response in
                 print(#function, "액세스 토큰 재발급 StatusCode: \(String(describing: response.response?.statusCode))")
                 switch response.result {
                 case .success(let success):

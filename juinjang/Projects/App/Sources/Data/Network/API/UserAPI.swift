@@ -51,13 +51,12 @@ enum UserAPI: TargetType {
         case .patchProfileIntroduction(let text):
             return ["introduction": text]
         case .regenerateAccessToken:
-            let dto = RefreshDto(
+            let request = RefreshAccessTokenRequest(
                 accessToken: UserDefaultManager.shared.accessToken,
                 refreshToken: UserDefaultManager.shared.refreshToken,
                 email: UserDefaultManager.shared.email
             )
-            dump(dto)
-            return dto.toDictionary()
+            return request.toDictionary()
         }
     }
     

@@ -65,7 +65,7 @@ final class ShareWriteViewReactor: Reactor {
     struct Dependency {
         let selectedModel: ShareSelectModel
         let noteRepository: NoteRepositoryProtocol
-        let userRepository: UserRepositoryProtocol
+        let userUsecase: UserUsecase
         let sharedNoteRepository: SharedNoteRepositoryProtocol
     }
     
@@ -192,9 +192,7 @@ extension ShareWriteViewReactor {
     }
     
     private func fetchUserNickname() -> Observable<Mutation> {
-        return dependency
-            .userRepository
-            .retrieveUserNickname()
+        return dependency.userUsecase.fetchNickname()
             .asObservable()
             .map { .updateNickname(nickname: $0) }
     }

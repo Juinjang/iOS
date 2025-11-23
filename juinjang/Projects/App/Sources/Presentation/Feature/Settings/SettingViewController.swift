@@ -33,7 +33,6 @@ protocol LogoutDelegate: AnyObject {
 final class SettingViewController : BaseViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate, LogoutDelegate {
     static let id = "SettingViewController"
     
-    private let userRepository = UserRepository()
     private let navigationView = DefaultNavigationView().then {
         $0.title = "설정"
         $0.leftItem = [.pop]
@@ -150,7 +149,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     private lazy var withdrawalButton = makeButton(title: "계정 삭제하기", color: .gray400)
     
     struct Dependency {
-        let userRepository: UserRepositoryProtocol
+        let userUsecase: UserUsecaseProtocol
     }
     
     private let dependency: Dependency
@@ -179,8 +178,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         configureHierarchy()
         setConstraint()
         
-        userRepository
-            .retrieveProfileInfo()
+        dependency.userUsecase.fetchProfile()
             .subscribe(with: self) { (self, model) in
                 self.oneLineIntroTextFieldView.text = model.introduction ?? ""
             }
@@ -189,7 +187,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         oneLineIntroTextFieldView
             .saveButtonDidTapRelay
             .subscribe(with: self) { (self, text) in
-                self.userRepository.updateProfileIntroduction(text: text)
+                self.dependency.userUsecase.updateIntroduction(text)
                     .observe(on: MainScheduler.instance)
                     .subscribe(
                         onCompleted: { [weak self] in
@@ -205,7 +203,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func retrieveProfileInfo() {
-        dependency.userRepository.retrieveProfileInfo()
+        dependency.userUsecase.fetchProfile()
             .asObservable()
             .subscribe(with: self) { owner, profileModel in
                 print(profileModel)

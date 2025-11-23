@@ -162,12 +162,14 @@ final class MyNoteViewController: BaseViewController, View {
         pageCellEventRelay
             .filter { $0 == .shareButtonTap }
             .subscribe(with: self) { (self, _) in
+                let userRepository = UserRepository()
+                let userUsecase = UserUsecase(repository: userRepository)
                 self.navigationController?.pushViewController(
                     ShareSelectViewController(
                         reactor: .init(
                             dependency: .init(
                                 noteRepository: NoteRepository(),
-                                userRepository: UserRepository()
+                                userUsecase: userUsecase
                             )
                         )
                     ),

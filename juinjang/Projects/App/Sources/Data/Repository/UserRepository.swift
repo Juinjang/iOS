@@ -21,10 +21,10 @@ final class UserRepository: UserRepositoryProtocol {
         return .just(userDefault.nickname)
     }
     
-    func retrieveProfileInfo() -> Single<ProfileModel> {
+    func retrieveProfileInfo() -> Single<Profile> {
         return UserAPI.getProfileInfo
-            .request(BaseResponse<ProfileModel>.self, networkManager)
-            .map { try $0.unwrap() }
+            .request(BaseResponse<ProfileResponse>.self, networkManager)
+            .map { try $0.unwrap().toDomain() }
     }
     
     func updateProfileIntroduction(text: String) -> Completable {
@@ -33,9 +33,9 @@ final class UserRepository: UserRepositoryProtocol {
             .asCompletable()
     }
     
-    func regenerateAccesstoken() -> Single<RefreshDto> {
+    func regenerateAccesstoken() -> Single<RefreshAuthToken> {
         return UserAPI.regenerateAccessToken
-            .request(BaseResponse<RefreshDto>.self, networkManager)
-            .map { try $0.unwrap() }
+            .request(BaseResponse<RefreshAccessTokenResponse>.self, networkManager)
+            .map { try $0.unwrap().toDomain() }
     }
 }

@@ -216,9 +216,11 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func setttingBtnTap() {
+        let repository = UserRepository()
+        let usecase = UserUsecase(repository: repository)
         let settingVC = SettingViewController(
             dependency: SettingViewController.Dependency(
-                userRepository: UserRepository()
+                userUsecase: usecase
             )
         )
         settingVC.updateNicknameDelegate = self
