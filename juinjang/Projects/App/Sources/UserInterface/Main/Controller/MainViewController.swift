@@ -52,12 +52,10 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         tableView.rowHeight = 710
         tableView.backgroundColor = .clear
         view.backgroundColor = .mainWhite
-        
         view.add(
             navigationView,
             tableView
         )
-       
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
         setConstraint()
@@ -222,7 +220,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             )
         )
         settingVC.updateNicknameDelegate = self
-        self.navigationController?.pushViewController(settingVC, animated: true)
+        navigationController?.pushViewControllerFromLeftSide(settingVC)
     }
     
     private func setConstraint() {

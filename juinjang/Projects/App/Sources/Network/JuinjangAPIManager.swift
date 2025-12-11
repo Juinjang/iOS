@@ -13,6 +13,7 @@ import RxSwift
 
 final class JuinjangAPIManager {
     static let shared = JuinjangAPIManager()
+    
     private init() { }
     
     func fetchData<T: Decodable>(type: T.Type,

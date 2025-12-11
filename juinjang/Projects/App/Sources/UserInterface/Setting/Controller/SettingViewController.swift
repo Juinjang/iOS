@@ -410,7 +410,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     
     @objc private func backBtnTap() {
         updateNicknameDelegate?.updateNickname()
-        self.navigationController?.popViewController(animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     private func sendNickName(nickname: String) {

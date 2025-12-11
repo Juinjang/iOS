@@ -24,7 +24,7 @@ extension UIViewController {
         let window = sceneDelegate.window else { return }
         
         let mainViewController = MainViewController()
-        let nav = UINavigationController(rootViewController: mainViewController)
+        let nav = TransitionNavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve], animations: nil, completion: nil)
         

@@ -21,7 +21,6 @@ final class SplashViewController: UIViewController, View {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         configureAnimation()
     }
     
@@ -29,7 +28,6 @@ final class SplashViewController: UIViewController, View {
         view.backgroundColor = .splash
         view.addSubview(animationView)
         animationView.center = view.center
-
         animationView.play { [weak self] (finish) in
             self?.reactor?.action.onNext(.viewDidLoad)
         }
@@ -41,7 +39,6 @@ final class SplashViewController: UIViewController, View {
             .asDriver(onErrorDriveWith: .just(.login))
             .drive(with: self, onNext: { owner, navigation in
                 owner.animationView.stop()
-                
                 switch navigation {
                 case .onbording:
                     owner.changeOnboardingContainerVC()
@@ -64,7 +61,6 @@ final class SplashViewController: UIViewController, View {
     }
     
     private func showUpdateAlert() {
-            
         // 커스텀 뷰 인스턴스 생성
         let updateAlertView = UpdateAlertView(frame: CGRect(x: 0, y: 0, width: 342, height: 325))
         updateAlertView.center = view.center
@@ -92,8 +88,7 @@ final class SplashViewController: UIViewController, View {
     // 앱 스토어로 이동
     private func openAppStore() {
         guard let url = URL(string: APIKey.appStoreOpenUrlString),
-              UIApplication.shared.canOpenURL(url)
-        else { return }
+              UIApplication.shared.canOpenURL(url) else { return }
         
         UIApplication.shared.open(url, options: [:]) { _ in
             UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
