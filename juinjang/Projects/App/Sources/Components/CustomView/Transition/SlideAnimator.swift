@@ -8,7 +8,6 @@
 import UIKit
 
 final class SlideAnimator: NSObject, UIViewControllerAnimatedTransitioning {
-    
     private let operation: UINavigationController.Operation
     
     init(operation: UINavigationController.Operation) {

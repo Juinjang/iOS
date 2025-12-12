@@ -50,6 +50,7 @@ final class SignUpViewController: BaseViewController {
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
+    private let onboardingButton = TextButton(text: "서비스 체험하기", underline: true)
     
     override func viewDidLoad() {
         self.view.backgroundColor = .mainWhite
@@ -65,7 +66,8 @@ final class SignUpViewController: BaseViewController {
          juinjangLogo,
          kakaoLoginButton,
          appleLoginButton,
-         guideLabel].forEach { view.addSubview($0) }
+         guideLabel,
+         onboardingButton].forEach { view.addSubview($0) }
     }
     
     func setupLayout() {
@@ -90,7 +92,7 @@ final class SignUpViewController: BaseViewController {
         view.addSubview(loginStackView)
 
         loginStackView.snp.makeConstraints {
-            $0.top.equalTo(juinjangLogo.snp.bottom).offset(view.frame.height * 0.13)
+            $0.top.equalTo(juinjangLogo.snp.bottom).offset(view.frame.height * 0.10)
             $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.08)
             $0.centerX.equalToSuperview()
         }
@@ -98,7 +100,14 @@ final class SignUpViewController: BaseViewController {
         // 안내 Label
         guideLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(loginStackView.snp.bottom).offset(view.frame.height * 0.06)
+            $0.top.equalTo(loginStackView.snp.bottom).offset(view.frame.height * 0.04)
+        }
+        
+        onboardingButton.snp.makeConstraints {
+            $0.width.equalTo(90)
+            $0.height.equalTo(19)
+            $0.top.equalTo(guideLabel.snp.bottom).offset(32)
+            $0.centerX.equalToSuperview()
         }
     }
     
