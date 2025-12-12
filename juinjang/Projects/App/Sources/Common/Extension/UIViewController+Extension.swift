@@ -103,7 +103,7 @@ extension UIViewController {
         let sceneDelegate = windowScene.delegate as? SceneDelegate,
         let window = sceneDelegate.window else { return }
         
-        let mainViewController = SignUpViewController()
+        let mainViewController = SignUpViewController(.push)
         let nav = UINavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve], animations: nil, completion: nil)

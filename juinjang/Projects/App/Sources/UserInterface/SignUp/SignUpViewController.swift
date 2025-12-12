@@ -9,16 +9,20 @@ import UIKit
 import Then
 import SnapKit
 import Alamofire
-
 import KakaoSDKCommon
 import KakaoSDKAuth
 import KakaoSDKUser
-
 import AuthenticationServices
-
 import RxSwift
 
 final class SignUpViewController: BaseViewController {
+    enum TransitionStyle {
+        case present
+        case push
+    }
+    
+    private let currentTransitionStyle: TransitionStyle
+    
     var disposeBag: DisposeBag = DisposeBag()
     lazy var juinjangLogoImage = UIImageView().then {
         $0.image = UIImage.SignUp.juinjangLogoGraphic
@@ -50,7 +54,23 @@ final class SignUpViewController: BaseViewController {
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
-    private let onboardingButton = TextButton(text: "서비스 체험하기", underline: true)
+    private lazy var onboardingButton = TextButton(text: "서비스 체험하기", underline: true).then {
+        $0.addTarget(self, action: #selector(onboardingButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    private lazy var dismissButton = ImageButton(normalImage: .x24).then {
+        $0.tintColor = .gray450
+        $0.addTarget(self, action: #selector(dismissButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    init(_ transitionStyle: TransitionStyle) {
+        currentTransitionStyle = transitionStyle
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         self.view.backgroundColor = .mainWhite
@@ -67,7 +87,8 @@ final class SignUpViewController: BaseViewController {
          kakaoLoginButton,
          appleLoginButton,
          guideLabel,
-         onboardingButton].forEach { view.addSubview($0) }
+         onboardingButton,
+         dismissButton].forEach { view.addSubview($0) }
     }
     
     func setupLayout() {
@@ -103,12 +124,30 @@ final class SignUpViewController: BaseViewController {
             $0.top.equalTo(loginStackView.snp.bottom).offset(view.frame.height * 0.04)
         }
         
-        onboardingButton.snp.makeConstraints {
-            $0.width.equalTo(90)
-            $0.height.equalTo(19)
-            $0.top.equalTo(guideLabel.snp.bottom).offset(32)
-            $0.centerX.equalToSuperview()
+        if currentTransitionStyle == .push {
+            dismissButton.removeFromSuperview()
+            onboardingButton.snp.makeConstraints {
+                $0.width.equalTo(90)
+                $0.height.equalTo(19)
+                $0.top.equalTo(guideLabel.snp.bottom).offset(32)
+                $0.centerX.equalToSuperview()
+            }
+        } else {
+            onboardingButton.removeFromSuperview()
+            dismissButton.snp.makeConstraints {
+                $0.size.equalTo(24)
+                $0.top.equalToSuperview().offset(59)
+                $0.right.equalToSuperview().offset(-24)
+            }
         }
+    }
+    
+    @objc func dismissButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
+    
+    @objc func onboardingButtonTapped(_ sender: UIButton) {
+        print("온보딩 버튼 클릭")
     }
     
     @objc func loginButtonTapped(_ sender: UIButton) {
@@ -221,7 +260,9 @@ extension SignUpViewController{
                         if let userId = kakaoUser.id {
                             print("사용자 ID : \(userId)")
                             UserDefaultManager.shared.kakaoTargetId = userId
-                            requestKakaoLogin(email: UserDefaultManager.shared.email, nickname: UserDefaultManager.shared.nickname, kakaoTargetId: userId)
+                            requestKakaoLogin(email: UserDefaultManager.shared.email,
+                                              nickname: UserDefaultManager.shared.nickname,
+                                              kakaoTargetId: userId)
                         } else {
                             print("사용자 ID를 가져올 수 없습니다.")
                         }
