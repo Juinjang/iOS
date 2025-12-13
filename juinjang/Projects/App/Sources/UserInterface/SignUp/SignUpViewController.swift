@@ -66,6 +66,9 @@ final class SignUpViewController: BaseViewController {
     init(_ transitionStyle: TransitionStyle) {
         currentTransitionStyle = transitionStyle
         super.init()
+        if transitionStyle == .present {
+            self.modalPresentationStyle = .overFullScreen
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -136,7 +139,7 @@ final class SignUpViewController: BaseViewController {
             onboardingButton.removeFromSuperview()
             dismissButton.snp.makeConstraints {
                 $0.size.equalTo(24)
-                $0.top.equalToSuperview().offset(59)
+                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
                 $0.right.equalToSuperview().offset(-24)
             }
         }

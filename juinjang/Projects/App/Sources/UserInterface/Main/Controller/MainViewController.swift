@@ -220,7 +220,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     
     @objc private func lookAroundButtonTapped() {
         if UserDefaultManager.shared.isOnboarding {
-            print("바텀 시트 띄우기")
+            let bottomSheetView = SignUpBottomSheetView()
+            navigationController?.present(bottomSheetView, animated: true)
         } else {
             let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
             lookAroundVC.navigationController?.isNavigationBarHidden = true
