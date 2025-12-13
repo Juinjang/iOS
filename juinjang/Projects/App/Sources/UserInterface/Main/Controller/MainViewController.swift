@@ -14,6 +14,7 @@ protocol updateNicknameDelegate: AnyObject {
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private let termsRepository = TermsRepository()
     private let userRepository = UserRepository()
+    private let onboardingRepository = OnboardingRepository()
     private lazy var navigationView = CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
         $0.leftItem = [.setting]
     }
@@ -129,7 +130,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func checkAndShowTermsPopup() {
-        print("약관 동의 버전은????\(UserDefaultManager.shared.agreeVersion)")
+        guard (UserDefaultManager.shared.isOnboarding == false) else { return }
         let currentVersion = "1.1.0"
         if UserDefaultManager.shared.agreeVersion.compare(currentVersion, options: .numeric) == .orderedAscending {
             termsPopupViewController = TermsPopupViewController(
@@ -146,20 +147,30 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
 
     @objc private func callMainImjangRequest() {
-        JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
-                                            api: .mainImjang) { [weak self] response, error in
-            guard let self = self else { return }
-            if let error = error {
-                print(error.localizedDescription)
-                return
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingRepository.retrieveRecentNotes()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.mainImjangList = response.recentUpdatedList
+                    self.tableView.reloadData()
+                }
+                .disposed(by: disposeBag)
+        } else {
+            JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
+                                                api: .mainImjang) { [weak self] response, error in
+                guard let self = self else { return }
+                if let error = error {
+                    print(error.localizedDescription)
+                    return
+                }
+                
+                guard let response = response else { return }
+                guard let result = response.result else { return }
+                print(response)
+                self.isFirstShowing = false
+                mainImjangList = result.recentUpdatedList
+                tableView.reloadData()
             }
-            
-            guard let response = response else { return }
-            guard let result = response.result else { return }
-            print(response)
-            self.isFirstShowing = false
-            mainImjangList = result.recentUpdatedList
-            tableView.reloadData()
         }
     }
     
@@ -208,9 +219,13 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func lookAroundButtonTapped() {
-        let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
-        lookAroundVC.navigationController?.isNavigationBarHidden = true
-        self.navigationController?.pushViewController(lookAroundVC, animated: true)
+        if UserDefaultManager.shared.isOnboarding {
+            print("바텀 시트 띄우기")
+        } else {
+            let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
+            lookAroundVC.navigationController?.isNavigationBarHidden = true
+            self.navigationController?.pushViewController(lookAroundVC, animated: true)
+        }
     }
     
     @objc private func setttingBtnTap() {

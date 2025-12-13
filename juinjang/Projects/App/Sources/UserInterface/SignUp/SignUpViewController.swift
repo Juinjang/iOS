@@ -148,6 +148,7 @@ final class SignUpViewController: BaseViewController {
     
     @objc func onboardingButtonTapped(_ sender: UIButton) {
         UserDefaultManager.shared.isOnboarding = true
+        UserDefaultManager.shared.nickname = "미래의 건물주"
         changeHome()
     }
     
@@ -254,7 +255,8 @@ extension SignUpViewController{
                 print(error)
             } else {
                 if let kakaoUser = user {
-                    if let email = kakaoUser.kakaoAccount?.email, let nickname = kakaoUser.kakaoAccount?.profile?.nickname {
+                    if let email = kakaoUser.kakaoAccount?.email,
+                        let nickname = kakaoUser.kakaoAccount?.profile?.nickname {
                         print("사용자 이메일 : \(email)")
                         UserDefaultManager.shared.email = email
                         UserDefaultManager.shared.nickname = nickname
