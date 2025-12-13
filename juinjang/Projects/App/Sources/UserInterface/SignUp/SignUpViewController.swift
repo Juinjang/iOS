@@ -149,6 +149,7 @@ final class SignUpViewController: BaseViewController {
         dismiss(animated: true)
     }
     
+    // 온보딩 분기처리
     @objc func onboardingButtonTapped(_ sender: UIButton) {
         UserDefaultManager.shared.isOnboarding = true
         UserDefaultManager.shared.nickname = "미래의 건물주"

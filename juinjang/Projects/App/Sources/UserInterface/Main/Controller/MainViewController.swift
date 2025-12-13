@@ -130,6 +130,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func checkAndShowTermsPopup() {
+        // 온보딩 분기처리
         guard (UserDefaultManager.shared.isOnboarding == false) else { return }
         let currentVersion = "1.1.0"
         if UserDefaultManager.shared.agreeVersion.compare(currentVersion, options: .numeric) == .orderedAscending {
@@ -145,8 +146,9 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             }
         }
     }
-
+    
     @objc private func callMainImjangRequest() {
+        // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
             onboardingRepository.retrieveRecentNotes()
                 .asObservable()
@@ -155,23 +157,25 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
                     self.tableView.reloadData()
                 }
                 .disposed(by: disposeBag)
-        } else {
-            JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
-                                                api: .mainImjang) { [weak self] response, error in
-                guard let self = self else { return }
-                if let error = error {
-                    print(error.localizedDescription)
-                    return
-                }
-                
-                guard let response = response else { return }
-                guard let result = response.result else { return }
-                print(response)
-                self.isFirstShowing = false
-                mainImjangList = result.recentUpdatedList
-                tableView.reloadData()
-            }
+            return
         }
+        
+        JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
+                                            api: .mainImjang) { [weak self] response, error in
+            guard let self = self else { return }
+            if let error = error {
+                print(error.localizedDescription)
+                return
+            }
+            
+            guard let response = response else { return }
+            guard let result = response.result else { return }
+            print(response)
+            self.isFirstShowing = false
+            mainImjangList = result.recentUpdatedList
+            tableView.reloadData()
+        }
+        
     }
     
     private func callVersionRequest(imjangId: Int, completion: @escaping (Int?) -> Void) {
@@ -222,11 +226,13 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         if UserDefaultManager.shared.isOnboarding {
             let bottomSheetView = SignUpBottomSheetView()
             navigationController?.present(bottomSheetView, animated: true)
-        } else {
-            let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
-            lookAroundVC.navigationController?.isNavigationBarHidden = true
-            self.navigationController?.pushViewController(lookAroundVC, animated: true)
+            return
         }
+        
+        let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
+        lookAroundVC.navigationController?.isNavigationBarHidden = true
+        self.navigationController?.pushViewController(lookAroundVC, animated: true)
+        
     }
     
     @objc private func setttingBtnTap() {

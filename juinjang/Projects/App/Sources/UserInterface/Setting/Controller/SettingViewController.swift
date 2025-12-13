@@ -110,7 +110,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.font = .pretendard(size: 14, weight: .medium)
         $0.textColor = .gray400
     }
-
+    
     private let loginImageView = UIImageView().then {
         if UserDefaultManager.shared.isKakaoLogin {
             $0.image = UIImage.Setting.KAKAO
@@ -189,7 +189,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         retrieveProfileInfo()
         loadProfileImage()
         logoutButton.contentHorizontalAlignment = .left
-
+        
         bindAction()
         addTarget()
         configureHierarchy()
@@ -288,7 +288,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         }
         picker.dismiss(animated: true, completion: nil)
     }
-        
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
@@ -376,10 +376,10 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             nicknameTextField.delegate = self
             view.addSubview(line1)
             nicknameTextField.snp.makeConstraints{
-             $0.top.equalTo(nicknameLabel.snp.bottom).offset(8)
-             $0.left.equalToSuperview().offset(24)
-             $0.width.equalTo(264)
-             $0.height.equalTo(23)
+                $0.top.equalTo(nicknameLabel.snp.bottom).offset(8)
+                $0.left.equalToSuperview().offset(24)
+                $0.width.equalTo(264)
+                $0.height.equalTo(23)
             }
             line1.snp.makeConstraints{
                 $0.top.equalTo(nicknameTextField.snp.bottom).offset(3)
@@ -437,7 +437,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         let parameters: [String: Any] = [
             "nickname": nickname
         ]
-
+        
         JuinjangAPIManager.shared.postData(type: BaseResponse<NicknameDto>.self, api: .saveNickname, parameter: parameters) { [weak self] response, error in
             guard let self else { return }
             if error == nil {
@@ -480,34 +480,35 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func configureHierarchy() {
+        // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
             view.add(navigationView, onboardingLabel, loginButton)
-        } else {
-            view.add(navigationView, scrollView)
-            scrollView.addSubview(contentView)
-            
-            contentView.add(
-                profileImageView,
-                editButton,
-                nicknameLabel,
-                nicknameValueLabel,
-                saveButton,
-                line1,
-                oneLineIntroTextFieldView,
-                logInfoLabel,
-                loginImageView,
-                logInfoMailLabel,
-                line2,
-                pencilShopButton,
-                line3,
-                useButton,
-                qnaButton,
-                line4,
-                logoutButton,
-                line5,
-                withdrawalButton
-            )
+            return
         }
+        view.add(navigationView, scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.add(
+            profileImageView,
+            editButton,
+            nicknameLabel,
+            nicknameValueLabel,
+            saveButton,
+            line1,
+            oneLineIntroTextFieldView,
+            logInfoLabel,
+            loginImageView,
+            logInfoMailLabel,
+            line2,
+            pencilShopButton,
+            line3,
+            useButton,
+            qnaButton,
+            line4,
+            logoutButton,
+            line5,
+            withdrawalButton
+        )
     }
     
     private func setConstraint() {
@@ -515,6 +516,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
         }
         
+        // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
             onboardingLabel.snp.makeConstraints {
                 $0.top.equalTo(navigationView.snp.bottom).offset(32)
@@ -526,117 +528,120 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
                 $0.horizontalEdges.equalToSuperview().inset(24)
                 $0.height.equalTo(52)
             }
-        } else {
-            scrollView.snp.makeConstraints {
-                $0.top.equalTo(navigationView.snp.bottom)
-                $0.horizontalEdges.bottom.equalToSuperview()
-            }
             
-            contentView.snp.makeConstraints {
-                $0.edges.equalToSuperview()
-                $0.width.equalToSuperview()
-                $0.bottom.equalTo(withdrawalButton.snp.bottom).offset(20)
-            }
-            
-            profileImageView.snp.makeConstraints{
-                $0.top.equalToSuperview().offset(28)
-                $0.centerX.equalToSuperview()
-                $0.width.height.equalTo(66)
-            }
-            editButton.snp.makeConstraints{
-                $0.top.equalTo(profileImageView.snp.bottom).offset(8)
-                $0.centerX.equalToSuperview()
-                $0.height.equalTo(19)
-            }
-            nicknameLabel.snp.makeConstraints{
-                $0.top.equalTo(editButton.snp.bottom).offset(28)
-                $0.leading.equalToSuperview().offset(24)
-            }
-            nicknameValueLabel.snp.makeConstraints{
-                $0.top.equalTo(nicknameLabel.snp.bottom).offset(10)
-                $0.leading.equalToSuperview().offset(24)
-            }
-            saveButton.snp.makeConstraints{
-                $0.top.equalTo(nicknameLabel.snp.bottom).offset(5)
-                $0.trailing.equalToSuperview().inset(21)
-                $0.height.equalTo(29)
-                $0.width.equalTo(64)
-            }
-            
-            oneLineIntroTextFieldView.snp.makeConstraints {
-                $0.top.equalTo(saveButton.snp.bottom).offset(20)
-                $0.left.equalToSuperview().offset(24)
-                $0.right.equalToSuperview().inset(21)
-                $0.height.equalTo(68)
-            }
-            
-            logInfoLabel.snp.makeConstraints {
-                $0.top.equalTo(oneLineIntroTextFieldView.snp.bottom).offset(29)
-                $0.leading.equalToSuperview().offset(24)
-            }
-            loginImageView.snp.makeConstraints{
-                $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
-                $0.leading.equalToSuperview().offset(24)
-                $0.height.width.equalTo(20)
-            }
-            logInfoMailLabel.snp.makeConstraints{
-                $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
-                $0.leading.equalTo(loginImageView.snp.trailing).offset(8)
-            }
-            line2.snp.makeConstraints {
-                $0.top.equalTo(logInfoMailLabel.snp.bottom).offset(28)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(4)
-            }
-            
-            pencilShopButton.snp.makeConstraints { make in
-                make.top.equalTo(line2.snp.bottom).offset(10)
-                make.horizontalEdges.equalToSuperview()
-                make.height.equalTo(60)
-            }
-            
-            line3.snp.makeConstraints { make in
-                make.top.equalTo(pencilShopButton.snp.bottom).offset(10)
-                make.horizontalEdges.equalToSuperview()
-                make.height.equalTo(4)
-            }
-            
-            useButton.snp.makeConstraints {
-                $0.top.equalTo(line3.snp.bottom).offset(10)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(60)
-            }
-            
-            qnaButton.snp.makeConstraints {
-                $0.top.equalTo(useButton.snp.bottom)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(60)
-            }
-            
-            line4.snp.makeConstraints {
-                $0.top.equalTo(qnaButton.snp.bottom).offset(10)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(4)
-            }
-            
-            logoutButton.snp.makeConstraints {
-                $0.top.equalTo(line4.snp.bottom).offset(10)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(60)
-            }
-            
-            line5.snp.makeConstraints {
-                $0.top.equalTo(logoutButton.snp.bottom).offset(10)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(4)
-            }
-            
-            withdrawalButton.snp.makeConstraints {
-                $0.top.equalTo(line5.snp.bottom).offset(10)
-                $0.horizontalEdges.equalToSuperview()
-                $0.height.equalTo(60)
-            }
+            return
         }
+        
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom)
+            $0.horizontalEdges.bottom.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
+            $0.bottom.equalTo(withdrawalButton.snp.bottom).offset(20)
+        }
+        
+        profileImageView.snp.makeConstraints{
+            $0.top.equalToSuperview().offset(28)
+            $0.centerX.equalToSuperview()
+            $0.width.height.equalTo(66)
+        }
+        editButton.snp.makeConstraints{
+            $0.top.equalTo(profileImageView.snp.bottom).offset(8)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(19)
+        }
+        nicknameLabel.snp.makeConstraints{
+            $0.top.equalTo(editButton.snp.bottom).offset(28)
+            $0.leading.equalToSuperview().offset(24)
+        }
+        nicknameValueLabel.snp.makeConstraints{
+            $0.top.equalTo(nicknameLabel.snp.bottom).offset(10)
+            $0.leading.equalToSuperview().offset(24)
+        }
+        saveButton.snp.makeConstraints{
+            $0.top.equalTo(nicknameLabel.snp.bottom).offset(5)
+            $0.trailing.equalToSuperview().inset(21)
+            $0.height.equalTo(29)
+            $0.width.equalTo(64)
+        }
+        
+        oneLineIntroTextFieldView.snp.makeConstraints {
+            $0.top.equalTo(saveButton.snp.bottom).offset(20)
+            $0.left.equalToSuperview().offset(24)
+            $0.right.equalToSuperview().inset(21)
+            $0.height.equalTo(68)
+        }
+        
+        logInfoLabel.snp.makeConstraints {
+            $0.top.equalTo(oneLineIntroTextFieldView.snp.bottom).offset(29)
+            $0.leading.equalToSuperview().offset(24)
+        }
+        loginImageView.snp.makeConstraints{
+            $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
+            $0.leading.equalToSuperview().offset(24)
+            $0.height.width.equalTo(20)
+        }
+        logInfoMailLabel.snp.makeConstraints{
+            $0.top.equalTo(logInfoLabel.snp.bottom).offset(10)
+            $0.leading.equalTo(loginImageView.snp.trailing).offset(8)
+        }
+        line2.snp.makeConstraints {
+            $0.top.equalTo(logInfoMailLabel.snp.bottom).offset(28)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(4)
+        }
+        
+        pencilShopButton.snp.makeConstraints { make in
+            make.top.equalTo(line2.snp.bottom).offset(10)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(60)
+        }
+        
+        line3.snp.makeConstraints { make in
+            make.top.equalTo(pencilShopButton.snp.bottom).offset(10)
+            make.horizontalEdges.equalToSuperview()
+            make.height.equalTo(4)
+        }
+        
+        useButton.snp.makeConstraints {
+            $0.top.equalTo(line3.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(60)
+        }
+        
+        qnaButton.snp.makeConstraints {
+            $0.top.equalTo(useButton.snp.bottom)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(60)
+        }
+        
+        line4.snp.makeConstraints {
+            $0.top.equalTo(qnaButton.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(4)
+        }
+        
+        logoutButton.snp.makeConstraints {
+            $0.top.equalTo(line4.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(60)
+        }
+        
+        line5.snp.makeConstraints {
+            $0.top.equalTo(logoutButton.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(4)
+        }
+        
+        withdrawalButton.snp.makeConstraints {
+            $0.top.equalTo(line5.snp.bottom).offset(10)
+            $0.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(60)
+        }
+        
     }
     
     private func makeSeparatorView() -> UIView {
@@ -653,7 +658,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             attributes: AttributeContainer([
                 .font: UIFont.pretendard(size: 16, weight: .semiBold),
                 .foregroundColor: color
-        ]))
+            ]))
         if let image {
             config.image = image
             config.imagePadding = 8

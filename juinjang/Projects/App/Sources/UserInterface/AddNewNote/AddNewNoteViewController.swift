@@ -275,6 +275,7 @@ final class AddNewNoteViewController: BaseViewController {
     }
     
     lazy var addNoteButton = UIButton().then {
+        // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
             $0.setTitle("회원가입하고 노트 생성하기", for: .normal)
         } else {
@@ -942,7 +943,7 @@ final class AddNewNoteViewController: BaseViewController {
     }
     
     @objc func buttonTapped(_ sender: UIButton) {
-        // Onboarding 분기처리
+        // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
             present(SignUpViewController(.present), animated: true)
             return
