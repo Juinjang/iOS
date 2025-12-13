@@ -147,7 +147,8 @@ final class SignUpViewController: BaseViewController {
     }
     
     @objc func onboardingButtonTapped(_ sender: UIButton) {
-        print("온보딩 버튼 클릭")
+        UserDefaultManager.shared.isOnboarding = true
+        changeHome()
     }
     
     @objc func loginButtonTapped(_ sender: UIButton) {
@@ -201,6 +202,7 @@ final class SignUpViewController: BaseViewController {
                 UserDefaultManager.shared.profileImage = UIImage.Setting.profile
             }
             // 메인 화면으로 이동
+            UserDefaultManager.shared.isOnboarding = false
             self.changeHome()
         }
     }

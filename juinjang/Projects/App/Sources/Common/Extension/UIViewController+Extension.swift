@@ -38,7 +38,7 @@ extension UIViewController {
         
         let imjangListViewController = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
         let mainViewController = MainViewController()
-        let nav = UINavigationController(rootViewController: mainViewController)
+        let nav = TransitionNavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         DispatchQueue.main.async {
             nav.pushViewController(imjangListViewController, animated: false)
@@ -55,7 +55,7 @@ extension UIViewController {
         
         let lookAroundViewController = LookAroundViewController(reactor: .init(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
         let mainViewController = MainViewController()
-        let nav = UINavigationController(rootViewController: mainViewController)
+        let nav = TransitionNavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         DispatchQueue.main.async {
             nav.pushViewController(lookAroundViewController, animated: false)
@@ -71,7 +71,8 @@ extension UIViewController {
               let window = sceneDelegate.window else { return }
         
         let mainVC = MainViewController()
-        
+        let mainNavigationVC = TransitionNavigationController(rootViewController: mainVC)
+
         let lookAroundVC = LookAroundViewController(reactor: .init(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
                 
         let imjangDetailVC = ImjangDetailViewController(
@@ -87,7 +88,7 @@ extension UIViewController {
         )
         
         let nav = UINavigationController()
-        nav.setViewControllers([mainVC, lookAroundVC], animated: false)
+        nav.setViewControllers([mainNavigationVC, lookAroundVC], animated: false)
         window.rootViewController = nav
         DispatchQueue.main.async {
             nav.pushViewController(imjangDetailVC, animated: true)
@@ -104,7 +105,7 @@ extension UIViewController {
         let window = sceneDelegate.window else { return }
         
         let mainViewController = SignUpViewController(.push)
-        let nav = UINavigationController(rootViewController: mainViewController)
+        let nav = TransitionNavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         UIView.transition(with: window, duration: 0.3, options: [.transitionCrossDissolve], animations: nil, completion: nil)
         
@@ -117,7 +118,7 @@ extension UIViewController {
         let window = sceneDelegate.window else { return }
         
         let mainViewController = OnboardingContainerViewController(reactor: OnboardingContainerReactor())
-        let nav = UINavigationController(rootViewController: mainViewController)
+        let nav = TransitionNavigationController(rootViewController: mainViewController)
         window.rootViewController = nav
         UIView.transition(with: window, duration: 0.2, options: [.transitionCrossDissolve], animations: nil, completion: nil)
         
