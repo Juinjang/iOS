@@ -271,6 +271,13 @@ extension ImjangSearchResultViewController: UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let imjangId = searchedImjangList[indexPath.row].noteId
+        
+        // 온보딩 분기 처리
+        if UserDefaultManager.shared.isOnboarding {
+            self.showImjangNoteVC(imjangId: 1, version: 0)
+            return
+        }
+        
         callVersionRequest(imjangId: imjangId) { version in
             if let version = version {
                 self.showImjangNoteVC(imjangId: imjangId, version: version)

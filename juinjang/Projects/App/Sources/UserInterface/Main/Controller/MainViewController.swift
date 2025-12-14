@@ -341,8 +341,16 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
          return CGSize(width: 143 , height: 204)
      }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         let item = mainImjangList[indexPath.row]
+        
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            self.showImjangNoteVC(imjangId: item.limjangId, version: 0)
+            return
+        }
+        
         callVersionRequest(imjangId: item.limjangId) { [weak self] version in
             guard let self = self else { return }
             if let version = version {

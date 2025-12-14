@@ -450,6 +450,13 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
             switch imjangSection {
             case .scrap:
                 let item = scrapImjangList[indexPath.row]
+                
+                // 온보딩 분기처리
+                if UserDefaultManager.shared.isOnboarding {
+                    self.showImjangNoteVC(imjangId: item.noteId, version: 0)
+                    return
+                }
+                
                 callVersionRequest(imjangId: item.noteId) { [weak self] version in
                 guard let self else { return }
                     if let version = version {
@@ -460,6 +467,12 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                 }
             case .list:
                 let imjangId = imjangList[indexPath.row].noteId
+                // 온보딩 분기처리
+                if UserDefaultManager.shared.isOnboarding {
+                    self.showImjangNoteVC(imjangId: imjangId, version: 0)
+                    return
+                }
+                
                 callVersionRequest(imjangId: imjangId) { [weak self] version in
                     guard let self else { return }
                     if let version = version {
