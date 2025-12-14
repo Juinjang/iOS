@@ -187,6 +187,12 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     
     // 삭제 화면으로 이동
     @objc private func showDeleteImjangVC() {
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
+        
         let DeleteImjangVC = DeleteImjangViewController(
             dependency: DeleteImjangViewController.Dependency(
                 noteRepository: NoteRepository()
@@ -197,6 +203,12 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     }
     
     @objc private func showShareSelectVC() {
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
+        
         let viewController = ShareSelectViewController(
             reactor: .init(
                 dependency: .init(
@@ -273,6 +285,9 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     }
 
     private func scrapRequest(imjangId: Int) {
+        // 온보딩 분기처리
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
+
         JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self,
                                             api: .scrap(imjangId: imjangId)) { response, error in
             if let error = error {
@@ -285,6 +300,9 @@ extension ImjangListViewController: DeleteImjangListDelegate {
     }
         
     private func cancelScrapRequest(noteId: Int) {
+        // 온보딩 분기처리
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
+        
         JuinjangAPIManager.shared.fetchData(type: NoResultResponse.self, api: .cancelScrap(imjangId: noteId)) { response, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -354,7 +372,8 @@ extension ImjangListViewController: DeleteImjangListDelegate {
 
 // MARK: - CollectionView Delegate
 extension ImjangListViewController: UICollectionViewDataSource, UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         if let imjangSection = Section(rawValue: section) {
             switch imjangSection {
             case .scrap:
@@ -400,7 +419,8 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         if let imjangSection = Section(rawValue: indexPath.section) {
             switch imjangSection {
             case .scrap:
@@ -429,7 +449,9 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
         }
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView,
+                        viewForSupplementaryElementOfKind kind: String,
+                        at indexPath: IndexPath) -> UICollectionReusableView {
         if let section = Section(rawValue: indexPath.section) {
             switch section {
             case .scrap:
@@ -450,6 +472,8 @@ extension ImjangListViewController: UICollectionViewDataSource, UICollectionView
                     header.shareButton.addTarget(self, action: #selector(showShareSelectVC), for: .touchUpInside)
                     header.filterActionRelay
                         .subscribe(with: self) { owner, action in
+                            // 온보딩 분기처리
+                            guard (!UserDefaultManager.shared.isOnboarding) else { return }
                             print(action)
                             switch action {
                             case .updated:
