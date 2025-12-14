@@ -82,6 +82,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func getProfileInfo() {
+        // 온보딩 분기처리
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         userRepository.retrieveProfileInfo()
             .asObservable()
             .subscribe(with: self) { owner, profileModel in
