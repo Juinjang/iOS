@@ -151,6 +151,8 @@ final class ImjangNoteViewController: BaseViewController,
     private let conditionEventRelay = PublishRelay<ImjangNoteShareConditionViewEventType>()
     private var roomName: String = ""
     
+    private let signUpToastView = SignUpToastView()
+    
     init(imjangId: Int, version: Int) {
         self.imjangId = imjangId
         self.versionDetail = version
@@ -204,14 +206,19 @@ final class ImjangNoteViewController: BaseViewController,
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .share:
+                    // 온보딩 분기처리
+                    if UserDefaultManager.shared.isOnboarding {
+                        self.present(SignUpBottomSheetView(), animated: true)
+                    }
+                    
                     self.noteRepository.retrieveShareableNoteList(
                         param: .init(
                             sort: nil,
                             propertyType: nil,
                             priceType: nil,
-                            keyword: self.roomName ?? "",
+                            keyword: self.roomName,
                             page: 1,
-                            size: 20
+                            size: 100
                         )
                     )
                     .asObservable()
@@ -243,6 +250,11 @@ final class ImjangNoteViewController: BaseViewController,
                 case .popButtonTap:
                     self.popView()
                 case .textButtonTap:
+                    // 온보딩 분기처리
+                    if UserDefaultManager.shared.isOnboarding {
+                        self.navigationController?.present(SignUpBottomSheetView(), animated: true)
+                        return
+                    }
                     self.editView()
                 default: break
                 }
@@ -587,6 +599,13 @@ final class ImjangNoteViewController: BaseViewController,
         addChild(recordingSegmentedVC)
         containerView.addSubview(recordingSegmentedVC.view)
         recordingSegmentedVC.imjangId = imjangId
+        
+        // 온보딩 분기 처리
+        if UserDefaultManager.shared.isOnboarding {
+            photoRegisterButton.removeFromSuperview()
+            checkListActionButton.removeFromSuperview()
+            view.addSubview(signUpToastView)
+        }
     }
     
     // 뷰들 디자인
@@ -748,11 +767,14 @@ final class ImjangNoteViewController: BaseViewController,
             $0.height.equalTo(noImageBackgroundView.snp.width).multipliedBy(171.0 / 342.0)
         }
         
-        photoRegisterButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().offset(-9)
-            $0.trailing.equalToSuperview().offset(-10)
-            $0.height.equalTo(27)
-            $0.width.equalTo(94)
+        // 온보딩 분기처리
+        if !UserDefaultManager.shared.isOnboarding {
+            photoRegisterButton.snp.makeConstraints {
+                $0.bottom.equalToSuperview().offset(-9)
+                $0.trailing.equalToSuperview().offset(-10)
+                $0.height.equalTo(27)
+                $0.width.equalTo(94)
+            }
         }
     }
     
@@ -780,13 +802,15 @@ final class ImjangNoteViewController: BaseViewController,
             $0.width.height.equalTo(24)
         }
         
-        checkListActionButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.snp.bottom).offset(-28)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-            $0.height.equalTo(48)
+        if !UserDefaultManager.shared.isOnboarding {
+            checkListActionButton.snp.makeConstraints {
+                $0.bottom.equalTo(view.snp.bottom).offset(-28)
+                $0.trailing.equalTo(view.snp.trailing).offset(-24)
+                $0.height.equalTo(48)
+            }
+            
+            view.bringSubviewToFront(checkListActionButton)
         }
-        
-        view.bringSubviewToFront(checkListActionButton)
         
         navigationView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -876,6 +900,14 @@ final class ImjangNoteViewController: BaseViewController,
         recordingSegmentedVC.didMove(toParent: self)
         
         contentView.bringSubviewToFront(imageBlockView)
+        
+        if UserDefaultManager.shared.isOnboarding {
+            signUpToastView.snp.makeConstraints {
+                $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+                $0.horizontalEdges.equalToSuperview().inset(17)
+                $0.height.equalTo(52)
+            }
+        }
     }
     
     
