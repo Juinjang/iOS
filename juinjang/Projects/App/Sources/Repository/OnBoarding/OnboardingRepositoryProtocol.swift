@@ -12,4 +12,5 @@ protocol OnboardingRepositoryProtocol {
     func retrieveMyNotes() -> Single<[NoteDTO]>
     func retrieveMyNoteCheckLists() -> Single<[CheckListAnswerDTO]>
     func retrieveMyNoteDetail() -> Single<NoteDetailModel>
+    func retrieveMyNoteRecordMemo() -> Single<RecordMemoDto>
 }

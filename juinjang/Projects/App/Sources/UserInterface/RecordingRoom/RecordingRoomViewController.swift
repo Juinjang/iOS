@@ -9,12 +9,15 @@ import UIKit
 import SnapKit
 import Then
 import AmplitudeSwift
+import RxSwift
 
 protocol RemoveRecordDelegate: AnyObject {
     func removeRecordResponse(recordId: Int)
 }
 
 final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegate {
+    private let onboardRepsotiroy = OnboardingRepository()
+    private let disposeBag = DisposeBag()
     func removeRecordResponse(recordId: Int) {
         if let index = fileItems.firstIndex(where: { $0.recordId == recordId }) {
             fileItems.remove(at: index)
@@ -172,7 +175,19 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     // 녹음 3개까지, 메모 조회
     func callFetchRequest() {
-        guard (!UserDefaultManager.shared.isOnboarding) else { return }
+        if UserDefaultManager.shared.isOnboarding {
+            onboardRepsotiroy
+                .retrieveMyNoteRecordMemo()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.setMemo(memo: response.memo)
+                    self.fileItems = response.recordDto
+                    self.loadRecordings()
+                }
+                .disposed(by: disposeBag)
+            return
+        }
+        
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecordMemoDto>.self, api: .fetchRecordingRoom(imjangId: imjangId)) { [weak self] recordMemoDto, error in
             if let error = error {
                 print(error.localizedDescription)

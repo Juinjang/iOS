@@ -40,4 +40,10 @@ final class OnboardingRepository: OnboardingRepositoryProtocol {
             .request(BaseResponse<NoteDetailModel>.self, networkManager)
             .map { try $0.unwrap() }
     }
+    
+    func retrieveMyNoteRecordMemo() -> Single<RecordMemoDto> {
+        return OnboardingAPI.getMyNoteRecordMemo
+            .request(BaseResponse<RecordMemoDto>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
 }
