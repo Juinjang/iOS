@@ -110,6 +110,58 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     @objc private func searchRequest() {
         showSkeletonView()
+        
+        // 도메인 분기 처리
+        if UserDefaultManager.shared.isOnboarding {
+            // 2자 미만 입력 → 검색 미적용
+            let trimmed = self.searchKeyword.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard trimmed.count >= 2 else { return }
+            
+            let lowercasedKeyword = trimmed.lowercased()
+            let notes = [
+                NoteDTO(noteId: 1,
+                        purposeType: "RESIDENTIAL_PURPOSE",
+                        propertyType: "APARTMENT",
+                        priceType: "SALE",
+                        name: "우성 아파트",
+                        imageUrl: [
+                            "https://juinjang-bucket.s3.ap-northeast-2.amazonaws.com/mock/mock_png_1.png",
+                            "https://juinjang-bucket.s3.ap-northeast-2.amazonaws.com/mock/mock_png_2.png",
+                            "https://juinjang-bucket.s3.ap-northeast-2.amazonaws.com/mock/mock_png_3.png"
+                        ],
+                        isScraped: true,
+                        rate: "4.5",
+                        price: "500000000",
+                        monthlyRent: nil,
+                        pyong: 28,
+                        floor: "10",
+                        shortAddress: "101동 1001호",
+                        address: "서울 송파구 잠실동 101-1")
+            ].filter { note in
+                // 집 별명
+                if note.name.lowercased().contains(lowercasedKeyword) {
+                    return true
+                }
+                
+                // 도로명 주소 (옵셔널 안전 처리)
+                if let shortAddress = note.shortAddress?.lowercased(),
+                   shortAddress.contains(lowercasedKeyword) {
+                    return true
+                }
+                
+                if let address = note.address?.lowercased(),
+                   address.contains(lowercasedKeyword) {
+                    return true
+                }
+                
+                return false
+            }
+            
+            self.searchedImjangList = notes
+            self.collectionView.reloadData()
+            return
+        }
+        
         if searchKeyword.count > 0 {
             dependency
                 .noteRepository
@@ -160,7 +212,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         view.addSubview(navigationView)
         view.addSubview(collectionView)
     }
-
+    
     private func designView() {
         view.backgroundColor = .mainWhite
         navigationView.setSearchTextFieldText(searchKeyword)
@@ -170,7 +222,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         emptyImage.alpha = 0
         emptyLabel.alpha = 0
     }
-
+    
     private func setupConstraints() {
         navigationView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
@@ -294,7 +346,7 @@ extension ImjangSearchResultViewController: SkeletonCollectionViewDataSource {
             withReuseIdentifier: identifier,
             for: indexPath
         ) as! ImjangSkeletonCollectionViewCell
-
+        
         return cell
     }
 }
