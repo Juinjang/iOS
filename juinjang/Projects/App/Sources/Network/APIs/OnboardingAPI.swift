@@ -14,6 +14,7 @@ enum OnboardingAPI: TargetType {
     case getMyNoteCheckLists
     case getMyNoteDetail
     case getMyNoteRecordMemo
+    case getMyNoteReport
 
     var path: String {
         switch self {
@@ -27,6 +28,8 @@ enum OnboardingAPI: TargetType {
             return "mock/notes/detail"
         case .getMyNoteRecordMemo:
             return "mock/notes/records"
+        case .getMyNoteReport:
+            return "mock/notes/report"
         }
     }
 
@@ -36,7 +39,8 @@ enum OnboardingAPI: TargetType {
                 .getMyNotes,
                 .getMyNoteCheckLists,
                 .getMyNoteDetail,
-                .getMyNoteRecordMemo:
+                .getMyNoteRecordMemo,
+                .getMyNoteReport:
             return .get
         }
     }
@@ -47,7 +51,8 @@ enum OnboardingAPI: TargetType {
                 .getMyNotes,
                 .getMyNoteCheckLists,
                 .getMyNoteDetail,
-                .getMyNoteRecordMemo:
+                .getMyNoteRecordMemo,
+                .getMyNoteReport:
             return []
         }
     }
@@ -58,7 +63,8 @@ enum OnboardingAPI: TargetType {
                 .getMyNotes,
                 .getMyNoteCheckLists,
                 .getMyNoteDetail,
-                .getMyNoteRecordMemo:
+                .getMyNoteRecordMemo,
+                .getMyNoteReport:
             return nil
         }
     }
@@ -69,7 +75,8 @@ enum OnboardingAPI: TargetType {
                 .getMyNotes,
                 .getMyNoteCheckLists,
                 .getMyNoteDetail,
-                .getMyNoteRecordMemo:
+                .getMyNoteRecordMemo,
+                .getMyNoteReport:
             return nil
         }
     }

@@ -521,6 +521,10 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         closeButton.addTarget(self, action: #selector(closeBtnTap), for: .touchUpInside)
     }
     @objc private func compareButtonTap() {
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
         
         if imjangList.isEmpty {
             // 매물이 하나도 없을 때 팝업을 띄움

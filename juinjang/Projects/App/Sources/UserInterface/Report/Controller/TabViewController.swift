@@ -12,7 +12,6 @@ import Tabman
 import Pageboy
 
 final class TabViewController: TabmanViewController {
-    
     private var viewControllers: Array<UIViewController> = []
     var index = 0
     var imjangId: Int = 0
