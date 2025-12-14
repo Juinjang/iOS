@@ -48,6 +48,7 @@ final class ImjangListViewController: BaseViewController {
     
     struct Dependency {
         let noteRepository: NoteRepositoryProtocol
+        let onboardingRepository: OnboardingRepositoryProtocol
     }
     
     private let dependency: Dependency
@@ -103,8 +104,32 @@ final class ImjangListViewController: BaseViewController {
 // MARK: - request
 extension ImjangListViewController {
     private func fetchImjangList(sort: MyNoteFilter = .updated, setScrap: Bool = false) {
-        print(#function)
         setLoading(isShow: true)
+
+        if UserDefaultManager.shared.isOnboarding {
+            dependency
+                .onboardingRepository
+                .retrieveMyNotes()
+                .asObservable()
+                .catch { [weak self] error in
+                    self?.setLoading(isShow: false)
+                    self?.showAlert(title: "에러", message: error.localizedDescription, actionHandler: nil)
+                    return .empty()
+                }
+                .subscribe(with: self) { (self, response) in
+                    self.mainView.setupEmptyView(isEmpty: response.isEmpty)
+                    self.imjangList = response
+                    self.setData(scrapedList: response)   // 스크랩된것들 scrapList에 추가
+                    self.mainView.hasResults(!self.imjangList.isEmpty)
+                    self.mainView.collectionView.reloadData()
+                    self.setLoading(isShow: false)
+                }
+                .disposed(by: disposeBag)
+            
+            return
+        }
+        
+        print(#function)
         dependency
             .noteRepository
             .retrieveNoteList(sort: sort.parameterValue, keyword: "")

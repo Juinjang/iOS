@@ -9,4 +9,5 @@ import RxSwift
 
 protocol OnboardingRepositoryProtocol {
     func retrieveRecentNotes() -> Single<RecentUpdatedDto>
+    func retrieveMyNotes() -> Single<[NoteDTO]>
 }

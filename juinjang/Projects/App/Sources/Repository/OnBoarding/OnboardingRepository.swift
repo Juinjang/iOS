@@ -22,4 +22,10 @@ final class OnboardingRepository: OnboardingRepositoryProtocol {
             .request(BaseResponse<RecentUpdatedDto>.self, networkManager)
             .map { try $0.unwrap() }
     }
+    
+    func retrieveMyNotes() -> Single<[NoteDTO]> {
+        return OnboardingAPI.getMyNotes
+            .request(BaseResponse<NoteResultDTO>.self, networkManager)
+            .map { try $0.unwrap().notes }
+    }
 }
