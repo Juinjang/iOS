@@ -11,6 +11,7 @@ import Alamofire
 enum OnboardingAPI: TargetType {
     case getRecentNotes
     case getMyNotes
+    case getMyNoteCheckLists
 
     var path: String {
         switch self {
@@ -18,13 +19,16 @@ enum OnboardingAPI: TargetType {
             return "mock/notes/recent"
         case .getMyNotes:
             return "mock/notes/list"
+        case .getMyNoteCheckLists:
+            return "mock/notes/checklists"
         }
     }
 
     var method: HTTPMethod {
         switch self {
         case .getRecentNotes,
-                .getMyNotes:
+                .getMyNotes,
+                .getMyNoteCheckLists:
             return .get
         }
     }
@@ -32,7 +36,8 @@ enum OnboardingAPI: TargetType {
     var queryItems: [URLQueryItem] {
         switch self {
         case .getRecentNotes,
-                .getMyNotes:
+                .getMyNotes,
+                .getMyNoteCheckLists:
             return []
         }
     }
@@ -40,7 +45,8 @@ enum OnboardingAPI: TargetType {
     var parameters: [String : Any]? {
         switch self {
         case .getRecentNotes,
-                .getMyNotes:
+                .getMyNotes,
+                .getMyNoteCheckLists:
             return nil
         }
     }
@@ -48,7 +54,9 @@ enum OnboardingAPI: TargetType {
     var interceptor: AuthInterceptor? {
         switch self {
         case .getRecentNotes,
-                .getMyNotes: return nil
+                .getMyNotes,
+                .getMyNoteCheckLists:
+            return nil
         }
     }
 }
