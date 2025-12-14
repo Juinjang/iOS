@@ -263,7 +263,10 @@ extension SignUpViewController{
                         let nickname = kakaoUser.kakaoAccount?.profile?.nickname {
                         print("사용자 이메일 : \(email)")
                         UserDefaultManager.shared.email = email
-                        UserDefaultManager.shared.nickname = nickname
+                        // 온보딩 분기처리
+                        if (!UserDefaultManager.shared.isOnboarding) {
+                            UserDefaultManager.shared.nickname = nickname
+                        }
                         print("targetId: \(kakaoUser.id)")
                         if let userId = kakaoUser.id {
                             print("사용자 ID : \(userId)")
