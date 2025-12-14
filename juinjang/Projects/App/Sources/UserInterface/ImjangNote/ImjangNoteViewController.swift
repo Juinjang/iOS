@@ -973,7 +973,6 @@ final class ImjangNoteViewController: BaseViewController,
         noteRepository.retrieveCheckList(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, checkListResponse) in
-                
                 var savedQuestionIds = Set<Int>()
                 var uniqueItems = [CheckListAnswer]()
                 

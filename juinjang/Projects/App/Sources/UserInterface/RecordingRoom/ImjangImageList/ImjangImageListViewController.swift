@@ -174,8 +174,16 @@ final class ImjangImageListViewController: BaseViewController {
                 case .popButtonTap:
                     self.popView()
                 case .trashButtonTap:
+                    if UserDefaultManager.shared.isOnboarding {
+                        self.present(SignUpBottomSheetView(), animated: true)
+                        return
+                    }
                     self.deleteImageButtonTapped()
                 case .addButtonTap:
+                    if UserDefaultManager.shared.isOnboarding {
+                        self.present(SignUpBottomSheetView(), animated: true)
+                        return
+                    }
                     self.addImage()
                 default: break
                 }
@@ -328,7 +336,8 @@ extension ImjangImageListViewController: UICollectionViewDelegate, UICollectionV
 
 // MARK: ImagePicker Delegate
 extension ImjangImageListViewController: PHPickerViewControllerDelegate {
-    func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+    func picker(_ picker: PHPickerViewController,
+                didFinishPicking results: [PHPickerResult]) {
         picker.dismiss(animated: true)
         let group = DispatchGroup()
         
