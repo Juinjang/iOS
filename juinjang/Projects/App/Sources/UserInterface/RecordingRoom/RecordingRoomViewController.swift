@@ -172,6 +172,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     // 녹음 3개까지, 메모 조회
     func callFetchRequest() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecordMemoDto>.self, api: .fetchRecordingRoom(imjangId: imjangId)) { [weak self] recordMemoDto, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -224,6 +225,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     // 메모장 생성/수정 요청
     func callMemoRequest() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         print(#function)
         guard let memo = memoTextView.text else { return }
         let parameter = [
@@ -252,6 +254,11 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     @objc
     func addRecordingFilesVC() {
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
+        
         if fileItems.count >= 3 {
             showAlert(title: nil, message: "녹음 파일은 3개까지 생성 가능해요", actionHandler: nil)
             return

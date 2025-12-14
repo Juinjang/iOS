@@ -34,4 +34,10 @@ final class OnboardingRepository: OnboardingRepositoryProtocol {
             .request(BaseResponse<[CheckListAnswerDTO]>.self, networkManager)
             .map { try $0.unwrap() }
     }
+    
+    func retrieveMyNoteDetail() -> Single<NoteDetailModel> {
+        return OnboardingAPI.getMyNoteDetail
+            .request(BaseResponse<NoteDetailModel>.self, networkManager)
+            .map { try $0.unwrap() }
+    }
 }

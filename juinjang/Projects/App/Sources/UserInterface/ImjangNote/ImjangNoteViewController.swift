@@ -20,6 +20,7 @@ final class ImjangNoteViewController: BaseViewController,
                                       ButtonStateDelegate,
                                       SendCheckListData {
     private let noteRepository = NoteRepository()
+    private let onboardingRepository = OnboardingRepository()
     private let disposeBag = DisposeBag()
     
     private lazy var navigationView: DefaultNavigationView = {
@@ -281,6 +282,11 @@ final class ImjangNoteViewController: BaseViewController,
                 owner.present(infoPopup, animated: true)
             }
             .disposed(by: disposeBag)
+        
+        signUpToastView.onTapSignUp = { [weak self] in
+            guard let self else { return }
+            self.present(SignUpViewController(.present), animated: true)
+        }
     }
     
     @objc private func handlePageChange(notification: Notification) {
@@ -337,6 +343,19 @@ final class ImjangNoteViewController: BaseViewController,
 
     
     private func callRequest() {
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingRepository
+                .retrieveMyNoteDetail()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.setData(detailDto: response)
+                    self.roomName = self.detailDto?.buildingName ?? ""
+                    self.updateConditionViewLayout(model: response)
+                }
+                .disposed(by: disposeBag)
+            return
+        }
+        
         noteRepository.retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, detailData) in
@@ -1139,6 +1158,22 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func updateConditionViewLayout(model: NoteDetailModel) {
+        if UserDefaultManager.shared.isOnboarding {
+            noteShareConditionView.snp.remakeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(106)
+            }
+            
+            // containerView
+            containerView.snp.remakeConstraints {
+                $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
+            }
+            return
+        }
+        
         // MARK: - 공유 조건 뷰
         // 평층 입력 X -> 공유 조건 뷰 X
         if model.pyong != nil && model.floor != nil {
@@ -1173,6 +1208,35 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func requestShareConditions() {
+        if UserDefaultManager.shared.isOnboarding {
+            // Temp Data
+            let conditions: [ShareableCondition] = [
+                .init(category: "LOCATION_CONDITION",
+                      answeredCount: 10,
+                      totalCount: 10,
+                      requiredCount: 10,
+                      isSatisfied: true),
+                .init(category: "PUBLIC_SPACE",
+                      answeredCount: 10,
+                      totalCount: 10,
+                      requiredCount: 10,
+                      isSatisfied: true),
+                .init(category: "INDOOR",
+                      answeredCount: 10,
+                      totalCount: 10,
+                      requiredCount: 10,
+                      isSatisfied: true)
+            ]
+            
+            let conditionDTO = ShareableConditionDTO(
+                isTotalSatisfied: true,
+                conditions: conditions
+            )
+            
+            noteShareConditionView.configure(model: conditionDTO, relay: conditionEventRelay)
+            return
+        }
+        
         noteRepository.retrieveChecklistConditionList(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, conditionDTO) in
