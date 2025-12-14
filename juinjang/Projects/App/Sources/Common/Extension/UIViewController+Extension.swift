@@ -36,7 +36,12 @@ extension UIViewController {
         let sceneDelegate = windowScene.delegate as? SceneDelegate,
         let window = sceneDelegate.window else { return }
         
-        let imjangListViewController = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
+        let imjangListViewController = ImjangListViewController(
+            dependency: ImjangListViewController.Dependency(
+                noteRepository: NoteRepository(),
+                onboardingRepository: OnboardingRepository()
+            )
+        )
         let mainViewController = MainViewController()
         let nav = TransitionNavigationController(rootViewController: mainViewController)
         window.rootViewController = nav

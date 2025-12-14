@@ -220,7 +220,12 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func myNoteButtonTapped() {
-        let vc = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
+        let vc = ImjangListViewController(
+            dependency: ImjangListViewController.Dependency(
+                noteRepository: NoteRepository(),
+                onboardingRepository: OnboardingRepository()
+            )
+        )
         vc.deleteImjangListDelegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }

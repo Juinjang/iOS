@@ -197,7 +197,8 @@ final class PencilShopViewController: BaseViewController, View {
             navigationController.popToRootViewController(animated: false)
             navigationController.pushViewController(
                 ImjangListViewController(
-                    dependency: .init(noteRepository: NoteRepository())
+                    dependency: .init(noteRepository: NoteRepository(),
+                                      onboardingRepository: OnboardingRepository())
                 ),
                 animated: true
             )
