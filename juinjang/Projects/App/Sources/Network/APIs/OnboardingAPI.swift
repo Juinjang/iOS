@@ -21,7 +21,7 @@ enum OnboardingAPI: TargetType {
         case .getRecentNotes:
             return "mock/notes/recent"
         case .getMyNotes:
-            return "mock/notes/list"
+            return "mock/notes/mynotes"
         case .getMyNoteCheckLists:
             return "mock/notes/checklists"
         case .getMyNoteDetail:
