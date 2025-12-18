@@ -13,7 +13,7 @@ final class ScrapCollectionViewCell: UICollectionViewCell {
     var totalStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
         $0.spacing = 4
         $0.backgroundColor = .stroke2
     }
@@ -166,7 +166,7 @@ extension ScrapCollectionViewCell {
         let imageVStackView = UIStackView().then {
             $0.axis = .vertical
             $0.alignment = .fill
-            $0.distribution = .equalSpacing
+            $0.distribution = .fill
             $0.spacing = 5
         }
         
