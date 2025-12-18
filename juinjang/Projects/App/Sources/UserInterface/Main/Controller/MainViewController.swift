@@ -153,7 +153,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     @objc private func callMainImjangRequest() {
         // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
-            onboardingRepository.retrieveRecentNotes()
+            onboardingRepository.retrieveRecentMyNotes()
                 .asObservable()
                 .subscribe(with: self) { (self, response) in
                     self.mainImjangList = response.recentUpdatedList
@@ -178,7 +178,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             mainImjangList = result.recentUpdatedList
             tableView.reloadData()
         }
-        
     }
     
     private func callVersionRequest(imjangId: Int, completion: @escaping (Int?) -> Void) {

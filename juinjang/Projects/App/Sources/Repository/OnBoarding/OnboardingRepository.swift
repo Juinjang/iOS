@@ -17,8 +17,8 @@ final class OnboardingRepository: OnboardingRepositoryProtocol {
         self.userDefault = userDefault
     }
     
-    func retrieveRecentNotes() -> Single<RecentUpdatedDto> {
-        return OnboardingAPI.getRecentNotes
+    func retrieveRecentMyNotes() -> Single<RecentUpdatedDto> {
+        return OnboardingAPI.getRecentMyNotes
             .request(BaseResponse<RecentUpdatedDto>.self, networkManager)
             .map { try $0.unwrap() }
     }
