@@ -353,6 +353,8 @@ final class ImjangNoteViewController: BaseViewController,
                     self.updateConditionViewLayout(model: response)
                 }
                 .disposed(by: disposeBag)
+            
+            requestShareConditions()
             return
         }
         
