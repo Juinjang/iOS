@@ -104,7 +104,7 @@ final class SignUpBottomSheetView: UIViewController {
         
         cancelButton.snp.makeConstraints {
             $0.left.equalToSuperview().offset(24)
-            $0.right.equalTo(containerView.snp.centerX).inset(4)
+            $0.right.equalTo(containerView.snp.centerX).offset(-4)
             $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
             $0.height.equalTo(52)
         }
