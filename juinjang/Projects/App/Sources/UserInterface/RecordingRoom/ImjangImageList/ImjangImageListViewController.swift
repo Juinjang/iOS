@@ -43,7 +43,18 @@ final class ImjangImageListViewController: BaseViewController {
     private var isDeleteMode = false
     
     private lazy var panGesture = UIPanGestureRecognizer(target: self, action: #selector(handlePanGesture(_:)))
-
+    
+    init(images: [String] = []) {
+        self.imageList = images.enumerated().map { index, url in
+            ImageDto(imageId: index, imageUrl: url)
+        }
+        super.init()
+    }
+    
+    @MainActor required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         bindNavigationBar()
@@ -58,6 +69,7 @@ final class ImjangImageListViewController: BaseViewController {
     
     // 이미지 전체 조회 요청
     func callFetchImageRequest() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         guard let imjangId = imjangId else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<ImagesListDto>.self, api: .fetchImage(imjangId: imjangId)) { response, error in
             if let error = error {

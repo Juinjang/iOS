@@ -81,9 +81,11 @@ final class ImjangNoteViewController: BaseViewController,
         $0.lineBreakMode = .byCharWrapping
         $0.isUserInteractionEnabled = false
     }
+    
     private let addressStackView = UIStackView().then {
         $0.isUserInteractionEnabled = false
     }
+    
     private let addressBackgroundView = UIButton().then {
         $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
@@ -104,11 +106,8 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private let noteDetailInfoView = ImjangNoteDetailInfoView()
-    
     private let noteShareConditionView = ImjangNoteShareConditionView()
-    
     private let shareCompletedButton = ShareCompletedButton()
-    
     private let imageBlockView = UIView()
     
     private let infoStackView = UIStackView().then {
@@ -325,7 +324,6 @@ final class ImjangNoteViewController: BaseViewController,
 
         let icon = NSAttributedString(attachment: attachment)
 
-        let spacing: CGFloat = 6
         let paragraph = NSMutableParagraphStyle()
         paragraph.firstLineHeadIndent = 0
         paragraph.headIndent = 0
@@ -517,9 +515,10 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 이미지 리스트 화면으로 이동
     @objc private func showImjangImageListVC() {
-        let imjangImageListVC = ImjangImageListViewController()
+        let imjangImageListVC = ImjangImageListViewController(images: images)
         imjangImageListVC.imjangId = imjangId
         imjangImageListVC.completionHandler = { imageStrings in
+            guard (!UserDefaultManager.shared.isOnboarding) else { return }
             self.images = imageStrings
             self.setUpImageUI()
             NotificationCenter.default.post(name: .refreshImjangList, object: nil)
