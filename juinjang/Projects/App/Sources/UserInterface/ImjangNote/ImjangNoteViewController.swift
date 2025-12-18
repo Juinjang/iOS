@@ -46,24 +46,30 @@ final class ImjangNoteViewController: BaseViewController,
     private let noImageBackgroundView = UIImageView()
     private let photoRegisterButton = PhotoRegisterButton()
     
-    private lazy var firstImage = UIImageView()
-    private lazy var secondImage = UIImageView()
-    private lazy var thirdImage = UIImageView()
+    private lazy var firstImage = UIImageView().then {
+        $0.backgroundColor = .gray2
+    }
+    private lazy var secondImage = UIImageView().then {
+        $0.backgroundColor = .gray2
+    }
+    private lazy var thirdImage = UIImageView().then {
+        $0.backgroundColor = .gray2
+    }
     
     // 이미지 개수 레이블
     private var maximizeImageView = UIImageView()
     
     //이미지 배치할 스택뷰
-    private var stackView = UIStackView().then {
+    private var tripleImageStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
         $0.spacing = 8
     }
     private var vStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
         $0.spacing = 8
     }
     
@@ -409,7 +415,7 @@ final class ImjangNoteViewController: BaseViewController,
             detailDto.buildingName
         checkListActionButton.isHidden = detailDto.isShared
         photoRegisterButton.isHidden = detailDto.isShared
-        imageBlockView.isHidden = !detailDto.isShared
+        imageBlockView.isHidden = UserDefaultManager.shared.isOnboarding ? true : (!detailDto.isShared)
         navigationView.rightItem = detailDto.isShared ? [] : [.text(title: "편집")]
         addressBackgroundView.isEnabled = (detailDto.roadAddress == nil)
         
@@ -496,12 +502,12 @@ final class ImjangNoteViewController: BaseViewController,
         if isEmpty {
             noImageBackgroundView.addGestureRecognizer(tapGesture)
         } else {
-            stackView.addGestureRecognizer(tapGesture)
+            tripleImageStackView.addGestureRecognizer(tapGesture)
         }
     }
     
     private func setUserInteraction(isEmpty: Bool) {
-        stackView.isUserInteractionEnabled = !isEmpty
+        tripleImageStackView.isUserInteractionEnabled = !isEmpty
         vStackView.isUserInteractionEnabled = !isEmpty
         firstImage.isUserInteractionEnabled = !isEmpty
         secondImage.isUserInteractionEnabled = !isEmpty
@@ -597,7 +603,7 @@ final class ImjangNoteViewController: BaseViewController,
          addressBackgroundView,
          containerView,
          noImageBackgroundView,
-         stackView,
+         tripleImageStackView,
          imageBlockView].forEach {
             contentView.addSubview($0)
         }
@@ -691,7 +697,7 @@ final class ImjangNoteViewController: BaseViewController,
     // 이미지 개수에 따라 stackView 설정
     private func setUpImageUI() {
         noImageBackgroundView.isHidden = true
-        stackView.isHidden = false
+        tripleImageStackView.isHidden = false
         maximizeImageView.isHidden = false
         setUserInteraction(isEmpty: false)
         setImageStackViewClick(isEmpty: false)
@@ -699,7 +705,7 @@ final class ImjangNoteViewController: BaseViewController,
         switch imageCount {
         case 0:
             noImageBackgroundView.isHidden = false
-            stackView.isHidden = true
+            tripleImageStackView.isHidden = true
             maximizeImageView.isHidden = true
             setUserInteraction(isEmpty: true)
             setImageStackViewClick(isEmpty: true)
@@ -716,7 +722,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func setImage1() {
         let imageWidth = view.frame.width - (24*2)
-        stackView.spacing = 0
+        tripleImageStackView.spacing = 0
         
         firstImage.snp.remakeConstraints {
             $0.width.equalTo(imageWidth)
@@ -730,7 +736,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func setImage2() {
         //        let imagesWidth = view.frame.width - (24*2) - 8
-        stackView.spacing = 8
+        tripleImageStackView.spacing = 8
         vStackView.spacing = 0
         
         firstImage.snp.remakeConstraints {
@@ -751,7 +757,7 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func setImage3() {
-        stackView.spacing = 8
+        tripleImageStackView.spacing = 8
         vStackView.spacing = 8
         
         firstImage.snp.remakeConstraints {
@@ -806,20 +812,20 @@ final class ImjangNoteViewController: BaseViewController,
         if images.isEmpty {
             topView = noImageBackgroundView
         } else {
-            topView = stackView
+            topView = tripleImageStackView
         }
         
         [firstImage,vStackView].forEach {
-            stackView.addArrangedSubview($0)
+            tripleImageStackView.addArrangedSubview($0)
         }
         
         [secondImage, thirdImage].forEach {
             vStackView.addArrangedSubview($0)
         }
         
-        stackView.addSubview(maximizeImageView)
+        tripleImageStackView.addSubview(maximizeImageView)
         maximizeImageView.snp.makeConstraints {
-            $0.bottom.trailing.equalTo(stackView).inset(12)
+            $0.bottom.trailing.equalTo(tripleImageStackView).inset(12)
             $0.width.height.equalTo(24)
         }
         
@@ -854,9 +860,9 @@ final class ImjangNoteViewController: BaseViewController,
         
         setImageViewConstraints()
         
-        contentView.bringSubviewToFront(stackView)
+        contentView.bringSubviewToFront(tripleImageStackView)
         // 방 이미지 스택뷰
-        stackView.snp.makeConstraints {
+        tripleImageStackView.snp.makeConstraints {
             $0.top.equalTo(contentView).offset(8)
             $0.leading.equalTo(contentView).offset(24)
             $0.trailing.equalTo(contentView).offset(-24)
