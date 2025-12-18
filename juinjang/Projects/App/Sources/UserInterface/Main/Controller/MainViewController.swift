@@ -156,6 +156,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             onboardingRepository.retrieveRecentMyNotes()
                 .asObservable()
                 .subscribe(with: self) { (self, response) in
+                    self.isFirstShowing = false
                     self.mainImjangList = response.recentUpdatedList
                     self.tableView.reloadData()
                 }
@@ -276,11 +277,13 @@ extension MainViewController: updateNicknameDelegate {
 
 //MARK: - extension
 extension MainViewController : UITableViewDelegate, UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
         return 2
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TopTableViewCell.identifier, for: indexPath) as? TopTableViewCell
             else{
@@ -321,11 +324,13 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
 }
      
 extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         return mainImjangList.count
     }
      
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BottomCollectionViewCell.identifier, for: indexPath) as? BottomCollectionViewCell else {
             return UICollectionViewCell()
         }
@@ -336,7 +341,9 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
         return cell
      }
      
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+     func collectionView(_ collectionView: UICollectionView,
+                         layout collectionViewLayout: UICollectionViewLayout,
+                         sizeForItemAt indexPath: IndexPath) -> CGSize {
          return CGSize(width: 143 , height: 204)
      }
     
