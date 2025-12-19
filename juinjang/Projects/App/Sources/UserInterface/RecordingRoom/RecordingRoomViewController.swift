@@ -262,6 +262,10 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     @objc
     func showRecordingFilesVC() {
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
         let RecordingFilesVC = RecordingFilesViewController(imjangId: imjangId)
         RecordingFilesVC.removeRecordDelegate = self
         self.navigationController?.pushViewController(RecordingFilesVC, animated: true)
