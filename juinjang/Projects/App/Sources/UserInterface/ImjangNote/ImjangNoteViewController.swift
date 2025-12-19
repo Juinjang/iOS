@@ -215,6 +215,7 @@ final class ImjangNoteViewController: BaseViewController,
                     // 온보딩 분기처리
                     if UserDefaultManager.shared.isOnboarding {
                         self.present(SignUpBottomSheetView(), animated: true)
+                        return
                     }
                     
                     self.noteRepository.retrieveShareableNoteList(
