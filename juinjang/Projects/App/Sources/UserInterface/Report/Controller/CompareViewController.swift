@@ -343,6 +343,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     
     func callRequest(sort: Filter = .update, setScrap: Bool = false, excludingId: Int? = nil) {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: sort.sortValue)) { response, error in
             if let error = error {
                 print(error.localizedDescription)
