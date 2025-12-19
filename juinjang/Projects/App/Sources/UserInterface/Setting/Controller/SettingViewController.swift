@@ -195,12 +195,14 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         configureHierarchy()
         setConstraint()
         
-        userRepository
-            .retrieveProfileInfo()
-            .subscribe(with: self) { (self, model) in
-                self.oneLineIntroTextFieldView.text = model.introduction ?? ""
-            }
-            .disposed(by: disposeBag)
+        if (!UserDefaultManager.shared.isOnboarding) {
+            userRepository
+                .retrieveProfileInfo()
+                .subscribe(with: self) { (self, model) in
+                    self.oneLineIntroTextFieldView.text = model.introduction ?? ""
+                }
+                .disposed(by: disposeBag)
+        }
         
         oneLineIntroTextFieldView
             .saveButtonDidTapRelay
@@ -221,6 +223,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func retrieveProfileInfo() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         dependency.userRepository.retrieveProfileInfo()
             .asObservable()
             .subscribe(with: self) { owner, profileModel in
