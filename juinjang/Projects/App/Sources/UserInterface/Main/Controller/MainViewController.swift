@@ -95,6 +95,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func checkAndShowPencilShopTermsPopup() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         termsRepository.retrievePencilShopAgreementStatus()
             .asObservable()
             .subscribe(with: self) { (self, response) in
