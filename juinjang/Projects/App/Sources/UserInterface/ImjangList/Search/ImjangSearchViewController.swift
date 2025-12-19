@@ -112,7 +112,8 @@ final class ImjangSearchViewController: BaseViewController {
     private func showSearchResultVC(keyword: String) {
         let SearchResultVC = ImjangSearchResultViewController(
             dependency: ImjangSearchResultViewController.Dependency(
-                noteRepository: NoteRepository()
+                noteRepository: NoteRepository(),
+                onboardingRepository: OnboardingRepository()
             )
         )
         SearchResultVC.searchKeyword = keyword

@@ -67,7 +67,7 @@ extension TargetType {
         } else if let parameters = parameters {
             request.httpBody = try JSONSerialization.data(withJSONObject: parameters, options: [])
         }
-
+        
         return request
     }
 }

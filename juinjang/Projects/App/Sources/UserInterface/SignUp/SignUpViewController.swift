@@ -177,6 +177,7 @@ final class SignUpViewController: BaseViewController {
         controller.performRequests()
     
     }
+    
     func getUserNickname() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<UserInfoResult>.self, api: .profile) { response, error in
             if let error = error {
