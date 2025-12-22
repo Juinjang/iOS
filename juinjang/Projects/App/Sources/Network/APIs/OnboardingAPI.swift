@@ -34,51 +34,19 @@ enum OnboardingAPI: TargetType {
     }
 
     var method: HTTPMethod {
-        switch self {
-        case .getRecentMyNotes,
-                .getMyNotes,
-                .getMyNoteCheckLists,
-                .getMyNoteDetail,
-                .getMyNoteRecordMemo,
-                .getMyNoteReport:
-            return .get
-        }
+        return .get
     }
     
     var queryItems: [URLQueryItem] {
-        switch self {
-        case .getRecentMyNotes,
-                .getMyNotes,
-                .getMyNoteCheckLists,
-                .getMyNoteDetail,
-                .getMyNoteRecordMemo,
-                .getMyNoteReport:
-            return []
-        }
+        return []
     }
-
+    
     var parameters: [String : Any]? {
-        switch self {
-        case .getRecentMyNotes,
-                .getMyNotes,
-                .getMyNoteCheckLists,
-                .getMyNoteDetail,
-                .getMyNoteRecordMemo,
-                .getMyNoteReport:
-            return nil
-        }
+        return nil
     }
     
     var interceptor: AuthInterceptor? {
-        switch self {
-        case .getRecentMyNotes,
-                .getMyNotes,
-                .getMyNoteCheckLists,
-                .getMyNoteDetail,
-                .getMyNoteRecordMemo,
-                .getMyNoteReport:
-            return nil
-        }
+        return nil
     }
 }
 
