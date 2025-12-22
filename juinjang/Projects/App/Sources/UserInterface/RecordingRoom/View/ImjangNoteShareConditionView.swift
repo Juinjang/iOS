@@ -79,19 +79,18 @@ final class ImjangNoteShareConditionView: BaseView {
             .map { ImjangNoteShareConditionViewEventType.share }
             .bind(to: relay)
             .disposed(by: disposeBag)
+        
+        infoButton.rx.throttleTap
+            .subscribe(with: self) { owner, _ in
+                owner.infoButtonDidTapRelay.accept(())
+            }
+            .disposed(by: disposeBag)
     }
     
     override func configureView() {
         super.configureView()
         roundCorners(cornerRadius: 8, corner: .all)
         layer.borderWidth = 1
-        
-        infoButton.rx.throttleTap
-            .subscribe(with: self) { owner, _ in
-                print("@@@ infoButton Did Tap")
-                owner.infoButtonDidTapRelay.accept(())
-            }
-            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {
