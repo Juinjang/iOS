@@ -52,7 +52,7 @@ let project = Project(
             appType: .dev,
             appDependencies: appDependencies,
             appVersion: "2.0.7",
-            build: "2025.12.23.1"
+            build: "2025.12.26.1"
         )
     ],
     additionalFiles: [
