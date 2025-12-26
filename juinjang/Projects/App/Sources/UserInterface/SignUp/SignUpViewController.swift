@@ -267,7 +267,7 @@ extension SignUpViewController{
                         // 온보딩 분기처리
                         if (!UserDefaultManager.shared.isOnboarding) {
                             UserDefaultManager.shared.nickname = nickname
-                        }
+                        } 
                         print("targetId: \(kakaoUser.id)")
                         if let userId = kakaoUser.id {
                             print("사용자 ID : \(userId)")

@@ -46,6 +46,7 @@ final class ImjangNoteShareConditionView: BaseView {
     }
     
     private var disposeBag = DisposeBag()
+    
     let infoButtonDidTapRelay = PublishRelay<Void>()
     
     func configure(model: ShareableConditionDTO,
