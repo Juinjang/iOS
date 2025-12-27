@@ -9,5 +9,3 @@ struct ShareableConditionDTO: Codable {
     let isTotalSatisfied: Bool
     let conditions: [ShareableCondition]
 }
-
-

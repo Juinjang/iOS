@@ -9,12 +9,15 @@ import UIKit
 import SnapKit
 import Then
 import AmplitudeSwift
+import RxSwift
 
 protocol RemoveRecordDelegate: AnyObject {
     func removeRecordResponse(recordId: Int)
 }
 
 final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegate {
+    private let onboardRepsotiroy = OnboardingRepository()
+    private let disposeBag = DisposeBag()
     func removeRecordResponse(recordId: Int) {
         if let index = fileItems.firstIndex(where: { $0.recordId == recordId }) {
             fileItems.remove(at: index)
@@ -172,6 +175,19 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     // 녹음 3개까지, 메모 조회
     func callFetchRequest() {
+        if UserDefaultManager.shared.isOnboarding {
+            onboardRepsotiroy
+                .retrieveMyNoteRecordMemo()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.setMemo(memo: response.memo)
+                    self.fileItems = response.recordDto
+                    self.loadRecordings()
+                }
+                .disposed(by: disposeBag)
+            return
+        }
+        
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecordMemoDto>.self, api: .fetchRecordingRoom(imjangId: imjangId)) { [weak self] recordMemoDto, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -224,6 +240,7 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     // 메모장 생성/수정 요청
     func callMemoRequest() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         print(#function)
         guard let memo = memoTextView.text else { return }
         let parameter = [
@@ -245,6 +262,10 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     @objc
     func showRecordingFilesVC() {
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
         let RecordingFilesVC = RecordingFilesViewController(imjangId: imjangId)
         RecordingFilesVC.removeRecordDelegate = self
         self.navigationController?.pushViewController(RecordingFilesVC, animated: true)
@@ -252,6 +273,11 @@ final class RecordingRoomViewController: BaseViewController, RemoveRecordDelegat
     
     @objc
     func addRecordingFilesVC() {
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
+        
         if fileItems.count >= 3 {
             showAlert(title: nil, message: "녹음 파일은 3개까지 생성 가능해요", actionHandler: nil)
             return

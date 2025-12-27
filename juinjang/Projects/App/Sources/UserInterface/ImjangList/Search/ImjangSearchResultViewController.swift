@@ -21,7 +21,8 @@ final class ImjangSearchResultViewController: BaseViewController {
         collectionView.backgroundColor = .white
         collectionView.showsVerticalScrollIndicator = false
         collectionView.register(ImjangNoteCollectionViewCell.self)
-        collectionView.register(ImjangSkeletonCollectionViewCell.self, forCellWithReuseIdentifier: ImjangSkeletonCollectionViewCell.identifier)
+        collectionView.register(ImjangSkeletonCollectionViewCell.self,
+                                forCellWithReuseIdentifier: ImjangSkeletonCollectionViewCell.identifier)
         collectionView.isSkeletonable = true
         return collectionView
     }()
@@ -46,6 +47,7 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     struct Dependency {
         let noteRepository: NoteRepositoryProtocol
+        let onboardingRepository: OnboardingRepositoryProtocol
     }
     
     private let dependency: Dependency
@@ -110,6 +112,45 @@ final class ImjangSearchResultViewController: BaseViewController {
     
     @objc private func searchRequest() {
         showSkeletonView()
+        // 도메인 분기 처리
+        if UserDefaultManager.shared.isOnboarding {
+            dependency.onboardingRepository
+                .retrieveMyNotes()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    // 2자 미만 입력 → 검색 미적용
+                    let trimmed = self.searchKeyword.trimmingCharacters(in: .whitespacesAndNewlines)
+                    guard trimmed.count >= 2 else { return }
+                    
+                    let lowercasedKeyword = trimmed.lowercased()
+                    
+                    var notes = response.filter { note in
+                        // 집 별명
+                        if note.name.lowercased().contains(lowercasedKeyword) {
+                            return true
+                        }
+                        
+                        // 도로명 주소 (옵셔널 안전 처리)
+                        if let shortAddress = note.shortAddress?.lowercased(),
+                           shortAddress.contains(lowercasedKeyword) {
+                            return true
+                        }
+                        
+                        if let address = note.address?.lowercased(),
+                           address.contains(lowercasedKeyword) {
+                            return true
+                        }
+                        
+                        return false
+                    }
+                    
+                    self.searchedImjangList = notes
+                    self.collectionView.reloadData()
+                }
+                .disposed(by: disposeBag)
+            return
+        }
+        
         if searchKeyword.count > 0 {
             dependency
                 .noteRepository
@@ -160,7 +201,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         view.addSubview(navigationView)
         view.addSubview(collectionView)
     }
-
+    
     private func designView() {
         view.backgroundColor = .mainWhite
         navigationView.setSearchTextFieldText(searchKeyword)
@@ -170,7 +211,7 @@ final class ImjangSearchResultViewController: BaseViewController {
         emptyImage.alpha = 0
         emptyLabel.alpha = 0
     }
-
+    
     private func setupConstraints() {
         navigationView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
@@ -219,6 +260,13 @@ extension ImjangSearchResultViewController: UICollectionViewDelegate, UICollecti
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let imjangId = searchedImjangList[indexPath.row].noteId
+        
+        // 온보딩 분기 처리
+        if UserDefaultManager.shared.isOnboarding {
+            self.showImjangNoteVC(imjangId: 1, version: 0)
+            return
+        }
+        
         callVersionRequest(imjangId: imjangId) { version in
             if let version = version {
                 self.showImjangNoteVC(imjangId: imjangId, version: version)
@@ -277,11 +325,13 @@ extension ImjangSearchResultViewController {
 
 extension ImjangSearchResultViewController: SkeletonCollectionViewDataSource {
     // skeletonView
-    func collectionSkeletonView(_ skeletonView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionSkeletonView(_ skeletonView: UICollectionView,
+                                numberOfItemsInSection section: Int) -> Int {
         return 3
     }
     
-    func collectionSkeletonView(_ skeletonView: UICollectionView, cellIdentifierForItemAt indexPath: IndexPath) -> ReusableCellIdentifier {
+    func collectionSkeletonView(_ skeletonView: UICollectionView,
+                                cellIdentifierForItemAt indexPath: IndexPath) -> ReusableCellIdentifier {
         return ImjangSkeletonCollectionViewCell.identifier
     }
     
@@ -294,7 +344,7 @@ extension ImjangSearchResultViewController: SkeletonCollectionViewDataSource {
             withReuseIdentifier: identifier,
             for: indexPath
         ) as! ImjangSkeletonCollectionViewCell
-
+        
         return cell
     }
 }

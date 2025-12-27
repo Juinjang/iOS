@@ -84,7 +84,8 @@ final class SplashViewReactor: Reactor {
             // accessToken 없을 경우 로그인 화면으로 이동
             navigation = .login
         } else {
-            // 홈 화면으로 이동
+            // 기존에 로그인이 되어 있는 경우 isOnboarding = false
+            UserDefaultManager.shared.isOnboarding = false
             navigation = .home
         }
         return .just(.setNavigation(navigation))

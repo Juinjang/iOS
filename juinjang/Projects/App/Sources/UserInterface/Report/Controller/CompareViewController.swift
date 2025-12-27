@@ -343,6 +343,7 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
     }
     
     func callRequest(sort: Filter = .update, setScrap: Bool = false, excludingId: Int? = nil) {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<TotalListDto>.self, api: .totalImjang(sort: sort.sortValue)) { response, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -521,6 +522,10 @@ final class CompareViewController : BaseViewController, SendCompareImjangData, S
         closeButton.addTarget(self, action: #selector(closeBtnTap), for: .touchUpInside)
     }
     @objc private func compareButtonTap() {
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpBottomSheetView(), animated: true)
+            return
+        }
         
         if imjangList.isEmpty {
             // 매물이 하나도 없을 때 팝업을 띄움

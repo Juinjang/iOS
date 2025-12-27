@@ -275,7 +275,12 @@ final class AddNewNoteViewController: BaseViewController {
     }
     
     lazy var addNoteButton = UIButton().then {
-        $0.setTitle("노트 생성하기", for: .normal)
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            $0.setTitle("회원가입하고 노트 생성하기", for: .normal)
+        } else {
+            $0.setTitle("노트 생성하기", for: .normal)
+        }
         $0.setTitleColor(.mainWhite, for: .normal)
         
         $0.backgroundColor = .null
@@ -938,6 +943,12 @@ final class AddNewNoteViewController: BaseViewController {
     }
     
     @objc func buttonTapped(_ sender: UIButton) {
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            present(SignUpViewController(.present), animated: true)
+            return
+        }
+        
         amplitude.track(event: BaseEvent(eventType: AmpliEventName.page_viewed.rawValue, eventProperties: [
             AmpliEventProp.next_button_clicked.rawValue: "true"
         ]))

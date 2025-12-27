@@ -134,7 +134,7 @@ final class ExpandedTextFieldTableViewCell: UITableViewCell {
         backgroundColor = .mainWhite
         
         answerTextField.text = answer
-        answerTextField.backgroundColor = .mainWhite
+        answerTextField.layer.backgroundColor = UIColor.main100.cgColor
         
         updateTextFieldWidth()
     }

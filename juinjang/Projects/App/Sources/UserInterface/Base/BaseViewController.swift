@@ -33,7 +33,7 @@ class BaseViewController: UIViewController {
         showAlert(title: "세션이 만료되었습니다", message: "다시 로그인해주세요") { [weak self] in
             guard let self else { return }
             UserDefaultManager.shared.removeUserInfo()
-            changeRootView(to: SignUpViewController(), isNav: true)
+            changeRootView(to: SignUpViewController(.push), isNav: true)
         }
     }
     

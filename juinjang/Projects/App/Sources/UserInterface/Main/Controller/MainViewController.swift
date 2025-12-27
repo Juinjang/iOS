@@ -14,6 +14,7 @@ protocol updateNicknameDelegate: AnyObject {
 final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     private let termsRepository = TermsRepository()
     private let userRepository = UserRepository()
+    private let onboardingRepository = OnboardingRepository()
     private lazy var navigationView = CenterFlexibleNavigationView(centerView: mainLogoImageView).then {
         $0.leftItem = [.setting]
     }
@@ -52,12 +53,10 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         tableView.rowHeight = 710
         tableView.backgroundColor = .clear
         view.backgroundColor = .mainWhite
-        
         view.add(
             navigationView,
             tableView
         )
-       
         NotificationCenter.default.addObserver(self, selector: #selector(showLoginVC), name: .refreshTokenExpired, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(callMainImjangRequest), name: .refreshMainImjang, object: nil)
         setConstraint()
@@ -83,6 +82,9 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func getProfileInfo() {
+        // 온보딩 분기처리
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
+        
         userRepository.retrieveProfileInfo()
             .asObservable()
             .subscribe(with: self) { owner, profileModel in
@@ -93,6 +95,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func checkAndShowPencilShopTermsPopup() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         termsRepository.retrievePencilShopAgreementStatus()
             .asObservable()
             .subscribe(with: self) { (self, response) in
@@ -131,7 +134,8 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     private func checkAndShowTermsPopup() {
-        print("약관 동의 버전은????\(UserDefaultManager.shared.agreeVersion)")
+        // 온보딩 분기처리
+        guard (UserDefaultManager.shared.isOnboarding == false) else { return }
         let currentVersion = "1.1.0"
         if UserDefaultManager.shared.agreeVersion.compare(currentVersion, options: .numeric) == .orderedAscending {
             termsPopupViewController = TermsPopupViewController(
@@ -146,8 +150,21 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             }
         }
     }
-
+    
     @objc private func callMainImjangRequest() {
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingRepository.retrieveRecentMyNotes()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.isFirstShowing = false
+                    self.mainImjangList = response.recentUpdatedList
+                    self.tableView.reloadData()
+                }
+                .disposed(by: disposeBag)
+            return
+        }
+        
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<RecentUpdatedDto>.self,
                                             api: .mainImjang) { [weak self] response, error in
             guard let self = self else { return }
@@ -204,15 +221,27 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
     }
     
     @objc private func myNoteButtonTapped() {
-        let vc = ImjangListViewController(dependency: ImjangListViewController.Dependency(noteRepository: NoteRepository()))
+        let vc = ImjangListViewController(
+            dependency: ImjangListViewController.Dependency(
+                noteRepository: NoteRepository(),
+                onboardingRepository: OnboardingRepository()
+            )
+        )
         vc.deleteImjangListDelegate = self
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc private func lookAroundButtonTapped() {
+        if UserDefaultManager.shared.isOnboarding {
+            let bottomSheetView = SignUpBottomSheetView()
+            navigationController?.present(bottomSheetView, animated: true)
+            return
+        }
+        
         let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
         lookAroundVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(lookAroundVC, animated: true)
+        
     }
     
     @objc private func setttingBtnTap() {
@@ -222,7 +251,7 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
             )
         )
         settingVC.updateNicknameDelegate = self
-        self.navigationController?.pushViewController(settingVC, animated: true)
+        navigationController?.pushViewControllerFromLeftSide(settingVC)
     }
     
     private func setConstraint() {
@@ -249,11 +278,13 @@ extension MainViewController: updateNicknameDelegate {
 
 //MARK: - extension
 extension MainViewController : UITableViewDelegate, UITableViewDataSource{
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView,
+                   numberOfRowsInSection section: Int) -> Int {
         return 2
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView,
+                   cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row == 0 {
             guard let cell = tableView.dequeueReusableCell(withIdentifier: TopTableViewCell.identifier, for: indexPath) as? TopTableViewCell
             else{
@@ -294,11 +325,13 @@ extension MainViewController : UITableViewDelegate, UITableViewDataSource{
 }
      
 extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout{
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func collectionView(_ collectionView: UICollectionView,
+                        numberOfItemsInSection section: Int) -> Int {
         return mainImjangList.count
     }
      
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView,
+                        cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BottomCollectionViewCell.identifier, for: indexPath) as? BottomCollectionViewCell else {
             return UICollectionViewCell()
         }
@@ -309,12 +342,22 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
         return cell
      }
      
-     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+     func collectionView(_ collectionView: UICollectionView,
+                         layout collectionViewLayout: UICollectionViewLayout,
+                         sizeForItemAt indexPath: IndexPath) -> CGSize {
          return CGSize(width: 143 , height: 204)
      }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    func collectionView(_ collectionView: UICollectionView,
+                        didSelectItemAt indexPath: IndexPath) {
         let item = mainImjangList[indexPath.row]
+        
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            self.showImjangNoteVC(imjangId: item.limjangId, version: 0)
+            return
+        }
+        
         callVersionRequest(imjangId: item.limjangId) { [weak self] version in
             guard let self = self else { return }
             if let version = version {

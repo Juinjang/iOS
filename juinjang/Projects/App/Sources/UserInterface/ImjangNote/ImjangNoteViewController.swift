@@ -20,6 +20,7 @@ final class ImjangNoteViewController: BaseViewController,
                                       ButtonStateDelegate,
                                       SendCheckListData {
     private let noteRepository = NoteRepository()
+    private let onboardingRepository = OnboardingRepository()
     private let disposeBag = DisposeBag()
     
     private lazy var navigationView: DefaultNavigationView = {
@@ -45,24 +46,30 @@ final class ImjangNoteViewController: BaseViewController,
     private let noImageBackgroundView = UIImageView()
     private let photoRegisterButton = PhotoRegisterButton()
     
-    private lazy var firstImage = UIImageView()
-    private lazy var secondImage = UIImageView()
-    private lazy var thirdImage = UIImageView()
+    private lazy var firstImage = UIImageView().then {
+        $0.backgroundColor = .gray2
+    }
+    private lazy var secondImage = UIImageView().then {
+        $0.backgroundColor = .gray2
+    }
+    private lazy var thirdImage = UIImageView().then {
+        $0.backgroundColor = .gray2
+    }
     
     // 이미지 개수 레이블
     private var maximizeImageView = UIImageView()
     
     //이미지 배치할 스택뷰
-    private var stackView = UIStackView().then {
+    private var tripleImageStackView = UIStackView().then {
         $0.axis = .horizontal
         $0.alignment = .fill
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
         $0.spacing = 8
     }
     private var vStackView = UIStackView().then {
         $0.axis = .vertical
         $0.alignment = .fill
-        $0.distribution = .equalSpacing
+        $0.distribution = .fill
         $0.spacing = 8
     }
     
@@ -74,9 +81,11 @@ final class ImjangNoteViewController: BaseViewController,
         $0.lineBreakMode = .byCharWrapping
         $0.isUserInteractionEnabled = false
     }
+    
     private let addressStackView = UIStackView().then {
         $0.isUserInteractionEnabled = false
     }
+    
     private let addressBackgroundView = UIButton().then {
         $0.backgroundColor = .gray100
         $0.layer.cornerRadius = 10
@@ -97,11 +106,8 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private let noteDetailInfoView = ImjangNoteDetailInfoView()
-    
     private let noteShareConditionView = ImjangNoteShareConditionView()
-    
     private let shareCompletedButton = ShareCompletedButton()
-    
     private let imageBlockView = UIView()
     
     private let infoStackView = UIStackView().then {
@@ -150,6 +156,8 @@ final class ImjangNoteViewController: BaseViewController,
     private let clickPyungFloorRelay = PublishRelay<Void>()
     private let conditionEventRelay = PublishRelay<ImjangNoteShareConditionViewEventType>()
     private var roomName: String = ""
+    
+    private let signUpToastView = SignUpToastView()
     
     init(imjangId: Int, version: Int) {
         self.imjangId = imjangId
@@ -204,14 +212,20 @@ final class ImjangNoteViewController: BaseViewController,
             .subscribe(with: self) { (self, event) in
                 switch event {
                 case .share:
+                    // 온보딩 분기처리
+                    if UserDefaultManager.shared.isOnboarding {
+                        self.present(SignUpBottomSheetView(), animated: true)
+                        return
+                    }
+                    
                     self.noteRepository.retrieveShareableNoteList(
                         param: .init(
                             sort: nil,
                             propertyType: nil,
                             priceType: nil,
-                            keyword: self.roomName ?? "",
+                            keyword: self.roomName,
                             page: 1,
-                            size: 20
+                            size: 100
                         )
                     )
                     .asObservable()
@@ -243,6 +257,11 @@ final class ImjangNoteViewController: BaseViewController,
                 case .popButtonTap:
                     self.popView()
                 case .textButtonTap:
+                    // 온보딩 분기처리
+                    if UserDefaultManager.shared.isOnboarding {
+                        self.navigationController?.present(SignUpBottomSheetView(), animated: true)
+                        return
+                    }
                     self.editView()
                 default: break
                 }
@@ -269,6 +288,11 @@ final class ImjangNoteViewController: BaseViewController,
                 owner.present(infoPopup, animated: true)
             }
             .disposed(by: disposeBag)
+        
+        signUpToastView.onTapSignUp = { [weak self] in
+            guard let self else { return }
+            self.present(SignUpViewController(.present), animated: true)
+        }
     }
     
     @objc private func handlePageChange(notification: Notification) {
@@ -301,7 +325,6 @@ final class ImjangNoteViewController: BaseViewController,
 
         let icon = NSAttributedString(attachment: attachment)
 
-        let spacing: CGFloat = 6
         let paragraph = NSMutableParagraphStyle()
         paragraph.firstLineHeadIndent = 0
         paragraph.headIndent = 0
@@ -325,6 +348,21 @@ final class ImjangNoteViewController: BaseViewController,
 
     
     private func callRequest() {
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingRepository
+                .retrieveMyNoteDetail()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.setData(detailDto: response)
+                    self.roomName = self.detailDto?.buildingName ?? ""
+                    self.updateConditionViewLayout(model: response)
+                }
+                .disposed(by: disposeBag)
+            
+            requestShareConditions()
+            return
+        }
+        
         noteRepository.retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, detailData) in
@@ -376,7 +414,7 @@ final class ImjangNoteViewController: BaseViewController,
             detailDto.buildingName
         checkListActionButton.isHidden = detailDto.isShared
         photoRegisterButton.isHidden = detailDto.isShared
-        imageBlockView.isHidden = !detailDto.isShared
+        imageBlockView.isHidden = UserDefaultManager.shared.isOnboarding ? true : (!detailDto.isShared)
         navigationView.rightItem = detailDto.isShared ? [] : [.text(title: "편집")]
         addressBackgroundView.isEnabled = (detailDto.roadAddress == nil)
         
@@ -463,12 +501,12 @@ final class ImjangNoteViewController: BaseViewController,
         if isEmpty {
             noImageBackgroundView.addGestureRecognizer(tapGesture)
         } else {
-            stackView.addGestureRecognizer(tapGesture)
+            tripleImageStackView.addGestureRecognizer(tapGesture)
         }
     }
     
     private func setUserInteraction(isEmpty: Bool) {
-        stackView.isUserInteractionEnabled = !isEmpty
+        tripleImageStackView.isUserInteractionEnabled = !isEmpty
         vStackView.isUserInteractionEnabled = !isEmpty
         firstImage.isUserInteractionEnabled = !isEmpty
         secondImage.isUserInteractionEnabled = !isEmpty
@@ -478,9 +516,10 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 이미지 리스트 화면으로 이동
     @objc private func showImjangImageListVC() {
-        let imjangImageListVC = ImjangImageListViewController()
+        let imjangImageListVC = ImjangImageListViewController(images: images)
         imjangImageListVC.imjangId = imjangId
         imjangImageListVC.completionHandler = { imageStrings in
+            guard (!UserDefaultManager.shared.isOnboarding) else { return }
             self.images = imageStrings
             self.setUpImageUI()
             NotificationCenter.default.post(name: .refreshImjangList, object: nil)
@@ -564,7 +603,7 @@ final class ImjangNoteViewController: BaseViewController,
          addressBackgroundView,
          containerView,
          noImageBackgroundView,
-         stackView,
+         tripleImageStackView,
          imageBlockView].forEach {
             contentView.addSubview($0)
         }
@@ -587,6 +626,13 @@ final class ImjangNoteViewController: BaseViewController,
         addChild(recordingSegmentedVC)
         containerView.addSubview(recordingSegmentedVC.view)
         recordingSegmentedVC.imjangId = imjangId
+        
+        // 온보딩 분기 처리
+        if UserDefaultManager.shared.isOnboarding {
+            photoRegisterButton.removeFromSuperview()
+            checkListActionButton.removeFromSuperview()
+            view.addSubview(signUpToastView)
+        }
     }
     
     // 뷰들 디자인
@@ -651,7 +697,7 @@ final class ImjangNoteViewController: BaseViewController,
     // 이미지 개수에 따라 stackView 설정
     private func setUpImageUI() {
         noImageBackgroundView.isHidden = true
-        stackView.isHidden = false
+        tripleImageStackView.isHidden = false
         maximizeImageView.isHidden = false
         setUserInteraction(isEmpty: false)
         setImageStackViewClick(isEmpty: false)
@@ -659,7 +705,7 @@ final class ImjangNoteViewController: BaseViewController,
         switch imageCount {
         case 0:
             noImageBackgroundView.isHidden = false
-            stackView.isHidden = true
+            tripleImageStackView.isHidden = true
             maximizeImageView.isHidden = true
             setUserInteraction(isEmpty: true)
             setImageStackViewClick(isEmpty: true)
@@ -676,7 +722,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func setImage1() {
         let imageWidth = view.frame.width - (24*2)
-        stackView.spacing = 0
+        tripleImageStackView.spacing = 0
         
         firstImage.snp.remakeConstraints {
             $0.width.equalTo(imageWidth)
@@ -690,7 +736,7 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func setImage2() {
         //        let imagesWidth = view.frame.width - (24*2) - 8
-        stackView.spacing = 8
+        tripleImageStackView.spacing = 8
         vStackView.spacing = 0
         
         firstImage.snp.remakeConstraints {
@@ -711,7 +757,7 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func setImage3() {
-        stackView.spacing = 8
+        tripleImageStackView.spacing = 8
         vStackView.spacing = 8
         
         firstImage.snp.remakeConstraints {
@@ -748,11 +794,14 @@ final class ImjangNoteViewController: BaseViewController,
             $0.height.equalTo(noImageBackgroundView.snp.width).multipliedBy(171.0 / 342.0)
         }
         
-        photoRegisterButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().offset(-9)
-            $0.trailing.equalToSuperview().offset(-10)
-            $0.height.equalTo(27)
-            $0.width.equalTo(94)
+        // 온보딩 분기처리
+        if !UserDefaultManager.shared.isOnboarding {
+            photoRegisterButton.snp.makeConstraints {
+                $0.bottom.equalToSuperview().offset(-9)
+                $0.trailing.equalToSuperview().offset(-10)
+                $0.height.equalTo(27)
+                $0.width.equalTo(94)
+            }
         }
     }
     
@@ -763,30 +812,32 @@ final class ImjangNoteViewController: BaseViewController,
         if images.isEmpty {
             topView = noImageBackgroundView
         } else {
-            topView = stackView
+            topView = tripleImageStackView
         }
         
         [firstImage,vStackView].forEach {
-            stackView.addArrangedSubview($0)
+            tripleImageStackView.addArrangedSubview($0)
         }
         
         [secondImage, thirdImage].forEach {
             vStackView.addArrangedSubview($0)
         }
         
-        stackView.addSubview(maximizeImageView)
+        tripleImageStackView.addSubview(maximizeImageView)
         maximizeImageView.snp.makeConstraints {
-            $0.bottom.trailing.equalTo(stackView).inset(12)
+            $0.bottom.trailing.equalTo(tripleImageStackView).inset(12)
             $0.width.height.equalTo(24)
         }
         
-        checkListActionButton.snp.makeConstraints {
-            $0.bottom.equalTo(view.snp.bottom).offset(-28)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-            $0.height.equalTo(48)
+        if !UserDefaultManager.shared.isOnboarding {
+            checkListActionButton.snp.makeConstraints {
+                $0.bottom.equalTo(view.snp.bottom).offset(-28)
+                $0.trailing.equalTo(view.snp.trailing).offset(-24)
+                $0.height.equalTo(48)
+            }
+            
+            view.bringSubviewToFront(checkListActionButton)
         }
-        
-        view.bringSubviewToFront(checkListActionButton)
         
         navigationView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide)
@@ -809,9 +860,9 @@ final class ImjangNoteViewController: BaseViewController,
         
         setImageViewConstraints()
         
-        contentView.bringSubviewToFront(stackView)
+        contentView.bringSubviewToFront(tripleImageStackView)
         // 방 이미지 스택뷰
-        stackView.snp.makeConstraints {
+        tripleImageStackView.snp.makeConstraints {
             $0.top.equalTo(contentView).offset(8)
             $0.leading.equalTo(contentView).offset(24)
             $0.trailing.equalTo(contentView).offset(-24)
@@ -876,6 +927,14 @@ final class ImjangNoteViewController: BaseViewController,
         recordingSegmentedVC.didMove(toParent: self)
         
         contentView.bringSubviewToFront(imageBlockView)
+        
+        if UserDefaultManager.shared.isOnboarding {
+            signUpToastView.snp.makeConstraints {
+                $0.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
+                $0.horizontalEdges.equalToSuperview().inset(17)
+                $0.height.equalTo(52)
+            }
+        }
     }
     
     
@@ -941,7 +1000,6 @@ final class ImjangNoteViewController: BaseViewController,
         noteRepository.retrieveCheckList(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, checkListResponse) in
-                
                 var savedQuestionIds = Set<Int>()
                 var uniqueItems = [CheckListAnswer]()
                 
@@ -1108,6 +1166,22 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func updateConditionViewLayout(model: NoteDetailModel) {
+        if UserDefaultManager.shared.isOnboarding {
+            noteShareConditionView.snp.remakeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(106)
+            }
+            
+            // containerView
+            containerView.snp.remakeConstraints {
+                $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
+            }
+            return
+        }
+        
         // MARK: - 공유 조건 뷰
         // 평층 입력 X -> 공유 조건 뷰 X
         if model.pyong != nil && model.floor != nil {
@@ -1142,6 +1216,35 @@ final class ImjangNoteViewController: BaseViewController,
     }
     
     private func requestShareConditions() {
+        if UserDefaultManager.shared.isOnboarding {
+            // Temp Data
+            let conditions: [ShareableCondition] = [
+                .init(category: "LOCATION_CONDITION",
+                      answeredCount: 10,
+                      totalCount: 10,
+                      requiredCount: 10,
+                      isSatisfied: true),
+                .init(category: "PUBLIC_SPACE",
+                      answeredCount: 10,
+                      totalCount: 10,
+                      requiredCount: 10,
+                      isSatisfied: true),
+                .init(category: "INDOOR",
+                      answeredCount: 10,
+                      totalCount: 10,
+                      requiredCount: 10,
+                      isSatisfied: true)
+            ]
+            
+            let conditionDTO = ShareableConditionDTO(
+                isTotalSatisfied: true,
+                conditions: conditions
+            )
+            
+            noteShareConditionView.configure(model: conditionDTO, relay: conditionEventRelay)
+            return
+        }
+        
         noteRepository.retrieveChecklistConditionList(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, conditionDTO) in

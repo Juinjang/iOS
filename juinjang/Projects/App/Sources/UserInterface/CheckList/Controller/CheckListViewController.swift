@@ -19,6 +19,7 @@ protocol CheckListDelegate: AnyObject {
 final class CheckListViewController: BaseViewController {
     private let disposeBag = DisposeBag()
     private let noteRepository = NoteRepository()
+    private let onboardingRepository = OnboardingRepository()
     
     // 체크리스트 정보
     var version: Int
@@ -189,6 +190,48 @@ final class CheckListViewController: BaseViewController {
     
     // -MARK: API 요청(체크리스트 조회)
     private func showCheckList(completion: @escaping () -> Void) {
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingRepository
+                .retrieveMyNoteCheckLists()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    // 이미 추가된 questionId를 추적하기 위한 Set
+                    var addedQuestionIds = Set<Int>()
+                    
+                    for item in response {
+                        // 이미 추가된 questionId인 경우
+                        if addedQuestionIds.contains(item.questionId) {
+                            continue
+                        }
+                        
+                        // CheckListAnswer 객체를 생성하여 배열에 추가
+                        let checkListAnswer = CheckListAnswer(imjangId: self.imjangId,
+                                                              questionId: item.questionId,
+                                                              answer: item.answer,
+                                                              isSelected: true)
+                        
+                        self.savedCheckListItems.append(checkListAnswer)
+                        self.checkListItems.append(checkListAnswer)
+                        
+                        // 추가된 questionId를 Set에 추가
+                        addedQuestionIds.insert(item.questionId)
+                    }
+                    
+                    print("------저장된 체크리스트 조회------")
+                    for checkListItem in self.checkListItems {
+                        print(checkListItem)
+                    }
+                    NotificationCenter.default.post(
+                        name: NSNotification.Name("CheckListItemsUpdated"),
+                        object: self.checkListItems
+                    )
+                    completion()
+                }
+                .disposed(by: disposeBag)
+            return
+        }
+        
         noteRepository.retrieveCheckList(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, response) in

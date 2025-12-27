@@ -110,7 +110,12 @@ final class ImjangSearchViewController: BaseViewController {
     }
     
     private func showSearchResultVC(keyword: String) {
-        let SearchResultVC = ImjangSearchResultViewController(dependency: ImjangSearchResultViewController.Dependency(noteRepository: NoteRepository()))
+        let SearchResultVC = ImjangSearchResultViewController(
+            dependency: ImjangSearchResultViewController.Dependency(
+                noteRepository: NoteRepository(),
+                onboardingRepository: OnboardingRepository()
+            )
+        )
         SearchResultVC.searchKeyword = keyword
         navigationController?.pushViewController(SearchResultVC, animated: true)
     }

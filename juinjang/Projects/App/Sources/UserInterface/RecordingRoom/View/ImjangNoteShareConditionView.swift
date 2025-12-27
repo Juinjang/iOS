@@ -33,7 +33,6 @@ final class ImjangNoteShareConditionView: BaseView {
         $0.setImage(UIImage.infoCircle.withRenderingMode(.alwaysTemplate)
             .withTintColor(.gray450).resized(toWidth: 20), for: .normal)
         $0.backgroundColor = .clear
-        $0.imageEdgeInsets = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
     }
     
     private let conditionBaseView = UIView().then {
@@ -46,11 +45,14 @@ final class ImjangNoteShareConditionView: BaseView {
         $0.alignment = .center
     }
     
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
+    
     let infoButtonDidTapRelay = PublishRelay<Void>()
     
     func configure(model: ShareableConditionDTO,
                    relay: PublishRelay<ImjangNoteShareConditionViewEventType>) {
+        disposeBag = DisposeBag()
+
         if !conditionStackView.subviews.isEmpty {
             conditionStackView.subviews.forEach {
                 conditionStackView.removeArrangedSubview($0)
@@ -78,19 +80,18 @@ final class ImjangNoteShareConditionView: BaseView {
             .map { ImjangNoteShareConditionViewEventType.share }
             .bind(to: relay)
             .disposed(by: disposeBag)
+        
+        infoButton.rx.throttleTap
+            .subscribe(with: self) { owner, _ in
+                owner.infoButtonDidTapRelay.accept(())
+            }
+            .disposed(by: disposeBag)
     }
     
     override func configureView() {
         super.configureView()
         roundCorners(cornerRadius: 8, corner: .all)
         layer.borderWidth = 1
-        
-        infoButton.rx.throttleTap
-            .subscribe(with: self) { owner, _ in
-                print("@@@ infoButton Did Tap")
-                owner.infoButtonDidTapRelay.accept(())
-            }
-            .disposed(by: disposeBag)
     }
     
     override func configureHierarchy() {

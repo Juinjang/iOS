@@ -21,7 +21,7 @@ import Alamofire
 import RxSwift
 
 final class ReportViewController : BaseViewController {
-    
+    private let onboardingRepository = OnboardingRepository()
     let templateId = 103560
     var safariViewController : SFSafariViewController?
     var checkListViewController: CheckListViewController?
@@ -100,6 +100,18 @@ final class ReportViewController : BaseViewController {
     }
     
     func getReportInfo(limjangId: Int, accessToken: String) {
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingRepository.retrieveMyNoteReport()
+                .asObservable()
+                .subscribe(with: self) { (self, response) in
+                    self.setData(reportDto: response.reportDTO)
+                    self.setData(detailDto: response.limjangDto)
+                }
+                .disposed(by: disposeBag)
+            
+            return
+        }
+        
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<ReportResponseDto>.self, api: .fetchReportInfo(imjangId: limjangId)) { [weak self] response, error in
             guard let self else { return }
             if error == nil {
@@ -253,6 +265,7 @@ final class ReportViewController : BaseViewController {
         )
         self.navigationController?.popViewController(animated: true)
     }
+    
     @objc func shareBtnTap() {
         if ShareApi.isKakaoTalkSharingAvailable() {
             // 카카오톡으로 카카오톡 공유 가능

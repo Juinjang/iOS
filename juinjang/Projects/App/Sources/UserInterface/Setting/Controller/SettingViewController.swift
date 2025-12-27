@@ -110,7 +110,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         $0.font = .pretendard(size: 14, weight: .medium)
         $0.textColor = .gray400
     }
-
+    
     private let loginImageView = UIImageView().then {
         if UserDefaultManager.shared.isKakaoLogin {
             $0.image = UIImage.Setting.KAKAO
@@ -149,6 +149,22 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     
     private lazy var withdrawalButton = makeButton(title: "계정 삭제하기", color: .gray400)
     
+    private let onboardingLabel = DSLabel(.h4).then {
+        $0.fontColor = .black
+        $0.text = "든든한 임장 기록 도우미\n주인장이랑 함께해요"
+        $0.numberOfLines = 2
+        $0.fontAlignment = .left
+    }
+    
+    private lazy var loginButton = UIButton().then {
+        $0.backgroundColor = .main
+        $0.roundCorners(cornerRadius: 10, corner: .all)
+        $0.setTitle("로그인/회원가입", for: .normal)
+        $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
+        $0.setTitleColor(.mainWhite, for: .normal)
+        $0.addTarget(self, action: #selector(loginButtonTapped(_:)), for: .touchUpInside)
+    }
+    
     struct Dependency {
         let userRepository: UserRepositoryProtocol
     }
@@ -173,18 +189,20 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         retrieveProfileInfo()
         loadProfileImage()
         logoutButton.contentHorizontalAlignment = .left
-
+        
         bindAction()
         addTarget()
         configureHierarchy()
         setConstraint()
         
-        userRepository
-            .retrieveProfileInfo()
-            .subscribe(with: self) { (self, model) in
-                self.oneLineIntroTextFieldView.text = model.introduction ?? ""
-            }
-            .disposed(by: disposeBag)
+        if (!UserDefaultManager.shared.isOnboarding) {
+            userRepository
+                .retrieveProfileInfo()
+                .subscribe(with: self) { (self, model) in
+                    self.oneLineIntroTextFieldView.text = model.introduction ?? ""
+                }
+                .disposed(by: disposeBag)
+        }
         
         oneLineIntroTextFieldView
             .saveButtonDidTapRelay
@@ -205,6 +223,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func retrieveProfileInfo() {
+        guard (!UserDefaultManager.shared.isOnboarding) else { return }
         dependency.userRepository.retrieveProfileInfo()
             .asObservable()
             .subscribe(with: self) { owner, profileModel in
@@ -272,7 +291,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
         }
         picker.dismiss(animated: true, completion: nil)
     }
-        
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
     }
@@ -360,10 +379,10 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             nicknameTextField.delegate = self
             view.addSubview(line1)
             nicknameTextField.snp.makeConstraints{
-             $0.top.equalTo(nicknameLabel.snp.bottom).offset(8)
-             $0.left.equalToSuperview().offset(24)
-             $0.width.equalTo(264)
-             $0.height.equalTo(23)
+                $0.top.equalTo(nicknameLabel.snp.bottom).offset(8)
+                $0.left.equalToSuperview().offset(24)
+                $0.width.equalTo(264)
+                $0.height.equalTo(23)
             }
             line1.snp.makeConstraints{
                 $0.top.equalTo(nicknameTextField.snp.bottom).offset(3)
@@ -410,14 +429,18 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     
     @objc private func backBtnTap() {
         updateNicknameDelegate?.updateNickname()
-        self.navigationController?.popViewController(animated: true)
+        navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func loginButtonTapped(_ sender: UIButton) {
+        present(SignUpViewController(.present), animated: true)
     }
     
     private func sendNickName(nickname: String) {
         let parameters: [String: Any] = [
             "nickname": nickname
         ]
-
+        
         JuinjangAPIManager.shared.postData(type: BaseResponse<NicknameDto>.self, api: .saveNickname, parameter: parameters) { [weak self] response, error in
             guard let self else { return }
             if error == nil {
@@ -460,6 +483,11 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     }
     
     private func configureHierarchy() {
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            view.add(navigationView, onboardingLabel, loginButton)
+            return
+        }
         view.add(navigationView, scrollView)
         scrollView.addSubview(contentView)
         
@@ -489,6 +517,22 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
     private func setConstraint() {
         navigationView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        // 온보딩 분기처리
+        if UserDefaultManager.shared.isOnboarding {
+            onboardingLabel.snp.makeConstraints {
+                $0.top.equalTo(navigationView.snp.bottom).offset(32)
+                $0.left.equalToSuperview().offset(24)
+            }
+            
+            loginButton.snp.makeConstraints {
+                $0.top.equalTo(onboardingLabel.snp.bottom).offset(24)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(52)
+            }
+            
+            return
         }
         
         scrollView.snp.makeConstraints {
@@ -600,6 +644,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             $0.horizontalEdges.equalToSuperview()
             $0.height.equalTo(60)
         }
+        
     }
     
     private func makeSeparatorView() -> UIView {
@@ -616,7 +661,7 @@ final class SettingViewController : BaseViewController, UIImagePickerControllerD
             attributes: AttributeContainer([
                 .font: UIFont.pretendard(size: 16, weight: .semiBold),
                 .foregroundColor: color
-        ]))
+            ]))
         if let image {
             config.image = image
             config.imagePadding = 8

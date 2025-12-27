@@ -9,16 +9,20 @@ import UIKit
 import Then
 import SnapKit
 import Alamofire
-
 import KakaoSDKCommon
 import KakaoSDKAuth
 import KakaoSDKUser
-
 import AuthenticationServices
-
 import RxSwift
 
 final class SignUpViewController: BaseViewController {
+    enum TransitionStyle {
+        case present
+        case push
+    }
+    
+    private let currentTransitionStyle: TransitionStyle
+    
     var disposeBag: DisposeBag = DisposeBag()
     lazy var juinjangLogoImage = UIImageView().then {
         $0.image = UIImage.SignUp.juinjangLogoGraphic
@@ -50,6 +54,26 @@ final class SignUpViewController: BaseViewController {
         $0.font = UIFont(name: "Pretendard-Regular", size: 14)
     }
     
+    private lazy var onboardingButton = TextButton(text: "서비스 체험하기", underline: true).then {
+        $0.addTarget(self, action: #selector(onboardingButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    private lazy var dismissButton = ImageButton(normalImage: .x24).then {
+        $0.tintColor = .gray450
+        $0.addTarget(self, action: #selector(dismissButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    init(_ transitionStyle: TransitionStyle) {
+        currentTransitionStyle = transitionStyle
+        super.init()
+        if transitionStyle == .present {
+            self.modalPresentationStyle = .overFullScreen
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         self.view.backgroundColor = .mainWhite
@@ -65,7 +89,9 @@ final class SignUpViewController: BaseViewController {
          juinjangLogo,
          kakaoLoginButton,
          appleLoginButton,
-         guideLabel].forEach { view.addSubview($0) }
+         guideLabel,
+         onboardingButton,
+         dismissButton].forEach { view.addSubview($0) }
     }
     
     func setupLayout() {
@@ -90,7 +116,7 @@ final class SignUpViewController: BaseViewController {
         view.addSubview(loginStackView)
 
         loginStackView.snp.makeConstraints {
-            $0.top.equalTo(juinjangLogo.snp.bottom).offset(view.frame.height * 0.13)
+            $0.top.equalTo(juinjangLogo.snp.bottom).offset(view.frame.height * 0.10)
             $0.height.lessThanOrEqualTo(view.snp.height).multipliedBy(0.08)
             $0.centerX.equalToSuperview()
         }
@@ -98,8 +124,36 @@ final class SignUpViewController: BaseViewController {
         // 안내 Label
         guideLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(loginStackView.snp.bottom).offset(view.frame.height * 0.06)
+            $0.top.equalTo(loginStackView.snp.bottom).offset(view.frame.height * 0.04)
         }
+        
+        if currentTransitionStyle == .push {
+            dismissButton.removeFromSuperview()
+            onboardingButton.snp.makeConstraints {
+                $0.width.equalTo(90)
+                $0.height.equalTo(19)
+                $0.top.equalTo(guideLabel.snp.bottom).offset(32)
+                $0.centerX.equalToSuperview()
+            }
+        } else {
+            onboardingButton.removeFromSuperview()
+            dismissButton.snp.makeConstraints {
+                $0.size.equalTo(24)
+                $0.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                $0.right.equalToSuperview().offset(-24)
+            }
+        }
+    }
+    
+    @objc func dismissButtonTapped(_ sender: UIButton) {
+        dismiss(animated: true)
+    }
+    
+    // 온보딩 분기처리
+    @objc func onboardingButtonTapped(_ sender: UIButton) {
+        UserDefaultManager.shared.isOnboarding = true
+        UserDefaultManager.shared.nickname = "미래의 건물주"
+        changeHome()
     }
     
     @objc func loginButtonTapped(_ sender: UIButton) {
@@ -123,6 +177,7 @@ final class SignUpViewController: BaseViewController {
         controller.performRequests()
     
     }
+    
     func getUserNickname() {
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<UserInfoResult>.self, api: .profile) { response, error in
             if let error = error {
@@ -153,6 +208,7 @@ final class SignUpViewController: BaseViewController {
                 UserDefaultManager.shared.profileImage = UIImage.Setting.profile
             }
             // 메인 화면으로 이동
+            UserDefaultManager.shared.isOnboarding = false
             self.changeHome()
         }
     }
@@ -204,15 +260,21 @@ extension SignUpViewController{
                 print(error)
             } else {
                 if let kakaoUser = user {
-                    if let email = kakaoUser.kakaoAccount?.email, let nickname = kakaoUser.kakaoAccount?.profile?.nickname {
+                    if let email = kakaoUser.kakaoAccount?.email,
+                        let nickname = kakaoUser.kakaoAccount?.profile?.nickname {
                         print("사용자 이메일 : \(email)")
                         UserDefaultManager.shared.email = email
-                        UserDefaultManager.shared.nickname = nickname
+                        // 온보딩 분기처리
+                        if (!UserDefaultManager.shared.isOnboarding) {
+                            UserDefaultManager.shared.nickname = nickname
+                        } 
                         print("targetId: \(kakaoUser.id)")
                         if let userId = kakaoUser.id {
                             print("사용자 ID : \(userId)")
                             UserDefaultManager.shared.kakaoTargetId = userId
-                            requestKakaoLogin(email: UserDefaultManager.shared.email, nickname: UserDefaultManager.shared.nickname, kakaoTargetId: userId)
+                            requestKakaoLogin(email: UserDefaultManager.shared.email,
+                                              nickname: UserDefaultManager.shared.nickname,
+                                              kakaoTargetId: userId)
                         } else {
                             print("사용자 ID를 가져올 수 없습니다.")
                         }
