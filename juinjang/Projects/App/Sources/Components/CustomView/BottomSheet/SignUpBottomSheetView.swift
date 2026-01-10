@@ -8,6 +8,7 @@
 import UIKit
 import Then
 import SnapKit
+import AmplitudeSwift
 
 final class SignUpBottomSheetView: UIViewController {
     private let containerView = UIView().then {
@@ -122,6 +123,7 @@ final class SignUpBottomSheetView: UIViewController {
     }
     
     @objc private func acceptButtonTapped(_ sender: UIButton) {
+        amplitude.track(event: BaseEvent(eventType: AmpliEventName.signup_button_clicked.rawValue))
         present(SignUpViewController(.present), animated: true)
     }
 }
