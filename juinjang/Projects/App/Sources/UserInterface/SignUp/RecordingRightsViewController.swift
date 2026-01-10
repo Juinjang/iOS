@@ -131,7 +131,7 @@ final class RecordingRightsViewController: BaseViewController {
             guard let self else { return }
             DispatchQueue.main.async {
                 self.changeHome()
-                amplitude.track(eventType: AmpliEventName.signup.rawValue)
+                amplitude.track(eventType: AmpliEventName.signup_page.rawValue)
             }
         }
     }

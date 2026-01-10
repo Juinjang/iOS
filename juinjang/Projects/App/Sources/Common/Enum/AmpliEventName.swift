@@ -13,7 +13,10 @@ enum AmpliEventName: String {
     case onboarding_step_3
     case onboarding_complete
     
-    case signup = "회원가입"
+    case signup_page = "회원가입"
+    case signin_page = "login page"
+    case test_button_clicked = "서비스 체험하기"
+    case signup_button_clicked
     
     case page_viewed = "page viewed"
     case button_clicked = "button clicked"

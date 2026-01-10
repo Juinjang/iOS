@@ -14,8 +14,9 @@ import KakaoSDKAuth
 import KakaoSDKUser
 import AuthenticationServices
 import RxSwift
+import AmplitudeSwift
 
-final class SignUpViewController: BaseViewController {
+final class SignUpViewController: BaseViewController {    
     enum TransitionStyle {
         case present
         case push
@@ -80,6 +81,7 @@ final class SignUpViewController: BaseViewController {
         self.navigationController?.navigationBar.tintColor = .black
         self.navigationItem.hidesBackButton = true
         super.viewDidLoad()
+        trackLoginViewEntry()
         addSubViews()
         setupLayout()
     }
@@ -151,6 +153,7 @@ final class SignUpViewController: BaseViewController {
     
     // 온보딩 분기처리
     @objc func onboardingButtonTapped(_ sender: UIButton) {
+        amplitude.track(event: BaseEvent(eventType: AmpliEventName.test_button_clicked.rawValue))
         UserDefaultManager.shared.isOnboarding = true
         UserDefaultManager.shared.nickname = "미래의 건물주"
         changeHome()
@@ -212,6 +215,7 @@ final class SignUpViewController: BaseViewController {
             self.changeHome()
         }
     }
+    
     private func loadImage(from url: URL, completion: @escaping (UIImage?) -> Void) {
         AF.request(url).responseData { response in
             switch response.result {
@@ -225,6 +229,18 @@ final class SignUpViewController: BaseViewController {
                 completion(nil)
             }
         }
+    }
+    
+    // MARK: - Amplitude
+    private func trackLoginViewEntry() {
+        let event = BaseEvent(
+            eventType: (
+                currentTransitionStyle == .present
+                ? AmpliEventName.signup_page
+                : AmpliEventName.signin_page
+            ).rawValue
+        )
+        amplitude.track(event: event)
     }
 }
 
