@@ -8,4 +8,10 @@
 import SwiftUI
 
 @main
-struct 
+struct JuinjangApp: App {
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+        }
+    }
+}
