@@ -1,0 +1,20 @@
+//
+//  Colors.stencil
+//  Manifests
+//
+//  Created by 조유진 on 1/10/26.
+//
+
+import SwiftUI
+
+{% for catalog in catalogs %}
+{% if catalog.name == "Color" %}
+public extension Color {
+{% for color in catalog.assets %}
+    static var {{ color.name|swiftIdentifier:"pretty"|lowerFirstWord }}: Color {
+        return Color(named: "{{ color.name }}", in: .module, compatibleWith: nil)!
+    }
+{% endfor %}
+}
+{% endif %}
+{% endfor %}
