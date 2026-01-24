@@ -153,7 +153,12 @@ final class SignUpViewController: BaseViewController {
     
     // 온보딩 분기처리
     @objc func onboardingButtonTapped(_ sender: UIButton) {
-        amplitude.track(event: BaseEvent(eventType: AmpliEventName.test_button_clicked.rawValue))
+        amplitude.track(event: BaseEvent(
+            eventType: AmpliEventName.button_clicked.rawValue,
+            eventProperties: [
+                AmpliEventProp.test_button_clicked.rawValue : "true"
+            ]
+        ))
         UserDefaultManager.shared.isOnboarding = true
         UserDefaultManager.shared.nickname = "미래의 건물주"
         changeHome()
@@ -234,11 +239,14 @@ final class SignUpViewController: BaseViewController {
     // MARK: - Amplitude
     private func trackLoginViewEntry() {
         let event = BaseEvent(
-            eventType: (
-                currentTransitionStyle == .present
-                ? AmpliEventName.signup_page
-                : AmpliEventName.signin_page
-            ).rawValue
+            eventType: currentTransitionStyle == .present
+            ? AmpliEventName.signup_viewed.rawValue
+            : AmpliEventName.login_viewed.rawValue,
+            eventProperties: [
+                (currentTransitionStyle == .present
+                 ? AmpliEventProp.signup_page.rawValue
+                 : AmpliEventProp.signin_page.rawValue) : "true"
+            ]
         )
         amplitude.track(event: event)
     }

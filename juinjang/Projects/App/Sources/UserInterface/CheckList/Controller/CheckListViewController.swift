@@ -4,7 +4,7 @@
 //
 //  Created by 임수진 on 2/19/24.
 //
-// TODO: 버전, 셀 저장, 셀 값 해제 문제
+
 import UIKit
 import SnapKit
 import Alamofire
@@ -30,6 +30,8 @@ final class CheckListViewController: BaseViewController {
     var savedCheckListItems: [CheckListAnswer] = [] // 저장되어 있던 체크리스트 항목
     var checkListItems: [CheckListAnswer] = [] // 저장될 체크리스트 항목
     
+    private var maxScrollPercent: Int = 0 // 앰플리튜드 이벤트 용
+    
     weak var delegate: CheckListDelegate?
     
     init(imjangId: Int, version: Int) {
@@ -50,6 +52,21 @@ final class CheckListViewController: BaseViewController {
         $0.backgroundColor = .gray100
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        if isMovingFromParent || isBeingDismissed {
+            amplitude.track(
+                event: BaseEvent(
+                    eventType: AmpliEventName.scroll_viewed.rawValue,
+                    eventProperties: [
+                        AmpliEventProp.checklist_page.rawValue : "\(maxScrollPercent)%"
+                    ]
+                )
+            )
+        }
+    }
+    
     override func viewDidLoad() {
         addCheckListModel()
         super.viewDidLoad()
@@ -59,14 +76,50 @@ final class CheckListViewController: BaseViewController {
         setupLayout()
         registerCell()
         setCheckInfo()
-        NotificationCenter.default.addObserver(self, selector: #selector(didStoppedParentScroll), name: NSNotification.Name("didStoppedParentScroll"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleEditModeChange(_:)), name: Notification.Name("EditModeChanged"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ReloadTableView), name: NSNotification.Name("ReloadTableView"), object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didStoppedParentScroll),
+            name: NSNotification.Name("didStoppedParentScroll"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleEditModeChange(_:)),
+            name: Notification.Name("EditModeChanged"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ReloadTableView),
+            name: NSNotification.Name("ReloadTableView"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
+        
         let hasSeenTutorial = UserDefaults.standard.bool(forKey: "hasSeenTutorial")
         if !hasSeenTutorial {
             UserDefaults.standard.set(true, forKey: "hasSeenTutorial")
             showTutorial()
         }
+    }
+    
+    @objc private func appDidEnterBackground() {
+        amplitude.track(
+            event: BaseEvent(
+                eventType: AmpliEventName.scroll_viewed.rawValue,
+                eventProperties: [
+                    AmpliEventProp.checklist_page.rawValue : "\(maxScrollPercent)%"
+                ]
+            )
+        )
     }
     
     private func showTutorial() {
@@ -322,6 +375,12 @@ extension CheckListViewController: UIScrollViewDelegate {
         
         let offset = scrollView.contentOffset.y
         
+        let scrollPercent = scrollView.scrollPercent
+
+        if UserDefaultManager.shared.isOnboarding && scrollPercent > maxScrollPercent {
+            maxScrollPercent = scrollPercent
+        }
+                
         // 스크롤이 맨 위에 있을 때만 tableView의 스크롤을 비활성화
         if offset <= 0 {
             if tableView.isScrollEnabled {
@@ -687,6 +746,25 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
             let adjustedSection = isEditMode ? indexPath.section - 1 : indexPath.section
             checkListCategories[adjustedSection].isExpanded.toggle()
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .fade)
+            
+            var eventKey = ""
+            
+            switch indexPath.section {
+            case 1:
+                eventKey = AmpliEventProp.location_clicked.rawValue
+            case 2:
+                eventKey = AmpliEventProp.convenience_clicked.rawValue
+            case 3:
+                eventKey = AmpliEventProp.indoor_clicked.rawValue
+            default: break
+            }
+            
+            amplitude.track(event: BaseEvent(
+                eventType: AmpliEventName.scroll_viewed.rawValue,
+                eventProperties: [
+                    eventKey : "true"
+                ]
+            ))
         }
     }
 

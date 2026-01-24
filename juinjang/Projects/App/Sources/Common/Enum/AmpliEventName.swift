@@ -13,10 +13,10 @@ enum AmpliEventName: String {
     case onboarding_step_3
     case onboarding_complete
     
-    case signup_page = "회원가입"
-    case signin_page = "login page"
-    case test_button_clicked = "서비스 체험하기"
-    case signup_button_clicked
+    case login_viewed
+    case signup_viewed
+    case scroll_viewed
+    case category_clicked
     
     case page_viewed = "page viewed"
     case button_clicked = "button clicked"
@@ -44,6 +44,15 @@ enum AmpliEventProp: String {
     case record_room
     case record_file
     case record_memo
+    
+    // 체험하기
+    case signin_page
+    case signup_page
+    case test_button_clicked
+    case signup_button_clicked
+    case location_clicked
+    case convenience_clicked
+    case indoor_clicked
 }
 
 enum AmpliEventPropValue: String {

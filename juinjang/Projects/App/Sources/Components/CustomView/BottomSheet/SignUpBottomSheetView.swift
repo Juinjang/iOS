@@ -123,7 +123,13 @@ final class SignUpBottomSheetView: UIViewController {
     }
     
     @objc private func acceptButtonTapped(_ sender: UIButton) {
-        amplitude.track(event: BaseEvent(eventType: AmpliEventName.signup_button_clicked.rawValue))
+        amplitude.track(event: BaseEvent(
+            eventType: AmpliEventName.button_clicked.rawValue,
+            eventProperties: [
+                AmpliEventProp.signup_button_clicked.rawValue : "true"
+            ]
+        )
+        )
         present(SignUpViewController(.present), animated: true)
     }
 }
