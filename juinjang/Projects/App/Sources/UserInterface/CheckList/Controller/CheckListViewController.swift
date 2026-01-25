@@ -762,7 +762,7 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
             amplitude.track(event: BaseEvent(
                 eventType: AmpliEventName.scroll_viewed.rawValue,
                 eventProperties: [
-                    eventKey : "true"
+                    eventKey : "\(checkListCategories[adjustedSection].isExpanded)"
                 ]
             ))
         }
