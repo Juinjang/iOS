@@ -29,9 +29,7 @@ final class CheckListViewController: BaseViewController {
     var checkListCategories: [CheckListCategory] = [] // 카테고리별 질문
     var savedCheckListItems: [CheckListAnswer] = [] // 저장되어 있던 체크리스트 항목
     var checkListItems: [CheckListAnswer] = [] // 저장될 체크리스트 항목
-    
-    private var maxScrollPercent: Int = 0 // 앰플리튜드 이벤트 용
-    
+        
     weak var delegate: CheckListDelegate?
     
     init(imjangId: Int, version: Int) {
@@ -50,21 +48,6 @@ final class CheckListViewController: BaseViewController {
         $0.isScrollEnabled = false
         $0.frame.size.height = $0.contentSize.height
         $0.backgroundColor = .gray100
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if isMovingFromParent || isBeingDismissed {
-            amplitude.track(
-                event: BaseEvent(
-                    eventType: AmpliEventName.scroll_viewed.rawValue,
-                    eventProperties: [
-                        AmpliEventProp.checklist_page.rawValue : "\(maxScrollPercent)%"
-                    ]
-                )
-            )
-        }
     }
     
     override func viewDidLoad() {
@@ -97,29 +80,11 @@ final class CheckListViewController: BaseViewController {
             object: nil
         )
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(appDidEnterBackground),
-            name: UIApplication.didEnterBackgroundNotification,
-            object: nil
-        )
-        
         let hasSeenTutorial = UserDefaults.standard.bool(forKey: "hasSeenTutorial")
         if !hasSeenTutorial {
             UserDefaults.standard.set(true, forKey: "hasSeenTutorial")
             showTutorial()
         }
-    }
-    
-    @objc private func appDidEnterBackground() {
-        amplitude.track(
-            event: BaseEvent(
-                eventType: AmpliEventName.scroll_viewed.rawValue,
-                eventProperties: [
-                    AmpliEventProp.checklist_page.rawValue : "\(maxScrollPercent)%"
-                ]
-            )
-        )
     }
     
     private func showTutorial() {
@@ -374,12 +339,6 @@ extension CheckListViewController: UIScrollViewDelegate {
         guard scrollView == self.tableView else { return }
         
         let offset = scrollView.contentOffset.y
-        
-        let scrollPercent = scrollView.scrollPercent
-
-        if UserDefaultManager.shared.isOnboarding && scrollPercent > maxScrollPercent {
-            maxScrollPercent = scrollPercent
-        }
                 
         // 스크롤이 맨 위에 있을 때만 tableView의 스크롤을 비활성화
         if offset <= 0 {
