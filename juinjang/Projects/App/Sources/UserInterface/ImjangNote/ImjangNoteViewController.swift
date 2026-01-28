@@ -159,6 +159,8 @@ final class ImjangNoteViewController: BaseViewController,
     
     private let signUpToastView = SignUpToastView()
     
+    private var maxScrollPercent: Int = 0 // 앰플리튜드 이벤트 용
+    
     init(imjangId: Int, version: Int) {
         self.imjangId = imjangId
         self.versionDetail = version
@@ -183,6 +185,13 @@ final class ImjangNoteViewController: BaseViewController,
         NotificationCenter.default.addObserver(self, selector: #selector(scrollToTop), name: NSNotification.Name("ScrollToTop"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handleCheckListItemsUpdated(_:)), name: NSNotification.Name("CheckListItemsUpdated"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(handlePageChange(notification:)), name: NSNotification.Name("ChangeButtonStatus"), object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appDidEnterBackground),
+            name: UIApplication.didEnterBackgroundNotification,
+            object: nil
+        )
         
         if previousVCType == .createImjangVC {
             NotificationCenter.default.post(name: .refreshImjangList, object: nil)
@@ -554,6 +563,15 @@ final class ImjangNoteViewController: BaseViewController,
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        
+        amplitude.track(
+            event: BaseEvent(
+                eventType: AmpliEventName.scroll_viewed.rawValue,
+                eventProperties: [
+                    AmpliEventProp.checklist_page.rawValue : "\(maxScrollPercent)%"
+                ]
+            )
+        )
 
         if isMovingFromParent {
             switch previousVCType {
@@ -1270,6 +1288,17 @@ final class ImjangNoteViewController: BaseViewController,
         ]))
         checkListActionButton.configuration?.background.backgroundColor = .main
     }
+    
+    @objc private func appDidEnterBackground() {
+        amplitude.track(
+            event: BaseEvent(
+                eventType: AmpliEventName.scroll_viewed.rawValue,
+                eventProperties: [
+                    AmpliEventProp.checklist_page.rawValue : "\(maxScrollPercent)%"
+                ]
+            )
+        )
+    }
 }
 
 extension ImjangNoteViewController: UIScrollViewDelegate {
@@ -1277,7 +1306,16 @@ extension ImjangNoteViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let containerY = containerView.frame.origin.y
         
-        if scrollView.contentOffset.y > 0 && scrollView.contentOffset.y > containerY - 10 {
+        let offsetY = scrollView.contentOffset.y
+        
+        let scrollPercent = scrollView.scrollPercent
+
+        if UserDefaultManager.shared.isOnboarding && scrollPercent > maxScrollPercent {
+            maxScrollPercent = scrollPercent
+            print(scrollPercent)
+        }
+        
+        if offsetY > 0 && offsetY > containerY - 10 {
             scrollView.isScrollEnabled = false
             scrollView.contentOffset.y = containerY
             NotificationCenter.default.post(name: NSNotification.Name("didStoppedParentScroll"), object: nil)

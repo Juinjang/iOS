@@ -4,7 +4,7 @@
 //
 //  Created by 임수진 on 2/19/24.
 //
-// TODO: 버전, 셀 저장, 셀 값 해제 문제
+
 import UIKit
 import SnapKit
 import Alamofire
@@ -29,7 +29,7 @@ final class CheckListViewController: BaseViewController {
     var checkListCategories: [CheckListCategory] = [] // 카테고리별 질문
     var savedCheckListItems: [CheckListAnswer] = [] // 저장되어 있던 체크리스트 항목
     var checkListItems: [CheckListAnswer] = [] // 저장될 체크리스트 항목
-    
+        
     weak var delegate: CheckListDelegate?
     
     init(imjangId: Int, version: Int) {
@@ -59,9 +59,27 @@ final class CheckListViewController: BaseViewController {
         setupLayout()
         registerCell()
         setCheckInfo()
-        NotificationCenter.default.addObserver(self, selector: #selector(didStoppedParentScroll), name: NSNotification.Name("didStoppedParentScroll"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(handleEditModeChange(_:)), name: Notification.Name("EditModeChanged"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(ReloadTableView), name: NSNotification.Name("ReloadTableView"), object: nil)
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(didStoppedParentScroll),
+            name: NSNotification.Name("didStoppedParentScroll"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleEditModeChange(_:)),
+            name: Notification.Name("EditModeChanged"),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(ReloadTableView),
+            name: NSNotification.Name("ReloadTableView"),
+            object: nil
+        )
+        
         let hasSeenTutorial = UserDefaults.standard.bool(forKey: "hasSeenTutorial")
         if !hasSeenTutorial {
             UserDefaults.standard.set(true, forKey: "hasSeenTutorial")
@@ -321,7 +339,7 @@ extension CheckListViewController: UIScrollViewDelegate {
         guard scrollView == self.tableView else { return }
         
         let offset = scrollView.contentOffset.y
-        
+                
         // 스크롤이 맨 위에 있을 때만 tableView의 스크롤을 비활성화
         if offset <= 0 {
             if tableView.isScrollEnabled {
@@ -687,6 +705,25 @@ extension CheckListViewController: UITableViewDelegate, UITableViewDataSource {
             let adjustedSection = isEditMode ? indexPath.section - 1 : indexPath.section
             checkListCategories[adjustedSection].isExpanded.toggle()
             tableView.reloadSections(IndexSet(integer: indexPath.section), with: .fade)
+            
+            var eventKey = ""
+            
+            switch indexPath.section {
+            case 1:
+                eventKey = AmpliEventProp.location_clicked.rawValue
+            case 2:
+                eventKey = AmpliEventProp.convenience_clicked.rawValue
+            case 3:
+                eventKey = AmpliEventProp.indoor_clicked.rawValue
+            default: break
+            }
+            
+            amplitude.track(event: BaseEvent(
+                eventType: AmpliEventName.scroll_viewed.rawValue,
+                eventProperties: [
+                    eventKey : "\(checkListCategories[adjustedSection].isExpanded)"
+                ]
+            ))
         }
     }
 

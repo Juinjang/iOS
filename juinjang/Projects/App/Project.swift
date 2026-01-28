@@ -43,16 +43,16 @@ let project = Project(
         .makeAppTarget(
             appType: .prod,
             appDependencies: appDependencies,
-            appVersion: "2.0.7",
-            build: "2025.12.27.1"
+            appVersion: "2.0.8",
+            build: "2025.01.26.1"
         ),
         
         // MARK: - DEV
         .makeAppTarget(
             appType: .dev,
             appDependencies: appDependencies,
-            appVersion: "2.0.7",
-            build: "2025.12.26.1"
+            appVersion: "2.0.8",
+            build: "2025.01.26.1"
         )
     ],
     additionalFiles: [
