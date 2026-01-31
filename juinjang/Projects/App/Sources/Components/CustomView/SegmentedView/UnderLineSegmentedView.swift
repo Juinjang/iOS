@@ -145,7 +145,7 @@ final class UnderLineSegmentedView: BaseView, PageUnderLineUpdatable {
                 $0.setTitleColor(.gray500, for: .selected)
                 $0.titleLabel?.font = .pretendard(size: 14, weight: .semiBold)
                 $0.tag = index
-                $0.rx.tap
+                $0.rx.throttleTap
                     .withUnretained(self)
                     .do { (self, _) in
                         self.isSegmentTapTriggered = true

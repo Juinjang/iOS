@@ -236,7 +236,8 @@ final class TermsPopupViewController: BaseViewController, TermPopupDelegate {
         isAgree.toggle()
     }
     
-    @objc private func gotoMain() {
+    @objc private func gotoMain(sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
         guard isAgree else {
             print("Button2는 isAgree가 true일 때만 동작합니다.")
             return

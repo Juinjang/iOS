@@ -33,7 +33,7 @@ final class LookAroundContentCell: BaseCollectionViewCell {
         iconImageView.image = content.iconImage
         titleLabel.setAttribute(text: content.title, color: .gray600, font: .pretendard(size: 16, weight: .semiBold), lineHeight: 23)
         
-        cellTapButton.rx.tap
+        cellTapButton.rx.throttleTap
             .map { LookAroundEventType.cellContentTap(content: content) }
             .bind(to: relay)
             .disposed(by: disposeBag)

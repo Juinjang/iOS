@@ -23,7 +23,7 @@ final class SearchKeywordHeader: BaseCollectionReusableView {
     let removeAllButtonTappedRelay = PublishRelay<Void>()
     
     func configure() {
-        removeAllButton.rx.tap
+        removeAllButton.rx.throttleTap
             .bind(to: removeAllButtonTappedRelay)
             .disposed(by: disposeBag)
     }

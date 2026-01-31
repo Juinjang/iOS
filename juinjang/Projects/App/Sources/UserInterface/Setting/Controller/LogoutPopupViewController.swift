@@ -21,6 +21,7 @@ final class LogoutPopupViewController: BaseViewController {
     }
     
     @objc func yes(_ sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
         logoutDelegate?.logout()
     }
     

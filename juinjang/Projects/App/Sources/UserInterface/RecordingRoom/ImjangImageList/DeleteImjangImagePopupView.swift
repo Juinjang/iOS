@@ -101,6 +101,7 @@ final class DeleteImjangImagePopupView: UIViewController {
     }
     
     @objc func confirmAction(_ sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
         self.completionHandler?()
         dismiss(animated: false, completion: nil)
     }

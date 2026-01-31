@@ -39,7 +39,7 @@ final class RecentSearchKeywordCell: BaseCollectionViewCell {
     func configureCell(keyword: String, relay: PublishRelay<SearchKeywordCellEventType>) {
         searchKeywordLabel.setAttribute(text: keyword, font: .pretendard(size: 16, weight: .medium), lineHeight: 23)
    
-        deleteButton.rx.tap
+        deleteButton.rx.throttleTap
             .map { SearchKeywordCellEventType.deleteButtonTap(keyword: keyword) }
             .bind(to: relay)
             .disposed(by: disposeBag)

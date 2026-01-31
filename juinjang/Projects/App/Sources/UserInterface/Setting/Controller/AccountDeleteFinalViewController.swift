@@ -138,10 +138,11 @@ final class AccountDeleteFinalViewController: BaseViewController {
             }
         }
     }
-    @objc private  func no(_ sender: Any) {
+    @objc private  func no(_ sender: UIButton) {
         dismiss(animated: false, completion: nil)
     }
-    @objc private  func yes(_ sender: Any) {
+    @objc private  func yes(_ sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
         if UserDefaultManager.shared.isKakaoLogin {
             withdrawKakaoAccount(accessToken: UserDefaultManager.shared.accessToken, kakaoTargetId: UserDefaultManager.shared.kakaoTargetId)
         } else {

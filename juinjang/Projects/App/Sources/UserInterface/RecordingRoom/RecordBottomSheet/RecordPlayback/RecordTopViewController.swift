@@ -110,6 +110,7 @@ final class RecordTopViewController: BaseViewController {
     
     // 편집버튼 클릭 시
     @objc func editButtonTapped(_ sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
         sender.isSelected.toggle()
         
         if sender.isSelected {

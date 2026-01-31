@@ -80,7 +80,7 @@ final class SearchNavigationView: DefaultNavigationView {
             .bind(to: isSearchActiveRelay)
             .disposed(by: disposeBag)
         
-        self.searchToggleButton.rx.tap
+        self.searchToggleButton.rx.throttleTap
             .withUnretained(self)
             .subscribe { (self, _) in
                 if self.isSearchActiveRelay.value {

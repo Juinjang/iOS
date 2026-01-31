@@ -13,7 +13,7 @@ import ReactorKit
 extension Reactive where Base: UIButton {
     var throttleTap: Observable<ControlEvent<()>.Element> {
         return self.controlEvent(.touchUpInside)
-            .throttle(.milliseconds(500),
+            .throttle(.milliseconds(1500),
                       latest: false,
                       scheduler: MainScheduler.instance)
     }

@@ -102,6 +102,7 @@ final class DeletePopupViewController: BaseViewController {
     }
     
     @objc func confirmAction(_ sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
         self.completionHandler?(fileIndexPath!)
         dismiss(animated: false, completion: nil)
     }
