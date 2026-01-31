@@ -241,7 +241,6 @@ final class MainViewController: BaseViewController, DeleteImjangListDelegate {
         let lookAroundVC = LookAroundViewController(reactor: LookAroundReactor(dependency: .init(sharedNoteRepository: SharedNoteRepository())))
         lookAroundVC.navigationController?.isNavigationBarHidden = true
         self.navigationController?.pushViewController(lookAroundVC, animated: true)
-        
     }
     
     @objc private func setttingBtnTap() {

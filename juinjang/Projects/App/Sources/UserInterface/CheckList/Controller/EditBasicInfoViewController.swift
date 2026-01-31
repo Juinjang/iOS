@@ -717,14 +717,17 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
         }
     }
     
-    func updateTextFieldWidthConstraint(for textField: UITextField, constant: CGFloat) {
+    func updateTextFieldWidthConstraint(for textField: UITextField,
+                                        constant: CGFloat) {
         removeAllWidthConstraints(for: textField)
         let widthConstraint = textField.widthAnchor.constraint(equalToConstant: constant)
         widthConstraint.isActive = true
         textField.superview?.layoutIfNeeded()
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
         
         // 각 텍스트 필드에 대한 최소, 최대 너비 설정
