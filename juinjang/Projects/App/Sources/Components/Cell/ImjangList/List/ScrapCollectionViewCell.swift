@@ -71,8 +71,6 @@ extension ScrapCollectionViewCell {
         
         setScore(score: note.rate)
         
-        roomPriceLabel.text = note.price
-        
         roomAddressLabel.textColor = .gray400
         if let address = note.address {
             roomAddressLabel.text = address
@@ -222,6 +220,14 @@ extension ScrapCollectionViewCell {
     }
     
     private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
+        if note.price == "" || note.price == "0" {
+            roomPriceLabel.text = "가격 미입력"
+            roomPriceLabel.fontColor = .gray450
+            return
+        } else {
+            roomPriceLabel.fontColor = .gray600
+        }
+        
         switch priceType {
         case .SALE, .PULL_RENT, .MARKET_PRICE:
             roomPriceLabel.text = "\(priceType.title) \( note.price.formatToKoreanCurrencyWithZero())"

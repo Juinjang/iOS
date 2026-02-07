@@ -27,7 +27,6 @@ final class CheckListPopUpViewController: BaseViewController {
         $0.text = "기록룸으로 이동할까요?\n저장하지 않은 수정사항은 사라집니다."
         $0.textColor = .gray600
         $0.font = UIFont(name: "Pretendard-Medium", size: 16)
-//        $0.setLineSpacing(spacing: 3)
         $0.textAlignment = .center
         $0.numberOfLines = 2
     }

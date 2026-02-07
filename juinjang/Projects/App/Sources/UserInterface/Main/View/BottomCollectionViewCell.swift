@@ -63,7 +63,12 @@ final class BottomCollectionViewCell: UICollectionViewCell {
             price = formatRealEstatePrice(type: priceType, price: listDto.price)
         }
         
-        priceLabel.text = priceType.isEmpty ? "\(price)" : "\(priceType) \(price)"
+        if price == "" || price == "0" {
+            priceLabel.text = "가격 미입력"
+        } else {
+            priceLabel.text = priceType.isEmpty ? "\(price)" : "\(priceType) \(price)"
+        }
+        
         setScore(score: listDto.totalAverage)
     }
     
