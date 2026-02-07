@@ -14,11 +14,7 @@ import AmplitudeSwift
 import RxSwift
 import RxRelay
 
-final class ImjangNoteViewController: BaseViewController,
-                                      SendEditData,
-                                      SendDetailEditData,
-                                      ButtonStateDelegate,
-                                      SendCheckListData {
+final class ImjangNoteViewController: BaseViewController, SendEditData, SendDetailEditData, ButtonStateDelegate, SendCheckListData {
     private let noteRepository = NoteRepository()
     private let onboardingRepository = OnboardingRepository()
     private let disposeBag = DisposeBag()
@@ -358,10 +354,12 @@ final class ImjangNoteViewController: BaseViewController,
     
     private func callRequest() {
         if UserDefaultManager.shared.isOnboarding {
+            setLoading(isShow: true)
             onboardingRepository
                 .retrieveMyNoteDetail()
                 .asObservable()
                 .subscribe(with: self) { (self, response) in
+                    self.setLoading(isShow: false)
                     self.setData(detailDto: response)
                     self.roomName = self.detailDto?.buildingName ?? ""
                     self.updateConditionViewLayout(model: response)
@@ -372,9 +370,11 @@ final class ImjangNoteViewController: BaseViewController,
             return
         }
         
+        setLoading(isShow: true)
         noteRepository.retrieveNoteDetail(noteID: imjangId)
             .asObservable()
             .subscribe(with: self) { (self, detailData) in
+                self.setLoading(isShow: false)
                 self.setData(detailDto: detailData)
                 self.roomName = self.detailDto?.buildingName ?? ""
                 self.updateConditionViewLayout(model: detailData)

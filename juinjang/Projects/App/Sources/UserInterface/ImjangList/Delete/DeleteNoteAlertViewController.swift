@@ -119,6 +119,7 @@ final class DeleteNoteAlertViewController: BaseAlertViewController {
             messageLabel.asFont(targetString: "외 \(selectedCount - 1)건을 정말 삭제할까요?", font: .pretendard(size: 16, weight: .medium))
         }
         messageLabel.asColor(targetString: "외 \(selectedCount - 1)건", color: .main)
+        roomNameLabel.textAlignment = .center
         messageLabel.textAlignment = .center
     }
 }

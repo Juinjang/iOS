@@ -107,9 +107,11 @@ final class SelectMaemullViewController : BaseViewController {
     
     private func retrieveNoteList(sort: MyNoteFilter = .updated, excludingId: Int) {
         print(#function)
+        setLoading(isShow: true)
         dependency.noteRepository.retrieveNoteList(sort: sort.parameterValue, keyword: "")
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
+                owner.setLoading(isShow: false)
                 let notes = noteResultDTO
                 let filteredList = notes.filter { item in
                     return item.noteId != excludingId

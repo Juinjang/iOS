@@ -285,7 +285,7 @@ final class AddNewNoteViewController: BaseViewController {
         
         $0.backgroundColor = .null
         $0.layer.cornerRadius = 8
-        $0.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(addNoteButtonDidTap(_:)), for: .touchUpInside)
         
         $0.titleLabel?.font = .pretendard(size: 16, weight: .semiBold)
         $0.titleLabel?.adjustsFontSizeToFitWidth = true
@@ -942,7 +942,9 @@ final class AddNewNoteViewController: BaseViewController {
         }
     }
     
-    @objc func buttonTapped(_ sender: UIButton) {
+    @objc func addNoteButtonDidTap(_ sender: UIButton) {
+        guard sender.shouldAcceptEvent(throttleInterval: 2.0) else { return }
+        
         // 온보딩 분기처리
         if UserDefaultManager.shared.isOnboarding {
             present(SignUpViewController(.present), animated: true)
@@ -1016,10 +1018,16 @@ final class AddNewNoteViewController: BaseViewController {
     private func postAddNewNote(completionHandler: @escaping (Int?, NetworkError?) -> Void) {
         guard let request = addNewNoteRequest() else { return }
         
+        setLoading(isShow: true)
         repository.createNote(
             param: request
         ).asObservable()
+            .catch { [weak self] error in
+                self?.setLoading(isShow: false)
+                return .empty()
+            }
             .subscribe(with: self) { (self, responseModel) in
+                self.setLoading(isShow: false)
                 completionHandler(responseModel.noteId, nil)
             }
             .disposed(by: disposeBag)

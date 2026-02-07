@@ -132,10 +132,12 @@ final class DeleteImjangViewController: BaseViewController {
     }
     
     private func retrieveNoteList() {
+        setLoading(isShow: true)
         dependency.noteRepository.retrieveNoteList(sort: Filter.update.sortValue, keyword: "")
             .asObservable()
             .subscribe(with: self) { owner, noteResultDTO in
                 print(noteResultDTO)
+                self.setLoading(isShow: false)
                 let notes = noteResultDTO
                 owner.imjangList = notes
                 owner.collectionView.reloadData()

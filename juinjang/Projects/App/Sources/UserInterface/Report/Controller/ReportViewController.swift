@@ -101,9 +101,11 @@ final class ReportViewController : BaseViewController {
     
     func getReportInfo(limjangId: Int, accessToken: String) {
         if UserDefaultManager.shared.isOnboarding {
+            setLoading(isShow: true)
             onboardingRepository.retrieveMyNoteReport()
                 .asObservable()
                 .subscribe(with: self) { (self, response) in
+                    self.setLoading(isShow: false)
                     self.setData(reportDto: response.reportDTO)
                     self.setData(detailDto: response.limjangDto)
                 }
@@ -112,8 +114,10 @@ final class ReportViewController : BaseViewController {
             return
         }
         
+        setLoading(isShow: true)
         JuinjangAPIManager.shared.fetchData(type: BaseResponse<ReportResponseDto>.self, api: .fetchReportInfo(imjangId: limjangId)) { [weak self] response, error in
             guard let self else { return }
+            self.setLoading(isShow: false)
             if error == nil {
                 guard let response, let result = response.result else {
                     print("fetch Report Info Response is Empty")
