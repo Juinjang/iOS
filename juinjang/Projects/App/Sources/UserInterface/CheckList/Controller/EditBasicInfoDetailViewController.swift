@@ -142,20 +142,21 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     lazy var addressDetailTextField = UITextField().then {
         let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
-            let attributes: [NSAttributedString.Key: Any] = [
-                .foregroundColor: UIColor.gray300,
-                .font: customFont
-            ]
-            $0.attributedPlaceholder = NSAttributedString(string: "상세 주소", attributes: attributes)
-            $0.layer.backgroundColor = UIColor.mainWhite.cgColor
-            $0.layer.cornerRadius = 10
-            $0.layer.borderWidth = 1.5
-            $0.layer.borderColor = UIColor.stroke2.cgColor
-            $0.textColor = .gray500
-            $0.font = customFont
-            let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
-            $0.leftView = paddingView
-            $0.leftViewMode = .always
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray300,
+            .font: customFont
+        ]
+        $0.attributedPlaceholder = NSAttributedString(string: "상세 주소", attributes: attributes)
+        $0.layer.backgroundColor = UIColor.mainWhite.cgColor
+        $0.layer.cornerRadius = 10
+        $0.layer.borderWidth = 1.5
+        $0.layer.borderColor = UIColor.stroke2.cgColor
+        $0.textColor = .gray500
+        $0.font = customFont
+        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
+        $0.leftView = paddingView
+        $0.leftViewMode = .always
+        $0.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     lazy var houseNicknameTextField = UITextField().then {
@@ -463,6 +464,11 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         houseNicknameTextField.text = detailDto.buildingName
         pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
         floorTextField.text = detailDto.floor ?? ""
+        
+        if addressTextField.text == "" && addressDetailTextField.text == "" {
+            setupAddressDetailTextPlaceHolder()
+        }
+        
         setPriceTypeButton(priceType: detailDto.priceType)
         setPriceLabel(model: detailDto)
         checkNextButtonActivation()
@@ -488,6 +494,20 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             selectedPriceType = 2
             setmonthlyRentView()
         }
+    }
+    
+    private func setupAddressDetailTextPlaceHolder() {
+        let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray300,
+            .font: customFont
+        ]
+        let placeHolderText = addressTextField.text == "" ? "도로명 주소를 먼저 입력해 주세요." : "상세 주소"
+        addressDetailTextField.backgroundColor = addressDetailTextField.text == ""
+        ? .gray100
+        : .mainWhite
+        
+        addressDetailTextField.attributedPlaceholder = NSAttributedString(string: placeHolderText, attributes: attributes)
     }
     
     private func setPriceLabel(model: NoteDetailModel) {
@@ -1015,6 +1035,10 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
             }
         }
         return true
+    }
+    
+    @objc private func textDidChange(_ textField: UITextField) {
+        setupAddressDetailTextPlaceHolder()
     }
     
     private func sizeForText(text: String, font: UIFont) -> CGSize {

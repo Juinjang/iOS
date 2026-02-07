@@ -389,6 +389,11 @@ final class EditBasicInfoViewController: BaseViewController {
         houseNicknameTextField.text = detailDto.buildingName
         floorTextField.text = detailDto.floor ?? ""
         pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
+        
+        if detailDto.roadAddress == nil && detailDto.addressDetail == nil {
+            
+        }
+        
         setPriceLabel(model: detailDto)
         checkNextButtonActivation()
     }
@@ -787,6 +792,8 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
         } else if textField == fourDigitPriceField {
             textField.placeholder = "0000"
             updateTextFieldWidthConstraint(for: textField, constant: 79)
+        } else if textField == addressDetailTextField {
+            
         }
     }
     
