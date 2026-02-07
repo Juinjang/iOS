@@ -68,7 +68,8 @@ final class NoteRepository: NoteRepositoryProtocol {
             .asCompletable()
     }
     
-    func updateNote(noteID id: Int, param: NoteUpdateRequestDTO) -> Completable {
+    func updateNote(noteID id: Int,
+                    param: NoteUpdateRequestDTO) -> Completable {
         return NoteAPI.patchNote(id, param)
             .request(NoResultResponse.self, networkManager)
             .asCompletable()

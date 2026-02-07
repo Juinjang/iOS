@@ -22,11 +22,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     
     var checkSaveTimeRelay: PublishRelay<Void>?
     
-    var postModel: PostCodeResponseModel? {
-        didSet {
-            checkNextButtonActivation()
-        }
-    }
+    var postModel: PostCodeResponseModel?
     
     var initialEditModel: EditBasicInfoModel? // 초기 정보 수정 모델
     var transactionModel = TransactionModel()
@@ -339,16 +335,27 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     lazy var saveButton = UIButton().then {
         $0.setTitle("저장하기", for: .normal)
         $0.setTitleColor(.mainWhite, for: .normal)
-        
         $0.backgroundColor = .gray500
         $0.layer.cornerRadius = 8
-        
         $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
         $0.titleLabel?.numberOfLines = 1
         $0.titleLabel?.adjustsFontSizeToFitWidth = true
         $0.titleLabel?.minimumScaleFactor = 0.5
         $0.titleLabel?.lineBreakMode = .byTruncatingTail
         $0.addTarget(self, action: #selector(nextButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    private lazy var cancelButton = UIButton().then {
+        $0.setTitle("취소하기", for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
+        $0.backgroundColor = .gray3
+        $0.layer.cornerRadius = 8
+        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        $0.titleLabel?.numberOfLines = 1
+        $0.titleLabel?.adjustsFontSizeToFitWidth = true
+        $0.titleLabel?.minimumScaleFactor = 0.5
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.addTarget(self, action: #selector(cancelbuttonDidTap), for: .touchUpInside)
     }
     
     // -MARK: API 요청
@@ -478,7 +485,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         
         setPriceTypeButton(priceType: detailDto.priceType)
         setPriceLabel(model: detailDto)
-        checkNextButtonActivation()
     }
     
     private func setPriceTypeButton(priceType: String) {
@@ -510,7 +516,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             .font: customFont
         ]
         let placeHolderText = addressTextField.text == "" ? "도로명 주소를 먼저 입력해 주세요." : "상세 주소"
-        addressDetailTextField.backgroundColor = addressDetailTextField.text == ""
+        addressDetailTextField.isEnabled = !(addressTextField.text == "")
+        addressDetailTextField.backgroundColor = addressTextField.text == ""
         ? .gray100
         : .mainWhite
         
@@ -578,7 +585,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
          priceLabel,
          priceView,
          priceView2,
-         saveButton].forEach { view.addSubview($0) }
+         saveButton,
+         cancelButton].forEach { view.addSubview($0) }
         setupLayout()
     }
     
@@ -735,10 +743,17 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         inputMonthlyRentStackView.axis = .horizontal
         inputMonthlyRentStackView.spacing = 5
 
-        // 저장 버튼
+        cancelButton.snp.makeConstraints {
+            $0.height.equalTo(52)
+            $0.width.equalTo(109)
+            $0.leading.equalToSuperview().offset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
+        }
+        
         saveButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.horizontalEdges.equalToSuperview().inset(24)
+            $0.leading.equalTo(cancelButton.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
             $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
     }
@@ -747,6 +762,10 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     private func setButton() {
         // 입주 유형 카테고리에 속한 버튼
         priceTypeButtons = [saleButton, jeonseButton, monthlyRentButton]
+    }
+    
+    @objc private func cancelbuttonDidTap(_ sender: UIButton) {
+        getImjang()
     }
     
     @objc private func buttonPressed(_ sender: UIButton) {
@@ -782,8 +801,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
             selectedPriceType = 2
             setmonthlyRentView()
         }
-        saveButton.isEnabled = false
-        saveButton.backgroundColor = .gray300
         selectedPriceTypeButton = sender.isSelected ? sender : nil
         
         // 텍스트 필드 관련
@@ -918,12 +935,6 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         guard let price = Int(fourDigitMonthlyRentField.text ?? "") else { return nil }
         let priceString = String(price * 10000)
         return priceString
-    }
-    
-    private func checkNextButtonActivation() {
-        let shouldEnable = isFormInputValid() && isEditedComparedToInitial()
-        saveButton.isEnabled = shouldEnable
-        saveButton.backgroundColor = shouldEnable ? .gray500 : .gray300
     }
     
     private func isEditedComparedToInitial() -> Bool {
@@ -1062,11 +1073,6 @@ extension EditBasicInfoDetailViewController: UITextFieldDelegate {
             textField.placeholder = "0000"
             updateTextFieldWidthConstraint(for: textField, constant: 79)
         }
-        checkNextButtonActivation()
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        checkNextButtonActivation()
     }
 }
 

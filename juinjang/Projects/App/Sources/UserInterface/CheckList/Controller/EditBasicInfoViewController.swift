@@ -34,11 +34,7 @@ final class EditBasicInfoViewController: BaseViewController {
     
     weak var delegate: SendEditData?
     
-    var postModel: PostCodeResponseModel? {
-        didSet {
-            checkNextButtonActivation()
-        }
-    }
+    var postModel: PostCodeResponseModel?
     
     var initialEditModel: EditBasicInfoModel? // 초기 정보 수정 모델
 
@@ -291,6 +287,19 @@ final class EditBasicInfoViewController: BaseViewController {
         $0.addTarget(self, action: #selector(nextButtonTapped(_:)), for: .touchUpInside)
     }
     
+    private lazy var cancelButton = UIButton().then {
+        $0.setTitle("취소하기", for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
+        $0.backgroundColor = .gray3
+        $0.layer.cornerRadius = 8
+        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        $0.titleLabel?.numberOfLines = 1
+        $0.titleLabel?.adjustsFontSizeToFitWidth = true
+        $0.titleLabel?.minimumScaleFactor = 0.5
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.addTarget(self, action: #selector(cancelbuttonDidTap), for: .touchUpInside)
+    }
+    
     // -MARK: API 요청
     private func getImjang() {
         guard let imjangId = imjangId else { return }
@@ -403,7 +412,6 @@ final class EditBasicInfoViewController: BaseViewController {
         }
         
         setPriceLabel(model: detailDto)
-        checkNextButtonActivation()
     }
     
     private func setPriceLabel(model: NoteDetailModel) {
@@ -455,7 +463,8 @@ final class EditBasicInfoViewController: BaseViewController {
          priceLabel,
          priceView,
          priceView2,
-         saveButton].forEach { view.addSubview($0) }
+         saveButton,
+         cancelButton].forEach { view.addSubview($0) }
         setupLayout()
     }
     
@@ -608,15 +617,23 @@ final class EditBasicInfoViewController: BaseViewController {
             $0.centerY.equalTo(priceView.snp.centerY)
         }
 
-        // 저장 버튼
+        cancelButton.snp.makeConstraints {
+            $0.height.equalTo(52)
+            $0.width.equalTo(109)
+            $0.leading.equalToSuperview().offset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
+        }
+        
         saveButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.centerX.equalTo(view.snp.centerX).offset(58.5)
-            $0.leading.equalTo(view.snp.leading).offset(24)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.leading.equalTo(cancelButton.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
-
+    }
+    
+    @objc private func cancelbuttonDidTap(_ sender: UIButton) {
+        getImjang()
     }
     
     @objc private func searchAddressButtonTapped(_ sender: UIButton) {
@@ -679,17 +696,12 @@ final class EditBasicInfoViewController: BaseViewController {
             .font: customFont
         ]
         let placeHolderText = addressTextField.text == "" ? "도로명 주소를 먼저 입력해 주세요." : "상세 주소"
-        addressDetailTextField.backgroundColor = addressDetailTextField.text == ""
+        addressDetailTextField.isEnabled = !(addressTextField.text == "")
+        addressDetailTextField.backgroundColor = addressTextField.text == ""
         ? .gray100
         : .mainWhite
         
         addressDetailTextField.attributedPlaceholder = NSAttributedString(string: placeHolderText, attributes: attributes)
-    }
-    
-    private func checkNextButtonActivation() {
-        let shouldEnable = isFormInputValid() && isEditedComparedToInitial()
-        saveButton.isEnabled = shouldEnable
-        saveButton.backgroundColor = shouldEnable ? .gray500 : .gray300
     }
     
     private func isEditedComparedToInitial() -> Bool {
@@ -819,10 +831,6 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
     
     @objc private func textDidChange(_ textField: UITextField) {
         setupAddressDetailTextPlaceHolder()
-    }
-    
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        checkNextButtonActivation()
     }
 }
 
