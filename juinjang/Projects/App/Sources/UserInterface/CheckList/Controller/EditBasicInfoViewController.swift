@@ -120,6 +120,13 @@ final class EditBasicInfoViewController: BaseViewController {
         $0.leftViewMode = .always
     }
     
+    var addressText: String? {
+        didSet {
+            addressTextField.text = addressText ?? ""
+            setupAddressDetailTextPlaceHolder()
+        }
+    }
+    
     lazy var searchAddressButton = UIButton().then {
         $0.setTitle("주소 검색하기", for: .normal)
         $0.setTitleColor(.mainWhite, for: .normal)
@@ -152,6 +159,7 @@ final class EditBasicInfoViewController: BaseViewController {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
+        $0.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     lazy var houseNicknameTextField = UITextField().then {
@@ -390,8 +398,8 @@ final class EditBasicInfoViewController: BaseViewController {
         floorTextField.text = detailDto.floor ?? ""
         pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
         
-        if detailDto.roadAddress == nil && detailDto.addressDetail == nil {
-            
+        if addressTextField.text == "" && addressDetailTextField.text == "" {
+            setupAddressDetailTextPlaceHolder()
         }
         
         setPriceLabel(model: detailDto)
@@ -664,6 +672,20 @@ final class EditBasicInfoViewController: BaseViewController {
         }
     }
     
+    private func setupAddressDetailTextPlaceHolder() {
+        let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray300,
+            .font: customFont
+        ]
+        let placeHolderText = addressTextField.text == "" ? "도로명 주소를 먼저 입력해 주세요." : "상세 주소"
+        addressDetailTextField.backgroundColor = addressDetailTextField.text == ""
+        ? .gray100
+        : .mainWhite
+        
+        addressDetailTextField.attributedPlaceholder = NSAttributedString(string: placeHolderText, attributes: attributes)
+    }
+    
     private func checkNextButtonActivation() {
         let shouldEnable = isFormInputValid() && isEditedComparedToInitial()
         saveButton.isEnabled = shouldEnable
@@ -792,9 +814,11 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
         } else if textField == fourDigitPriceField {
             textField.placeholder = "0000"
             updateTextFieldWidthConstraint(for: textField, constant: 79)
-        } else if textField == addressDetailTextField {
-            
         }
+    }
+    
+    @objc private func textDidChange(_ textField: UITextField) {
+        setupAddressDetailTextPlaceHolder()
     }
     
     func textFieldDidChangeSelection(_ textField: UITextField) {

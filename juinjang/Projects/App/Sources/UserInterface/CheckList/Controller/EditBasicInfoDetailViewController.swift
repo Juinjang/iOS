@@ -124,6 +124,13 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         $0.leftViewMode = .always
     }
     
+    var addressText: String? {
+        didSet {
+            addressTextField.text = addressText ?? ""
+            setupAddressDetailTextPlaceHolder()
+        }
+    }
+    
     lazy var searchAddressButton = UIButton().then {
         $0.setTitle("주소 검색하기", for: .normal)
         $0.setTitleColor(.mainWhite, for: .normal)
