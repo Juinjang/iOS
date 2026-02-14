@@ -12,3 +12,7 @@ struct RootView: View {
         Text("Juinjang")
     }
 }
+
+#Preview {
+    RootView()
+}
