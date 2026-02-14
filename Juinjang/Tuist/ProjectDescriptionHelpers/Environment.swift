@@ -2,7 +2,7 @@
 import ProjectDescription
 
 public enum Environment {
-    public static let deploymentTargets: DeploymentTargets = .iOS("16.0")
+    public static let deploymentTargets: DeploymentTargets = .iOS("17.0")
     public static let destinations: Destinations = [.iPhone]
     public static let organizationName = "com.juinjangteam.Juinjang"
     public static let appVersion = "2.0.1"
