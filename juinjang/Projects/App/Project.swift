@@ -44,7 +44,7 @@ let project = Project(
             appType: .prod,
             appDependencies: appDependencies,
             appVersion: "2.0.9",
-            build: "2025.02.08.1"
+            build: "2025.02.14.1"
         ),
         
         // MARK: - DEV
@@ -52,7 +52,7 @@ let project = Project(
             appType: .dev,
             appDependencies: appDependencies,
             appVersion: "2.0.9",
-            build: "2025.02.08.1"
+            build: "2025.02.14.1"
         )
     ],
     additionalFiles: [
