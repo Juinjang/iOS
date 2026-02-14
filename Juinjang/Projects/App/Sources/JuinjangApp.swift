@@ -1,5 +1,5 @@
 //
-//  App.swift.swift
+//  JuinjangApp.swift.swift
 //  App
 //
 //  Created by 조유진 on 1/10/26.
