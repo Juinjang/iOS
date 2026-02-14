@@ -9,7 +9,8 @@ import PackageDescription
         productTypes: [
             "Alamofire": .staticFramework,
             "Reachability": .staticFramework,
-            "SnapKit": .staticFramework
+            "SnapKit": .staticFramework,
+            "ComposableArchitecture": .staticFramework
         ]
     )
 #endif

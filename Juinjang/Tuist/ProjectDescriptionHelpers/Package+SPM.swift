@@ -21,4 +21,9 @@ public extension Package.SPM {
         url: "https://github.com/ashleymills/Reachability.swift",
         requirement: .upToNextMajor(from: "5.0.0")
     )
+    
+    static let ComposableArchitecture = Package.remote(
+        url: "https://github.com/pointfreeco/swift-composable-architecture.git",
+        requirement: .upToNextMajor(from: "1.23.1")
+    )
 }
