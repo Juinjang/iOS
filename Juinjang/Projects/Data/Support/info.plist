@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!--
-   info.plist
-   Manifests
-
-   Created by 조유진 on 2/14/26.
-   Copyright (c) 2026 ___ORGANIZATIONNAME___. All rights reserved.
--->
 <plist version="1.0">
-<dict/>
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>ADM_KEY</key>
+	<string>$(ADM_KEY)</string>
+	<key>AREA_CODE_URL</key>
+	<string>$(AREA_CODE_URL)</string>
+	<key>BASE_URL</key>
+	<string>$(BASE_URL)</string>
+</dict>
 </plist>
