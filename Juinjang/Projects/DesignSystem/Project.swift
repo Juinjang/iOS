@@ -16,8 +16,7 @@ let project = Project(
             product: .framework,
             resources: .resources,
             dependencies: [
-                .module(.core),
-                .SPM.SnapKit
+                .module(.core)
             ]
         )
     ],

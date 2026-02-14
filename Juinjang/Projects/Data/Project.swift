@@ -23,8 +23,9 @@ let project = Project(
             product: .framework,
             infoPlist: .file(path: "Support/Info.plist"),
             dependencies: [
+                .module(.domain),
                 .SPM.Alamofire,
-                .module(.domain)
+                .SPM.Reachability
             ],
             settings: .settings(configurations: [
                 .debug(name: "Debug", xcconfig: "Configurations/secrets.xcconfig"),

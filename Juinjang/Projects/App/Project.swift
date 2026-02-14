@@ -3,7 +3,6 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let appDependencies: [TargetDependency] = [
-    .SPM.Reachability,
     .module(.data),
     .module(.presentation)
 ]
@@ -12,8 +11,9 @@ let project = Project(
     name: Module.app.name,
     packages: [
         .SPM.Alamofire,
-        .SPM.Reachability,
-        .SPM.SnapKit
+        .SPM.SnapKit,
+        .SPM.ComposableArchitecture,
+        .SPM.Reachability
     ],
     targets: [
         // MARK: - PROD

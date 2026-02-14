@@ -6,12 +6,7 @@ import PackageDescription
     import ProjectDescriptionHelpers
 
     let packageSettings: PackageSettings = .init(
-        productTypes: [
-            "Alamofire": .staticFramework,
-            "Reachability": .staticFramework,
-            "SnapKit": .staticFramework,
-            "ComposableArchitecture": .staticFramework
-        ]
+        productTypes: [:]
     )
 #endif
 

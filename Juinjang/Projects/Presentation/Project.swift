@@ -16,8 +16,7 @@ let project = Project(
             product: .staticFramework,
             dependencies: [
                 .module(.designSystem),
-                .module(.domain),
-                .SPM.ComposableArchitecture
+                .module(.domain)
             ]
         )
     ]
