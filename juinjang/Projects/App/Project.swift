@@ -3,9 +3,9 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let appDependencies: [TargetDependency] = [
-    .SPM.Alamofire,
     .SPM.Reachability,
-    .SPM.SnapKit
+    .module(.data),
+    .module(.presentation)
 ]
 
 let project = Project(

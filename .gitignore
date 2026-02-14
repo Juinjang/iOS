@@ -1,5 +1,6 @@
 # Privacy
 **/XCConfig
+**/Configurations
 APIKey.swift
 
 # General
@@ -33,4 +34,5 @@ xcuserdata/
 **/Derived/
 juinjang/Tuist/.build
 **/build
-juinjang/Projects/App/Sources/Network/APIKey.swift
+**/APIKey.swift
+*.xcconfig
