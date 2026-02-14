@@ -71,3 +71,6 @@ Tuist/.build
 
 **/XCConfig
 **/APIKey.swift
+
+### xcconfig ###
+*.xcconfig
