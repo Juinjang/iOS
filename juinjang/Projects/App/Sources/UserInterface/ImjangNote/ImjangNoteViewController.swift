@@ -1206,34 +1206,31 @@ final class ImjangNoteViewController: BaseViewController,
         }
         
         // MARK: - 공유 조건 뷰
-        // 평층 입력 X -> 공유 조건 뷰 X
-        if model.pyong != nil && model.floor != nil {
-            if model.isShared {
-                shareCompletedButton.snp.remakeConstraints {
-                    $0.top.equalTo(infoStackView.snp.bottom).offset(16)
-                    $0.horizontalEdges.equalToSuperview().inset(24)
-                    $0.height.equalTo(68)
-                }
-                
-                // containerView
-                containerView.snp.remakeConstraints {
-                    $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
-                    $0.leading.trailing.equalTo(contentView)
-                    $0.bottom.equalTo(contentView).offset(-24)
-                }
-            } else {
-                noteShareConditionView.snp.remakeConstraints {
-                    $0.top.equalTo(infoStackView.snp.bottom).offset(16)
-                    $0.horizontalEdges.equalToSuperview().inset(24)
-                    $0.height.equalTo(106)
-                }
-                
-                // containerView
-                containerView.snp.remakeConstraints {
-                    $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
-                    $0.leading.trailing.equalTo(contentView)
-                    $0.bottom.equalTo(contentView).offset(-24)
-                }
+        if model.isShared {
+            shareCompletedButton.snp.remakeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(68)
+            }
+            
+            // containerView
+            containerView.snp.remakeConstraints {
+                $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
+            }
+        } else {
+            noteShareConditionView.snp.remakeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(106)
+            }
+            
+            // containerView
+            containerView.snp.remakeConstraints {
+                $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
             }
         }
     }
