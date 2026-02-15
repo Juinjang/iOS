@@ -12,7 +12,6 @@ let project = Project(
     packages: [
         .SPM.Alamofire,
         .SPM.SnapKit,
-        .SPM.ComposableArchitecture,
         .SPM.Reachability
     ],
     targets: [
