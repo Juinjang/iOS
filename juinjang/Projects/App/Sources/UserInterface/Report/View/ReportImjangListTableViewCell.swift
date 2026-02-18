@@ -45,21 +45,40 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setPriceLabel(priceList: [String], priceType: String) {
+    func setPriceLabel(priceList: [String?], priceType: String) {
         switch priceList.count {
+            
         case 1:
-            let priceString = priceList[0]
-            print(priceString.formatToKoreanCurrencyWithZero())
-            if priceType.isEmpty {
-                priceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                priceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
+            guard
+                let raw = priceList.first ?? nil,
+                let value = Int(raw),
+                value > 0
+            else {
+                priceLabel.text = "가격 미입력"
+                return
             }
+
+            let formatted = raw.formatToKoreanCurrencyWithZero()
+            priceLabel.text = priceType.isEmpty
+                ? formatted
+                : "\(priceType) \(formatted)"
+            
         case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-            priceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
+            guard
+                let depositRaw = priceList[safe: 0] ?? nil,
+                let rentRaw = priceList[safe: 1] ?? nil,
+                let rentValue = Int(rentRaw),
+                rentValue > 0
+            else {
+                priceLabel.text = "가격 미입력"
+                return
+            }
+
+            let formattedDeposit = depositRaw.formatToKoreanCurrencyWithZero()
+            let formattedRent = rentRaw.oneSplitAmount().addingCommas()
+
+            priceLabel.text = "\(priceType) \(formattedDeposit) / \(formattedRent)"
+            
         default:
             priceLabel.text = "편집을 통해 가격을 설정해주세요."
         }
@@ -84,7 +103,6 @@ final class ReportImjangListTableViewCell: UITableViewCell {
         }
         setPriceLabel(priceList: imjangNote.priceList, priceType: priceTypeString)
         setRate(totalAverage: imjangNote.totalAverage)
-        print("총점은 : \(imjangNote.totalAverage)")
         
         addressLabel.text = imjangNote.address
         

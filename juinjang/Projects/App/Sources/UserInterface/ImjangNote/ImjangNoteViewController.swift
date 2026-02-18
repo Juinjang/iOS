@@ -469,16 +469,26 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 방 가격 설정
     private func setPriceLabel(model: NoteDetailModel) {
-        if (model.price?.isEmpty ?? true) || model.price == "0" {
+        guard
+            let price = model.price,
+            let priceValue = Int(price),
+            priceValue > 0
+        else {
             roomPriceLabel.text = "가격 미입력"
             return
         }
+
+        let formattedPrice = price.formatToKoreanCurrencyWithZero()
         
-        if let monthlyRent = model.monthlyRent {
-            // 월세 일 경우
-            roomPriceLabel.text = "\(model.priceTypeToString) \(String(describing: model.price?.formatToKoreanCurrencyWithZero())) / \(monthlyRent.formatToKoreanCurrencyWithZero())"
+        if let monthlyRent = model.monthlyRent,
+           let rentValue = Int(monthlyRent),
+           rentValue > 0 {
+            
+            let formattedRent = monthlyRent.formatToKoreanCurrencyWithZero()
+            roomPriceLabel.text = "\(model.priceTypeToString) \(formattedPrice) / \(formattedRent)"
+            
         } else {
-            roomPriceLabel.text = "\(model.priceTypeToString) \(String(describing: model.price?.formatToKoreanCurrencyWithZero()))"
+            roomPriceLabel.text = "\(model.priceTypeToString) \(formattedPrice)"
         }
     }
     

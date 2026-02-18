@@ -238,33 +238,38 @@ final class ReportViewController : BaseViewController {
 
     }
     
-    func setPriceLabel(priceList: [String], priceType: String) {
+    func setPriceLabel(priceList: [String?], priceType: String) {
         switch priceList.count {
         case 1:
-            let priceString = priceList[0]
-            
-            if priceString == "0" || priceString == "" {
+            guard
+                let priceString = priceList.first ?? nil,
+                let priceInt = Int(priceString),
+                priceInt > 0
+            else {
                 priceLabel.text = "가격 미입력"
                 return
             }
             
-            print(priceString.formatToKoreanCurrencyWithZero())
-            if priceType.isEmpty {
-                priceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                priceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
-            }
+            let formatted = priceString.formatToKoreanCurrencyWithZero()
+            
+            priceLabel.text = priceType.isEmpty
+            ? formatted
+            : "\(priceType) \(formatted)"
         case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-            
-            if priceString2 == "0" || priceString2 == "" {
+            guard
+                let deposit = priceList[safe: 0] ?? nil,
+                let rent = priceList[safe: 1] ?? nil,
+                let rentInt = Int(rent),
+                rentInt > 0
+            else {
                 priceLabel.text = "가격 미입력"
                 return
             }
             
-            priceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
+            let formattedDeposit = deposit.formatToKoreanCurrencyWithZero()
+            let formattedRent = rent.oneSplitAmount().addingCommas()
+            
+            priceLabel.text = "\(priceType) \(formattedDeposit) / \(formattedRent)"
         default:
             priceLabel.text = "편집을 통해 가격을 설정해주세요."
         }

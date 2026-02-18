@@ -220,7 +220,7 @@ extension ScrapCollectionViewCell {
     }
     
     private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
-        if note.price == "" || note.price == "0" {
+        if (note.price?.isEmpty ?? true) || note.price == "0" {
             roomPriceLabel.text = "가격 미입력"
             roomPriceLabel.fontColor = .gray450
             return
@@ -230,9 +230,9 @@ extension ScrapCollectionViewCell {
         
         switch priceType {
         case .SALE, .PULL_RENT, .MARKET_PRICE:
-            roomPriceLabel.text = "\(priceType.title) \( note.price.formatToKoreanCurrencyWithZero())"
+            roomPriceLabel.text = "\(priceType.title) \(note.price?.formatToKoreanCurrencyWithZero() ?? "")"
         case .MONTHLY_RENT:
-            roomPriceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero()) / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+            roomPriceLabel.text = "\(priceType.title) \(note.price?.formatToKoreanCurrencyWithZero() ?? "") / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
     }
     

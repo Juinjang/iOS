@@ -19,7 +19,7 @@ struct MainImjangDto: Codable {
     let limjangId: Int
     let image: String?
     let nickname: String
-    let price: String
+    let price: String?
     let totalAverage: String?
     let address: String
 }
@@ -32,7 +32,7 @@ struct ListDto: Codable, Hashable {
     var isScraped: Bool
     let nickname: String
     let priceType: Int
-    let priceList: [String]
+    let priceList: [String?]
     let totalAverage: String?    // 체크리스트 생선 전일 경우 값은 nil
     let address: String?
     
@@ -56,7 +56,7 @@ struct LimjangDto: Codable {
     let priceType: Int
     let image: String?
     let nickname: String
-    let price: String
+    let price: String?
     let totalAverage: String?    // 체크리스트 생선 전일 경우 값은 nil
     let address: String?
 }
@@ -67,7 +67,7 @@ struct LimjangDTO: Codable {
     let purposeCode: Int
     let nickname: String
     let priceType: Int
-    let priceList: [String]
+    let priceList: [String?]
     let address: String
     let addressDetail: String
     let createdAt: String
@@ -87,7 +87,7 @@ struct NoteDTO: Codable {
     let imageUrl: [String]
     var isScraped: Bool
     let rate: String?
-    let price: String
+    let price: String?
     let monthlyRent: String?
     let pyong: Int?
     let floor: String?
