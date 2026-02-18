@@ -300,6 +300,8 @@ final class EditBasicInfoViewController: BaseViewController {
         $0.addTarget(self, action: #selector(cancelbuttonDidTap), for: .touchUpInside)
     }
     
+    private var initialBuildingName: String = ""
+    
     // -MARK: API 요청
     private func getImjang() {
         guard let imjangId = imjangId else { return }
@@ -324,9 +326,10 @@ final class EditBasicInfoViewController: BaseViewController {
 
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
-        let nickname = houseNicknameTextField.text ?? ""
+        let bindingNickname = houseNicknameTextField.text ?? ""
+        let nickname = bindingNickname.isEmpty ? initialBuildingName : bindingNickname
         let floor = floorTextField.text ?? ""
-        let pyong = Int(pyungTextField.text ?? "") ?? 0
+        let pyong = Int(pyungTextField.text ?? "")
         
         noteRepository
             .updateImjang(
@@ -408,6 +411,7 @@ final class EditBasicInfoViewController: BaseViewController {
         addressTextField.text = detailDto.roadAddress ?? ""
         addressDetailTextField.text = detailDto.addressDetail ?? ""
         houseNicknameTextField.text = detailDto.buildingName
+        initialBuildingName = detailDto.buildingName
         floorTextField.text = detailDto.floor ?? ""
         pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
         
@@ -680,8 +684,8 @@ final class EditBasicInfoViewController: BaseViewController {
                     price: String(threeDisitPrice * 100000000 + fourDisitPrice * 10000),
                     monthlyRent: "",
                     updatedAt: updatedAt,
-                    floor: "",
-                    pyong: 0,
+                    floor: nil,
+                    pyong: nil,
                     bcode: nil,
                     sido: nil,
                     sigungu: nil,

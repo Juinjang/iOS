@@ -358,6 +358,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         $0.addTarget(self, action: #selector(cancelbuttonDidTap), for: .touchUpInside)
     }
     
+    private var initialBuildingName: String = ""
+    
     // -MARK: API 요청
     func getImjang() {
         guard let imjangId = imjangId else { return }
@@ -394,9 +396,10 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         let monthlyRent = monthlyRentPriceString()
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
-        let nickname = houseNicknameTextField.text ?? ""
+        let bindingNickname = houseNicknameTextField.text ?? ""
+        let nickname = bindingNickname.isEmpty ? initialBuildingName : bindingNickname
         let floor = floorTextField.text ?? ""
-        let pyong = Int(pyungTextField.text ?? "") ?? 0
+        let pyong = Int(pyungTextField.text ?? "")
         
         let parameter: NoteUpdateRequestDTO = .init(
             priceType: selectedPriceType,
@@ -480,6 +483,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         addressTextField.text = detailDto.roadAddress ?? ""
         addressDetailTextField.text = detailDto.addressDetail ?? ""
         houseNicknameTextField.text = detailDto.buildingName
+        initialBuildingName = detailDto.buildingName
         pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
         floorTextField.text = detailDto.floor ?? ""
         
@@ -920,8 +924,8 @@ final class EditBasicInfoDetailViewController: BaseViewController {
                     price: String(threeDigitPrice * 100000000 + fourDigitPrice * 10000),
                     monthlyRent: monthlyRentPriceString(),
                     updatedAt: updatedAt,
-                    floor: "",
-                    pyong: 0,
+                    floor: nil,
+                    pyong: nil,
                     bcode: nil,
                     sido: nil,
                     sigungu: nil,
