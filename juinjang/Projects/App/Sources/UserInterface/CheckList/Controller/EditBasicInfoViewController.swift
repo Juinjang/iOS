@@ -360,11 +360,15 @@ final class EditBasicInfoViewController: BaseViewController {
             .disposed(by: disposeBag)
     }
     
-    private func mergedPriceString(threeDigit: String?, fourDigit: String?) -> String {
-        let hundredMillion = Int(threeDigit?.trimmingCharacters(in: .whitespaces) ?? "") ?? 0  // 억
-        let tenThousand = Int(fourDigit?.trimmingCharacters(in: .whitespaces) ?? "") ?? 0     // 만원
+    private func mergedPriceString(threeDigit: String?, fourDigit: String?) -> String? {
+        let hundredMillion = Int(threeDigit?.trimmingCharacters(in: .whitespaces) ?? "")  // 억
+        let tenThousand = Int(fourDigit?.trimmingCharacters(in: .whitespaces) ?? "")     // 만원
+        
+        guard hundredMillion != nil || tenThousand != nil else {
+            return nil
+        }
 
-        let totalPrice = hundredMillion * 100_000_000 + tenThousand * 10_000
+        let totalPrice = (hundredMillion ?? 0) * 100_000_000 + (tenThousand ?? 0) * 10_000
         return String(totalPrice)
     }
 
@@ -415,7 +419,9 @@ final class EditBasicInfoViewController: BaseViewController {
     }
     
     private func setPriceLabel(model: NoteDetailModel) {
-        let (units, remainder) = model.price.twoSplitAmount()
+        let splitPrice = model.price?.twoSplitAmount()
+        let units = splitPrice?.0
+        let remainder = splitPrice?.1
         
         threeDigitPriceField.text = units == "0" ? "" : units
         fourDigitPriceField.text = remainder == "0" ? "" : remainder
