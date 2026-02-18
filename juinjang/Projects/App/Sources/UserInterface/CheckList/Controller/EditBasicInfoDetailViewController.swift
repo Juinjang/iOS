@@ -495,6 +495,14 @@ final class EditBasicInfoDetailViewController: BaseViewController {
         setPriceLabel(model: detailDto)
     }
     
+    private func resetPriceTypeButton() {
+        saleButton.isSelected = false
+        jeonseButton.isSelected = false
+        monthlyRentButton.isSelected = false
+        selectedPriceTypeButton = nil
+        selectedPriceType = nil
+    }
+    
     private func setPriceTypeButton(priceType: String) {
         if priceType == "SALE" {
             saleButton.isSelected = true
@@ -775,6 +783,7 @@ final class EditBasicInfoDetailViewController: BaseViewController {
     }
     
     @objc private func cancelbuttonDidTap(_ sender: UIButton) {
+        resetPriceTypeButton()
         getImjang()
     }
     
