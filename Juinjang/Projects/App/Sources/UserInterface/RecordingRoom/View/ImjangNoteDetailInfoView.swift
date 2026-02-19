@@ -37,29 +37,22 @@ final class ImjangNoteDetailInfoView: BaseView {
             $0.removeFromSuperview()
         }
         
-        if let floor = model.floor,
-           let pyong = model.pyong {
-            [createContentLabel(text: model.propertyTypeToKorean),
-             createContentLabel(text: "\(floor)층"),
-             createContentLabel(text: "\(pyong)평")].forEach {
-                contentStackView.addArrangedSubview($0)
-            }
-        } else {
-            [createContentLabel(text: model.propertyTypeToKorean),
-             createTextButton(text: "눌러서 입력하러 가기"),
-             createTextButton(text: "눌러서 입력하러 가기")].forEach {
-                contentStackView.addArrangedSubview($0)
-                if let button = $0 as? UIButton {
-                    button.rx.throttleTap
-                        .bind(to: relay)
-                        .disposed(by: disposeBag)
-                    
-                    button.snp.makeConstraints {
-                        $0.height.equalTo(23)
-                    }
-                }
-            }
-        }
+        contentStackView.addArrangedSubview(
+            createContentLabel(text: model.propertyTypeToKorean)
+        )
+        
+        [makeValueView(
+            value: model.floor,
+            unit: "층",
+            relay: relay
+        ),
+         makeValueView(
+            value: String(model.pyong ?? 0),
+            unit: "평",
+            relay: relay
+         )].forEach {
+             contentStackView.addArrangedSubview($0)
+         }
     }
     
     override func configureHierarchy() {
@@ -118,6 +111,31 @@ extension ImjangNoteDetailInfoView {
             $0.setTitleColor(.gray300, for: .normal)
             $0.titleLabel?.textAlignment = .left
             $0.setTitle("눌러서 입력하러 가기", for: .normal)
+        }
+    }
+    
+    fileprivate func makeValueView(
+        value: String?,
+        unit: String,
+        relay: PublishRelay<Void>
+    ) -> UIView {
+        if let value,
+           !value.isEmpty,
+           value != "0" {
+            
+            return createContentLabel(text: "\(value)\(unit)")
+        } else {
+            let button = createTextButton(text: "눌러서 입력하러 가기")
+            
+            button.rx.throttleTap
+                .bind(to: relay)
+                .disposed(by: disposeBag)
+            
+            button.snp.makeConstraints {
+                $0.height.equalTo(23)
+            }
+            
+            return button
         }
     }
 }

@@ -34,11 +34,7 @@ final class EditBasicInfoViewController: BaseViewController {
     
     weak var delegate: SendEditData?
     
-    var postModel: PostCodeResponseModel? {
-        didSet {
-            checkNextButtonActivation()
-        }
-    }
+    var postModel: PostCodeResponseModel?
     
     var initialEditModel: EditBasicInfoModel? // 초기 정보 수정 모델
 
@@ -120,6 +116,13 @@ final class EditBasicInfoViewController: BaseViewController {
         $0.leftViewMode = .always
     }
     
+    var addressText: String? {
+        didSet {
+            addressTextField.text = addressText ?? ""
+            setupAddressDetailTextPlaceHolder()
+        }
+    }
+    
     lazy var searchAddressButton = UIButton().then {
         $0.setTitle("주소 검색하기", for: .normal)
         $0.setTitleColor(.mainWhite, for: .normal)
@@ -152,6 +155,7 @@ final class EditBasicInfoViewController: BaseViewController {
         let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 12, height: $0.frame.height))
         $0.leftView = paddingView
         $0.leftViewMode = .always
+        $0.addTarget(self, action: #selector(textDidChange), for: .editingChanged)
     }
     
     lazy var houseNicknameTextField = UITextField().then {
@@ -283,6 +287,21 @@ final class EditBasicInfoViewController: BaseViewController {
         $0.addTarget(self, action: #selector(nextButtonTapped(_:)), for: .touchUpInside)
     }
     
+    private lazy var cancelButton = UIButton().then {
+        $0.setTitle("취소하기", for: .normal)
+        $0.setTitleColor(.gray500, for: .normal)
+        $0.backgroundColor = .gray3
+        $0.layer.cornerRadius = 8
+        $0.titleLabel?.font = UIFont(name: "Pretendard-SemiBold", size: 16)
+        $0.titleLabel?.numberOfLines = 1
+        $0.titleLabel?.adjustsFontSizeToFitWidth = true
+        $0.titleLabel?.minimumScaleFactor = 0.5
+        $0.titleLabel?.lineBreakMode = .byTruncatingTail
+        $0.addTarget(self, action: #selector(cancelbuttonDidTap), for: .touchUpInside)
+    }
+    
+    private var initialBuildingName: String = ""
+    
     // -MARK: API 요청
     private func getImjang() {
         guard let imjangId = imjangId else { return }
@@ -307,9 +326,10 @@ final class EditBasicInfoViewController: BaseViewController {
 
         let roadAddress = addressTextField.text ?? ""
         let addressDetail = addressDetailTextField.text ?? ""
-        let nickname = houseNicknameTextField.text ?? ""
+        let bindingNickname = houseNicknameTextField.text ?? ""
+        let nickname = bindingNickname.isEmpty ? initialBuildingName : bindingNickname
         let floor = floorTextField.text ?? ""
-        let pyong = Int(pyungTextField.text ?? "") ?? 0
+        let pyong = Int(pyungTextField.text ?? "")
         
         noteRepository
             .updateImjang(
@@ -343,11 +363,15 @@ final class EditBasicInfoViewController: BaseViewController {
             .disposed(by: disposeBag)
     }
     
-    private func mergedPriceString(threeDigit: String?, fourDigit: String?) -> String {
-        let hundredMillion = Int(threeDigit?.trimmingCharacters(in: .whitespaces) ?? "") ?? 0  // 억
-        let tenThousand = Int(fourDigit?.trimmingCharacters(in: .whitespaces) ?? "") ?? 0     // 만원
+    private func mergedPriceString(threeDigit: String?, fourDigit: String?) -> String? {
+        let hundredMillion = Int(threeDigit?.trimmingCharacters(in: .whitespaces) ?? "")  // 억
+        let tenThousand = Int(fourDigit?.trimmingCharacters(in: .whitespaces) ?? "")     // 만원
+        
+        guard hundredMillion != nil || tenThousand != nil else {
+            return nil
+        }
 
-        let totalPrice = hundredMillion * 100_000_000 + tenThousand * 10_000
+        let totalPrice = (hundredMillion ?? 0) * 100_000_000 + (tenThousand ?? 0) * 10_000
         return String(totalPrice)
     }
 
@@ -387,14 +411,21 @@ final class EditBasicInfoViewController: BaseViewController {
         addressTextField.text = detailDto.roadAddress ?? ""
         addressDetailTextField.text = detailDto.addressDetail ?? ""
         houseNicknameTextField.text = detailDto.buildingName
+        initialBuildingName = detailDto.buildingName
         floorTextField.text = detailDto.floor ?? ""
         pyungTextField.text = (detailDto.pyong == nil) ? "" : "\(detailDto.pyong ?? 0)"
+        
+        if addressTextField.text == "" && addressDetailTextField.text == "" {
+            setupAddressDetailTextPlaceHolder()
+        }
+        
         setPriceLabel(model: detailDto)
-        checkNextButtonActivation()
     }
     
     private func setPriceLabel(model: NoteDetailModel) {
-        let (units, remainder) = model.price.twoSplitAmount()
+        let splitPrice = model.price?.twoSplitAmount()
+        let units = splitPrice?.0
+        let remainder = splitPrice?.1
         
         threeDigitPriceField.text = units == "0" ? "" : units
         fourDigitPriceField.text = remainder == "0" ? "" : remainder
@@ -442,7 +473,8 @@ final class EditBasicInfoViewController: BaseViewController {
          priceLabel,
          priceView,
          priceView2,
-         saveButton].forEach { view.addSubview($0) }
+         saveButton,
+         cancelButton].forEach { view.addSubview($0) }
         setupLayout()
     }
     
@@ -595,15 +627,23 @@ final class EditBasicInfoViewController: BaseViewController {
             $0.centerY.equalTo(priceView.snp.centerY)
         }
 
-        // 저장 버튼
+        cancelButton.snp.makeConstraints {
+            $0.height.equalTo(52)
+            $0.width.equalTo(109)
+            $0.leading.equalToSuperview().offset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
+        }
+        
         saveButton.snp.makeConstraints {
             $0.height.equalTo(52)
-            $0.centerX.equalTo(view.snp.centerX).offset(58.5)
-            $0.leading.equalTo(view.snp.leading).offset(24)
-            $0.trailing.equalTo(view.snp.trailing).offset(-24)
-            $0.bottom.equalTo(view.snp.bottom).offset(-33)
+            $0.leading.equalTo(cancelButton.snp.trailing).offset(8)
+            $0.trailing.equalToSuperview().inset(24)
+            $0.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
-
+    }
+    
+    @objc private func cancelbuttonDidTap(_ sender: UIButton) {
+        getImjang()
     }
     
     @objc private func searchAddressButtonTapped(_ sender: UIButton) {
@@ -644,8 +684,8 @@ final class EditBasicInfoViewController: BaseViewController {
                     price: String(threeDisitPrice * 100000000 + fourDisitPrice * 10000),
                     monthlyRent: "",
                     updatedAt: updatedAt,
-                    floor: "",
-                    pyong: 0,
+                    floor: nil,
+                    pyong: nil,
                     bcode: nil,
                     sido: nil,
                     sigungu: nil,
@@ -659,10 +699,19 @@ final class EditBasicInfoViewController: BaseViewController {
         }
     }
     
-    private func checkNextButtonActivation() {
-        let shouldEnable = isFormInputValid() && isEditedComparedToInitial()
-        saveButton.isEnabled = shouldEnable
-        saveButton.backgroundColor = shouldEnable ? .gray500 : .gray300
+    private func setupAddressDetailTextPlaceHolder() {
+        let customFont = UIFont(name: "Pretendard-Medium", size: 16) ?? UIFont.systemFont(ofSize: 16)
+        let attributes: [NSAttributedString.Key: Any] = [
+            .foregroundColor: UIColor.gray300,
+            .font: customFont
+        ]
+        let placeHolderText = addressTextField.text == "" ? "도로명 주소를 먼저 입력해 주세요." : "상세 주소"
+        addressDetailTextField.isEnabled = !(addressTextField.text == "")
+        addressDetailTextField.backgroundColor = addressTextField.text == ""
+        ? .gray100
+        : .mainWhite
+        
+        addressDetailTextField.attributedPlaceholder = NSAttributedString(string: placeHolderText, attributes: attributes)
     }
     
     private func isEditedComparedToInitial() -> Bool {
@@ -717,14 +766,17 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
         }
     }
     
-    func updateTextFieldWidthConstraint(for textField: UITextField, constant: CGFloat) {
+    func updateTextFieldWidthConstraint(for textField: UITextField,
+                                        constant: CGFloat) {
         removeAllWidthConstraints(for: textField)
         let widthConstraint = textField.widthAnchor.constraint(equalToConstant: constant)
         widthConstraint.isActive = true
         textField.superview?.layoutIfNeeded()
     }
     
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+    func textField(_ textField: UITextField,
+                   shouldChangeCharactersIn range: NSRange,
+                   replacementString string: String) -> Bool {
         guard let text = textField.text else { return true }
         
         // 각 텍스트 필드에 대한 최소, 최대 너비 설정
@@ -787,8 +839,8 @@ extension EditBasicInfoViewController: UITextFieldDelegate {
         }
     }
     
-    func textFieldDidChangeSelection(_ textField: UITextField) {
-        checkNextButtonActivation()
+    @objc private func textDidChange(_ textField: UITextField) {
+        setupAddressDetailTextPlaceHolder()
     }
 }
 

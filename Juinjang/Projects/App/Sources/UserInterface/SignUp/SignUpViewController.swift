@@ -38,7 +38,7 @@ final class SignUpViewController: BaseViewController {
     lazy var kakaoLoginButton = UIButton().then {
         $0.setBackgroundImage(UIImage.SignUp.kakaoLogo, for: .normal)
         $0.contentMode = .scaleAspectFill
-        $0.addTarget(self, action: #selector(loginButtonTapped(_:)), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(kakaoButtonTapped(_:)), for: .touchUpInside)
     }
     
     lazy var appleLoginButton = UIButton().then {
@@ -164,7 +164,7 @@ final class SignUpViewController: BaseViewController {
         changeHome()
     }
     
-    @objc func loginButtonTapped(_ sender: UIButton) {
+    @objc func kakaoButtonTapped(_ sender: UIButton) {
         if UserApi.isKakaoTalkLoginAvailable() {
             // 카카오톡 로그인. api 호출 결과를 클로저로 전달.
             loginWithApp()
@@ -172,8 +172,8 @@ final class SignUpViewController: BaseViewController {
             // 만약, 카카오톡이 깔려있지 않을 경우에는 웹 브라우저로 카카오 로그인함.
             loginWithWeb()
         }
-            
     }
+    
     @objc func appleButtonTapped(_ sender: UIButton) {
         let appleProvider = ASAuthorizationAppleIDProvider()
         let request = appleProvider.createRequest()
@@ -216,7 +216,6 @@ final class SignUpViewController: BaseViewController {
                 UserDefaultManager.shared.profileImage = UIImage.Setting.profile
             }
             // 메인 화면으로 이동
-            UserDefaultManager.shared.isOnboarding = false
             self.changeHome()
         }
     }
@@ -352,6 +351,7 @@ extension SignUpViewController{
                     return
                 }
                 UserDefaultManager.shared.isKakaoLogin = true
+                UserDefaultManager.shared.isOnboarding = false
                 
                 guard let result = response.result else {
                     switch response.code {
@@ -412,7 +412,9 @@ extension SignUpViewController: ASAuthorizationControllerDelegate,ASAuthorizatio
             "identityToken": identityToken
         ]
         
-        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self, api: .appleLogin, parameter: parameters) { [weak self] response, error in
+        JuinjangAPIManager.shared.postData(type: BaseResponse<LoginResponse>.self,
+                                           api: .appleLogin,
+                                           parameter: parameters) { [weak self] response, error in
             guard let self else { return }
             if error == nil {
                 guard let response else {
@@ -420,6 +422,7 @@ extension SignUpViewController: ASAuthorizationControllerDelegate,ASAuthorizatio
                     return
                 }
                 UserDefaultManager.shared.isKakaoLogin = false
+                UserDefaultManager.shared.isOnboarding = false
                 
                 guard let result = response.result else {
                     switch response.code {
@@ -456,7 +459,8 @@ extension SignUpViewController: ASAuthorizationControllerDelegate,ASAuthorizatio
         return self.view.window!
     }
     
-    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+    func authorizationController(controller: ASAuthorizationController,
+                                 didCompleteWithAuthorization authorization: ASAuthorization) {
         guard let credential = authorization.credential as? ASAuthorizationAppleIDCredential else { return }
         if let authorizationCodeData = credential.authorizationCode,
            let authorizationCode = String(data: authorizationCodeData, encoding: .utf8) {

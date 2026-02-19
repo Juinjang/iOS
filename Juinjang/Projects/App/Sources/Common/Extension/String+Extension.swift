@@ -72,7 +72,7 @@ extension String {
         return dateString
     }
     
-    func twoSplitAmount() -> (String, String) {
+    func twoSplitAmount() -> (String?, String?) {
         // 문자열을 숫자로 변환
         if let amount = Int(self) {
             let units = amount / 100000000
@@ -80,6 +80,8 @@ extension String {
 
             // 나눈 결과를 문자열로 변환하여 반환
             return (String(units), String(remainder))
+        } else if isEmpty {
+            return (nil, nil)
         } else {
             // 변환 실패 시 기본값 반환
             return ("0", "0")

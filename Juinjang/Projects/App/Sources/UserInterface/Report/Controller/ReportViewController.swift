@@ -49,6 +49,7 @@ final class ReportViewController : BaseViewController {
         $0.textColor = .gray400
         $0.translatesAutoresizingMaskIntoConstraints = false
         $0.font = .pretendard(size: 16, weight: .medium)
+        $0.numberOfLines = 0
     }
     
     var imjangId: Int
@@ -148,6 +149,7 @@ final class ReportViewController : BaseViewController {
         
         addressLabel.snp.makeConstraints{
             $0.top.equalTo(priceLabel.snp.bottom).offset(6)
+            $0.height.equalTo(23)
             $0.leading.equalToSuperview().offset(24)
             $0.trailing.equalToSuperview().offset(-24)
         }
@@ -207,8 +209,6 @@ final class ReportViewController : BaseViewController {
             addressLabel.text = "주소 미입력"
             addressLabel.textColor = .null
         }
-        addressLabel.text = "\(detailDto.address ?? "") \(detailDto.addressDetail ?? "")"
-        addressLabel.numberOfLines = 0
         
         tabViewController.compareVC.compareLabel1.text = detailDto.nickname.count > 12 ? "\(detailDto.nickname.prefix(11))﹒﹒﹒" : detailDto.nickname
         tabViewController.compareVC.chartCompareLabel1.text = detailDto.nickname.count > 12 ? "\(detailDto.nickname.prefix(11))﹒﹒﹒" : detailDto.nickname
@@ -242,21 +242,38 @@ final class ReportViewController : BaseViewController {
 
     }
     
-    func setPriceLabel(priceList: [String], priceType: String) {
+    func setPriceLabel(priceList: [String?], priceType: String) {
         switch priceList.count {
         case 1:
-            let priceString = priceList[0]
-            print(priceString.formatToKoreanCurrencyWithZero())
-            if priceType.isEmpty {
-                priceLabel.text = priceString.formatToKoreanCurrencyWithZero()
-            } else {
-                priceLabel.text = "\(priceType) \(priceString.formatToKoreanCurrencyWithZero())"
+            guard
+                let priceString = priceList.first ?? nil,
+                let priceInt = Int(priceString),
+                priceInt > 0
+            else {
+                priceLabel.text = "가격 미입력"
+                return
             }
+            
+            let formatted = priceString.formatToKoreanCurrencyWithZero()
+            
+            priceLabel.text = priceType.isEmpty
+            ? formatted
+            : "\(priceType) \(formatted)"
         case 2:
-            let priceString1 = priceList[0].formatToKoreanCurrencyWithZero()
-            let priceString2 = priceList[1].oneSplitAmount()
-            let formattedPriceString2 = priceString2.addingCommas()
-            priceLabel.text = "\(priceType) \(priceString1) / \(formattedPriceString2)"
+            guard
+                let deposit = priceList[safe: 0] ?? nil,
+                let rent = priceList[safe: 1] ?? nil,
+                let rentInt = Int(rent),
+                rentInt > 0
+            else {
+                priceLabel.text = "가격 미입력"
+                return
+            }
+            
+            let formattedDeposit = deposit.formatToKoreanCurrencyWithZero()
+            let formattedRent = rent.oneSplitAmount().addingCommas()
+            
+            priceLabel.text = "\(priceType) \(formattedDeposit) / \(formattedRent)"
         default:
             priceLabel.text = "편집을 통해 가격을 설정해주세요."
         }
