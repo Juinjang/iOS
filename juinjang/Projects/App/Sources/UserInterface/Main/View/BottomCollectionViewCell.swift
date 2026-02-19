@@ -48,22 +48,27 @@ final class BottomCollectionViewCell: UICollectionViewCell {
         switch listDto.priceType {
         case 0:
             priceType = "매매"
-            price = formatRealEstatePrice(type: priceType, price: listDto.price)
+            price = formatRealEstatePrice(type: priceType, price: listDto.price ?? "")
         case 1:
             priceType = "전세"
-            price = formatRealEstatePrice(type: priceType, price: listDto.price)
+            price = formatRealEstatePrice(type: priceType, price: listDto.price ?? "")
         case 2:
             priceType = "월세"
-            price = formatRealEstatePrice(type: priceType, price: listDto.price)
+            price = formatRealEstatePrice(type: priceType, price: listDto.price ?? "")
         case 3:
             priceType = "실거래"
-            price = formatRealEstatePrice(type: priceType, price: listDto.price)
+            price = formatRealEstatePrice(type: priceType, price: listDto.price ?? "")
         default:
             priceType = ""
-            price = formatRealEstatePrice(type: priceType, price: listDto.price)
+            price = formatRealEstatePrice(type: priceType, price: listDto.price ?? "")
         }
         
-        priceLabel.text = priceType.isEmpty ? "\(price)" : "\(priceType) \(price)"
+        if price == "" || price == "0" {
+            priceLabel.text = "가격 미입력"
+        } else {
+            priceLabel.text = priceType.isEmpty ? "\(price)" : "\(priceType) \(price)"
+        }
+        
         setScore(score: listDto.totalAverage)
     }
     

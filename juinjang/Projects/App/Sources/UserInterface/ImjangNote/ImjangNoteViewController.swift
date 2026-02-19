@@ -469,11 +469,26 @@ final class ImjangNoteViewController: BaseViewController,
     
     // 방 가격 설정
     private func setPriceLabel(model: NoteDetailModel) {
-        if let monthlyRent = model.monthlyRent {
-            // 월세 일 경우
-            roomPriceLabel.text = "\(model.priceTypeToString) \(model.price.formatToKoreanCurrencyWithZero()) / \(monthlyRent.formatToKoreanCurrencyWithZero())"
+        guard
+            let price = model.price,
+            let priceValue = Int(price),
+            priceValue > 0
+        else {
+            roomPriceLabel.text = "가격 미입력"
+            return
+        }
+
+        let formattedPrice = price.formatToKoreanCurrencyWithZero()
+        
+        if let monthlyRent = model.monthlyRent,
+           let rentValue = Int(monthlyRent),
+           rentValue > 0 {
+            
+            let formattedRent = monthlyRent.formatToKoreanCurrencyWithZero()
+            roomPriceLabel.text = "\(model.priceTypeToString) \(formattedPrice) / \(formattedRent)"
+            
         } else {
-            roomPriceLabel.text = "\(model.priceTypeToString) \(model.price.formatToKoreanCurrencyWithZero())"
+            roomPriceLabel.text = "\(model.priceTypeToString) \(formattedPrice)"
         }
     }
     
@@ -1201,34 +1216,31 @@ final class ImjangNoteViewController: BaseViewController,
         }
         
         // MARK: - 공유 조건 뷰
-        // 평층 입력 X -> 공유 조건 뷰 X
-        if model.pyong != nil && model.floor != nil {
-            if model.isShared {
-                shareCompletedButton.snp.remakeConstraints {
-                    $0.top.equalTo(infoStackView.snp.bottom).offset(16)
-                    $0.horizontalEdges.equalToSuperview().inset(24)
-                    $0.height.equalTo(68)
-                }
-                
-                // containerView
-                containerView.snp.remakeConstraints {
-                    $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
-                    $0.leading.trailing.equalTo(contentView)
-                    $0.bottom.equalTo(contentView).offset(-24)
-                }
-            } else {
-                noteShareConditionView.snp.remakeConstraints {
-                    $0.top.equalTo(infoStackView.snp.bottom).offset(16)
-                    $0.horizontalEdges.equalToSuperview().inset(24)
-                    $0.height.equalTo(106)
-                }
-                
-                // containerView
-                containerView.snp.remakeConstraints {
-                    $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
-                    $0.leading.trailing.equalTo(contentView)
-                    $0.bottom.equalTo(contentView).offset(-24)
-                }
+        if model.isShared {
+            shareCompletedButton.snp.remakeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(68)
+            }
+            
+            // containerView
+            containerView.snp.remakeConstraints {
+                $0.top.equalTo(shareCompletedButton.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
+            }
+        } else {
+            noteShareConditionView.snp.remakeConstraints {
+                $0.top.equalTo(infoStackView.snp.bottom).offset(16)
+                $0.horizontalEdges.equalToSuperview().inset(24)
+                $0.height.equalTo(106)
+            }
+            
+            // containerView
+            containerView.snp.remakeConstraints {
+                $0.top.equalTo(noteShareConditionView.snp.bottom).offset(12)
+                $0.leading.trailing.equalTo(contentView)
+                $0.bottom.equalTo(contentView).offset(-24)
             }
         }
     }

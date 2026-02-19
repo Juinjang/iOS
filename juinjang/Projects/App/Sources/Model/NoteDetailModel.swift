@@ -16,7 +16,7 @@ struct NoteDetailModel: Codable {
     let images: [String]
     let roadAddress: String?
     let addressDetail: String?
-    let price: String
+    let price: String?
     let monthlyRent: String?
     let updatedAt: String
     let floor: String?

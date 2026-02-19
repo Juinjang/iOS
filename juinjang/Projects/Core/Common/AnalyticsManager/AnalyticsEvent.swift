@@ -17,10 +17,8 @@ public struct MainViewEvent: AnalyticsEvent {
     public enum Name: String {
         case enter_main_view
     }
-
     public var name: String
     public var parameters: [String: Any]?
-
     public init(name: Name, parameters: [String: Any]? = nil) {
         self.name = name.rawValue
         self.parameters = parameters

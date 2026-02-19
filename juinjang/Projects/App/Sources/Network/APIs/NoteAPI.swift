@@ -35,7 +35,7 @@ enum NoteAPI: TargetType {
         case .postCheckList(let noteID, _):
             return "v2/checklist/\(noteID)"
         case .patchNote(let noteID,_):
-            return "v2/users/notes/\(noteID)"
+            return "v2/users/notes/init/\(noteID)"
         }
     }
 

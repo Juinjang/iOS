@@ -30,7 +30,7 @@ final class NoteConditionInfoPopup: BaseAlertViewController {
         $0.fontSize = 13
         $0.fontColor = .gray450
         $0.fontAlignment = .center
-        $0.text = "매물에 대한 정보와 체크리스트를 모두 입력하면\n임장 노트를 공유할 수 있어요!"
+        $0.text = "매물에 대한 기본 정보들을 모두 입력하면\n임장 노트를 공유할 수 있어요!"
     }
     
     init() {

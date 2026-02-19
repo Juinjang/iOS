@@ -120,11 +120,17 @@ extension SelectNoteCell {
     
     // 가격 설정
     private func setPriceLabel(note: NoteDTO, priceType: PriceType) {
+        if (note.price?.isEmpty ?? true) || note.price == "0" {
+            priceLabel.text = "가격 미입력"
+            priceLabel.fontColor = .gray450
+            return
+        }
+        
         switch priceType {
         case .SALE, .PULL_RENT, .MARKET_PRICE:
-            priceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero())"
+            priceLabel.text = "\(priceType.title) \(note.price?.formatToKoreanCurrencyWithZero() ?? "")"
         case .MONTHLY_RENT:
-            priceLabel.text = "\(priceType.title) \(note.price.formatToKoreanCurrencyWithZero()) / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
+            priceLabel.text = "\(priceType.title) \(note.price?.formatToKoreanCurrencyWithZero() ?? "") / \(note.monthlyRent?.oneSplitAmount().addingCommas() ?? "")"
         }
     }
     
