@@ -8,7 +8,6 @@ public extension TargetDependency {
 
 public extension TargetDependency.SPM {
     static let Alamofire = Self.package(product: "Alamofire")
-    static let SnapKit = Self.package(product: "SnapKit")
     static let Reachability = Self.package(product: "Reachability")
     static let ComposableArchitecture = Self.package(product: "ComposableArchitecture")
     

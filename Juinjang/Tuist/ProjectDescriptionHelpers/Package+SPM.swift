@@ -12,11 +12,6 @@ public extension Package.SPM {
         requirement: .upToNextMajor(from: "5.11.0")
     )
     
-    static let SnapKit = Package.remote(
-        url: "https://github.com/SnapKit/SnapKit.git",
-        requirement: .upToNextMajor(from: "5.0.1")
-    )
-    
     static let Reachability = Package.remote(
         url: "https://github.com/ashleymills/Reachability.swift",
         requirement: .upToNextMajor(from: "5.0.0")

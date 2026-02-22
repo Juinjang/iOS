@@ -17,8 +17,13 @@ protocol APIClientProtocol {
 final class APIClient: APIClientProtocol {
     private let apiService: APIServiceProtocol
 
-    init(apiService: APIServiceProtocol = APIService.shared) {
+    init(apiService: APIServiceProtocol) {
         self.apiService = apiService
+    }
+
+    @MainActor
+    convenience init() {
+        self.init(apiService: APIService.shared)
     }
 
     func request<T: Decodable>(
@@ -32,3 +37,4 @@ final class APIClient: APIClientProtocol {
         }
     }
 }
+

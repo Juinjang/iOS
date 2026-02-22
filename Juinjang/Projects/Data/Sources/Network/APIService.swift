@@ -18,7 +18,7 @@ protocol APIServiceProtocol {
 }
 
 final class APIService: APIServiceProtocol {
-    static let shared = APIService()
+    @MainActor static let shared = APIService()
     
     // MARK: - Properties
     

@@ -1,17 +1,18 @@
 
-import ProjectDescription
+@preconcurrency import ProjectDescription
 import ProjectDescriptionHelpers
 
 let appDependencies: [TargetDependency] = [
     .module(.data),
-    .module(.presentation)
+    .module(.presentation),
+    .SPM.Alamofire,
+    .SPM.Reachability
 ]
 
 let project = Project(
     name: Module.app.name,
     packages: [
         .SPM.Alamofire,
-        .SPM.SnapKit,
         .SPM.Reachability
     ],
     targets: [
