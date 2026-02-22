@@ -4,16 +4,15 @@ import ProjectDescriptionHelpers
 
 let appDependencies: [TargetDependency] = [
     .module(.data),
-    .module(.presentation),
-    .SPM.Alamofire,
-    .SPM.Reachability
+    .module(.presentation)
 ]
 
 let project = Project(
     name: Module.app.name,
     packages: [
         .SPM.Alamofire,
-        .SPM.Reachability
+        .SPM.Reachability,
+        .SPM.ComposableArchitecture
     ],
     targets: [
         // MARK: - PROD
