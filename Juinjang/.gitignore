@@ -69,7 +69,6 @@ Derived/
 ### Tuist managed dependencies ###
 Tuist/.build
 
-**/XCConfig
 **/APIKey.swift
 
 ### xcconfig ###
