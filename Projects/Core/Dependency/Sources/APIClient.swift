@@ -1,13 +1,19 @@
 import ComposableArchitecture
+import Common
 import Model
 
 // MARK: - API Client Interface
-/// Feature 모듈은 이 Interface만 의존합니다.
-/// 실제 구현(Live)은 Core/Network에 위치합니다.
+/// Feature 모듈이 의존하는 네트워크 Interface
+/// 실제 구현(Live)은 Core/Network에서 Alamofire로 수행
+///
+///   public var fetchSomeData: @Sendable () async throws -> SomeModel
 
 @DependencyClient
 public struct APIClient: Sendable {
+    // MARK: - Home
     public var fetchHomeFeed: @Sendable () async throws -> [Post]
+
+    // MARK: - User
     public var fetchUserProfile: @Sendable (_ userId: String) async throws -> User
 }
 
@@ -16,8 +22,6 @@ public struct APIClient: Sendable {
 extension APIClient: TestDependencyKey {
     public static let testValue = Self()
 }
-
-// MARK: - DependencyValues 등록
 
 extension DependencyValues {
     public var apiClient: APIClient {
