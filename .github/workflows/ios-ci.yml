@@ -1,0 +1,27 @@
+name: iOS CI
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode.app
+
+      - name: Resolve Packages
+        run: xcodebuild -resolvePackageDependencies
+
+      - name: Build
+        run: |
+          xcodebuild \
+          -scheme App \
+          -destination 'platform=iOS Simulator,name=iPhone 17' \
+          build
