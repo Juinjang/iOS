@@ -1,5 +1,5 @@
 import ComposableArchitecture
-import Home
+import Splash
 import SwiftUI
 
 @main
@@ -7,8 +7,8 @@ struct JuinjangApp: App {
     var body: some Scene {
         WindowGroup {
             HomeView(
-                store: Store(initialState: HomeFeature.State()) {
-                    HomeFeature()
+                store: Store(initialState: SplashFeature.State()) {
+                    SplashFeature()
                 }
             )
         }
