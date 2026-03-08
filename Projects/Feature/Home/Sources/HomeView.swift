@@ -15,59 +15,10 @@ public struct HomeView: View {
     }
 
     public var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle("홈")
-                .onAppear { send(.onAppear) }
+        VStack {
+            Text("Home")
         }
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        if store.isLoading {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let errorMessage = store.errorMessage {
-            errorView(message: errorMessage)
-        } else {
-            postListView
-        }
-    }
-
-    private var postListView: some View {
-        List(store.posts) { post in
-            PostRow(post: post)
-        }
-        .refreshable { send(.refreshTapped) }
-    }
-
-    private func errorView(message: String) -> some View {
-        VStack(spacing: DSSpacing.md) {
-            Text("오류가 발생했습니다")
-                .font(DSFont.title)
-            Text(message)
-                .font(DSFont.body)
-            Button("다시 시도") {
-                send(.refreshTapped)
-            }
-        }
-    }
-}
-
-// MARK: - Post Row
-
-private struct PostRow: View {
-    let post: Post
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DSSpacing.sm) {
-            Text(post.title)
-                .font(DSFont.body)
-            Text(post.content)
-                .font(DSFont.caption)
-                .lineLimit(2)
-        }
-        .padding(.vertical, DSSpacing.xs)
+        .onAppear { send(.onAppear) }
     }
 }
 

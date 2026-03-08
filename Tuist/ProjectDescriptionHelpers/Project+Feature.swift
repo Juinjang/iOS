@@ -15,7 +15,7 @@ public extension Project {
 
         // 모든 Feature 공통 기본 의존성
         let baseDependencies: [TargetDependency] = [
-            .tca,
+            .external(.composableArchitecture),
             .designSystem
         ]
 

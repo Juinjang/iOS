@@ -37,8 +37,12 @@ extension TargetDependency {
     }
 
     // MARK: - External
-
-    public static var tca: TargetDependency {
-        .external(name: "ComposableArchitecture")
+    
+    public static func external(_ externalDependency: ExternalDependency) -> TargetDependency {
+      return .external(name: externalDependency.rawValue)
+    }
+    
+    public enum ExternalDependency: String {
+      case composableArchitecture = "ComposableArchitecture"
     }
 }

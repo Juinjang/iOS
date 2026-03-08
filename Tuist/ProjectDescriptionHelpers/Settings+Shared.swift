@@ -11,7 +11,8 @@ extension Settings {
             "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
             "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
             "CODE_SIGN_IDENTITY": "",
-            "SWIFT_STRICT_CONCURRENCY": "complete"
+            "SWIFT_STRICT_CONCURRENCY": "complete",
+            "ENABLE_USER_SCRIPT_SANDBOXING": "NO"
         ],
         configurations: [
             .debug(

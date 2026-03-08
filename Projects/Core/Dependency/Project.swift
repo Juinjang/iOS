@@ -5,6 +5,6 @@ let project = Project.core(
     module: .dependency,
     dependencies: [
         .core(.model),
-        .tca
+        .external(.composableArchitecture)
     ]
 )
