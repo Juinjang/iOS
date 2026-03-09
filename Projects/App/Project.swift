@@ -24,7 +24,7 @@ let project = Project(
                 .feature(.login),
                 .feature(.home),
                 // Core — Live 구현체는 App에서 링크
-                .core(.network),
+                .core(.networking),
 
                 // DesignSystem
                 .designSystem

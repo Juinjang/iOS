@@ -5,7 +5,9 @@ import PackageDescription
     import struct ProjectDescription.PackageSettings
 
     let packageSettings = PackageSettings(
-        productTypes: [:]
+        productTypes: [
+            "Alamofire": .framework
+        ]
     )
 #endif
 
@@ -15,6 +17,10 @@ let package = Package(
         .package(
             url: "https://github.com/pointfreeco/swift-composable-architecture",
             from: "1.24.1"
+        ),
+        .package(
+            url: "https://github.com/Alamofire/Alamofire.git",
+            from: "5.11.1"
         )
     ]
 )

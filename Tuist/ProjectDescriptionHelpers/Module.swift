@@ -22,7 +22,7 @@ public enum ModuleType {
     // MARK: - Core 모듈 목록
     public enum Core: String, CaseIterable {
         case dependency = "Dependency"
-        case network = "Network"
+        case networking = "Networking"
         case common = "Common"
         case model = "Model"
     }

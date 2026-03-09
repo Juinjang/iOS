@@ -3,7 +3,7 @@ import Splash
 import SwiftUI
 
 @main
-struct JuinjangApp: App {
+struct SplashExampleApp: App {
     var body: some Scene {
         WindowGroup {
             SplashView(

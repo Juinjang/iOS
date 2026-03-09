@@ -20,14 +20,11 @@ public final class APIService: APIServiceProtocol, @unchecked Sendable {
     public static let shared = APIService()
 
     private let decoder: JSONDecoder
-    private let tokenStorage: KeyValueStorage
 
     public init(
-        decoder: JSONDecoder = JSONDecoder(),
-        tokenStorage: KeyValueStorage = UserDefaultsStorage()
+        decoder: JSONDecoder = JSONDecoder()
     ) {
         self.decoder = decoder
-        self.tokenStorage = tokenStorage
     }
 
     public func request<T: Decodable>(
@@ -38,7 +35,6 @@ public final class APIService: APIServiceProtocol, @unchecked Sendable {
         let request = AF.request(
             target,
             interceptor: NetworkInterceptor(
-                tokenStorage: tokenStorage,
                 authType: target.authorizationType
             )
         )

@@ -5,7 +5,7 @@
 //  Created by 조유진 on 3/8/26.
 //
 
-public struct UpdateProfileRequest: Encodable {
+public struct UpdateProfileRequest: Encodable, Sendable {
     public let name: String
     public let profileImageURL: String?
 

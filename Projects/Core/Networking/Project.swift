@@ -2,10 +2,11 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.core(
-    module: .network,
+    module: .networking,
     dependencies: [
         .core(.dependency),
         .core(.model),
-        .core(.common)
+        .core(.common),
+        .external(.alamofire)
     ]
 )

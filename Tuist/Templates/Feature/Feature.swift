@@ -25,6 +25,10 @@ let featureTemplate = Template(
         .file(
             path: "Projects/Feature/\(Template.Attribute.required("name"))/Tests/\(Template.Attribute.required("name"))FeatureTests.swift",
             templatePath: "tests.stencil"
+        ),
+        .file(
+            path: "Projects/Feature/\(Template.Attribute.required("name"))/Example/Sources/\(Template.Attribute.required("name"))ExampleApp.swift",
+            templatePath: "example.stencil"
         )
     ]
 )

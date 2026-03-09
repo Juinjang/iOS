@@ -1,30 +1,44 @@
 //
 //  UserDefaultsClient.swift
-//  Common
+//  Dependency
 //
-//  Created by 조유진 on 3/8/26.
+//  Created by 조유진 on 3/9/26.
 //
 
 import ComposableArchitecture
 import Foundation
 
 // MARK: - UserDefaults Client
+/// TCA @DependencyClient 기반 UserDefaults 래퍼입니다.
+/// 모든 값을 Data(Codable)로 저장하여 타입 안전성을 보장합니다.
 
 @DependencyClient
 public struct UserDefaultsClient: Sendable {
 
-    // MARK: - 기본 타입 (String, Int, Bool, Double, Data)
+    /// Data 조회 (throws → 기본값 불필요)
     public var get: @Sendable (_ forKey: Key) throws -> Data
-    public var set: @Sendable (_ data: Data, _ forKey: Key) -> Void
-    public var remove: @Sendable (_ forKey: Key) -> Void
-    public var hasValue: @Sendable (_ forKey: Key) -> Bool
+
+    /// Data 저장
+    public var set: @Sendable (_ data: Data, _ forKey: Key) -> Void = { _, _ in }
+
+    /// 키 삭제
+    public var remove: @Sendable (_ forKey: Key) -> Void = { _ in }
+
+    /// 키 존재 여부 확인
+    public var hasValue: @Sendable (_ forKey: Key) -> Bool = { _ in false }
 }
 
 // MARK: - 타입 안전한 편의 메서드
-/// Feature에서 직접 사용하는 인터페이스
+///
+/// 사용법:
+///   let nickname: String = try userDefaultsClient.load(.nickname)
+///   userDefaultsClient.save("유진", forKey: .nickname)
+///   userDefaultsClient.save(true, forKey: .isFirstVoteDone)
+///   let isDone = userDefaultsClient.bool(.isFirstVoteDone, default: false)
 
 extension UserDefaultsClient {
 
+    /// Codable 값 조회
     public func load<T: Codable & Sendable>(
         _ key: Key,
         type: T.Type = T.self
@@ -37,6 +51,7 @@ extension UserDefaultsClient {
         }
     }
 
+    /// Codable 값 저장
     public func save<T: Codable & Sendable>(
         _ value: T,
         forKey key: Key
@@ -45,25 +60,33 @@ extension UserDefaultsClient {
         set(data, key)
     }
 
+    /// String 편의 조회
     public func string(_ key: Key) throws -> String {
         try load(key)
     }
-    
+
+    /// Bool 편의 조회 (기본값 지원)
     public func bool(_ key: Key, default defaultValue: Bool = false) -> Bool {
         (try? load(key)) ?? defaultValue
     }
-    
+
+    /// Int 편의 조회
     public func integer(_ key: Key) throws -> Int {
+        try load(key)
+    }
+
+    /// Double 편의 조회
+    public func double(_ key: Key) throws -> Double {
         try load(key)
     }
 }
 
-// MARK: - DependencyKey
+// MARK: - DependencyKey (Live 구현)
 
 extension UserDefaultsClient: DependencyKey {
 
     public static var liveValue: UserDefaultsClient {
-        let defaults = UserDefaults.standard
+        nonisolated(unsafe) let defaults = UserDefaults.standard
 
         return Self(
             get: { key in
@@ -105,7 +128,7 @@ extension UserDefaultsClient {
         case nickname
         case accessToken
         case refreshToken
-        // 새 키는 여기에 추가
+        case userId
     }
 }
 
@@ -124,7 +147,10 @@ public enum UserDefaultsError: Error, Equatable, Sendable, LocalizedError {
         }
     }
 
-    public static func == (lhs: UserDefaultsError, rhs: UserDefaultsError) -> Bool {
+    public static func == (
+        lhs: UserDefaultsError,
+        rhs: UserDefaultsError
+    ) -> Bool {
         switch (lhs, rhs) {
         case (.keyNotFound(let leftKey), .keyNotFound(let rightKey)):
             return leftKey == rightKey

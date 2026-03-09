@@ -6,5 +6,5 @@ let project = Project.feature(
     dependencies: [
         .core(.dependency),
         .core(.model)
-    ]
+    ],
 )

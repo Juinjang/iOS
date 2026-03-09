@@ -39,10 +39,11 @@ extension TargetDependency {
     // MARK: - External
     
     public static func external(_ externalDependency: ExternalDependency) -> TargetDependency {
-      return .external(name: externalDependency.rawValue)
+        return .external(name: externalDependency.rawValue)
     }
     
     public enum ExternalDependency: String {
-      case composableArchitecture = "ComposableArchitecture"
+        case composableArchitecture = "ComposableArchitecture"
+        case alamofire = "Alamofire"
     }
 }

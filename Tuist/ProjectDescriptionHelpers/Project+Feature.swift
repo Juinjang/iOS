@@ -8,7 +8,8 @@ public extension Project {
     static func feature(
         module: ModuleType.Feature,
         dependencies: [TargetDependency],
-        hasResources: Bool = false
+        hasResources: Bool = false,
+        includeExample: Bool = true
     ) -> Project {
 
         let name = module.rawValue
@@ -21,7 +22,7 @@ public extension Project {
 
         let allDependencies = baseDependencies + dependencies
 
-        let targets: [Target] = [
+        var targets: [Target] = [
             // MARK: - 메인 타깃
             .target(
                 name: name,
@@ -64,22 +65,63 @@ public extension Project {
                 settings: .shared
             )
         ]
+        
+        if includeExample {
+            targets.append(
+                .target(
+                    name: "\(name)Example",
+                    destinations: .iOS,
+                    product: .app,
+                    bundleId: "com.juinjang.feature.\(name.lowercased()).example",
+                    deploymentTargets: .iOS("17.0"),
+                    infoPlist: .extendingDefault(with: [
+                        "CFBundleDisplayName": "\(name) Example",
+                        "UILaunchStoryboardName": "LaunchScreen"
+                    ]),
+                    sources: ["Example/Sources/**"],
+                    dependencies: [
+                        .target(name: name),
+                        .target(name: "\(name)Testing")
+                    ],
+                    settings: .shared
+                )
+            )
+        }
+        
+        var schemes: [Scheme] = [
+            // Feature 빌드 + 테스트 Scheme
+            .scheme(
+                name: name,
+                buildAction: .buildAction(targets: [
+                    TargetReference(stringLiteral: name)
+                ]),
+                testAction: TestAction.targets(
+                    [TestableTarget(stringLiteral: "\(name)Tests")]
+                )
+            )
+        ]
+
+        // Example 앱 실행 Scheme
+        if includeExample {
+            schemes.append(
+                .scheme(
+                    name: "\(name)Example",
+                    buildAction: .buildAction(targets: [
+                        TargetReference(stringLiteral: "\(name)Example")
+                    ]),
+                    runAction: .runAction(
+                        configuration: .debug,
+                        executable: .target("\(name)Example")
+                    )
+                )
+            )
+        }
 
         return Project(
             name: name,
             settings: .shared,
             targets: targets,
-            schemes: [
-                .scheme(
-                    name: name,
-                    buildAction: .buildAction(targets: [
-                        TargetReference(stringLiteral: name)
-                    ]),
-                    testAction: TestAction.targets(
-                        [TestableTarget(stringLiteral: "\(name)Tests")]
-                    )
-                )
-            ]
+            schemes: schemes
         )
     }
 }
