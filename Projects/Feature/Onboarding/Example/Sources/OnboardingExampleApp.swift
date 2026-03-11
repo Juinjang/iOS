@@ -14,3 +14,11 @@ struct OnboardingExampleApp: App {
         }
     }
 }
+
+#Preview {
+    OnboardingView(
+        store: Store(initialState: OnboardingFeature.State()) {
+            OnboardingFeature()
+        }
+    )
+}

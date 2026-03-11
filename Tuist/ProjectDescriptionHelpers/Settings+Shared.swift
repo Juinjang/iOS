@@ -13,6 +13,8 @@ extension Settings {
             "CODE_SIGN_IDENTITY": "",
             "SWIFT_STRICT_CONCURRENCY": "complete",
             "ENABLE_USER_SCRIPT_SANDBOXING": "NO"
+//            "DEFINES_MODULE": "YES",
+//            "SWIFT_INSTALL_OBJC_HEADER": "YES"
         ],
         configurations: [
             .debug(

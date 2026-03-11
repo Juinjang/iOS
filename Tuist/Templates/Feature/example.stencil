@@ -14,3 +14,11 @@ struct {{ name }}ExampleApp: App {
         }
     }
 }
+
+#Preview("{{ name }}") {
+    {{ name }}View(
+        store: Store(initialState: {{ name }}Feature.State()) {
+            {{ name }}Feature()
+        }
+    )
+}

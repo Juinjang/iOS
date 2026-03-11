@@ -18,11 +18,3 @@ public struct OnboardingView: View {
         .onAppear { send(.onAppear) }
     }
 }
-
-#Preview {
-    OnboardingView(
-        store: Store(initialState: OnboardingFeature.State()) {
-            OnboardingFeature()
-        }
-    )
-}

@@ -14,3 +14,11 @@ struct LoginExampleApp: App {
         }
     }
 }
+
+#Preview {
+    LoginView(
+        store: Store(initialState: LoginFeature.State()) {
+            LoginFeature()
+        }
+    )
+}

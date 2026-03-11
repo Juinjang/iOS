@@ -18,11 +18,3 @@ public struct {{ name }}View: View {
         .onAppear { send(.onAppear) }
     }
 }
-
-#Preview {
-    {{ name }}View(
-        store: Store(initialState: {{ name }}Feature.State()) {
-            {{ name }}Feature()
-        }
-    )
-}

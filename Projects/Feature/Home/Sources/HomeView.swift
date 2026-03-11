@@ -21,13 +21,3 @@ public struct HomeView: View {
         .onAppear { send(.onAppear) }
     }
 }
-
-// MARK: - Preview
-
-#Preview {
-    HomeView(
-        store: Store(initialState: HomeFeature.State()) {
-            HomeFeature()
-        }
-    )
-}

@@ -81,7 +81,8 @@ public extension Project {
                     sources: ["Example/Sources/**"],
                     dependencies: [
                         .target(name: name),
-                        .target(name: "\(name)Testing")
+                        .target(name: "\(name)Testing"),
+                        .external(.composableArchitecture)
                     ],
                     settings: .shared
                 )

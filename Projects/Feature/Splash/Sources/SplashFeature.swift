@@ -21,7 +21,7 @@ public struct SplashFeature {
         }
     }
 
-    public var body: some ReducerOf<Self> {
+    public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .view(.onAppear):

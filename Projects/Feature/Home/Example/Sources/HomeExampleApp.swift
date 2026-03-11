@@ -14,3 +14,11 @@ struct HomeExampleApp: App {
         }
     }
 }
+
+#Preview {
+    HomeView(
+        store: Store(initialState: HomeFeature.State()) {
+            HomeFeature()
+        }
+    )
+}

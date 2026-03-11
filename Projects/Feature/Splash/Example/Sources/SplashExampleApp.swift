@@ -14,3 +14,11 @@ struct SplashExampleApp: App {
         }
     }
 }
+
+#Preview {
+    SplashView(
+        store: Store(initialState: SplashFeature.State()) {
+            SplashFeature()
+        }
+    )
+}

@@ -18,11 +18,3 @@ public struct SplashView: View {
         .onAppear { send(.onAppear) }
     }
 }
-
-#Preview {
-    SplashView(
-        store: Store(initialState: SplashFeature.State()) {
-            SplashFeature()
-        }
-    )
-}

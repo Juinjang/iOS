@@ -18,11 +18,3 @@ public struct LoginView: View {
         .onAppear { send(.onAppear) }
     }
 }
-
-#Preview {
-    LoginView(
-        store: Store(initialState: LoginFeature.State()) {
-            LoginFeature()
-        }
-    )
-}
