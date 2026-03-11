@@ -10,7 +10,7 @@ let workspace = Workspace(
     ],
     schemes: [
         .scheme(
-            name: "TMADemo-All",
+            name: "Juinjang-All",
             buildAction: .buildAction(targets: [
                 .project(path: "Projects/App", target: "App")
             ]),
