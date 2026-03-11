@@ -1,0 +1,69 @@
+name: Gemini Code Review
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - refactoring
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  review:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh
+
+      - name: Get changed files
+        id: files
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          git diff --name-only origin/${{ github.base_ref }} > files.txt
+
+      - name: Review each file with Gemini
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+
+          PROMPT=$(cat .ai/prompts/ios-review.md)
+
+          while read file; do
+
+            if [[ $file == *.swift ]]; then
+
+              echo "Reviewing $file"
+
+              DIFF=$(git diff origin/${{ github.base_ref }} -- $file | head -c 15000)
+
+              RESPONSE=$(curl -s \
+              -X POST \
+              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
+              -H "Content-Type: application/json" \
+              -d "{
+                \"contents\": [{
+                  \"parts\": [{
+                    \"text\": \"$PROMPT\n\nReview this Swift file diff:\n$DIFF\"
+                  }]
+                }]
+              }")
+
+              COMMENT=$(echo $RESPONSE | jq -r '.candidates[0].content.parts[0].text')
+
+              gh pr comment ${{ github.event.pull_request.number }} \
+              --body "### Gemini Review ($file)\n$COMMENT"
+
+            fi
+
+          done < files.txt
