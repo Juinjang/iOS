@@ -13,8 +13,6 @@ extension Settings {
             "CODE_SIGN_IDENTITY": "",
             "SWIFT_STRICT_CONCURRENCY": "complete",
             "ENABLE_USER_SCRIPT_SANDBOXING": "NO"
-//            "DEFINES_MODULE": "YES",
-//            "SWIFT_INSTALL_OBJC_HEADER": "YES"
         ],
         configurations: [
             .debug(
@@ -22,13 +20,15 @@ extension Settings {
                 settings: [
                     "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEBUG",
                     "SWIFT_OPTIMIZATION_LEVEL": "-Onone"
-                ]
+                ],
+                xcconfig: AppTargetType.dev.xcconfigPath
             ),
             .release(
                 name: "Release",
                 settings: [
                     "SWIFT_OPTIMIZATION_LEVEL": "-Owholemodule"
-                ]
+                ],
+                xcconfig: AppTargetType.prod.xcconfigPath
             )
         ]
     )

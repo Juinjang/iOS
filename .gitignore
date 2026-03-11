@@ -1,5 +1,5 @@
 # Privacy
-**/XCConfig
+*.xcconfig
 APIKey.swift
 
 # General

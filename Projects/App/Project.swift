@@ -1,35 +1,30 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let dependencies: [TargetDependency] = [
+    // Feature
+    .feature(.splash),
+    .feature(.onboarding),
+    .feature(.login),
+    .feature(.home),
+    // Core — Live 구현체는 App에서 링크
+    .core(.networking),
+
+    // DesignSystem
+    .designSystem
+]
+
 let project = Project(
     name: "App",
     settings: .shared,
     targets: [
-        .target(
-            name: "App",
-            destinations: .iOS,
-            product: .app,
-            bundleId: "com.juinjang.app",
-            deploymentTargets: .iOS("17.0"),
-            infoPlist: .extendingDefault(with: [
-                "CFBundleDisplayName": "주인장",
-                "UILaunchStoryboardName": "LaunchScreen"
-            ]),
-            sources: ["Sources/**"],
-            resources: ["Resources/**"],
-            dependencies: [
-                // Feature
-                .feature(.splash),
-                .feature(.onboarding),
-                .feature(.login),
-                .feature(.home),
-                // Core — Live 구현체는 App에서 링크
-                .core(.networking),
-
-                // DesignSystem
-                .designSystem
-            ],
-            settings: .shared
+        .makeAppTarget(
+            appType: .prod,
+            appDependencies: dependencies
+        ),
+        .makeAppTarget(
+            appType: .dev,
+            appDependencies: dependencies
         )
     ],
     schemes: [
