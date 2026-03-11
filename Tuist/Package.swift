@@ -6,7 +6,23 @@ import PackageDescription
 
     let packageSettings = PackageSettings(
         productTypes: [
-            "Alamofire": .framework
+            "Alamofire": .framework,
+            "ComposableArchitecture": .framework,
+
+            // TCA 하위 의존성 — 전부 dynamic으로 맞춰야 Preview 동작
+            "CasePaths": .framework,
+            "CombineSchedulers": .framework,
+            "ConcurrencyExtras": .framework,
+            "CustomDump": .framework,
+            "Dependencies": .framework,
+            "DependenciesMacros": .framework,
+            "IdentifiedCollections": .framework,
+            "Perception": .framework,
+            "Sharing": .framework,
+            "SwiftNavigation": .framework,
+            "Clocks": .framework,
+            "XCTestDynamicOverlay": .framework,
+            "OrderedCollections": .framework
         ]
     )
 #endif
