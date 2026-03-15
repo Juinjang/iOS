@@ -69,8 +69,8 @@ jobs:
                 -H "Content-Type: application/json" \
                 -d "$JSON")
 
-              COMMENT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text')
-
+              COMMENT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // "No review generated"')
+              
               gh pr comment ${{ github.event.pull_request.number }} \
               --body "### Gemini Review ($file)\n$COMMENT"
 
