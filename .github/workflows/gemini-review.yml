@@ -14,6 +14,10 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    permissions: 
+      pull-requests: write
+      contents: read
+
     steps:
 
       - uses: actions/checkout@v4
@@ -48,19 +52,24 @@ jobs:
 
               DIFF=$(git diff origin/${{ github.base_ref }} -- $file | head -c 15000)
 
-              RESPONSE=$(curl -s \
-              -X POST \
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"contents\": [{
-                  \"parts\": [{
-                    \"text\": \"$PROMPT\n\nReview this Swift file diff:\n$DIFF\"
+              JSON=$(jq -n \
+                --arg prompt "$PROMPT" \
+                --arg diff "$DIFF" \
+                '{
+                  contents: [{
+                    parts: [{
+                      text: ($prompt + "\n\nReview this Swift file diff:\n" + $diff)
+                    }]
                   }]
-                }]
-              }")
+                }')
 
-              COMMENT=$(echo $RESPONSE | jq -r '.candidates[0].content.parts[0].text')
+              RESPONSE=$(curl -s \
+                -X POST \
+                "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
+                -H "Content-Type: application/json" \
+                -d "$JSON")
+
+              COMMENT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text')
 
               gh pr comment ${{ github.event.pull_request.number }} \
               --body "### Gemini Review ($file)\n$COMMENT"
