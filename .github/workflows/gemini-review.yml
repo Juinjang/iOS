@@ -50,15 +50,17 @@ jobs:
 
               echo "Reviewing $file"
 
-              DIFF=$(git diff origin/${{ github.base_ref }} -- $file | head -c 15000)
+              FILE_CONTENT=$(head -c 6000 "$file")
+              DIFF=$(git diff origin/${{ github.base_ref }} -- $file | head -c 6000)
 
               JSON=$(jq -n \
                 --arg prompt "$PROMPT" \
+                --arg file "$FILE_CONTENT" \
                 --arg diff "$DIFF" \
                 '{
                   contents: [{
                     parts: [{
-                      text: ($prompt + "\n\nReview this Swift file diff:\n" + $diff)
+                      text: ($prompt + "\n\nHere is the Swift file:\n" + $file + "\n\nHere is the diff:\n" + $diff)
                     }]
                   }]
                 }')
@@ -69,11 +71,14 @@ jobs:
                 -H "Content-Type: application/json" \
                 -d "$JSON")
 
-              COMMENT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // "No review generated"')
+              COMMENT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null)
+
+              if [ -z "$COMMENT" ] || [ "$COMMENT" = "null" ]; then
+                COMMENT="No review generated. Gemini response was empty."
+              fi
               
               gh pr comment ${{ github.event.pull_request.number }} \
-              --body "### Gemini Review ($file)\n$COMMENT"
-
+              --body "$(printf "### Gemini Review (%s)\n\n%s" "$file" "$COMMENT")"
             fi
 
           done < files.txt
