@@ -1,0 +1,91 @@
+---
+name: dependency-builder
+model: sonnet
+description: TCA dependency client builder (interface + live implementation)
+skills:
+  - tca
+  - tma
+---
+
+# Dependency Builder Agent
+
+## Role
+Build TCA dependency clients end-to-end:
+Interface definition in Core/Dependency → Live implementation in Core/Networking.
+
+## When to Invoke
+- Adding a new API endpoint
+- Creating a new dependency client (e.g., analytics, storage, auth)
+- Adding methods to existing clients
+- Connecting new backend APIs to the app
+
+## Instructions
+1. Read tca skill (dependencies.md — @DependencyClient, DependencyKey, liveValue)
+2. Read tma skill (dependency-rules — module boundaries)
+3. Follow the two-module pattern:
+
+### Core/Dependency (Interface)
+```swift
+@DependencyClient
+public struct {Name}Client {
+    public var fetchItems: @Sendable () async throws -> [Item]
+    public var createItem: @Sendable (_ item: Item) async throws -> Item
+}
+
+extension {Name}Client: TestDependencyKey {
+    public static let testValue = Self()
+}
+
+extension DependencyValues {
+    public var {name}Client: {Name}Client {
+        get { self[{Name}Client.self] }
+        set { self[{Name}Client.self] = newValue }
+    }
+}
+```
+
+### Core/Networking (Live Implementation)
+```swift
+extension {Name}Client: DependencyKey {
+    public static let liveValue: Self = {
+        let client = NetworkClient()
+        return Self(
+            fetchItems: {
+                let response: ResultResponse<[Item]> = try await client.request(
+                    {Name}API.fetchItems,
+                    responseType: ResultResponse<[Item]>.self
+                )
+                return try APIMapper.mapData(response, transform: { $0 })
+            },
+            createItem: { item in
+                // ...
+            }
+        )
+    }()
+}
+```
+
+### API Endpoint Definition
+```swift
+enum {Name}API: APIEndpoint {
+    case fetchItems
+    case createItem(Item)
+
+    var path: String { ... }
+    var method: HTTPMethod { ... }
+    var parameters: Parameters? { ... }
+}
+```
+
+## Output Files
+```
+Core/Dependency/Sources/{Name}Client.swift     (interface)
+Core/Networking/Sources/{Name}ClientLive.swift  (live)
+Core/Networking/Sources/{Name}API.swift         (endpoint)
+```
+
+## Constraints
+- Use memberwise init pattern (return Self(...)) not var-assign pattern
+- All closures must be @Sendable
+- Interface must not import Alamofire (only Core/Networking imports it)
+- Use @DependencyClient macro for auto-unimplemented testValue
