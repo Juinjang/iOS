@@ -9,7 +9,7 @@ import Alamofire
 /// Core/Dependency의 APIClient Interface를 실제 네트워크 호출로 구현
 /// App 모듈에서 링크되어 런타임에 자동 주입됩니다.
 
-extension APIClient: DependencyKey {
+extension APIClient: @retroactive DependencyKey {
 
     public static let liveValue: Self = {
         let client = NetworkClient()
