@@ -3,7 +3,7 @@ import SwiftUI
 
 // MARK: - DSLottieView
 /// Reusable Lottie animation view using Lottie's native SwiftUI API (4.x+)
-/// Supports iOS 16.0+
+/// Supports iOS 17.0+
 
 public struct DSLottieView: View {
     private let name: String

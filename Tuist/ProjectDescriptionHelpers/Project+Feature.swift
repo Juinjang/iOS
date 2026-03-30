@@ -26,7 +26,7 @@ public extension Project {
             // MARK: - 메인 타깃
             .target(
                 name: name,
-                destinations: .iOS,
+                destinations: Environment.destinations,
                 product: .staticFramework,
                 bundleId: "com.juinjang.feature.\(name.lowercased())",
                 deploymentTargets: .iOS("17.0"),
@@ -39,7 +39,7 @@ public extension Project {
             // MARK: - Testing 타깃 (Mock, Stub)
             .target(
                 name: "\(name)Testing",
-                destinations: .iOS,
+                destinations: Environment.destinations,
                 product: .staticFramework,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).testing",
                 deploymentTargets: .iOS("17.0"),
@@ -53,7 +53,7 @@ public extension Project {
             // MARK: - 테스트 타깃
             .target(
                 name: "\(name)Tests",
-                destinations: .iOS,
+                destinations: Environment.destinations,
                 product: .unitTests,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).tests",
                 deploymentTargets: .iOS("17.0"),
@@ -70,7 +70,7 @@ public extension Project {
             targets.append(
                 .target(
                     name: "\(name)Example",
-                    destinations: .iOS,
+                    destinations: Environment.destinations,
                     product: .app,
                     bundleId: "com.juinjang.feature.\(name.lowercased()).example",
                     deploymentTargets: .iOS("17.0"),

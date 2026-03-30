@@ -18,7 +18,7 @@ public extension Project {
             targets: [
                 .target(
                     name: name,
-                    destinations: .iOS,
+                    destinations: Environment.destinations,
                     product: .staticFramework,
                     bundleId: "com.juinjang.core.\(name.lowercased())",
                     deploymentTargets: .iOS("17.0"),
