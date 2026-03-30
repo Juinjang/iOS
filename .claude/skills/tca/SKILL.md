@@ -31,3 +31,4 @@ All reference files are located in `./references/` directory:
 - `bindings.md` - @BindableState, BindableAction
 - `shared-state.md` - @Shared, persistence
 - `composition.md` - Scope, ifLet, forEach, reducer composition
+- `naming-conventions.md` - HTTP Method → Domain 네이밍 규칙 (fetch/create/update/remove 등)

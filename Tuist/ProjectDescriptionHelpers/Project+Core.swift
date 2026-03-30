@@ -21,7 +21,7 @@ public extension Project {
                     destinations: .iOS,
                     product: .staticFramework,
                     bundleId: "com.juinjang.core.\(name.lowercased())",
-                    deploymentTargets: .iOS("16.0"),
+                    deploymentTargets: .iOS("17.0"),
                     sources: ["Sources/**"],
                     resources: hasResources ? ["Resources/**"] : nil,
                     dependencies: dependencies,

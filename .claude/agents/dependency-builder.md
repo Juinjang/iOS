@@ -20,7 +20,7 @@ Interface definition in Core/Dependency → Live implementation in Core/Networki
 - Connecting new backend APIs to the app
 
 ## Instructions
-1. Read tca skill (dependencies.md — @DependencyClient, DependencyKey, liveValue)
+1. Read tca skill (dependencies.md, naming-conventions.md)
 2. Read tma skill (dependency-rules — module boundaries)
 3. Follow the two-module pattern:
 
@@ -83,6 +83,13 @@ Core/Dependency/Sources/{Name}Client.swift     (interface)
 Core/Networking/Sources/{Name}ClientLive.swift  (live)
 Core/Networking/Sources/{Name}API.swift         (endpoint)
 ```
+
+## Naming Rules (from naming-conventions.md)
+- GET → `fetch` (원격), `load` (로컬/캐시)
+- POST → `create`, `register` (회원가입 등), `add`
+- PATCH/PUT → `update`, `edit` (사용자 직접 편집)
+- DELETE → `delete` (영구), `remove` (목록 제거), `cancel` (예약 취소)
+- HTTP 메서드 이름(`get`, `post`, `patch`, `delete`) 직접 사용 금지
 
 ## Constraints
 - Use memberwise init pattern (return Self(...)) not var-assign pattern
