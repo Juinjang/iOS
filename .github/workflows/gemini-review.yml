@@ -11,59 +11,75 @@ on:
 
 jobs:
   review:
-
     runs-on: ubuntu-latest
 
-    steps:
+    permissions:
+      pull-requests: write
+      contents: read
 
+    steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Install jq
-        run: sudo apt-get install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
       - name: Install GitHub CLI
-        run: sudo apt-get install gh
+        run: sudo apt-get install -y gh
 
-      - name: Get changed files
-        id: files
-        run: |
-          git fetch origin ${{ github.base_ref }}
-          git diff --name-only origin/${{ github.base_ref }} > files.txt
-
-      - name: Review each file with Gemini
+      - name: Run Gemini Code Review
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+
+          echo "Fetching base branch..."
+          git fetch origin ${{ github.base_ref }}
+
+          echo "Collecting PR diff..."
+          DIFF=$(git diff origin/${{ github.base_ref }} | head -c 40000)
+
+          if [ -z "$DIFF" ]; then
+            echo "No diff found in PR."
+            exit 0
+          fi
 
           PROMPT=$(cat .ai/prompts/ios-review.md)
 
-          while read file; do
+          echo "Preparing Gemini request..."
 
-            if [[ $file == *.swift ]]; then
-
-              echo "Reviewing $file"
-
-              DIFF=$(git diff origin/${{ github.base_ref }} -- $file | head -c 15000)
-
-              RESPONSE=$(curl -s \
-              -X POST \
-              "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
-              -H "Content-Type: application/json" \
-              -d "{
-                \"contents\": [{
-                  \"parts\": [{
-                    \"text\": \"$PROMPT\n\nReview this Swift file diff:\n$DIFF\"
-                  }]
+          JSON=$(jq -n \
+            --arg prompt "$PROMPT" \
+            --arg diff "$DIFF" \
+            '{
+              contents: [{
+                role: "user",
+                parts: [{
+                  text: ($prompt + "\n\nReview the following Swift PR diff:\n" + $diff)
                 }]
-              }")
+              }]
+            }')
 
-              COMMENT=$(echo $RESPONSE | jq -r '.candidates[0].content.parts[0].text')
+          echo "Calling Gemini API..."
 
-              gh pr comment ${{ github.event.pull_request.number }} \
-              --body "### Gemini Review ($file)\n$COMMENT"
+          RESPONSE=$(curl -s \
+            -X POST \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$GEMINI_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$JSON")
 
-            fi
+          echo "===== GEMINI RESPONSE ====="
+          echo "$RESPONSE"
+          echo "==========================="
 
-          done < files.txt
+          COMMENT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null)
+
+          if [ -z "$COMMENT" ] || [ "$COMMENT" = "null" ]; then
+            COMMENT="Gemini did not generate a review. Check Action logs for the API response."
+          fi
+
+          echo "Posting review comment..."
+
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "$(printf "## 🤖 Gemini Code Review\n\n%s" "$COMMENT")"
