@@ -15,3 +15,4 @@ const hasTests = danger.git.modified_files.some(f => f.includes("Tests"))
 if (!hasTests) {
  message("No tests were added.")
 }
+

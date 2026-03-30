@@ -1,0 +1,34 @@
+import ComposableArchitecture
+import Dependency
+import Model
+
+// MARK: - Home Feature Reducer
+
+@Reducer
+public struct HomeFeature {
+
+    public init() {}
+
+    @ObservableState
+    public struct State: Equatable {
+        public init() {}
+    }
+
+    public enum Action: ViewAction {
+        case view(View)
+
+        @CasePathable
+        public enum View {
+            case onAppear
+        }
+    }
+
+    public var body: some Reducer<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case .view(.onAppear):
+                return .none
+            }
+        }
+    }
+}

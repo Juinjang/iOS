@@ -1,0 +1,14 @@
+
+import SwiftUI
+
+{% for catalog in catalogs %}
+{% if catalog.name == "Image" %}
+public extension Image {
+{% for image in catalog.assets %}
+    static var {{ image.name|swiftIdentifier:"pretty"|lowerFirstWord }}: Image {
+        Image("{{ image.name }}", bundle: .module)
+    }
+{% endfor %}
+}
+{% endif %}
+{% endfor %}

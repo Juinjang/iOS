@@ -1,0 +1,20 @@
+import ComposableArchitecture
+import DesignSystem
+import SwiftUI
+
+@ViewAction(for: {{ name }}Feature.self)
+public struct {{ name }}View: View {
+
+    @Bindable public var store: StoreOf<{{ name }}Feature>
+
+    public init(store: StoreOf<{{ name }}Feature>) {
+        self.store = store
+    }
+
+    public var body: some View {
+        VStack {
+            Text("{{ name }}")
+        }
+        .onAppear { send(.onAppear) }
+    }
+}

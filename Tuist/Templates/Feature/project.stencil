@@ -1,0 +1,10 @@
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let project = Project.feature(
+    module: .{{ name | lowercase }},
+    dependencies: [
+        .core(.dependency),
+        .core(.model)
+    ]
+)
