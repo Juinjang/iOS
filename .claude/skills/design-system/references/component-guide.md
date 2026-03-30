@@ -60,14 +60,17 @@ public struct DSPrimaryButton: View {
 
 ### Lottie View Component
 
+Use Lottie 4.x native SwiftUI API (`LottieView`). iOS 16+ compatible.
+Do NOT use `UIViewRepresentable` + `LottieAnimationView` — deprecated in Lottie 4.x.
+
 ```swift
 import SwiftUI
 import Lottie
 
-public struct DSLottieView: UIViewRepresentable {
-    let name: String
-    let loopMode: LottieLoopMode
-    let onComplete: (() -> Void)?
+public struct DSLottieView: View {
+    private let name: String
+    private let loopMode: LottieLoopMode
+    private let onComplete: (() -> Void)?
 
     public init(
         name: String,
@@ -79,20 +82,13 @@ public struct DSLottieView: UIViewRepresentable {
         self.onComplete = onComplete
     }
 
-    public func makeUIView(context: Context) -> LottieAnimationView {
-        let view = LottieAnimationView(
-            name: name,
-            bundle: DesignSystemResources.bundle
-        )
-        view.contentMode = .scaleAspectFit
-        view.loopMode = loopMode
-        view.play { finished in
-            if finished { onComplete?() }
-        }
-        return view
+    public var body: some View {
+        LottieView(animation: .named(name, bundle: .module))
+            .playing(loopMode: loopMode)
+            .animationDidFinish { completed in
+                if completed { onComplete?() }
+            }
     }
-
-    public func updateUIView(_ uiView: LottieAnimationView, context: Context) {}
 }
 ```
 

@@ -20,6 +20,16 @@ Review code changes for convention compliance, pattern adherence, and quality is
 
 ## Review Checklist
 
+### iOS Version Compatibility (CRITICAL)
+- Minimum deployment target: **iOS 16.0**
+- Flag any API that requires iOS 17.0+ (e.g., `@Observable`, `NavigationPath` initializer changes, etc.)
+- TCA uses `Perception` as iOS 16 backport for `@Observable` → always use `@ObservableState` + `WithPerceptionTracking`, never raw `@Observable`
+- `NavigationStack` → iOS 16+ ✅
+- `LottieView` (Lottie 4.x SwiftUI) → iOS 16+ ✅
+- `UIViewRepresentable` with `LottieAnimationView` → deprecated in Lottie 4.x ❌ use `LottieView` instead
+- Flag any `.onChange(of:perform:)` → deprecated iOS 17, use `.onChange(of:) { _, new in }` on iOS 17+ only if min is 16
+- Check `#available(iOS 17, *)` guards where newer APIs are used
+
 ### Swift Conventions
 - Naming: camelCase properties/methods, PascalCase types
 - Access control: prefer most restrictive (private > internal > public)

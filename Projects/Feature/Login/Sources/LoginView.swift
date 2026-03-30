@@ -5,7 +5,7 @@ import SwiftUI
 @ViewAction(for: LoginFeature.self)
 public struct LoginView: View {
 
-    @Bindable public var store: StoreOf<LoginFeature>
+    @Perception.Bindable public var store: StoreOf<LoginFeature>
 
     public init(store: StoreOf<LoginFeature>) {
         self.store = store

@@ -129,6 +129,7 @@ extension UserDefaultsClient {
         case accessToken
         case refreshToken
         case userId
+        case userStatus
     }
 }
 

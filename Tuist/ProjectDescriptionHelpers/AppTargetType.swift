@@ -59,7 +59,7 @@ public enum AppTargetType: String {
             "CFBundleDisplayName": "\(displayName)",
             "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "\(rawValue)",
             "SWIFT_VERSION": "6.0",
-            "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
+            "IPHONEOS_DEPLOYMENT_TARGET": "16.0",
             "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
             "SWIFT_STRICT_CONCURRENCY": "complete",
             "ENABLE_USER_SCRIPT_SANDBOXING": "NO",

@@ -5,6 +5,14 @@
 - Swift 6.0, iOS 17.0+
 - All TCA sub-dependencies set to `.framework` for Xcode Preview support
 
+## iOS Compatibility
+- Minimum deployment target: **iOS 16.0**
+- `@ObservableState` + `WithPerceptionTracking` = iOS 16+ safe (via Perception backport)
+- Never use raw `@Observable` macro (requires iOS 17+)
+- `NavigationStack` = iOS 16+ ✅
+- `LottieView` (Lottie 4.x) = iOS 16+ ✅ (use this, NOT `UIViewRepresentable` + `LottieAnimationView`)
+- `.onChange(of:perform:)` deprecated iOS 17 → use `.onChange(of:initial:_:)` with `#available` if needed
+
 ## Key Imports
 ```swift
 import ComposableArchitecture

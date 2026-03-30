@@ -26,18 +26,27 @@ imageView.image = DesignSystemAsset.Feature.Login.kakaoLogo.image
 
 ## Color Access
 
+Colors are defined as `Color` static extensions in `DSColors.swift`.
+
 ```swift
 import DesignSystem
 
-// SwiftUI
-Color(DesignSystemAsset.Colors.main.color)
-Color(DesignSystemAsset.Colors.gray600.color)
-Color(DesignSystemAsset.Colors.splash.color)
+// SwiftUI (use static extension directly)
+Color.splash
+Color.main
+Color.gray600
+Color.bg
 
-// UIKit
-let color = DesignSystemAsset.Colors.main.color
-view.backgroundColor = DesignSystemAsset.Colors.bg.color
+// In View body
+.background(Color.splash)
+.foregroundStyle(Color.gray600)
+
+// UIKit (via bundle lookup)
+UIColor(named: "splash", in: DesignSystemResources.bundle, compatibleWith: nil)
 ```
+
+Do NOT use `Color(.splash)` — this is invalid syntax.
+Do NOT use `Color(DesignSystemAsset.Colors.splash.color)` — Tuist does not generate color accessors for this project.
 
 ## Font Access
 

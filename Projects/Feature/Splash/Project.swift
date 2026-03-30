@@ -5,6 +5,7 @@ let project = Project.feature(
     module: .splash,
     dependencies: [
         .core(.dependency),
-        .core(.model)
+        .core(.model),
+        .external(.lottie)
     ]
 )
