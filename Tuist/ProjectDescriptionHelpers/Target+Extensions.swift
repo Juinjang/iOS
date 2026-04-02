@@ -21,7 +21,14 @@ extension Target {
             productName: appType.displayName,
             bundleId: appType.bundleID,
             deploymentTargets: Environment.deploymentTarget,
-            infoPlist: .default,
+            infoPlist: .extendingDefault(with: [
+                "CFBundleDisplayName": "$(CFBundleDisplayName)",
+                "UILaunchStoryboardName": "LaunchScreen",
+                "UIUserInterfaceStyle": "Light",
+                "UIApplicationSceneManifest": [
+                    "UIApplicationSupportsMultipleScenes": false
+                ]
+            ]),
             sources: ["Sources/**"],
             resources: ["Resources/**"],
             dependencies: appDependencies,
