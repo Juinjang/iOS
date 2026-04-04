@@ -90,10 +90,8 @@ public struct MyFeatureView: View {
     }
 
     public var body: some View {
-        WithPerceptionTracking {
-            Text("MyFeature")
-                .onAppear { store.send(.onAppear) }
-        }
+        Text("MyFeature")
+            .onAppear { store.send(.onAppear) }
     }
 }
 ```

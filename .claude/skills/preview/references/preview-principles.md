@@ -52,15 +52,13 @@ which directly impacts Preview load time.
 
 ```swift
 struct HomeView: View {
-    @Perception.Bindable var store: StoreOf<HomeFeature>
+    @Bindable var store: StoreOf<HomeFeature>
 
     var body: some View {
-        WithPerceptionTracking {
-            VStack {
-                headerSection
-                contentSection
-                footerSection
-            }
+        VStack {
+            headerSection
+            contentSection
+            footerSection
         }
     }
 

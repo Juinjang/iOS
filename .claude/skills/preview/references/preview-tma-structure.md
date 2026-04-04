@@ -30,27 +30,43 @@ Feature/Home/
 The **Example** target is a minimal app that hosts the feature for Preview.
 Select the `HomeExample` scheme in Xcode before using Previews.
 
-## Preview File Location
+## Preview 파일 위치 — 핵심 규칙
 
-Two valid locations for Preview files:
-
-### Option A: Alongside the view (preferred for simple cases)
-```
-Feature/Home/Sources/
-├── HomeFeature.swift
-├── HomeView.swift
-└── HomeView+Preview.swift    // or inline #Preview at bottom of HomeView.swift
-```
-
-### Option B: In Example target (for complex setups)
-```
-Feature/Home/Example/Sources/
-├── HomePreview.swift
-└── AppDelegate.swift
+### ❌ Sources에 #Preview 작성 금지
+```swift
+// ❌ Feature/Splash/Sources/SplashView.swift — 여기에 #Preview 작성하지 말 것
+#Preview {
+    SplashView(store: Store(...) { SplashFeature() })
+    // → 호스트 앱이 없어서 타임아웃 발생
+    // → Reducer Effect가 mock 없이 실행됨
+    // → 번들 리소스(Lottie, 이미지) 경로를 못 찾을 수 있음
+}
 ```
 
-Use Option B when the Preview requires additional setup (custom fonts, environment
-objects, etc.) that the Example app provides.
+Sources는 프레임워크 타겟이라 **호스트 앱이 없어** Preview가 정상 동작하지 않음.
+타임아웃, 크래시, noPreviewInfos 에러의 주요 원인.
+
+### ✅ Example 타겟에만 #Preview 작성
+```swift
+// ✅ Feature/Splash/Example/Sources/SplashExampleApp.swift
+#Preview {
+    SplashView(
+        store: Store(initialState: SplashFeature.State()) {
+            SplashFeature()
+        } withDependencies: {
+            $0.userDefaultsClient = .testValue  // mock 의존성 주입
+        }
+    )
+}
+```
+
+Example 타겟은 `.app` 제품이므로 호스트 앱이 존재하고,
+`{Feature}Example` 스킴으로 Preview를 실행할 수 있음.
+
+### Preview 실행 절차
+1. Xcode 스킴을 `{Feature}Example` (예: `SplashExample`)로 변경
+2. Example/Sources/ 내 파일에서 Preview 실행
+3. Sources/ 내 View 파일의 #Preview는 모두 제거
 
 ## Dependency Chain for Preview
 

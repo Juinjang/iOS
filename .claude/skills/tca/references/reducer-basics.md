@@ -53,20 +53,17 @@ struct HomeFeature {
 
 ```swift
 struct HomeView: View {
-    @Perception.Bindable var store: StoreOf<HomeFeature>
+    @Bindable var store: StoreOf<HomeFeature>
 
     var body: some View {
-        WithPerceptionTracking {
-            List(store.posts) { post in
-                PostRow(post: post)
-            }
-            .onAppear { store.send(.onAppear) }
+        List(store.posts) { post in
+            PostRow(post: post)
         }
+        .onAppear { store.send(.onAppear) }
     }
 }
 ```
 
 ## Important Notes
-- Use `WithPerceptionTracking` in view body for observation
-- Use `@Perception.Bindable` (not SwiftUI `@Bindable`) for store bindings
+- Use `@Bindable` (not `@Perception.Bindable`) for store bindings — iOS 17+ native, WithPerceptionTracking 불필요
 - `StoreOf<Feature>` is a typealias for `Store<Feature.State, Feature.Action>`

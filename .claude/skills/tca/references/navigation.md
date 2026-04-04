@@ -58,21 +58,19 @@ struct HomeRootFeature {
 
 ```swift
 struct HomeRootView: View {
-    @Perception.Bindable var store: StoreOf<HomeRootFeature>
+    @Bindable var store: StoreOf<HomeRootFeature>
 
     var body: some View {
-        WithPerceptionTracking {
-            NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-                HomeView(store: store.scope(state: \.home, action: \.home))
-            } destination: { store in
-                switch store.case {
-                case let .detail(store):
-                    PostDetailView(store: store)
-                case let .editProfile(store):
-                    EditProfileView(store: store)
-                case let .settings(store):
-                    SettingsView(store: store)
-                }
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+            HomeView(store: store.scope(state: \.home, action: \.home))
+        } destination: { store in
+            switch store.case {
+            case let .detail(store):
+                PostDetailView(store: store)
+            case let .editProfile(store):
+                EditProfileView(store: store)
+            case let .settings(store):
+                SettingsView(store: store)
             }
         }
     }

@@ -3,12 +3,17 @@ name: migration-helper
 model: sonnet
 description: Migration agent for ReactorKit→TCA and UIKit→SwiftUI transitions
 skills:
+  - base-conventions
   - tca
   - swiftui-expert-skill
   - swift-concurrency
 ---
 
 # Migration Helper Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Assist with codebase migrations:
@@ -35,7 +40,7 @@ Assist with codebase migrations:
 | `reduce(state:mutation:)` | state mutation inside Reduce closure |
 | `reactor.action.onNext(.x)` | `store.send(.x)` |
 | `reactor.state.map(\.prop)` | `store.prop` (via @ObservableState) |
-| `bind(reactor:)` | `WithPerceptionTracking { }` |
+| `bind(reactor:)` | `@Bindable store + .onAppear { store.send(.view(.onAppear)) }` |
 | `DisposeBag` | Effect cancellation (.cancellable) |
 | `Service` / `UseCase` | `@Dependency` client |
 

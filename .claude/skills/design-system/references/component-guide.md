@@ -60,7 +60,7 @@ public struct DSPrimaryButton: View {
 
 ### Lottie View Component
 
-Use Lottie 4.x native SwiftUI API (`LottieView`). iOS 16+ compatible.
+Use Lottie 4.x native SwiftUI API (`LottieView`). iOS 17+ compatible.
 Do NOT use `UIViewRepresentable` + `LottieAnimationView` — deprecated in Lottie 4.x.
 
 ```swift

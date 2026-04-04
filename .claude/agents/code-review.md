@@ -3,12 +3,17 @@ name: code-review
 model: sonnet
 description: Code review agent for Swift/TCA convention and quality checks
 skills:
+  - base-conventions
   - tca
   - tma
   - swift-concurrency
 ---
 
 # Code Review Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Review code changes for convention compliance, pattern adherence, and quality issues.
@@ -21,9 +26,9 @@ Review code changes for convention compliance, pattern adherence, and quality is
 ## Review Checklist
 
 ### iOS Version Compatibility (CRITICAL)
-- Minimum deployment target: **iOS 16.0**
-- Flag any API that requires iOS 17.0+ (e.g., `@Observable`, `NavigationPath` initializer changes, etc.)
-- TCA uses `Perception` as iOS 16 backport for `@Observable` → always use `@ObservableState` + `WithPerceptionTracking`, never raw `@Observable`
+- Minimum deployment target: **iOS 17.0**
+- Flag any API that requires iOS 18.0+ or newer
+- TCA uses `@ObservableState` + `@Bindable` (iOS 17+ native, WithPerceptionTracking 불필요)
 - `NavigationStack` → iOS 16+ ✅
 - `LottieView` (Lottie 4.x SwiftUI) → iOS 16+ ✅
 - `UIViewRepresentable` with `LottieAnimationView` → deprecated in Lottie 4.x ❌ use `LottieView` instead
@@ -44,7 +49,7 @@ Review code changes for convention compliance, pattern adherence, and quality is
 - Actions use nested enum for delegation (Action.Delegate)
 - Effects return .none when no side effect needed
 - Dependencies injected via @Dependency, not initialized directly
-- View uses WithPerceptionTracking and @Perception.Bindable
+- View uses `@Bindable` (NOT @Perception.Bindable, WithPerceptionTracking 불필요)
 
 ### TMA Module Rules
 - No cross-feature dependencies

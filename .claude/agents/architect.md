@@ -3,12 +3,17 @@ name: architect
 model: opus
 description: Architecture design and planning agent for complex structural decisions
 skills:
+  - base-conventions
   - tca
   - tma
   - swift-concurrency
 ---
 
 # Architect Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Design module structures, dependency graphs, navigation flows, and large-scale refactoring plans.

@@ -1,13 +1,27 @@
 # Accessing DesignSystem Assets from Feature Modules
 
-## How Tuist Resource Accessors Work
+## ⚠️ ResourceSynthesizers 자동 생성 구조
 
-When `hasResources: true` in the DesignSystem project config, Tuist generates:
-- `Derived/Sources/TuistAssets+DesignSystem.swift` — image and color accessors
-- `Derived/Sources/TuistFonts+DesignSystem.swift` — font accessors
-- `Derived/Sources/TuistBundle+DesignSystem.swift` — bundle accessor
+이 프로젝트는 `Tuist/ResourceSynthesizers/`에 커스텀 템플릿이 설정되어 있습니다:
+- `Colors.stencil` — Colors.xcassets의 컬러를 자동으로 extension 생성
+- `images.stencil` — Assets.xcassets(Images)의 이미지를 자동으로 extension 생성
 
-These are auto-generated on `tuist generate` and should NOT be edited manually.
+`tuist generate` 실행 시 `Derived/Sources/`에 type-safe accessor가 자동 생성됩니다.
+**수동으로 DSColors.swift 같은 파일을 별도로 만들지 않습니다.**
+
+## 에셋 추가 절차
+
+### 컬러 추가
+1. `Projects/DesignSystem/Resources/Colors.xcassets/`에 colorset 추가
+2. `tuist generate` 실행
+3. 자동 생성된 extension으로 바로 사용 가능
+
+### 이미지 추가
+1. `Projects/DesignSystem/Resources/Assets.xcassets/`에 imageset 추가
+2. `tuist generate` 실행
+3. 자동 생성된 extension으로 바로 사용 가능
+
+**별도의 Assets 폴더를 새로 만들지 않습니다.** 기존 폴더에 추가하면 자동 반영됩니다.
 
 ## Image Access
 
@@ -17,36 +31,20 @@ import DesignSystem
 // SwiftUI
 Image(uiImage: DesignSystemAsset.Common.arrowLeft.image)
 Image(uiImage: DesignSystemAsset.Feature.Splash.splashLogo.image)
-Image(uiImage: DesignSystemAsset.Brand.logo.image)
 
 // UIKit
 let image = DesignSystemAsset.Common.close.image
-imageView.image = DesignSystemAsset.Feature.Login.kakaoLogo.image
 ```
 
 ## Color Access
 
-Colors are defined as `Color` static extensions in `DSColors.swift`.
-
 ```swift
 import DesignSystem
 
-// SwiftUI (use static extension directly)
-Color.splash
-Color.main
-Color.gray600
-Color.bg
-
-// In View body
-.background(Color.splash)
-.foregroundStyle(Color.gray600)
-
-// UIKit (via bundle lookup)
-UIColor(named: "splash", in: DesignSystemResources.bundle, compatibleWith: nil)
+// ResourceSynthesizers가 자동 생성한 accessor 사용
+// 정확한 접근 방식은 Colors.stencil 템플릿에 따라 결정됨
+// tuist generate 후 Derived/Sources/ 에서 생성된 코드 확인
 ```
-
-Do NOT use `Color(.splash)` — this is invalid syntax.
-Do NOT use `Color(DesignSystemAsset.Colors.splash.color)` — Tuist does not generate color accessors for this project.
 
 ## Font Access
 
@@ -63,18 +61,14 @@ label.font = DesignSystemFontFamily.Pretendard.bold.font(size: 16)
 
 ## Lottie Access
 
-Lottie files are raw resources, accessed via bundle:
-
 ```swift
 import DesignSystem
 import Lottie
 
-// Get Lottie animation from DesignSystem bundle
-let bundle = DesignSystemResources.bundle
-let animation = LottieAnimation.named("splash60", bundle: bundle)
-
-// In SwiftUI with LottieView
-LottieView(animation: .named("splash60", bundle: DesignSystemResources.bundle))
+// DSLottieView 사용 (DesignSystem 모듈에 포함)
+DSLottieView(name: "splash60") {
+    // onComplete 콜백
+}
 ```
 
 ## Important Notes
@@ -82,7 +76,6 @@ LottieView(animation: .named("splash60", bundle: DesignSystemResources.bundle))
 1. **Always import DesignSystem** in Feature modules that use assets
 2. **Never duplicate assets** in Feature modules — always reference DesignSystem
 3. **Run `tuist generate`** after adding new assets to regenerate accessors
-4. **Accessor naming** follows the xcassets group/file structure:
-   - `Assets.xcassets/Common/arrow-left.imageset` → `DesignSystemAsset.Common.arrowLeft.image`
-   - `Colors.xcassets/Gray/gray100.colorset` → `DesignSystemAsset.Colors.gray100.color`
-5. **Kebab-case** in file names becomes **camelCase** in generated code
+4. **Colors.xcassets에 추가** → tuist generate → 자동으로 extension 생성
+5. **Assets.xcassets에 추가** → tuist generate → 자동으로 extension 생성
+6. **수동으로 Color/Image extension 파일을 만들지 않음** — ResourceSynthesizers가 관리

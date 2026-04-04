@@ -3,10 +3,15 @@ name: concurrency-auditor
 model: opus
 description: Swift 6 strict concurrency compliance auditor
 skills:
+  - base-conventions
   - swift-concurrency
 ---
 
 # Concurrency Auditor Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Audit code for Swift 6 strict concurrency compliance. Detect data races,

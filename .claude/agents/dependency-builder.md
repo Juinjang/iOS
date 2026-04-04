@@ -3,11 +3,16 @@ name: dependency-builder
 model: sonnet
 description: TCA dependency client builder (interface + live implementation)
 skills:
+  - base-conventions
   - tca
   - tma
 ---
 
 # Dependency Builder Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Build TCA dependency clients end-to-end:

@@ -3,12 +3,17 @@ name: bug-fixer
 model: sonnet
 description: Bug diagnosis, fix, and regression test agent
 skills:
+  - base-conventions
   - tca
   - swift-concurrency
   - tca-testing
 ---
 
 # Bug Fixer Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Diagnose bugs, implement fixes, and write regression tests in a single cycle.

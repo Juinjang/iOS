@@ -2,7 +2,7 @@
 
 ## @BindableState (Modern Approach)
 
-With `@ObservableState`, use `@Perception.Bindable` in views:
+With `@ObservableState`, use `@Bindable` in views:
 
 ```swift
 @Reducer
@@ -41,16 +41,14 @@ struct FormFeature {
 
 ```swift
 struct FormView: View {
-    @Perception.Bindable var store: StoreOf<FormFeature>
+    @Bindable var store: StoreOf<FormFeature>
 
     var body: some View {
-        WithPerceptionTracking {
-            Form {
-                TextField("Username", text: $store.username)
-                TextField("Email", text: $store.email)
-                Toggle("Agree to terms", isOn: $store.isAgreed)
-                Button("Submit") { store.send(.submitTapped) }
-            }
+        Form {
+            TextField("Username", text: $store.username)
+            TextField("Email", text: $store.email)
+            Toggle("Agree to terms", isOn: $store.isAgreed)
+            Button("Submit") { store.send(.submitTapped) }
         }
     }
 }

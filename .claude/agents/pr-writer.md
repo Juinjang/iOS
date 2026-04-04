@@ -6,6 +6,10 @@ description: Git commit message and PR description writer
 
 # PR Writer Agent
 
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
+
 ## Role
 Analyze git diffs and generate commit messages and PR descriptions.
 

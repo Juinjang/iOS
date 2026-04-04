@@ -85,25 +85,21 @@ case .view(.toggleFavorite(let id)):
 ```swift
 // BAD - view-level guard
 var body: some View {
-    WithPerceptionTracking {
-        content
-            .task {
-                if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
-                    store.send(.view(.onAppear))
-                }
+    content
+        .task {
+            if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                store.send(.view(.onAppear))
             }
-    }
+        }
 }
 
 // GOOD - reducer-level guard
 // View sends action normally; reducer decides whether to run effects
 var body: some View {
-    WithPerceptionTracking {
-        content
-            .task {
-                store.send(.view(.onAppear))
-            }
-    }
+    content
+        .task {
+            store.send(.view(.onAppear))
+        }
 }
 ```
 

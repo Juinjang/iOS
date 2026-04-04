@@ -3,11 +3,16 @@ name: test-writer
 model: sonnet
 description: TCA test code and mock data writer
 skills:
+  - base-conventions
   - tca-testing
   - swift-testing-expert
 ---
 
 # Test Writer Agent
+
+## Base Rules
+이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
+충돌 시 base-conventions가 우선합니다.
 
 ## Role
 Write comprehensive test code for Feature and Core modules.

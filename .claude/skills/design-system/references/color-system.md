@@ -51,14 +51,15 @@
 ## Usage in SwiftUI
 
 ```swift
-// Via Tuist-generated accessor
-Color(DesignSystemAsset.Colors.main.color)
-Color(DesignSystemAsset.Colors.gray600.color)
-Color(DesignSystemAsset.Colors.splash.color)
+import DesignSystem
 
-// For UIKit interop
-UIColor(resource: .main)
+// ResourceSynthesizers 자동 생성 accessor 사용
+// Colors.xcassets에 컬러 추가 → tuist generate → 자동 반영
+// 수동으로 DSColors.swift 같은 파일을 별도로 만들지 않음
 ```
+
+⚠️ 정확한 접근 방식은 `Tuist/ResourceSynthesizers/Colors.stencil` 템플릿에 따라 결정됩니다.
+`tuist generate` 후 `Derived/Sources/`에서 생성된 코드를 확인하세요.
 
 ## Dark Mode
 Currently single appearance (no dark mode variants).
