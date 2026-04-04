@@ -24,3 +24,4 @@ All reference files are located in `./references/` directory:
 - `infoplist-issues.md` - Info.plist 누락으로 인한 검정화면, LaunchScreen 관련
 - `tuist-build-issues.md` - Tuist generate 실패, XCConfig, 매크로 충돌
 - `runtime-warnings.md` - 런타임 중복 클래스 경고, 다크모드 이슈
+- `preview-issues.md` - Xcode Preview 무한 부팅, static framework, SDKStatCache

@@ -27,7 +27,7 @@ public extension Project {
             .target(
                 name: name,
                 destinations: Environment.destinations,
-                product: .staticFramework,
+                product: .framework,
                 bundleId: "com.juinjang.feature.\(name.lowercased())",
                 deploymentTargets: .iOS("17.0"),
                 sources: ["Sources/**"],
@@ -40,7 +40,7 @@ public extension Project {
             .target(
                 name: "\(name)Testing",
                 destinations: Environment.destinations,
-                product: .staticFramework,
+                product: .framework,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).testing",
                 deploymentTargets: .iOS("17.0"),
                 sources: ["Testing/**"],

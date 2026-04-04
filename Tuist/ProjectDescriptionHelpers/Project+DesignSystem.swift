@@ -15,7 +15,7 @@ public extension Project {
                 .target(
                     name: "DesignSystem",
                     destinations: Environment.destinations,
-                    product: .staticFramework,
+                    product: .framework,
                     bundleId: "com.juinjang.designsystem",
                     deploymentTargets: .iOS("17.0"),
                     sources: ["Sources/**"],

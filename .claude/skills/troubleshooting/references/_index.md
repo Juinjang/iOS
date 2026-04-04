@@ -11,3 +11,7 @@
 | AppIcon not found 빌드 에러 | AppIcon 대소문자 불일치 | tuist-build-issues.md |
 | Preview "NoBuildableEntries" | 스킴 불일치 | tuist-build-issues.md |
 | 런타임 중복 클래스 경고 | static library 다중 링크 | runtime-warnings.md |
+| Preview 무한 부팅 (무한 로딩) | static framework + Xcode 26 beta | preview-issues.md |
+| Preview "sdkstatcache not found" | SDK 해시 불일치 (Xcode beta 버그) | preview-issues.md |
+| Preview "NoBuildableEntries" | 스킴 불일치 | preview-issues.md |
+| Preview에서 Lottie 로딩 느림 | 대용량 JSON 파싱 | preview-issues.md |

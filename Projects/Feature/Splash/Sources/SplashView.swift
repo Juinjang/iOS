@@ -25,10 +25,4 @@ public struct SplashView: View {
     }
 }
 
-#Preview {
-    SplashView(
-        store: Store(initialState: SplashFeature.State()) {
-            SplashFeature()
-        }
-    )
-}
+
