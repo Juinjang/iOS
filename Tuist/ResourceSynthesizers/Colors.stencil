@@ -1,13 +1,22 @@
-
+// swiftlint:disable all
+// Generated using tuist — DO NOT EDIT
 import SwiftUI
 
 {% for catalog in catalogs %}
-{% if catalog.name == "Color" %}
+{% if catalog.name == "Colors" %}
 public extension Color {
-{% for color in catalog.assets %}
-    static var {{ color.name|swiftIdentifier:"pretty"|lowerFirstWord }}: Color {
-        return Color(named: "{{ color.name }}", in: .module, compatibleWith: nil)!
-    }
+{% for asset in catalog.assets %}
+{% if asset.items %}
+{% for item in asset.items %}
+{% if item.value %}
+    static let {{ item.name|swiftIdentifier:"pretty"|lowerFirstWord }} = Color("{{ item.value }}", bundle: .module)
+{% endif %}
+{% endfor %}
+{% else %}
+{% if asset.value %}
+    static let {{ asset.name|swiftIdentifier:"pretty"|lowerFirstWord }} = Color("{{ asset.value }}", bundle: .module)
+{% endif %}
+{% endif %}
 {% endfor %}
 }
 {% endif %}

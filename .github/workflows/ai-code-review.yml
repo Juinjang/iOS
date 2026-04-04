@@ -83,7 +83,13 @@ jobs:
             echo "==========================="
           fi
 
-          BODY=$(printf "## 🤖 AI Code Review Bot\n\n%s\n\n---\n_Last updated: $(date -u '+%%Y-%%m-%%d %%H:%%M UTC') | Powered by GPT-4o_" "$REVIEW")
+          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          BODY="## 🤖 AI Code Review Bot
+
+${REVIEW}
+
+---
+_Last updated: ${TIMESTAMP} | Powered by GPT-4o_"
 
           echo "Checking for existing review comment..."
 
