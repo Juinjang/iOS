@@ -19,6 +19,7 @@ public struct SplashView: View {
             }
             .frame(width: 250, height: 250)
         }
+        .compositingGroup()
         .onAppear {
             store.send(.view(.onAppear))
         }

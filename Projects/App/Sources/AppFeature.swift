@@ -13,6 +13,18 @@ public struct AppFeature {
         public var login: LoginFeature.State?
         public var home: HomeFeature.State?
 
+        public enum ActiveScreen {
+            case splash, onboarding, login, home, none
+        }
+
+        public var activeScreen: ActiveScreen {
+            if splash != nil { return .splash }
+            if onboarding != nil { return .onboarding }
+            if login != nil { return .login }
+            if home != nil { return .home }
+            return .none
+        }
+
         public init() {
             self.splash = SplashFeature.State()
         }
