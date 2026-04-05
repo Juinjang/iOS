@@ -1,6 +1,7 @@
 
+
 ---
 
-### 🔄 추가 리뷰 (__TIMESTAMP_VALUE__)
+### 🔄 추가 리뷰 (TIMESTAMP_PLACEHOLDER)
 
-__REVIEW_CONTENT__
+REVIEW_PLACEHOLDER

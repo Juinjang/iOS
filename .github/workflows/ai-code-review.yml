@@ -119,8 +119,8 @@ jobs:
               "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
               --jq '.body')
 
-            APPEND_BODY="${INCREMENTAL_TEMPLATE//__TIMESTAMP_VALUE__/$TIMESTAMP}"
-            APPEND_BODY="${APPEND_BODY//__REVIEW_CONTENT__/$REVIEW}"
+            APPEND_BODY="${INCREMENTAL_TEMPLATE//TIMESTAMP_PLACEHOLDER/$TIMESTAMP}"
+            APPEND_BODY="${APPEND_BODY//REVIEW_PLACEHOLDER/$REVIEW}"
             NEW_BODY="${EXISTING_BODY}${APPEND_BODY}"
 
             gh api \
@@ -129,16 +129,16 @@ jobs:
               -f body="$NEW_BODY"
           elif [ -n "$EXISTING_COMMENT_ID" ]; then
             echo "Updating existing comment..."
-            BODY="${INITIAL_TEMPLATE//__TIMESTAMP_VALUE__/$TIMESTAMP}"
-            BODY="${BODY//__REVIEW_CONTENT__/$REVIEW}"
+            BODY="${INITIAL_TEMPLATE//TIMESTAMP_PLACEHOLDER/$TIMESTAMP}"
+            BODY="${BODY//REVIEW_PLACEHOLDER/$REVIEW}"
             gh api \
               --method PATCH \
               "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
               -f body="$BODY"
           else
             echo "Creating new review comment..."
-            BODY="${INITIAL_TEMPLATE//__TIMESTAMP_VALUE__/$TIMESTAMP}"
-            BODY="${BODY//__REVIEW_CONTENT__/$REVIEW}"
+            BODY="${INITIAL_TEMPLATE//TIMESTAMP_PLACEHOLDER/$TIMESTAMP}"
+            BODY="${BODY//REVIEW_PLACEHOLDER/$REVIEW}"
             gh pr comment ${PR_NUMBER} --body "$BODY"
           fi
 

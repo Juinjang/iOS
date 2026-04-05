@@ -1,6 +1,7 @@
 ## 🤖 AI Code Review Bot
 
-__REVIEW_CONTENT__
+REVIEW_PLACEHOLDER
 
 ---
-___TIMESTAMP_VALUE__ | Powered by Gemini_
+
+_TIMESTAMP_PLACEHOLDER | Powered by Gemini_
