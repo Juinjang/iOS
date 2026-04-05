@@ -1,6 +1,6 @@
 ## 🤖 AI Code Review Bot
 
-{{REVIEW}}
+__REVIEW_CONTENT__
 
 ---
-_{{TIMESTAMP}} | Powered by Gemini_
+___TIMESTAMP_VALUE__ | Powered by Gemini_

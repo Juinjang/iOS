@@ -1,6 +1,6 @@
 
 ---
 
-### 🔄 추가 리뷰 ({{TIMESTAMP}})
+### 🔄 추가 리뷰 (__TIMESTAMP_VALUE__)
 
-{{REVIEW}}
+__REVIEW_CONTENT__
