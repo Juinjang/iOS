@@ -34,30 +34,44 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
+          EVENT_ACTION=${{ github.event.action }}
 
           echo "Fetching base branch..."
           git fetch origin ${{ github.base_ref }}
 
-          echo "Collecting PR diff..."
-          DIFF=$(git diff origin/${{ github.base_ref }} | head -c 40000)
+          # 최초 PR: 전체 diff / 이후 커밋: 해당 커밋 변경분만
+          if [ "$EVENT_ACTION" = "opened" ]; then
+            echo "New PR — reviewing full diff..."
+            DIFF=$(git diff origin/${{ github.base_ref }} | head -c 40000)
+            REVIEW_MODE="full"
+          else
+            echo "New commit — reviewing latest changes..."
+            DIFF=$(git diff HEAD~1 | head -c 40000)
+            REVIEW_MODE="incremental"
+          fi
 
           if [ -z "$DIFF" ]; then
-            echo "No diff found in PR."
+            echo "No diff found."
             exit 0
           fi
 
           PROMPT=$(cat .ai/prompts/ios-review.md)
 
-          echo "Preparing Gemini request..."
+          if [ "$REVIEW_MODE" = "incremental" ]; then
+            EXTRA_INSTRUCTION="이전 리뷰에 추가하는 내용입니다. 이번 커밋의 변경사항만 리뷰해주세요. '추가 리뷰'라고 표시해주세요."
+          else
+            EXTRA_INSTRUCTION=""
+          fi
 
           JSON=$(jq -n \
             --arg prompt "$PROMPT" \
             --arg diff "$DIFF" \
+            --arg extra "$EXTRA_INSTRUCTION" \
             '{
               contents: [{
                 role: "user",
                 parts: [{
-                  text: ($prompt + "\n\nReview the following Swift PR diff:\n" + $diff)
+                  text: ($prompt + "\n\n" + $extra + "\n\nReview the following Swift PR diff:\n" + $diff)
                 }]
               }]
             }')
@@ -80,9 +94,6 @@ jobs:
           fi
 
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
-          HEADER="## 🤖 AI Code Review Bot"
-          FOOTER="---"$'\n'"_Last updated: ${TIMESTAMP} | Powered by Gemini_"
-          BODY="${HEADER}"$'\n\n'"${REVIEW}"$'\n\n'"${FOOTER}"
 
           echo "Checking for existing review comment..."
 
@@ -91,14 +102,30 @@ jobs:
             --jq '.[] | select(.body | startswith("## 🤖 AI Code Review Bot")) | .id' \
             | head -1)
 
-          if [ -n "$EXISTING_COMMENT_ID" ]; then
-            echo "Updating existing comment (ID: $EXISTING_COMMENT_ID)..."
+          if [ "$REVIEW_MODE" = "incremental" ] && [ -n "$EXISTING_COMMENT_ID" ]; then
+            echo "Appending incremental review to existing comment..."
+            EXISTING_BODY=$(gh api \
+              "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
+              --jq '.body')
+
+            SEPARATOR=$'\n\n---\n\n'
+            INCREMENTAL_HEADER="### 🔄 추가 리뷰 (${TIMESTAMP})"
+            NEW_BODY="${EXISTING_BODY}${SEPARATOR}${INCREMENTAL_HEADER}"$'\n\n'"${REVIEW}"
+
+            gh api \
+              --method PATCH \
+              "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
+              -f body="$NEW_BODY"
+          elif [ -n "$EXISTING_COMMENT_ID" ]; then
+            echo "Updating existing comment..."
+            BODY="## 🤖 AI Code Review Bot"$'\n\n'"${REVIEW}"$'\n\n'"---"$'\n'"_Last updated: ${TIMESTAMP} | Powered by Gemini_"
             gh api \
               --method PATCH \
               "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
               -f body="$BODY"
           else
             echo "Creating new review comment..."
+            BODY="## 🤖 AI Code Review Bot"$'\n\n'"${REVIEW}"$'\n\n'"---"$'\n'"_Last updated: ${TIMESTAMP} | Powered by Gemini_"
             gh pr comment ${PR_NUMBER} --body "$BODY"
           fi
 
