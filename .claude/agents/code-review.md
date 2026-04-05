@@ -29,8 +29,8 @@ Review code changes for convention compliance, pattern adherence, and quality is
 - Minimum deployment target: **iOS 17.0**
 - Flag any API that requires iOS 18.0+ or newer
 - TCA uses `@ObservableState` + `@Bindable` (iOS 17+ native, WithPerceptionTracking 불필요)
-- `NavigationStack` → iOS 16+ ✅
-- `LottieView` (Lottie 4.x SwiftUI) → iOS 16+ ✅
+- `NavigationStack` → iOS 17+ ✅
+- `LottieView` (Lottie 4.x SwiftUI) → iOS 17+ ✅
 - `UIViewRepresentable` with `LottieAnimationView` → deprecated in Lottie 4.x ❌ use `LottieView` instead
 - Flag any `.onChange(of:perform:)` → deprecated iOS 17, use `.onChange(of:) { _, new in }` on iOS 17+ only if min is 16
 - Check `#available(iOS 17, *)` guards where newer APIs are used

@@ -9,8 +9,8 @@
 - Minimum deployment target: **iOS 17.0**
 - `@ObservableState` + `@Bindable` = iOS 17+ native observation
 - Never use raw `@Observable` macro — always use `@ObservableState` for TCA
-- `NavigationStack` = iOS 16+ (프로젝트 최소 타겟은 iOS 17.0) ✅
-- `LottieView` (Lottie 4.x) = iOS 16+ ✅ (use this, NOT `UIViewRepresentable` + `LottieAnimationView`)
+- `NavigationStack` = iOS 17+ ✅
+- `LottieView` (Lottie 4.x) = iOS 17+ ✅ (use this, NOT `UIViewRepresentable` + `LottieAnimationView`)
 - `.onChange(of:perform:)` deprecated iOS 17 → use `.onChange(of:initial:_:)` with `#available` if needed
 
 ## Key Imports
