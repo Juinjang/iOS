@@ -15,7 +15,9 @@ struct HomeExampleApp: App {
     }
 }
 
-#Preview {
+// MARK: - Previews
+
+#Preview("Home") {
     HomeView(
         store: Store(initialState: HomeFeature.State()) {
             HomeFeature()

@@ -9,16 +9,22 @@ struct SplashExampleApp: App {
             SplashView(
                 store: Store(initialState: SplashFeature.State()) {
                     SplashFeature()
+                } withDependencies: {
+                    $0.userDefaultsClient = .testValue
                 }
             )
         }
     }
 }
 
-#Preview {
+// MARK: - Previews
+
+#Preview("Splash") {
     SplashView(
         store: Store(initialState: SplashFeature.State()) {
             SplashFeature()
+        } withDependencies: {
+            $0.userDefaultsClient = .testValue
         }
     )
 }
