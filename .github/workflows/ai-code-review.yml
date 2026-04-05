@@ -95,6 +95,10 @@ jobs:
 
           TIMESTAMP=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M KST')
 
+          # 템플릿 로드 및 변수 치환
+          INITIAL_TEMPLATE=$(cat .ai/templates/review-initial.md)
+          INCREMENTAL_TEMPLATE=$(cat .ai/templates/review-incremental.md)
+
           echo "Checking for existing review comment..."
 
           EXISTING_COMMENT_ID=$(gh api \
@@ -102,15 +106,25 @@ jobs:
             --jq '.[] | select(.body | startswith("## 🤖 AI Code Review Bot")) | .id' \
             | head -1)
 
+          # 템플릿에 변수 치환
+          build_body() {
+            local template="$1"
+            local review="$2"
+            local ts="$3"
+            echo "${template//\{\{TIMESTAMP\}\}/$ts}" | while IFS= read -r line; do
+              echo "${line//\{\{REVIEW\}\}/$review}"
+            done
+          }
+
           if [ "$REVIEW_MODE" = "incremental" ] && [ -n "$EXISTING_COMMENT_ID" ]; then
-            echo "Appending incremental review to existing comment..."
+            echo "Appending incremental review..."
             EXISTING_BODY=$(gh api \
               "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
               --jq '.body')
 
-            SEPARATOR=$'\n\n---\n\n'
-            INCREMENTAL_HEADER="### 🔄 추가 리뷰 (${TIMESTAMP})"
-            NEW_BODY="${EXISTING_BODY}${SEPARATOR}${INCREMENTAL_HEADER}"$'\n\n'"${REVIEW}"
+            APPEND_BODY="${INCREMENTAL_TEMPLATE//\{\{TIMESTAMP\}\}/$TIMESTAMP}"
+            APPEND_BODY="${APPEND_BODY//\{\{REVIEW\}\}/$REVIEW}"
+            NEW_BODY="${EXISTING_BODY}${APPEND_BODY}"
 
             gh api \
               --method PATCH \
@@ -118,14 +132,16 @@ jobs:
               -f body="$NEW_BODY"
           elif [ -n "$EXISTING_COMMENT_ID" ]; then
             echo "Updating existing comment..."
-            BODY="## 🤖 AI Code Review Bot"$'\n\n'"${REVIEW}"$'\n\n'"---"$'\n'"_Last updated: ${TIMESTAMP} | Powered by Gemini_"
+            BODY="${INITIAL_TEMPLATE//\{\{TIMESTAMP\}\}/$TIMESTAMP}"
+            BODY="${BODY//\{\{REVIEW\}\}/$REVIEW}"
             gh api \
               --method PATCH \
               "repos/${{ github.repository }}/issues/comments/${EXISTING_COMMENT_ID}" \
               -f body="$BODY"
           else
             echo "Creating new review comment..."
-            BODY="## 🤖 AI Code Review Bot"$'\n\n'"${REVIEW}"$'\n\n'"---"$'\n'"_Last updated: ${TIMESTAMP} | Powered by Gemini_"
+            BODY="${INITIAL_TEMPLATE//\{\{TIMESTAMP\}\}/$TIMESTAMP}"
+            BODY="${BODY//\{\{REVIEW\}\}/$REVIEW}"
             gh pr comment ${PR_NUMBER} --body "$BODY"
           fi
 
