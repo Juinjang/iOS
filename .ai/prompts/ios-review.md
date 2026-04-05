@@ -5,7 +5,6 @@ The project uses:
 - SwiftUI + TCA (The Composable Architecture) 1.24.1+
 - Tuist Modular Architecture (TMA)
 - Swift 6, iOS 17.0+
-- @Bindable (NOT @Perception.Bindable), WithPerceptionTracking 불필요
 
 ---
 
