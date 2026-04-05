@@ -93,7 +93,7 @@ jobs:
             echo "==========================="
           fi
 
-          TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
+          TIMESTAMP=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M KST')
 
           echo "Checking for existing review comment..."
 
