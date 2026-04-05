@@ -24,7 +24,6 @@ public struct SplashFeature: Sendable {
         }
     }
 
-    
     @Dependency(\.userDefaultsClient) var userDefaultsClient
 
     public init() {}
