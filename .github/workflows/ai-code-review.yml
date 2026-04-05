@@ -77,12 +77,9 @@ jobs:
           fi
 
           TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
-          BODY="## 🤖 AI Code Review Bot
-
-${REVIEW}
-
----
-_Last updated: ${TIMESTAMP} | Powered by Gemini_"
+          HEADER="## 🤖 AI Code Review Bot"
+          FOOTER="---"$'\n'"_Last updated: ${TIMESTAMP} | Powered by Gemini_"
+          BODY="${HEADER}"$'\n\n'"${REVIEW}"$'\n\n'"${FOOTER}"
 
           echo "Checking for existing review comment..."
 
