@@ -87,10 +87,17 @@ jobs:
           REVIEW=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text' 2>/dev/null)
 
           if [ -z "$REVIEW" ] || [ "$REVIEW" = "null" ]; then
-            REVIEW="Gemini API 응답을 받지 못했습니다. Actions 로그를 확인해주세요."
+            echo "Gemini API 응답을 받지 못했습니다."
             echo "===== GEMINI RESPONSE ====="
             echo "$RESPONSE"
             echo "==========================="
+            exit 0
+          fi
+
+          # 리뷰할 내용이 없으면 코멘트 작성하지 않음
+          if echo "$REVIEW" | grep -qiE "리뷰 내용은 없습니다|리뷰 내용이 없습니다|해당하는.*없습니다|특이사항 없음|변경사항이 포함되어 있지 않아"; then
+            echo "No actionable review. Skipping comment."
+            exit 0
           fi
 
           TIMESTAMP=$(TZ='Asia/Seoul' date '+%Y-%m-%d %H:%M KST')
