@@ -23,6 +23,8 @@ extension Target {
             deploymentTargets: Environment.deploymentTarget,
             infoPlist: .extendingDefault(with: [
                 "CFBundleDisplayName": "$(CFBundleDisplayName)",
+                "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
                 "UILaunchStoryboardName": "LaunchScreen",
                 "UIUserInterfaceStyle": "Light",
                 "UIApplicationSceneManifest": [

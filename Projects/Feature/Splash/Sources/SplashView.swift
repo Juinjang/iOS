@@ -18,12 +18,18 @@ public struct SplashView: View {
                 store.send(.animationCompleted)
             }
             .frame(width: 250, height: 250)
+
+            if store.showUpdatePopup {
+                UpdateAlertView(
+                    onUpdate: { store.send(.updateButtonTapped) }
+                )
+                .transition(.opacity)
+            }
         }
         .compositingGroup()
+        .animation(.easeInOut(duration: 0.3), value: store.showUpdatePopup)
         .onAppear {
             store.send(.view(.onAppear))
         }
     }
 }
-
-
