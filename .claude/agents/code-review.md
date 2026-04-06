@@ -57,15 +57,20 @@ Review code changes for convention compliance, pattern adherence, and quality is
 - Public API minimized (only expose what other modules need)
 - Interface/Implementation separation where applicable
 
-### Concurrency
+### Concurrency (Swift 6 Strict)
 - @Sendable on closures crossing isolation boundaries
 - @MainActor on UI-related reducers and views
 - No unstructured Task {} without cancellation handling
 - Proper use of async/await (no callback-based patterns)
+- Missing Sendable conformance on types crossing isolation boundaries
+- Mutable shared state without actor protection
+- Unsafe @unchecked Sendable usage
+- AsyncSequence lifetime / termination handling
+- Dependency clients use @Sendable closures
 
 ### Memory
 - [weak self] in escaping closures where needed
-- No retain cycles in long-lived subscriptions
+- No retain cycles in long-lived subscriptions / async closures
 - Proper cleanup in .onDisappear or cancellation
 
 ## Output Format
