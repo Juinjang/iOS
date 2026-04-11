@@ -1,9 +1,8 @@
 ---
 name: code-review
 model: sonnet
-description: Code review agent for Swift/TCA convention and quality checks
+description: 코드 리뷰 — TCA 패턴, 아키텍처, Concurrency, 메모리
 skills:
-  - base-conventions
   - tca
   - tma
   - swift-concurrency
@@ -11,68 +10,46 @@ skills:
 
 # Code Review Agent
 
-## Base Rules
-이 Agent는 `.claude/skills/base-conventions/`의 공통 규칙을 따릅니다.
-충돌 시 base-conventions가 우선합니다.
-
 ## Role
-Review code changes for convention compliance, pattern adherence, and quality issues.
+코드 변경사항의 컨벤션 준수, 패턴 준수, 품질 이슈를 리뷰합니다.
 
-## When to Invoke
-- After implementing a feature, before committing
-- Reviewing a PR or diff
-- Checking code quality after refactoring
+## 반드시 참조
+- `.claude/rules/` — 코드 컨벤션, 아키텍처 규칙
+- `CLAUDE.md` — 프로젝트 스펙
 
 ## Review Checklist
 
-### iOS Version Compatibility (CRITICAL)
-- Minimum deployment target: **iOS 17.0**
-- Flag any API that requires iOS 18.0+ or newer
-- TCA uses `@ObservableState` + `@Bindable` (iOS 17+ native, WithPerceptionTracking 불필요)
-- `NavigationStack` → iOS 17+ ✅
-- `LottieView` (Lottie 4.x SwiftUI) → iOS 17+ ✅
-- `UIViewRepresentable` with `LottieAnimationView` → deprecated in Lottie 4.x ❌ use `LottieView` instead
-- Flag any `.onChange(of:perform:)` → deprecated iOS 17, use `.onChange(of:) { _, new in }` on iOS 17+ only if min is 16
-- Check `#available(iOS 17, *)` guards where newer APIs are used
-
-### Swift Conventions
-- Naming: camelCase properties/methods, PascalCase types
-- Access control: prefer most restrictive (private > internal > public)
-- No force unwraps (!) unless justified with comment
-- No force try (try!) in production code
-- Prefer value types (struct/enum) over reference types (class)
+### iOS Version Compatibility
+- 최소 타겟: iOS 17.0
+- iOS 18.0+ API 사용 시 플래그
 
 ### TCA Patterns
-- @Reducer macro present on all reducers
-- @ObservableState on all State structs
-- State conforms to Equatable
-- Actions use nested enum for delegation (Action.Delegate)
-- Effects return .none when no side effect needed
-- Dependencies injected via @Dependency, not initialized directly
-- View uses `@Bindable` (NOT @Perception.Bindable, WithPerceptionTracking 불필요)
+- `@Reducer`, `@ObservableState` 매크로
+- `@Bindable` (NOT @Perception.Bindable)
+- Action: `view(View)`, `delegate(Delegate)` 패턴
+- Side Effect는 Reducer에서만
+- Dependencies는 `@Dependency`로 주입
 
-### TMA Module Rules
-- No cross-feature dependencies
-- Dependencies flow downward only (Feature → Core → External)
-- Public API minimized (only expose what other modules need)
-- Interface/Implementation separation where applicable
+### Architecture
+- Feature → Feature 의존 금지
+- Feature에서 UIKit import 금지
+- Dependency 모듈: 인터페이스만
+- AppInfo 상수: 직접 접근 허용, Bundle.main: Client 통해
 
-### Concurrency (Swift 6 Strict)
-- @Sendable on closures crossing isolation boundaries
-- @MainActor on UI-related reducers and views
-- No unstructured Task {} without cancellation handling
-- Proper use of async/await (no callback-based patterns)
-- Missing Sendable conformance on types crossing isolation boundaries
-- Mutable shared state without actor protection
-- Unsafe @unchecked Sendable usage
-- AsyncSequence lifetime / termination handling
-- Dependency clients use @Sendable closures
+### Concurrency (Swift 6)
+- `@Sendable` on closures crossing isolation boundaries
+- Sendable conformance on types crossing isolation
+- Actor isolation 위반
+- AsyncSequence lifetime
+- `@unchecked Sendable` 사용 플래그
 
 ### Memory
-- [weak self] in escaping closures where needed
-- No retain cycles in long-lived subscriptions / async closures
-- Proper cleanup in .onDisappear or cancellation
+- retain cycle / strong reference 누수
+- async closure에서 [weak self] 누락
+- .onDisappear cleanup
 
 ## Output Format
-List issues by severity with file:line references and fix suggestions.
-End with a summary: approved / needs changes.
+3단계 severity로 보고:
+- 🚨 Critical — 반드시 수정
+- 🟡 Warning — 개선 권장
+- 💡 Suggestion — 선택적 개선
