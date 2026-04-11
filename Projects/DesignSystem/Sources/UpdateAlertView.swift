@@ -18,13 +18,13 @@ public struct UpdateAlertView: View {
             VStack(spacing: 0) {
                 // MARK: - 배경 이미지 + 사람 이미지
                 ZStack(alignment: .bottom) {
-                    Image("UpdateBackground", bundle: .module)
+                    Image.updateBackground
                         .resizable()
                         .scaledToFill()
                         .frame(height: 120)
                         .clipped()
 
-                    Image("UpdatePerson", bundle: .module)
+                    Image.updatePerson
                         .resizable()
                         .scaledToFit()
                         .frame(width: 40.6, height: 58)

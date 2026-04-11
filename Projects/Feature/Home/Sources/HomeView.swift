@@ -15,8 +15,20 @@ public struct HomeView: View {
     }
 
     public var body: some View {
-        VStack {
-            Text("Home")
+        VStack(spacing: 0) {
+            DSNavigationBar(style: .center) {
+                Image.logo
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 24)
+            }
+            .leftItems([.setting])
+            .rightItems([.record])
+            .onAction { action in
+                send(.navigationAction(action))
+            }
+
+            Spacer()
         }
         .onAppear { send(.onAppear) }
     }

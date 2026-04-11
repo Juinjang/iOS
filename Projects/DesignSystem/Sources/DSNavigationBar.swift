@@ -78,18 +78,18 @@ public struct DSNavigationBar<CenterContent: View>: View {
     }
 
     public var body: some View {
-        HStack(spacing: 0) {
-            leftItemsView
-                .padding(.leading, 24)
-
-            Spacer()
-
+        ZStack {
             centerView
 
-            Spacer()
+            HStack {
+                leftItemsView
+                    .padding(.leading, 24)
 
-            rightItemsView
-                .padding(.trailing, 24)
+                Spacer()
+
+                rightItemsView
+                    .padding(.trailing, 24)
+            }
         }
         .frame(height: 44)
     }
@@ -134,7 +134,7 @@ public struct DSNavigationBar<CenterContent: View>: View {
                     actionHandler?(.searchActive(isActive: false))
                 }
             } label: {
-                Image(searchText.isEmpty ? "search" : "close", bundle: .module)
+                (searchText.isEmpty ? Image.search : Image.close)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
@@ -179,8 +179,8 @@ public struct DSNavigationBar<CenterContent: View>: View {
                     .style(.body2)
                     .textColor(.gray400)
             default:
-                if let imageName = button.imageName {
-                    Image(imageName, bundle: .module)
+                if let image = button.image {
+                    image
                         .resizable()
                         .scaledToFit()
                         .frame(width: button.buttonSize, height: button.buttonSize)

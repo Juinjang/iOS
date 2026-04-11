@@ -62,7 +62,7 @@ private struct NavigationBarSearchPreview: View {
 #Preview("NavigationBar - Center (홈)") {
     VStack {
         DSNavigationBar(style: .center) {
-            Image("logo", bundle: DesignSystemResources.bundle)
+            Image.logo
                 .resizable()
                 .scaledToFit()
                 .frame(height: 24)

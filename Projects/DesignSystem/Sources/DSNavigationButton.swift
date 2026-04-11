@@ -15,17 +15,17 @@ public enum DSNavigationButton: Equatable {
     case startRecord
     case text(title: String)
 
-    var imageName: String? {
+    var image: Image? {
         switch self {
-        case .pop: return "arrowLeft"
-        case .search: return "search"
-        case .setting: return "setting"
-        case .record: return "record"
-        case .add: return "add"
-        case .close: return "close"
-        case .trash: return "trash"
-        case .report: return "siren"
-        case .startRecord: return "addOrange"
+        case .pop: return .arrowLeft
+        case .search: return .search
+        case .setting: return .setting
+        case .record: return .record
+        case .add: return .add
+        case .close: return .close
+        case .trash: return .trash
+        case .report: return .siren
+        case .startRecord: return .addOrange
         case .text: return nil
         }
     }
