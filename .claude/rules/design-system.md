@@ -20,6 +20,7 @@
 ## 금지 사항
 - 수동으로 Color/Image extension 파일 생성 금지 (DSColors.swift 등)
 - `Image("name", bundle: .module)` 직접 사용 금지 — Tuist 자동 생성 accessor 사용
+- 이미지에 색상 적용 시 `.renderingMode(.template)` 필수 — 없으면 `foregroundStyle` 무시됨
 - `Font.custom("Pretendard-Bold", size:)` 직접 사용 금지 — `DSFontStyle` 또는 `DesignSystemFontFamily` 사용
 - 별도의 Assets 폴더 생성 금지 — 기존 Images.xcassets 사용
 - Feature 모듈에 에셋 중복 금지 — DesignSystem만 참조

@@ -78,17 +78,29 @@ public struct DSNavigationBar<CenterContent: View>: View {
     }
 
     public var body: some View {
-        ZStack {
-            centerView
+        Group {
+            if barStyle == .search {
+                HStack(spacing: 4) {
+                    leftItemsView
+                        .padding(.leading, 24)
 
-            HStack {
-                leftItemsView
-                    .padding(.leading, 24)
+                    searchBarView
+                        .padding(.trailing, 24)
+                }
+            } else {
+                ZStack {
+                    centerView
 
-                Spacer()
+                    HStack {
+                        leftItemsView
+                            .padding(.leading, 24)
 
-                rightItemsView
-                    .padding(.trailing, 24)
+                        Spacer()
+
+                        rightItemsView
+                            .padding(.trailing, 24)
+                    }
+                }
             }
         }
         .frame(height: 44)
@@ -105,13 +117,13 @@ public struct DSNavigationBar<CenterContent: View>: View {
                 .textColor(titleColor)
                 .textAlignment(.center)
 
-        case .search:
-            searchBarView
-
         case .center:
             if let centerContent {
                 centerContent
             }
+
+        case .search:
+            EmptyView()
         }
     }
 
@@ -135,6 +147,7 @@ public struct DSNavigationBar<CenterContent: View>: View {
                 }
             } label: {
                 (searchText.isEmpty ? Image.search : Image.close)
+                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
@@ -181,6 +194,7 @@ public struct DSNavigationBar<CenterContent: View>: View {
             default:
                 if let image = button.image {
                     image
+                        .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
                         .frame(width: button.buttonSize, height: button.buttonSize)
