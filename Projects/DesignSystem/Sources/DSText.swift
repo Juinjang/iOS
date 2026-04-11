@@ -8,13 +8,13 @@ import SwiftUI
 /// ```
 /// DSText("제목")
 ///     .style(.h1)
-///     .dsColor(.main)
+///     .textColor(.main)
 ///
 /// DSText("본문 텍스트")
 ///     .style(.body)
-///     .dsColor(.gray600)
-///     .dsAlignment(.center)
-///     .dsMaxLines(2)
+///     .textColor(.gray600)
+///     .textAlignment(.center)
+///     .maxLines(2)
 /// ```
 
 public struct DSText: View {
@@ -22,7 +22,7 @@ public struct DSText: View {
     private var fontStyle: DSFontStyle = .body
     private var color: Color = .gray600
     private var alignment: TextAlignment = .leading
-    private var maxLines: Int?
+    private var lineLimit: Int?
 
     public init(_ text: String) {
         self.text = text
@@ -35,7 +35,7 @@ public struct DSText: View {
             .lineSpacing(fontStyle.lineHeight - fontStyle.size)
             .kerning(fontStyle.letterSpacing)
             .multilineTextAlignment(alignment)
-            .lineLimit(maxLines)
+            .lineLimit(lineLimit)
     }
 }
 
@@ -48,21 +48,21 @@ public extension DSText {
         return copy
     }
 
-    func dsColor(_ color: Color) -> DSText {
+    func textColor(_ color: Color) -> DSText {
         var copy = self
         copy.color = color
         return copy
     }
 
-    func dsAlignment(_ alignment: TextAlignment) -> DSText {
+    func textAlignment(_ alignment: TextAlignment) -> DSText {
         var copy = self
         copy.alignment = alignment
         return copy
     }
 
-    func dsMaxLines(_ lines: Int?) -> DSText {
+    func maxLines(_ lines: Int?) -> DSText {
         var copy = self
-        copy.maxLines = lines
+        copy.lineLimit = lines
         return copy
     }
 }

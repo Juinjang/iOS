@@ -34,13 +34,13 @@ public struct UpdateAlertView: View {
                 // MARK: - 텍스트
                 DSText("우리 업데이트 하러갈까요?")
                     .style(.h4)
-                    .dsColor(.main)
+                    .textColor(.main)
                     .padding(.top, 21)
 
                 DSText("주인장 크루들이 오류와 사용성을 개선했어요.\n지금 바로 레벨업한 주인장을 확인해보세요!")
                     .style(.body)
-                    .dsColor(.gray600)
-                    .dsAlignment(.center)
+                    .textColor(.gray600)
+                    .textAlignment(.center)
                     .padding(.top, 16)
 
                 Spacer()
@@ -49,7 +49,7 @@ public struct UpdateAlertView: View {
                 Button(action: onUpdate) {
                     DSText("업데이트하러 가기")
                         .style(.title)
-                        .dsColor(.white)
+                        .textColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(Color.gray500)
