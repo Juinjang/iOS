@@ -45,6 +45,7 @@ public enum JuinjangError: Error, Equatable, Sendable {
         }
     }
 }
+
 extension JuinjangError {
     /// 서버 응답 code 문자열
     public var code: String {

@@ -1,3 +1,4 @@
+import Common
 import ComposableArchitecture
 import Dependency
 import UIKit
@@ -25,9 +26,13 @@ public struct SplashFeature: Sendable {
         }
 
         public enum Delegate: Equatable {
-            case navigateToOnboarding
-            case navigateToLogin
-            case navigateToHome
+            case navigateTo(Route)
+        }
+        
+        public enum Route {
+            case onboarding
+            case login
+            case home
         }
     }
 
@@ -64,20 +69,18 @@ public struct SplashFeature: Sendable {
                     let accessToken = (try? userDefaultsClient.string(.accessToken)) ?? ""
 
                     if !userStatus {
-                        await send(.delegate(.navigateToOnboarding))
+                        await send(.delegate(.navigateTo(.onboarding)))
                     } else if accessToken.isEmpty {
-                        await send(.delegate(.navigateToLogin))
+                        await send(.delegate(.navigateTo(.login)))
                     } else {
-                        await send(.delegate(.navigateToHome))
+                        await send(.delegate(.navigateTo(.home)))
                     }
                 }
 
             case .updateButtonTapped:
                 return .run { _ in
-                    if let url = URL(string: "itms-apps://itunes.apple.com/app/id6476806621") {
-                        await MainActor.run {
-                            UIApplication.shared.open(url)
-                        }
+                    await MainActor.run {
+                        UIApplication.shared.open(AppInfo.appStoreURL)
                     }
                 }
 

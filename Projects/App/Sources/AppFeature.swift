@@ -42,15 +42,15 @@ public struct AppFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .splash(.delegate(.navigateToOnboarding)):
+            case .splash(.delegate(.navigateTo(.onboarding))):
                 state.splash = nil
                 state.onboarding = OnboardingFeature.State()
                 return .none
-            case .splash(.delegate(.navigateToLogin)):
+            case .splash(.delegate(.navigateTo(.login))):
                 state.splash = nil
                 state.login = LoginFeature.State()
                 return .none
-            case .splash(.delegate(.navigateToHome)):
+            case .splash(.delegate(.navigateTo(.home))):
                 state.splash = nil
                 state.home = HomeFeature.State()
                 return .none
