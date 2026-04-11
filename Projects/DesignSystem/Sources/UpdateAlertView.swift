@@ -1,5 +1,8 @@
 import SwiftUI
 
+// MARK: - UpdateAlertView
+/// 앱 업데이트 안내 팝업
+
 public struct UpdateAlertView: View {
     private let onUpdate: () -> Void
 
@@ -13,6 +16,7 @@ public struct UpdateAlertView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
+                // MARK: - 배경 이미지 + 사람 이미지
                 ZStack(alignment: .bottom) {
                     Image("UpdateBackground", bundle: .module)
                         .resizable()
@@ -27,24 +31,25 @@ public struct UpdateAlertView: View {
                         .padding(.bottom, 8)
                 }
 
-                Text("우리 업데이트 하러갈까요?")
-                    .font(.system(size: 20, weight: .semibold))
-                    .foregroundStyle(Color.main)
+                // MARK: - 텍스트
+                DSText("우리 업데이트 하러갈까요?")
+                    .style(.h4)
+                    .dsColor(.main)
                     .padding(.top, 21)
 
-                Text("주인장 크루들이 오류와 사용성을 개선했어요.\n지금 바로 레벨업한 주인장을 확인해보세요!")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color.gray600)
-                    .multilineTextAlignment(.center)
-                    .lineSpacing(4)
+                DSText("주인장 크루들이 오류와 사용성을 개선했어요.\n지금 바로 레벨업한 주인장을 확인해보세요!")
+                    .style(.body)
+                    .dsColor(.gray600)
+                    .dsAlignment(.center)
                     .padding(.top, 16)
 
                 Spacer()
 
+                // MARK: - 업데이트 버튼
                 Button(action: onUpdate) {
-                    Text("업데이트하러 가기")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(.white)
+                    DSText("업데이트하러 가기")
+                        .style(.title)
+                        .dsColor(.white)
                         .frame(maxWidth: .infinity)
                         .frame(height: 52)
                         .background(Color.gray500)
