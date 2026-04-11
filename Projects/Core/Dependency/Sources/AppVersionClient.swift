@@ -1,12 +1,14 @@
 import ComposableArchitecture
+import Foundation
 
 // MARK: - App Version Client Interface
-/// 앱 버전 확인을 위한 Interface
+/// 앱 버전 조회를 위한 Interface
 /// 실제 구현(Live)은 Core/Networking에서 iTunes API로 수행
 
 @DependencyClient
 public struct AppVersionClient: Sendable {
-    public var checkNeedsUpdate: @Sendable () async throws -> Bool
+    public var latestVersion: @Sendable () async throws -> String
+    public var currentVersion: @Sendable () -> String = { "0" }
 }
 
 // MARK: - TestDependencyKey

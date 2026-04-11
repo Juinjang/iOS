@@ -1,7 +1,7 @@
 import Common
 import ComposableArchitecture
 import Dependency
-import UIKit
+import Foundation
 
 @Reducer
 public struct SplashFeature: Sendable {
@@ -28,7 +28,7 @@ public struct SplashFeature: Sendable {
         public enum Delegate: Equatable {
             case navigateTo(Route)
         }
-        
+
         public enum Route {
             case onboarding
             case login
@@ -38,6 +38,7 @@ public struct SplashFeature: Sendable {
 
     @Dependency(\.appVersionClient) var appVersionClient
     @Dependency(\.userDefaultsClient) var userDefaultsClient
+    @Dependency(\.openURL) var openURL
 
     public init() {}
 
@@ -50,11 +51,11 @@ public struct SplashFeature: Sendable {
             case .animationCompleted:
                 return .run { send in
                     do {
-                        let needsUpdate = try await appVersionClient.checkNeedsUpdate()
-                        print("🔍 Version check result: needsUpdate = \(needsUpdate)")
+                        let latest = try await appVersionClient.latestVersion()
+                        let current = appVersionClient.currentVersion()
+                        let needsUpdate = current.compare(latest, options: .numeric) == .orderedAscending
                         await send(.versionCheckCompleted(needsUpdate: needsUpdate))
                     } catch {
-                        print("🔍 Version check error: \(error)")
                         await send(.versionCheckCompleted(needsUpdate: false))
                     }
                 }
@@ -79,9 +80,7 @@ public struct SplashFeature: Sendable {
 
             case .updateButtonTapped:
                 return .run { _ in
-                    await MainActor.run {
-                        UIApplication.shared.open(AppInfo.appStoreURL)
-                    }
+                    await openURL(AppInfo.appStoreURL)
                 }
 
             case .delegate:
