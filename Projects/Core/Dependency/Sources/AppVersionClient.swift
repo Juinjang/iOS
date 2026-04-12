@@ -8,7 +8,7 @@ import Foundation
 @DependencyClient
 public struct AppVersionClient: Sendable {
     public var latestVersion: @Sendable () async throws -> String
-    public var currentVersion: @Sendable () -> String = { "0" }
+    public var currentVersion: @Sendable () -> String = { "1.0.0" }
 }
 
 // MARK: - TestDependencyKey

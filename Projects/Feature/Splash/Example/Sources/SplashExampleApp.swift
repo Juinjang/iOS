@@ -11,6 +11,7 @@ struct SplashExampleApp: App {
                     SplashFeature()
                 } withDependencies: {
                     $0.userDefaultsClient = .testValue
+                    $0.appVersionClient = .testValue
                 }
             )
         }

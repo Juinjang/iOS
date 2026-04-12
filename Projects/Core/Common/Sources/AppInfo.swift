@@ -8,10 +8,10 @@ public enum AppInfo {
     public static let appId = "6476806621"
     public static let appStoreURL = URL(string: "itms-apps://itunes.apple.com/app/id\(appId)")!
     public static let appShareURL = URL(string: "https://apps.apple.com/kr/app/id\(appId)")!
-
+    
     // MARK: - Bundle
     public static var currentVersion: String {
-        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0"
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0.0"
     }
 
     public static var bundleId: String {
