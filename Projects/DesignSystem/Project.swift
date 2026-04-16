@@ -3,6 +3,7 @@ import ProjectDescriptionHelpers
 
 let project = Project.designSystem(
     dependencies: [
-        .core(.common)
+        .core(.common),
+        .external(.lottie)
     ]
 )

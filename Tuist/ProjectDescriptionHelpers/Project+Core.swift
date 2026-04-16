@@ -18,8 +18,8 @@ public extension Project {
             targets: [
                 .target(
                     name: name,
-                    destinations: .iOS,
-                    product: .staticFramework,
+                    destinations: Environment.destinations,
+                    product: .framework,
                     bundleId: "com.juinjang.core.\(name.lowercased())",
                     deploymentTargets: .iOS("17.0"),
                     sources: ["Sources/**"],

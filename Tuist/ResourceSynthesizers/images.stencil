@@ -1,13 +1,22 @@
-
+// swiftlint:disable all
+// Generated using tuist — DO NOT EDIT
 import SwiftUI
 
 {% for catalog in catalogs %}
-{% if catalog.name == "Image" %}
+{% if catalog.name == "Images" %}
 public extension Image {
-{% for image in catalog.assets %}
-    static var {{ image.name|swiftIdentifier:"pretty"|lowerFirstWord }}: Image {
-        Image("{{ image.name }}", bundle: .module)
-    }
+{% for asset in catalog.assets %}
+{% if asset.items %}
+{% for item in asset.items %}
+{% if item.value %}
+    static let {{ item.name|swiftIdentifier:"pretty"|lowerFirstWord }} = Image("{{ item.value }}", bundle: .module)
+{% endif %}
+{% endfor %}
+{% else %}
+{% if asset.value %}
+    static let {{ asset.name|swiftIdentifier:"pretty"|lowerFirstWord }} = Image("{{ asset.value }}", bundle: .module)
+{% endif %}
+{% endif %}
 {% endfor %}
 }
 {% endif %}

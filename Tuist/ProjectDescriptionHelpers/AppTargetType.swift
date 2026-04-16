@@ -29,7 +29,7 @@ public enum AppTargetType: String {
         case .prod:
             return "AppIcon"
         case .dev:
-            return "AppIcon-dev"
+            return "AppIcon-Dev"
         }
     }
     

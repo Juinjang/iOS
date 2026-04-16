@@ -14,10 +14,11 @@ public extension Project {
             targets: [
                 .target(
                     name: "DesignSystem",
-                    destinations: .iOS,
-                    product: .staticFramework,
+                    destinations: Environment.destinations,
+                    product: .framework,
                     bundleId: "com.juinjang.designsystem",
                     deploymentTargets: .iOS("17.0"),
+                    sources: ["Sources/**"],
                     resources: ["Resources/**"],
                     dependencies: dependencies,
                     settings: .shared

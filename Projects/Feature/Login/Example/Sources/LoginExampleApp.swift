@@ -15,7 +15,9 @@ struct LoginExampleApp: App {
     }
 }
 
-#Preview {
+// MARK: - Previews
+
+#Preview("Login") {
     LoginView(
         store: Store(initialState: LoginFeature.State()) {
             LoginFeature()

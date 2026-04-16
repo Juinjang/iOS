@@ -22,7 +22,8 @@ import PackageDescription
             "SwiftNavigation": .framework,
             "Clocks": .framework,
             "XCTestDynamicOverlay": .framework,
-            "OrderedCollections": .framework
+            "OrderedCollections": .framework,
+            "Lottie": .framework
         ]
     )
 #endif
@@ -37,6 +38,10 @@ let package = Package(
         .package(
             url: "https://github.com/Alamofire/Alamofire.git",
             from: "5.11.1"
+        ),
+        .package(
+            url: "https://github.com/airbnb/lottie-ios.git",
+            from: "4.5.0"
         )
     ]
 )

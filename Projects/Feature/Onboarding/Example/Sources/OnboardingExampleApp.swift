@@ -15,7 +15,9 @@ struct OnboardingExampleApp: App {
     }
 }
 
-#Preview {
+// MARK: - Previews
+
+#Preview("Onboarding") {
     OnboardingView(
         store: Store(initialState: OnboardingFeature.State()) {
             OnboardingFeature()
