@@ -11,6 +11,7 @@ extension Settings {
         "CODE_SIGN_IDENTITY": "",
         "SWIFT_STRICT_CONCURRENCY": "complete",
         "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
+        "OTHER_LDFLAGS": "-ObjC",
         "ALWAYS_SEARCH_USER_PATHS": "NO"
     ]
     

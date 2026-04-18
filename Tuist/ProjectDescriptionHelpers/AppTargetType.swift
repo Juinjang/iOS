@@ -52,22 +52,15 @@ public enum AppTargetType: String {
     }
     
     var baseSettings: SettingsDictionary {
-        return [
-            "ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS": "YES",
-            "OTHER_LDFLAGS": "-ObjC",
-            "ASSETCATALOG_COMPILER_APPICON_NAME": "\(appIconName)",
-            "CFBundleDisplayName": "\(displayName)",
-            "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "\(rawValue)",
-            "SWIFT_VERSION": "6.0",
-            "IPHONEOS_DEPLOYMENT_TARGET": "17.0",
-            "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
-            "SWIFT_STRICT_CONCURRENCY": "complete",
-            "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
-            "MARKETING_VERSION": "\(Environment.appVersion)",
-            "CURRENT_PROJECT_VERSION": "\(Environment.build)",
-            "ALWAYS_SEARCH_USER_PATHS": "NO"
-        ]
-    }
+        var settings = Settings.baseSettings
+        settings["ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS"] = "YES"
+        settings["ASSETCATALOG_COMPILER_APPICON_NAME"] = "\(appIconName)"
+        settings["CFBundleDisplayName"] = "\(displayName)"
+        settings["SWIFT_ACTIVE_COMPILATION_CONDITIONS"] = "\(rawValue)"
+        settings["MARKETING_VERSION"] = "\(Environment.appVersion)"
+        settings["CURRENT_PROJECT_VERSION"] = "\(Environment.build)"
+        return settings
+     }
     
     var baseConfigurations: [Configuration] {
         return [
