@@ -2,7 +2,6 @@ import ComposableArchitecture
 import DesignSystem
 import SwiftUI
 
-@ViewAction(for: LoginFeature.self)
 public struct LoginView: View {
 
     @Bindable public var store: StoreOf<LoginFeature>
@@ -15,6 +14,8 @@ public struct LoginView: View {
         VStack {
             Text("Login")
         }
-        .onAppear { send(.onAppear) }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }

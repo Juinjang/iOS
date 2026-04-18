@@ -29,7 +29,7 @@ public struct SplashView: View {
         .compositingGroup()
         .animation(.easeInOut(duration: 0.3), value: store.showUpdatePopup)
         .onAppear {
-            store.send(.view(.onAppear))
+            store.send(.onAppear)
         }
     }
 }

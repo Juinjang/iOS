@@ -2,7 +2,6 @@ import ComposableArchitecture
 import DesignSystem
 import SwiftUI
 
-@ViewAction(for: OnboardingFeature.self)
 public struct OnboardingView: View {
 
     @Bindable public var store: StoreOf<OnboardingFeature>
@@ -15,6 +14,8 @@ public struct OnboardingView: View {
         VStack {
             Text("Onboarding")
         }
-        .onAppear { send(.onAppear) }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }

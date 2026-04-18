@@ -15,15 +15,11 @@ public struct SplashFeature: Sendable {
     }
 
     public enum Action {
-        case view(View)
+        case onAppear
         case animationCompleted
         case versionCheckCompleted(needsUpdate: Bool)
         case updateButtonTapped
         case delegate(Delegate)
-
-        public enum View: Equatable {
-            case onAppear
-        }
 
         @CasePathable
         public enum Delegate: Equatable {
@@ -43,10 +39,10 @@ public struct SplashFeature: Sendable {
 
     public init() {}
 
-    public var body: some ReducerOf<Self> {
+    public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear):
+            case .onAppear:
                 return .none
 
             case .animationCompleted:

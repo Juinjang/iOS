@@ -15,22 +15,17 @@ public struct HomeFeature {
         public init() {}
     }
 
-    public enum Action: ViewAction {
-        case view(View)
-
-        @CasePathable
-        public enum View {
-            case onAppear
-            case navigationAction(DSNavigationAction)
-        }
+    public enum Action {
+        case onAppear
+        case navigationAction(DSNavigationAction)
     }
 
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear):
+            case .onAppear:
                 return .none
-            case .view(.navigationAction(let action)):
+            case .navigationAction(let action):
                 return handleNavigationAction(action)
             }
         }
