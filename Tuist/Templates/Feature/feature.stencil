@@ -12,11 +12,10 @@ public struct {{ name }}Feature {
         public init() {}
     }
 
-    public enum Action: ViewAction {
+    public enum Action: Action {
         case view(View)
-
-        @CasePathable
-        public enum View {
+        
+        public enum View: Equatable {
             case onAppear
         }
     }

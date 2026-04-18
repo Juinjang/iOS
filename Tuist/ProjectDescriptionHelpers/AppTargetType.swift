@@ -70,8 +70,21 @@ public enum AppTargetType: String {
     
     var baseConfigurations: [Configuration] {
         return [
-            .debug(name: .debug, xcconfig: xcconfigPath),
-            .release(name: .release, xcconfig: xcconfigPath)
+            .debug(
+                name: "Debug",
+                settings: [
+                    "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEBUG",
+                    "SWIFT_OPTIMIZATION_LEVEL": "-Onone"
+                ],
+                xcconfig: xcconfigPath
+            ),
+            .release(
+                name: "Release",
+                settings: [
+                    "SWIFT_OPTIMIZATION_LEVEL": "-Owholemodule"
+                ],
+                xcconfig: xcconfigPath
+            )
         ]
     }
 }

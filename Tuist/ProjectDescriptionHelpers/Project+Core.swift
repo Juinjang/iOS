@@ -25,7 +25,7 @@ public extension Project {
                     sources: ["Sources/**"],
                     resources: hasResources ? ["Resources/**"] : nil,
                     dependencies: dependencies,
-                    settings: .shared
+                    settings: .secretShared
                 )
             ],
             schemes: [
