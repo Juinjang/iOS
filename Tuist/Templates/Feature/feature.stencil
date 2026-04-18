@@ -13,17 +13,13 @@ public struct {{ name }}Feature {
     }
 
     public enum Action: Action {
-        case view(View)
-        
-        public enum View: Equatable {
-            case onAppear
-        }
+        case onAppear
     }
 
     public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear):
+            case .onAppear:
                 return .none
             }
         }

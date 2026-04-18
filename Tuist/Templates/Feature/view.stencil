@@ -14,7 +14,7 @@ public struct {{ name }}View: View {
             Text("{{ name }}")
         }
         .onAppear {
-            store.send(.view(.onAppear))
+            store.send(.onAppear)
         }
     }
 }
