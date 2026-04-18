@@ -8,7 +8,7 @@ public struct SplashFeature: Sendable {
     @ObservableState
     public struct State: Equatable {
         public var showUpdatePopup: Bool = false
-
+        
         public init(showUpdatePopup: Bool = false) {
             self.showUpdatePopup = showUpdatePopup
         }
@@ -25,6 +25,7 @@ public struct SplashFeature: Sendable {
             case onAppear
         }
 
+        @CasePathable
         public enum Delegate: Equatable {
             case navigateTo(Route)
         }
@@ -79,8 +80,9 @@ public struct SplashFeature: Sendable {
                 }
 
             case .updateButtonTapped:
+                guard let appStoreURL = AppInfo.appStoreURL else { return .none }
                 return .run { _ in
-                    await openURL(AppInfo.appStoreURL)
+                    await openURL(appStoreURL)
                 }
 
             case .delegate:

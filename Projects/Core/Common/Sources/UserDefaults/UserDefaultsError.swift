@@ -5,9 +5,11 @@
 //  Created by 조유진 on 4/18/26.
 //
 
+import Foundation
+
 public enum UserDefaultsError: Error, Equatable, Sendable, LocalizedError {
-    case keyNotFound(key: UserDefaultsClient.Key)
-    case decodingFailed(key: UserDefaultsClient.Key, underlying: Error)
+    case keyNotFound(key: UserDefaultsKey)
+    case decodingFailed(key: UserDefaultsKey, underlying: Error)
 
     public var errorDescription: String? {
         switch self {

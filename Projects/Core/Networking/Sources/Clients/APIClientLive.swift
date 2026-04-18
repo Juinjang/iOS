@@ -1,9 +1,9 @@
-import ComposableArchitecture
 import Common
 import Dependency
 import Model
 
 import Alamofire
+import ComposableArchitecture
 
 // MARK: - APIClient Live 구현
 /// Core/Dependency의 APIClient Interface를 실제 네트워크 호출로 구현
@@ -14,7 +14,7 @@ extension APIClient: @retroactive DependencyKey {
     public static let liveValue: Self = {
         let client = NetworkClient()
 
-        return Self(
+        return APIClient(
             fetchHomeFeed: {
                 let response: ResultResponse<[Post]> = try await client.request(
                     HomeAPI.fetchFeed,

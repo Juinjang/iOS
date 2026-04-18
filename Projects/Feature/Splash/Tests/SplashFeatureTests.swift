@@ -1,8 +1,12 @@
-import ComposableArchitecture
-import Dependency
+import Foundation
 import Testing
+
+import Common
+import Dependency
 @testable import Splash
 @testable import SplashTesting
+
+import ComposableArchitecture
 
 @MainActor
 struct SplashFeatureTests {
@@ -39,7 +43,8 @@ struct SplashFeatureTests {
         }
 
         await store.send(.animationCompleted)
-        await store.receive(\.delegate.navigateToOnboarding)
+        await store.receive(\.versionCheckCompleted)
+        await store.receive(\.delegate.navigateTo)
     }
 
     @Test
@@ -62,7 +67,8 @@ struct SplashFeatureTests {
         }
 
         await store.send(.animationCompleted)
-        await store.receive(\.delegate.navigateToLogin)
+        await store.receive(\.versionCheckCompleted)
+        await store.receive(\.delegate.navigateTo)
     }
 
     @Test
@@ -85,6 +91,7 @@ struct SplashFeatureTests {
         }
 
         await store.send(.animationCompleted)
-        await store.receive(\.delegate.navigateToHome)
+        await store.receive(\.versionCheckCompleted)
+        await store.receive(\.delegate.navigateTo)
     }
 }
