@@ -10,7 +10,8 @@ extension Settings {
         "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
         "CODE_SIGN_IDENTITY": "",
         "SWIFT_STRICT_CONCURRENCY": "complete",
-        "ENABLE_USER_SCRIPT_SANDBOXING": "NO"
+        "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
+        "ALWAYS_SEARCH_USER_PATHS": "NO"
     ]
     
     public static let baseConfigurations: [Configuration] = [
@@ -19,7 +20,7 @@ extension Settings {
             settings: [
                 "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "DEBUG",
                 "SWIFT_OPTIMIZATION_LEVEL": "-Onone"
-            ]
+            ],
         ),
         .release(
             name: "Release",
@@ -50,10 +51,12 @@ extension Settings {
     public static let shared: Settings = settings(
         base: baseSettings,
         configurations: baseConfigurations
+//        defaultSettings: .none
     )
     
     public static let secretShared: Settings = settings(
         base: baseSettings,
         configurations: secretConfigurations
+//        defaultSettings: .none
     )
 }

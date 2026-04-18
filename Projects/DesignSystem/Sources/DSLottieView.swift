@@ -1,5 +1,6 @@
-import Lottie
 import SwiftUI
+
+import Lottie
 
 // MARK: - DSLottieView
 /// Reusable Lottie animation view using Lottie's native SwiftUI API (4.x+)

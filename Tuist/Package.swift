@@ -23,6 +23,7 @@ import PackageDescription
             "Clocks": .framework,
             "XCTestDynamicOverlay": .framework,
             "OrderedCollections": .framework,
+            
             "Lottie": .framework
         ]
     )

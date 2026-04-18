@@ -64,7 +64,8 @@ public enum AppTargetType: String {
             "SWIFT_STRICT_CONCURRENCY": "complete",
             "ENABLE_USER_SCRIPT_SANDBOXING": "NO",
             "MARKETING_VERSION": "\(Environment.appVersion)",
-            "CURRENT_PROJECT_VERSION": "\(Environment.build)"
+            "CURRENT_PROJECT_VERSION": "\(Environment.build)",
+            "ALWAYS_SEARCH_USER_PATHS": "NO"
         ]
     }
     

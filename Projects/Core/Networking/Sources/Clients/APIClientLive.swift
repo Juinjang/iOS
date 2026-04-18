@@ -15,13 +15,6 @@ extension APIClient: @retroactive DependencyKey {
         let client = NetworkClient()
 
         return APIClient(
-            fetchHomeFeed: {
-                let response: ResultResponse<[Post]> = try await client.request(
-                    HomeAPI.fetchFeed,
-                    responseType: ResultResponse<[Post]>.self
-                )
-                return try APIMapper.mapData(response, transform: { $0 })
-            },
             fetchUserProfile: { userId in
                 let response: ResultResponse<User> = try await client.request(
                     UserAPI.fetchProfile(userId: userId),
