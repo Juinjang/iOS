@@ -19,7 +19,7 @@ public extension Project {
                 .target(
                     name: name,
                     destinations: Environment.destinations,
-                    product: .framework,
+                    product: .staticFramework,
                     bundleId: "com.juinjang.core.\(name.lowercased())",
                     deploymentTargets: .iOS("17.0"),
                     sources: ["Sources/**"],
