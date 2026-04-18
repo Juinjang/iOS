@@ -19,7 +19,7 @@ struct SplashFeatureTests {
             SplashFeature()
         }
 
-        await store.send(.view(.onAppear))
+        await store.send(.onAppear)
     }
 
     // MARK: - animationCompleted

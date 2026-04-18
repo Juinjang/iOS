@@ -8,9 +8,3 @@ public struct AppStoreLookupResponse: Decodable, Sendable {
     }
     public let results: [Result]
 }
-
-// MARK: - AppVersion Error
-
-public enum AppVersionError: Error {
-    case versionNotFound
-}

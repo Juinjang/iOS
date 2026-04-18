@@ -19,7 +19,7 @@ public struct APIClient: Sendable {
 // MARK: - TestDependencyKey
 
 extension APIClient: TestDependencyKey {
-    public static let testValue = APIClient()
+    public static let testValue = Self()
 }
 
 extension DependencyValues {
