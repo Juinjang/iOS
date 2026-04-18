@@ -5,12 +5,28 @@
 //  Created by 조유진 on 3/9/26.
 //
 
-import ComposableArchitecture
 import Foundation
+
+import Common
+
+import ComposableArchitecture
 
 // MARK: - UserDefaults Client
 /// TCA @DependencyClient 기반 UserDefaults 래퍼입니다.
 /// 모든 값을 Data(Codable)로 저장하여 타입 안전성을 보장합니다.
+
+// MARK: - Key 정의
+
+extension UserDefaultsClient {
+    public enum Key: String, Sendable {
+        case nickname
+        case accessToken
+        case refreshToken
+        case userId
+        case userStatus
+    }
+}
+
 
 @DependencyClient
 public struct UserDefaultsClient: Sendable {
@@ -88,7 +104,7 @@ extension UserDefaultsClient: DependencyKey {
     public static var liveValue: UserDefaultsClient {
         nonisolated(unsafe) let defaults = UserDefaults.standard
 
-        return Self(
+        return UserDefaultsClient(
             get: { key in
                 guard let data = defaults.data(forKey: key.rawValue) else {
                     throw UserDefaultsError.keyNotFound(key: key)
@@ -108,7 +124,18 @@ extension UserDefaultsClient: DependencyKey {
     }
 
     public static var testValue: UserDefaultsClient {
-        UserDefaultsClient()
+        nonisolated(unsafe) var storage: [String: Data] = [:]
+        return UserDefaultsClient(
+            get: { key in
+                guard let data = storage[key.rawValue] else {
+                    throw UserDefaultsError.keyNotFound(key: key)
+                }
+                return data
+            },
+            set: { data, key in storage[key.rawValue] = data },
+            remove: { key in storage.removeValue(forKey: key.rawValue) },
+            hasValue: { key in storage[key.rawValue] != nil }
+        )
     }
 }
 
@@ -118,48 +145,5 @@ public extension DependencyValues {
     var userDefaultsClient: UserDefaultsClient {
         get { self[UserDefaultsClient.self] }
         set { self[UserDefaultsClient.self] = newValue }
-    }
-}
-
-// MARK: - Key 정의
-
-extension UserDefaultsClient {
-    public enum Key: String, Sendable {
-        case nickname
-        case accessToken
-        case refreshToken
-        case userId
-        case userStatus
-    }
-}
-
-// MARK: - Error 정의
-
-public enum UserDefaultsError: Error, Equatable, Sendable, LocalizedError {
-    case keyNotFound(key: UserDefaultsClient.Key)
-    case decodingFailed(key: UserDefaultsClient.Key, underlying: Error)
-
-    public var errorDescription: String? {
-        switch self {
-        case .keyNotFound(let key):
-            return "[\(key.rawValue)] 값이 존재하지 않습니다"
-        case .decodingFailed(let key, _):
-            return "[\(key.rawValue)] 디코딩에 실패했습니다"
-        }
-    }
-
-    public static func == (
-        lhs: UserDefaultsError,
-        rhs: UserDefaultsError
-    ) -> Bool {
-        switch (lhs, rhs) {
-        case (.keyNotFound(let leftKey), .keyNotFound(let rightKey)):
-            return leftKey == rightKey
-        case (.decodingFailed(let leftKey, let leftError), .decodingFailed(let rightKey, let rightError)):
-            return leftKey == rightKey
-                && leftError.localizedDescription == rightError.localizedDescription
-        default:
-            return false
-        }
     }
 }

@@ -1,6 +1,9 @@
-import ComposableArchitecture
-import Splash
 import SwiftUI
+
+import Dependency
+import Splash
+
+import ComposableArchitecture
 
 @main
 struct SplashExampleApp: App {
@@ -26,7 +29,10 @@ struct SplashExampleApp: App {
             SplashFeature()
         } withDependencies: {
             $0.userDefaultsClient = .testValue
-            $0.appVersionClient = .testValue
+            $0.appVersionClient = AppVersionClient(
+                latestVersion: { "1.0.0" },
+                currentVersion: { "1.0.0" }
+            )
         }
     )
 }
@@ -37,7 +43,10 @@ struct SplashExampleApp: App {
             SplashFeature()
         } withDependencies: {
             $0.userDefaultsClient = .testValue
-            $0.appVersionClient = .testValue
+            $0.appVersionClient = AppVersionClient(
+                latestVersion: { "1.0.0" },
+                currentVersion: { "1.0.0" }
+            )
         }
     )
 }
