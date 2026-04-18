@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum UserDefaultsError: Error, Equatable, Sendable, LocalizedError {
+public enum UserDefaultsError: Error, Equatable, LocalizedError {
     case keyNotFound(key: UserDefaultsKey)
     case decodingFailed(key: UserDefaultsKey, underlying: Error)
 
