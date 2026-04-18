@@ -12,7 +12,7 @@ public struct {{ name }}Feature {
         public init() {}
     }
 
-    public enum Action: Action {
+    public enum Action {
         case onAppear
     }
 
