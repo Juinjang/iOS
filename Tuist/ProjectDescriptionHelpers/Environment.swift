@@ -23,6 +23,6 @@ public enum Environment {
 
     /// Debug → .staticFramework / Release → .framework
     public static var moduleProduct: Product {
-        isRelease ? .framework : .staticFramework
+        isRelease ? .staticFramework : .framework
     }
 }

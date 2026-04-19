@@ -18,3 +18,13 @@ public struct OnboardingView: View {
         }
     }
 }
+
+// MARK: - Previews
+
+#Preview("Onboarding") {
+    OnboardingView(
+        store: Store(initialState: OnboardingFeature.State()) {
+            OnboardingFeature()
+        }
+    )
+}
