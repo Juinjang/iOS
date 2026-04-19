@@ -8,8 +8,16 @@ public extension Image {
 {% for asset in catalog.assets %}
 {% if asset.items %}
 {% for item in asset.items %}
+{% if item.items %}
+{% for sub in item.items %}
+{% if sub.value %}
+    static let {{ sub.name|swiftIdentifier:"pretty"|lowerFirstWord }} = Image("{{ sub.value }}", bundle: .module)
+{% endif %}
+{% endfor %}
+{% else %}
 {% if item.value %}
     static let {{ item.name|swiftIdentifier:"pretty"|lowerFirstWord }} = Image("{{ item.value }}", bundle: .module)
+{% endif %}
 {% endif %}
 {% endfor %}
 {% else %}
