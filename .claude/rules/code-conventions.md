@@ -15,7 +15,7 @@
 ## View 구조
 ```swift
 public struct {Name}View: View {
-    @Bindable var store: StoreOf<{Name}Feature>
+    @Bindable public var store: StoreOf<{Name}Feature>
     public init(store: StoreOf<{Name}Feature>) { self.store = store }
     public var body: some View { ... }
 }
@@ -48,13 +48,10 @@ public struct {Name}View: View {
 ## Action 네이밍
 ```swift
 public enum Action {
-    case view(View)
+    case onAppear
+    case loginButtonTapped
     case delegate(Delegate)
 
-    public enum View: Equatable {
-        case onAppear
-        case loginButtonTapped
-    }
     public enum Delegate: Equatable {
         case navigateTo(Route)
     }

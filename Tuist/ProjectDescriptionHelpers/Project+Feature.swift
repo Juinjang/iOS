@@ -29,7 +29,7 @@ public extension Project {
                 destinations: Environment.destinations,
                 product: .staticFramework,
                 bundleId: "com.juinjang.feature.\(name.lowercased())",
-                deploymentTargets: .iOS("17.0"),
+                deploymentTargets: Environment.deploymentTarget,
                 sources: ["Sources/**"],
                 resources: hasResources ? ["Resources/**"] : nil,
                 dependencies: allDependencies,
@@ -42,7 +42,7 @@ public extension Project {
                 destinations: Environment.destinations,
                 product: .staticFramework,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).testing",
-                deploymentTargets: .iOS("17.0"),
+                deploymentTargets: Environment.deploymentTarget,
                 sources: ["Testing/**"],
                 dependencies: [
                     .target(name: name)
@@ -56,7 +56,7 @@ public extension Project {
                 destinations: Environment.destinations,
                 product: .unitTests,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).tests",
-                deploymentTargets: .iOS("17.0"),
+                deploymentTargets: Environment.deploymentTarget,
                 sources: ["Tests/**"],
                 dependencies: [
                     .target(name: name),
@@ -73,7 +73,7 @@ public extension Project {
                     destinations: Environment.destinations,
                     product: .app,
                     bundleId: "com.juinjang.feature.\(name.lowercased()).example",
-                    deploymentTargets: .iOS("17.0"),
+                    deploymentTargets: Environment.deploymentTarget,
                     infoPlist: .extendingDefault(with: [
                         "CFBundleDisplayName": "\(name) Example",
                         "UILaunchStoryboardName": "LaunchScreen"

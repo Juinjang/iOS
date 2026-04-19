@@ -17,7 +17,7 @@ public extension Project {
                     destinations: Environment.destinations,
                     product: .staticFramework,
                     bundleId: "com.juinjang.designsystem",
-                    deploymentTargets: .iOS("17.0"),
+                    deploymentTargets: Environment.deploymentTarget,
                     sources: ["Sources/**"],
                     resources: ["Resources/**"],
                     dependencies: dependencies,

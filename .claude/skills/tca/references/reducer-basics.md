@@ -19,7 +19,7 @@ struct HomeFeature {
         case postsLoaded(Result<[Post], Error>)
     }
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -54,12 +54,18 @@ struct HomeFeature {
 ```swift
 struct HomeView: View {
     @Bindable var store: StoreOf<HomeFeature>
+    
+    public init(store: StoreOf<HomeFeature>) {
+        self.store = store
+    }
 
     var body: some View {
         List(store.posts) { post in
             PostRow(post: post)
         }
-        .onAppear { store.send(.onAppear) }
+        .onAppear { 
+            store.send(.onAppear)
+        }
     }
 }
 ```

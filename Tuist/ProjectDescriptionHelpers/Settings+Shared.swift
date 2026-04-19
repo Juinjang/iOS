@@ -52,12 +52,10 @@ extension Settings {
     public static let shared: Settings = settings(
         base: baseSettings,
         configurations: baseConfigurations
-//        defaultSettings: .none
     )
     
     public static let secretShared: Settings = settings(
         base: baseSettings,
         configurations: secretConfigurations
-//        defaultSettings: .none
     )
 }

@@ -9,7 +9,7 @@ struct HomeFeature {
     @Dependency(\.uuid) var uuid
     @Dependency(\.date) var date
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .onAppear:

@@ -28,7 +28,7 @@ struct HomeRootFeature {
         case home(HomeFeature.Action)
     }
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Scope(state: \.home, action: \.home) {
             HomeFeature()
         }
@@ -129,7 +129,7 @@ struct ParentFeature {
         }
     }
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             // ...
         }
@@ -156,7 +156,7 @@ struct AppFeature {
     }
 
     // Use ifLet for each optional child
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             // transition logic
         }
