@@ -15,7 +15,6 @@ import PackageDescription
             "ConcurrencyExtras": .framework,
             "CustomDump": .framework,
             "Dependencies": .framework,
-            "DependenciesMacros": .framework,
             "IdentifiedCollections": .framework,
             "Perception": .framework,
             "Sharing": .framework,
