@@ -15,7 +15,7 @@ public extension Project {
                 .target(
                     name: "DesignSystem",
                     destinations: Environment.destinations,
-                    product: .staticFramework,
+                    product: Environment.moduleProduct,
                     bundleId: "com.juinjang.designsystem",
                     deploymentTargets: Environment.deploymentTarget,
                     sources: ["Sources/**"],

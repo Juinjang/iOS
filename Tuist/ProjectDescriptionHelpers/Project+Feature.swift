@@ -27,7 +27,7 @@ public extension Project {
             .target(
                 name: name,
                 destinations: Environment.destinations,
-                product: .staticFramework,
+                product: Environment.moduleProduct,
                 bundleId: "com.juinjang.feature.\(name.lowercased())",
                 deploymentTargets: Environment.deploymentTarget,
                 sources: ["Sources/**"],
@@ -40,7 +40,7 @@ public extension Project {
             .target(
                 name: "\(name)Testing",
                 destinations: Environment.destinations,
-                product: .staticFramework,
+                product: Environment.moduleProduct,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).testing",
                 deploymentTargets: Environment.deploymentTarget,
                 sources: ["Testing/**"],

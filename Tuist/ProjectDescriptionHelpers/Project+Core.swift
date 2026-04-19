@@ -19,7 +19,7 @@ public extension Project {
                 .target(
                     name: name,
                     destinations: Environment.destinations,
-                    product: .staticFramework,
+                    product: Environment.moduleProduct,
                     bundleId: "com.juinjang.core.\(name.lowercased())",
                     deploymentTargets: Environment.deploymentTarget,
                     sources: ["Sources/**"],
