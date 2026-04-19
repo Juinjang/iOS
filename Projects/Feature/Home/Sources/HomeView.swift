@@ -6,9 +6,8 @@ import SwiftUI
 // MARK: - Home View
 
 public struct HomeView: View {
-
-    @Bindable public var store: StoreOf<HomeFeature>
-
+    @Bindable var store: StoreOf<HomeFeature>
+    
     public init(store: StoreOf<HomeFeature>) {
         self.store = store
     }

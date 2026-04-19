@@ -14,7 +14,7 @@ public struct AppVersionClient: Sendable {
 // MARK: - TestDependencyKey
 
 extension AppVersionClient: TestDependencyKey {
-    public static let testValue = Self()
+    public static let testValue = AppVersionClient()
 }
 
 // MARK: - DependencyValues 등록

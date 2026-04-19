@@ -4,11 +4,11 @@ import SwiftUI
 
 public struct SplashView: View {
     @Bindable var store: StoreOf<SplashFeature>
-
+    
     public init(store: StoreOf<SplashFeature>) {
         self.store = store
     }
-
+    
     public var body: some View {
         ZStack {
             Color.splash

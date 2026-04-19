@@ -41,7 +41,11 @@ struct FormFeature {
 
 ```swift
 struct FormView: View {
-    @Bindable public var store: StoreOf<FormFeature>
+    @Bindable var store: StoreOf<FormFeature>
+    
+    public init(store: StoreOf<FormFeature>) {
+        self.store = store
+    }
 
     var body: some View {
         Form {

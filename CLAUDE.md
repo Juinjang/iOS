@@ -61,8 +61,6 @@ tuist scaffold Core --name {Name}
 - `@Bindable` 사용 (NOT `@Perception.Bindable`)
 - `WithPerceptionTracking` 불필요 (iOS 17+)
 - Feature에서 `UIKit` import 금지
-- Preview는 Example 타겟에서만 (`{Feature}Example` 스킴)
-- Sources에 `#Preview` 작성 금지
 - 에셋은 `Colors.xcassets`, `Images.xcassets`에 추가 → `tuist generate`로 자동 extension 생성
 - 모듈 생성은 `tuist scaffold` 우선
 

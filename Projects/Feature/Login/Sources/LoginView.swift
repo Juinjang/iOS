@@ -3,9 +3,8 @@ import DesignSystem
 import SwiftUI
 
 public struct LoginView: View {
-
-    @Bindable public var store: StoreOf<LoginFeature>
-
+    @Bindable var store: StoreOf<LoginFeature>
+    
     public init(store: StoreOf<LoginFeature>) {
         self.store = store
     }
