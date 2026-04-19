@@ -21,11 +21,11 @@ App (juinjang / juinjang-dev)
  ├── Feature/Onboarding
  ├── Feature/Login
  ├── Feature/Home
- ├── Core/Networking    (Live 구현체, Alamofire)
+ ├── Core/Networking    (Live 구현체, Alamofire, DTO)
  └── DesignSystem       (Colors, Images, Fonts, Lottie, Components)
 
 Core/Dependency          (Client 인터페이스, @DependencyClient)
-Core/Model               (Domain 모델, DTO)
+Core/Model               (Domain 모델)
 Core/Common              (Extension, AppInfo 상수)
 ```
 

@@ -26,7 +26,7 @@ skills:
 ### TCA Patterns
 - `@Reducer`, `@ObservableState` 매크로
 - `@Bindable` (NOT @Perception.Bindable)
-- Action: `view(View)`, `delegate(Delegate)` 패턴
+- Action: `buttonTapped`, `delegate(Delegate)` 패턴
 - Side Effect는 Reducer에서만
 - Dependencies는 `@Dependency`로 주입
 
