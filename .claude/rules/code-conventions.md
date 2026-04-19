@@ -15,7 +15,7 @@
 ## View 구조
 ```swift
 public struct {Name}View: View {
-    @Bindable public var store: StoreOf<{Name}Feature>
+    @Bindable var store: StoreOf<{Name}Feature>
     public init(store: StoreOf<{Name}Feature>) { self.store = store }
     public var body: some View { ... }
 }
