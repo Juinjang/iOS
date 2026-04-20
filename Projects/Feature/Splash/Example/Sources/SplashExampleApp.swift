@@ -1,6 +1,10 @@
-import ComposableArchitecture
-import Splash
 import SwiftUI
+
+import Dependency
+import Splash
+import SplashTesting
+
+import ComposableArchitecture
 
 @main
 struct SplashExampleApp: App {
@@ -11,7 +15,7 @@ struct SplashExampleApp: App {
                     SplashFeature()
                 } withDependencies: {
                     $0.userDefaultsClient = .testValue
-                    $0.appVersionClient = .testValue
+                    $0.appVersionClient = MockSplashClient.updatePopupMock
                 }
             )
         }
@@ -26,7 +30,7 @@ struct SplashExampleApp: App {
             SplashFeature()
         } withDependencies: {
             $0.userDefaultsClient = .testValue
-            $0.appVersionClient = .testValue
+            $0.appVersionClient = MockSplashClient.splashMock
         }
     )
 }
@@ -37,7 +41,7 @@ struct SplashExampleApp: App {
             SplashFeature()
         } withDependencies: {
             $0.userDefaultsClient = .testValue
-            $0.appVersionClient = .testValue
+            $0.appVersionClient = MockSplashClient.updatePopupMock
         }
     )
 }

@@ -14,6 +14,6 @@ struct OnboardingFeatureTests {
             OnboardingFeature()
         }
 
-        await store.send(.view(.onAppear))
+        await store.send(.onAppear)
     }
 }

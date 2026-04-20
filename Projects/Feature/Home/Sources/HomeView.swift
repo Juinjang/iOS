@@ -5,11 +5,9 @@ import SwiftUI
 
 // MARK: - Home View
 
-@ViewAction(for: HomeFeature.self)
 public struct HomeView: View {
-
-    @Bindable public var store: StoreOf<HomeFeature>
-
+    @Bindable var store: StoreOf<HomeFeature>
+    
     public init(store: StoreOf<HomeFeature>) {
         self.store = store
     }
@@ -25,11 +23,13 @@ public struct HomeView: View {
             .leftItems([.setting])
             .rightItems([.record])
             .onAction { action in
-                send(.navigationAction(action))
+                store.send(.navigationAction(action))
             }
 
             Spacer()
         }
-        .onAppear { send(.onAppear) }
+        .onAppear {
+            store.send(.onAppear)
+        }
     }
 }

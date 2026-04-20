@@ -19,7 +19,7 @@ struct FormFeature {
         case submitTapped
     }
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         BindingReducer()
         Reduce { state, action in
             switch action {
@@ -42,6 +42,10 @@ struct FormFeature {
 ```swift
 struct FormView: View {
     @Bindable var store: StoreOf<FormFeature>
+    
+    public init(store: StoreOf<FormFeature>) {
+        self.store = store
+    }
 
     var body: some View {
         Form {

@@ -37,4 +37,8 @@ DesignSystem/Resources/
 ├── Images.xcassets     # 이미지
 ├── Fonts/              # 폰트
 └── Lotties/            # Lottie JSON
+
+DesignSystem/Sources/
+├── Enum/               # 열거형 데이터
+└── Components/         # 공통 컴포넌트
 ```

@@ -5,8 +5,11 @@
 //  Created by 조유진 on 3/9/26.
 //
 
-import ComposableArchitecture
 import Foundation
+
+import Common
+
+import ComposableArchitecture
 
 // MARK: - UserDefaults Client
 /// TCA @DependencyClient 기반 UserDefaults 래퍼입니다.
@@ -16,16 +19,16 @@ import Foundation
 public struct UserDefaultsClient: Sendable {
 
     /// Data 조회 (throws → 기본값 불필요)
-    public var get: @Sendable (_ forKey: Key) throws -> Data
+    public var get: @Sendable (_ forKey: UserDefaultsKey) throws -> Data
 
     /// Data 저장
-    public var set: @Sendable (_ data: Data, _ forKey: Key) -> Void = { _, _ in }
+    public var set: @Sendable (_ data: Data, _ forKey: UserDefaultsKey) -> Void = { _, _ in }
 
     /// 키 삭제
-    public var remove: @Sendable (_ forKey: Key) -> Void = { _ in }
+    public var remove: @Sendable (_ forKey: UserDefaultsKey) -> Void = { _ in }
 
     /// 키 존재 여부 확인
-    public var hasValue: @Sendable (_ forKey: Key) -> Bool = { _ in false }
+    public var hasValue: @Sendable (_ forKey: UserDefaultsKey) -> Bool = { _ in false }
 }
 
 // MARK: - 타입 안전한 편의 메서드
@@ -40,7 +43,7 @@ extension UserDefaultsClient {
 
     /// Codable 값 조회
     public func load<T: Codable & Sendable>(
-        _ key: Key,
+        _ key: UserDefaultsKey,
         type: T.Type = T.self
     ) throws -> T {
         let data = try get(key)
@@ -54,29 +57,25 @@ extension UserDefaultsClient {
     /// Codable 값 저장
     public func save<T: Codable & Sendable>(
         _ value: T,
-        forKey key: Key
+        forKey key: UserDefaultsKey
     ) {
         guard let data = try? JSONEncoder().encode(value) else { return }
         set(data, key)
     }
 
-    /// String 편의 조회
-    public func string(_ key: Key) throws -> String {
+    public func string(_ key: UserDefaultsKey) throws -> String {
         try load(key)
     }
 
-    /// Bool 편의 조회 (기본값 지원)
-    public func bool(_ key: Key, default defaultValue: Bool = false) -> Bool {
+    public func bool(_ key: UserDefaultsKey, default defaultValue: Bool = false) -> Bool {
         (try? load(key)) ?? defaultValue
     }
-
-    /// Int 편의 조회
-    public func integer(_ key: Key) throws -> Int {
+    
+    public func integer(_ key: UserDefaultsKey) throws -> Int {
         try load(key)
     }
 
-    /// Double 편의 조회
-    public func double(_ key: Key) throws -> Double {
+    public func double(_ key: UserDefaultsKey) throws -> Double {
         try load(key)
     }
 }
@@ -108,7 +107,18 @@ extension UserDefaultsClient: DependencyKey {
     }
 
     public static var testValue: UserDefaultsClient {
-        UserDefaultsClient()
+        nonisolated(unsafe) var storage: [String: Data] = [:]
+        return Self(
+            get: { key in
+                guard let data = storage[key.rawValue] else {
+                    throw UserDefaultsError.keyNotFound(key: key)
+                }
+                return data
+            },
+            set: { data, key in storage[key.rawValue] = data },
+            remove: { key in storage.removeValue(forKey: key.rawValue) },
+            hasValue: { key in storage[key.rawValue] != nil }
+        )
     }
 }
 
@@ -118,48 +128,5 @@ public extension DependencyValues {
     var userDefaultsClient: UserDefaultsClient {
         get { self[UserDefaultsClient.self] }
         set { self[UserDefaultsClient.self] = newValue }
-    }
-}
-
-// MARK: - Key 정의
-
-extension UserDefaultsClient {
-    public enum Key: String, Sendable {
-        case nickname
-        case accessToken
-        case refreshToken
-        case userId
-        case userStatus
-    }
-}
-
-// MARK: - Error 정의
-
-public enum UserDefaultsError: Error, Equatable, Sendable, LocalizedError {
-    case keyNotFound(key: UserDefaultsClient.Key)
-    case decodingFailed(key: UserDefaultsClient.Key, underlying: Error)
-
-    public var errorDescription: String? {
-        switch self {
-        case .keyNotFound(let key):
-            return "[\(key.rawValue)] 값이 존재하지 않습니다"
-        case .decodingFailed(let key, _):
-            return "[\(key.rawValue)] 디코딩에 실패했습니다"
-        }
-    }
-
-    public static func == (
-        lhs: UserDefaultsError,
-        rhs: UserDefaultsError
-    ) -> Bool {
-        switch (lhs, rhs) {
-        case (.keyNotFound(let leftKey), .keyNotFound(let rightKey)):
-            return leftKey == rightKey
-        case (.decodingFailed(let leftKey, let leftError), .decodingFailed(let rightKey, let rightError)):
-            return leftKey == rightKey
-                && leftError.localizedDescription == rightError.localizedDescription
-        default:
-            return false
-        }
     }
 }

@@ -4,11 +4,11 @@ import SwiftUI
 
 public struct SplashView: View {
     @Bindable var store: StoreOf<SplashFeature>
-
+    
     public init(store: StoreOf<SplashFeature>) {
         self.store = store
     }
-
+    
     public var body: some View {
         ZStack {
             Color.splash
@@ -29,7 +29,7 @@ public struct SplashView: View {
         .compositingGroup()
         .animation(.easeInOut(duration: 0.3), value: store.showUpdatePopup)
         .onAppear {
-            store.send(.view(.onAppear))
+            store.send(.onAppear)
         }
     }
 }

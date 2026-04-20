@@ -37,7 +37,8 @@ extension Target {
             settings: .settings(
                 base: appType.baseSettings,
                 configurations: appType.baseConfigurations
-            )
+//                defaultSettings: .none
+            ),
         )
     }
 }

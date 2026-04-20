@@ -6,8 +6,7 @@ import Foundation
 public enum AppInfo {
     // MARK: - App Store
     public static let appId = "6476806621"
-    public static let appStoreURL = URL(string: "itms-apps://itunes.apple.com/app/id\(appId)")!
-    public static let appShareURL = URL(string: "https://apps.apple.com/kr/app/id\(appId)")!
+    public static let appStoreURL = URL(string: "itms-apps://itunes.apple.com/app/id\(appId)")
     
     // MARK: - Bundle
     public static var currentVersion: String {
@@ -19,7 +18,7 @@ public enum AppInfo {
     }
 
     // MARK: - iTunes Lookup
-    public static var iTunesLookupURL: URL {
-        URL(string: "https://itunes.apple.com/lookup?bundleId=\(bundleId)&country=kr")!
+    public static var iTunesLookupURL: URL? {
+        URL(string: "https://itunes.apple.com/lookup?bundleId=\(bundleId)&country=kr")
     }
 }

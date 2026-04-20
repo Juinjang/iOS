@@ -19,13 +19,13 @@ public extension Project {
                 .target(
                     name: name,
                     destinations: Environment.destinations,
-                    product: .framework,
+                    product: Environment.moduleProduct,
                     bundleId: "com.juinjang.core.\(name.lowercased())",
-                    deploymentTargets: .iOS("17.0"),
+                    deploymentTargets: Environment.deploymentTarget,
                     sources: ["Sources/**"],
                     resources: hasResources ? ["Resources/**"] : nil,
                     dependencies: dependencies,
-                    settings: .shared
+                    settings: .secretShared
                 )
             ],
             schemes: [

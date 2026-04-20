@@ -54,7 +54,7 @@ public struct HomeRootFeature {
         }
     }
 
-    public var body: some ReducerOf<Self> {
+    public var body: some Reducer<State, Action> {
         Scope(state: \.home, action: \.home) {
             HomeFeature()
         }

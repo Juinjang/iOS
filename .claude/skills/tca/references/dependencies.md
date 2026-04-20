@@ -9,7 +9,7 @@ struct HomeFeature {
     @Dependency(\.uuid) var uuid
     @Dependency(\.date) var date
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -53,7 +53,7 @@ extension DependencyValues {
 ```swift
 // Core/Networking/Sources/APIClientLive.swift
 extension APIClient: DependencyKey {
-    public static let liveValue: Self = {
+    public static let liveValue: APIClient = {
         let client = NetworkClient()
 
         return Self(
@@ -80,7 +80,7 @@ extension APIClient: DependencyKey {
 
 ### Memberwise Init (Preferred)
 ```swift
-return Self(
+return APIClient(
     fetchHomeFeed: { ... },
     fetchUserProfile: { ... }
 )

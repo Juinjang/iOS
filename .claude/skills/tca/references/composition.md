@@ -16,7 +16,7 @@ struct ParentFeature {
         case otherChild(OtherFeature.Action)
     }
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Scope(state: \.child, action: \.child) {
             ChildFeature()
         }
@@ -40,7 +40,7 @@ struct ParentFeature {
 ## ifLet - Optional Child State (Sheets, Alerts)
 
 ```swift
-var body: some ReducerOf<Self> {
+var body: some Reducer<State, Action> {
     Reduce { state, action in
         // core logic
     }
@@ -55,7 +55,7 @@ var body: some ReducerOf<Self> {
 
 ### StackState Navigation
 ```swift
-var body: some ReducerOf<Self> {
+var body: some Reducer<State, Action> {
     Reduce { state, action in
         // navigation logic
     }
@@ -74,7 +74,7 @@ enum Action {
     case items(IdentifiedActionOf<ItemFeature>)
 }
 
-var body: some ReducerOf<Self> {
+var body: some Reducer<State, Action> {
     Reduce { state, action in
         // ...
     }
@@ -87,7 +87,7 @@ var body: some ReducerOf<Self> {
 ## Composition Order
 
 ```swift
-var body: some ReducerOf<Self> {
+var body: some Reducer<State, Action> {
     // 1. Child scopes first
     Scope(state: \.child, action: \.child) { ChildFeature() }
 
@@ -123,7 +123,7 @@ struct MainTabFeature {
         case myPageRoot(MyPageRootFeature.Action)
     }
 
-    var body: some ReducerOf<Self> {
+    var body: some Reducer<State, Action> {
         Scope(state: \.homeRoot, action: \.homeRoot) {
             HomeRootFeature()
         }

@@ -14,6 +14,6 @@ struct LoginFeatureTests {
             LoginFeature()
         }
 
-        await store.send(.view(.onAppear))
+        await store.send(.onAppear)
     }
 }

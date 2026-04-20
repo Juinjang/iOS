@@ -14,6 +14,6 @@ struct {{ name }}FeatureTests {
             {{ name }}Feature()
         }
 
-        await store.send(.view(.onAppear))
+        await store.send(.onAppear)
     }
 }

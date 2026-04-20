@@ -48,13 +48,10 @@ public struct {Name}View: View {
 ## Action 네이밍
 ```swift
 public enum Action {
-    case view(View)
+    case onAppear
+    case loginButtonTapped
     case delegate(Delegate)
 
-    public enum View: Equatable {
-        case onAppear
-        case loginButtonTapped
-    }
     public enum Delegate: Equatable {
         case navigateTo(Route)
     }

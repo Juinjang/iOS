@@ -8,23 +8,20 @@ public struct SplashFeature: Sendable {
     @ObservableState
     public struct State: Equatable {
         public var showUpdatePopup: Bool = false
-
+        
         public init(showUpdatePopup: Bool = false) {
             self.showUpdatePopup = showUpdatePopup
         }
     }
 
     public enum Action {
-        case view(View)
+        case onAppear
         case animationCompleted
         case versionCheckCompleted(needsUpdate: Bool)
         case updateButtonTapped
         case delegate(Delegate)
 
-        public enum View: Equatable {
-            case onAppear
-        }
-
+        @CasePathable
         public enum Delegate: Equatable {
             case navigateTo(Route)
         }
@@ -42,10 +39,10 @@ public struct SplashFeature: Sendable {
 
     public init() {}
 
-    public var body: some ReducerOf<Self> {
+    public var body: some Reducer<State, Action> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear):
+            case .onAppear:
                 return .none
 
             case .animationCompleted:
@@ -79,8 +76,9 @@ public struct SplashFeature: Sendable {
                 }
 
             case .updateButtonTapped:
+                guard let appStoreURL = AppInfo.appStoreURL else { return .none }
                 return .run { _ in
-                    await openURL(AppInfo.appStoreURL)
+                    await openURL(appStoreURL)
                 }
 
             case .delegate:

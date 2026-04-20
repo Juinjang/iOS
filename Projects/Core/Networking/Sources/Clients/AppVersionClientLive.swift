@@ -1,22 +1,27 @@
-import Common
-import ComposableArchitecture
-import Dependency
 import Foundation
+
+import Common
+import Dependency
 import Model
+
+import ComposableArchitecture
 
 // MARK: - AppVersionClient Live Implementation
 
 extension AppVersionClient: @retroactive DependencyKey {
     public static let liveValue = Self(
         latestVersion: {
-            let (data, _) = try await URLSession.shared.data(from: AppInfo.iTunesLookupURL)
+            guard let iTunesLookupURL = AppInfo.iTunesLookupURL else {
+                throw AppVersionError.urlNotFound
+            }
+            let (data, _) = try await URLSession.shared.data(from: iTunesLookupURL)
             let response = try JSONDecoder().decode(AppStoreLookupResponse.self, from: data)
 
-            guard let latest = response.results.first?.version else {
+            guard let latestVersion = response.results.first?.version else {
                 throw AppVersionError.versionNotFound
             }
 
-            return latest
+            return latestVersion
         },
         currentVersion: {
             AppInfo.currentVersion
