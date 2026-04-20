@@ -87,7 +87,7 @@ extension UserDefaultsClient: DependencyKey {
     public static var liveValue: UserDefaultsClient {
         nonisolated(unsafe) let defaults = UserDefaults.standard
 
-        return UserDefaultsClient(
+        return Self(
             get: { key in
                 guard let data = defaults.data(forKey: key.rawValue) else {
                     throw UserDefaultsError.keyNotFound(key: key)
@@ -108,7 +108,7 @@ extension UserDefaultsClient: DependencyKey {
 
     public static var testValue: UserDefaultsClient {
         nonisolated(unsafe) var storage: [String: Data] = [:]
-        return UserDefaultsClient(
+        return Self(
             get: { key in
                 guard let data = storage[key.rawValue] else {
                     throw UserDefaultsError.keyNotFound(key: key)

@@ -14,7 +14,7 @@ extension APIClient: @retroactive DependencyKey {
     public static let liveValue: Self = {
         let client = NetworkClient()
 
-        return APIClient(
+        return Self(
             fetchUserProfile: { userId in
                 let response: ResultResponse<User> = try await client.request(
                     UserAPI.fetchProfile(userId: userId),

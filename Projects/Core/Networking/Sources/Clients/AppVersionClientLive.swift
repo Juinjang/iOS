@@ -9,7 +9,7 @@ import ComposableArchitecture
 // MARK: - AppVersionClient Live Implementation
 
 extension AppVersionClient: @retroactive DependencyKey {
-    public static let liveValue = AppVersionClient(
+    public static let liveValue = Self(
         latestVersion: {
             guard let iTunesLookupURL = AppInfo.iTunesLookupURL else {
                 throw AppVersionError.urlNotFound

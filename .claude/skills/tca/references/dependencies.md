@@ -37,7 +37,7 @@ public struct APIClient {
 }
 
 extension APIClient: TestDependencyKey {
-    public static let testValue = APIClient()  // auto-generates unimplemented
+    public static let testValue = Self()  // auto-generates unimplemented
 }
 
 extension DependencyValues {
@@ -56,7 +56,7 @@ extension APIClient: DependencyKey {
     public static let liveValue: APIClient = {
         let client = NetworkClient()
 
-        return APIClient(
+        return Self(
             fetchHomeFeed: {
                 let response: ResultResponse<[Post]> = try await client.request(
                     HomeAPI.fetchFeed,
