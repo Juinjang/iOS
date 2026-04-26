@@ -4,24 +4,16 @@ import Foundation
 @Reducer
 public struct SettingFeature: Sendable {
     public struct FieldEditState: Equatable {
-        public enum Mode: Equatable {
-            case beforeEdit
-            case editing
-            case completed
-            case validationFailed
-            case duplicate
-        }
-
         public enum ButtonTapResult: Equatable {
             case startedEditing
             case save(String)
             case cancelled
         }
 
-        public var mode: Mode
+        public var mode: EditableProfileFieldView.Mode
         public var input: String
 
-        public init(mode: Mode = .beforeEdit, input: String = "") {
+        public init(mode: EditableProfileFieldView.Mode = .beforeEdit, input: String = "") {
             self.mode = mode
             self.input = input
         }
@@ -90,6 +82,7 @@ public struct SettingFeature: Sendable {
     public enum Action {
         case view(View)
 
+        @CasePathable
         public enum View: Equatable {
             case onAppear
             case backButtonTapped
