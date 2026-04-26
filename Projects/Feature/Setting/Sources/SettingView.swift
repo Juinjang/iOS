@@ -5,6 +5,13 @@ import SwiftUI
 public struct SettingView: View {
     @Bindable var store: StoreOf<SettingFeature>
 
+    private enum FocusedField: Hashable {
+        case nickname
+        case intro
+    }
+
+    @FocusState private var focusedField: FocusedField?
+
     public init(store: StoreOf<SettingFeature>) {
         self.store = store
     }
@@ -30,27 +37,35 @@ public struct SettingView: View {
                         .padding(.bottom, 28)
 
                     thickSeparator
-
                     pencilShopRow
-
                     thickSeparator
-
                     legalSection
-
                     thickSeparator
-
                     logoutRow
-
                     thickSeparator
-
                     accountDeleteRow
 
                     Spacer(minLength: 20)
                 }
             }
+            .scrollDismissesKeyboard(.never)
         }
         .background(Color.mainWhite)
         .onAppear { store.send(.view(.onAppear)) }
+        .onChange(of: store.nicknameField.mode) { _, mode in
+            syncFocus(for: .nickname, mode: mode)
+        }
+        .onChange(of: store.introField.mode) { _, mode in
+            syncFocus(for: .intro, mode: mode)
+        }
+    }
+
+    private func syncFocus(for field: FocusedField, mode: SettingFeature.FieldEditState.Mode) {
+        if mode == .beforeEdit {
+            if focusedField == field { focusedField = nil }
+        } else {
+            focusedField = field
+        }
     }
 
     // MARK: - Profile
@@ -81,61 +96,126 @@ public struct SettingView: View {
     @ViewBuilder
     private var accountInfoSection: some View {
         VStack(alignment: .leading, spacing: 28) {
-            editableRow(
+            editableField(
                 title: "닉네임",
-                value: store.nickname,
-                placeholder: "닉네임을 입력해 보세요"
-            ) {
-                store.send(.view(.nicknameEditButtonTapped))
-            }
+                savedValue: store.nickname,
+                defaultPlaceholder: "닉네임을 입력해 보세요",
+                editingPlaceholder: "8자 이내",
+                warningText: "닉네임은 8자 이내로 입력해 주세요.",
+                duplicateText: "동일한 닉네임이 존재해요",
+                field: store.nicknameField,
+                focusValue: .nickname,
+                textBinding: Binding(
+                    get: { store.nicknameField.input },
+                    set: { store.send(.view(.nicknameTextChanged($0))) }
+                ),
+                buttonAction: {
+                    if focusedField != nil { focusedField = nil }
+                    store.send(.view(.nicknameFieldButtonTapped))
+                }
+            )
 
-            editableRow(
+            editableField(
                 title: "한줄소개",
-                value: store.oneLineIntroduction,
-                placeholder: "한줄소개를 입력해 보세요"
-            ) {
-                store.send(.view(.oneLineIntroEditButtonTapped))
-            }
+                savedValue: store.oneLineIntroduction,
+                defaultPlaceholder: "한줄소개를 입력해 보세요",
+                editingPlaceholder: "20자 이내",
+                warningText: "20자 이내로 입력해 주세요.",
+                duplicateText: nil,
+                field: store.introField,
+                focusValue: .intro,
+                textBinding: Binding(
+                    get: { store.introField.input },
+                    set: { store.send(.view(.introTextChanged($0))) }
+                ),
+                buttonAction: {
+                    if focusedField != nil { focusedField = nil }
+                    store.send(.view(.introFieldButtonTapped))
+                }
+            )
 
             loginInfoRow
         }
     }
 
     @ViewBuilder
-    private func editableRow(
+    private func editableField(
         title: String,
-        value: String,
-        placeholder: String,
-        action: @escaping () -> Void
+        savedValue: String,
+        defaultPlaceholder: String,
+        editingPlaceholder: String,
+        warningText: String,
+        duplicateText: String?,
+        field: SettingFeature.FieldEditState,
+        focusValue: FocusedField,
+        textBinding: Binding<String>,
+        buttonAction: @escaping () -> Void
     ) -> some View {
-        HStack(alignment: .bottom, spacing: 8) {
-            VStack(alignment: .leading, spacing: 10) {
-                DSText(title)
-                    .style(.body2)
-                    .textColor(.gray400)
-
-                if value.isEmpty {
-                    DSText(placeholder)
+        VStack(alignment: .leading, spacing: 4.5) {
+            HStack(alignment: .bottom, spacing: 8) {
+                VStack(alignment: .leading, spacing: 9.5) {
+                    DSText(title)
                         .style(.body2)
-                        .textColor(.gray300)
-                } else {
-                    DSText(value)
-                        .style(.body)
-                        .textColor(.gray500)
+                        .textColor(.gray400)
+
+                    Group {
+                        if field.mode == .beforeEdit {
+                            if savedValue.isEmpty {
+                                DSText(defaultPlaceholder)
+                                    .style(.body2)
+                                    .textColor(.gray300)
+                            } else {
+                                DSText(savedValue)
+                                    .style(.body)
+                                    .textColor(.gray500)
+                            }
+                        } else {
+                            TextField(
+                                "",
+                                text: textBinding,
+                                prompt: Text(editingPlaceholder)
+                                    .foregroundStyle(Color.gray300)
+                                    .font(DSFontStyle.body2.font)
+                            )
+                            .font(DSFontStyle.body.font)
+                            .foregroundStyle(Color.gray500)
+                            .focused($focusedField, equals: focusValue)
+                        }
+                    }
+                    .frame(height: 24)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
+                Spacer()
+
+                Button(action: buttonAction) {
+                    DSText(buttonTitle(for: field.mode))
+                        .style(.body2)
+                        .textColor(.mainWhite)
+                        .frame(width: 64, height: 29)
+                        .background(buttonBackground(for: field.mode))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+                .buttonStyle(.plain)
+            }
+
+            bottomLine(for: field.mode)
+
+            if let warning = warningMessage(
+                for: field.mode,
+                warningText: warningText,
+                duplicateText: duplicateText
+            ) {
+                HStack(spacing: 3) {
+                    Image.warn
+                        .resizable()
+                        .frame(width: 16, height: 16)
+
+                    DSText(warning)
+                        .style(.body2)
+                        .textColor(.main)
                 }
             }
-
-            Spacer()
-
-            Button(action: action) {
-                DSText("변경")
-                    .style(.body2)
-                    .textColor(.mainWhite)
-                    .frame(width: 64, height: 29)
-                    .background(Color.gray450)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-            }
-            .buttonStyle(.plain)
         }
     }
 
@@ -156,6 +236,48 @@ public struct SettingView: View {
                     .style(.body)
                     .textColor(.gray500)
             }
+        }
+    }
+
+    // MARK: - Button helpers
+
+    private func buttonTitle(for mode: SettingFeature.FieldEditState.Mode) -> String {
+        switch mode {
+        case .beforeEdit: return "변경"
+        case .completed: return "저장"
+        case .editing, .validationFailed, .duplicate: return "취소"
+        }
+    }
+
+    private func buttonBackground(for mode: SettingFeature.FieldEditState.Mode) -> Color {
+        switch mode {
+        case .completed: return .main
+        default: return .gray450
+        }
+    }
+
+    private func bottomLine(for mode: SettingFeature.FieldEditState.Mode) -> some View {
+        let color: Color
+        switch mode {
+        case .beforeEdit:
+            color = .clear
+        case .validationFailed, .duplicate:
+            color = .main
+        case .editing, .completed:
+            color = .stroke
+        }
+        return color.frame(height: 1)
+    }
+
+    private func warningMessage(
+        for mode: SettingFeature.FieldEditState.Mode,
+        warningText: String,
+        duplicateText: String?
+    ) -> String? {
+        switch mode {
+        case .validationFailed: return warningText
+        case .duplicate: return duplicateText
+        default: return nil
         }
     }
 
