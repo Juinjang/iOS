@@ -14,9 +14,10 @@ public enum ModuleType {
     /// scaffold 후 여기에 case를 추가하세요.
     public enum Feature: String, CaseIterable {
         case home = "Home"
-         case splash = "Splash"
-         case onboarding = "Onboarding"
-         case login = "Login"
+        case splash = "Splash"
+        case onboarding = "Onboarding"
+        case login = "Login"
+        case setting = "Setting"
     }
 
     // MARK: - Core 모듈 목록

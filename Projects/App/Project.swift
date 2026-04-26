@@ -7,6 +7,7 @@ let dependencies: [TargetDependency] = [
     .feature(.onboarding),
     .feature(.login),
     .feature(.home),
+    .feature(.setting),
     // Core — Live 구현체는 App에서 링크
     .core(.networking),
 

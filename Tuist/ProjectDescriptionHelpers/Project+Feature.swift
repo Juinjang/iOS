@@ -23,11 +23,11 @@ public extension Project {
         let allDependencies = baseDependencies + dependencies
 
         var targets: [Target] = [
-            // MARK: - 메인 타깃
+            // MARK: - 메인 타깃 (dynamic framework — Preview 지원)
             .target(
                 name: name,
                 destinations: Environment.destinations,
-                product: .staticFramework,
+                product: .framework,
                 bundleId: "com.juinjang.feature.\(name.lowercased())",
                 deploymentTargets: .iOS("17.0"),
                 sources: ["Sources/**"],
@@ -40,7 +40,7 @@ public extension Project {
             .target(
                 name: "\(name)Testing",
                 destinations: Environment.destinations,
-                product: .staticFramework,
+                product: .framework,
                 bundleId: "com.juinjang.feature.\(name.lowercased()).testing",
                 deploymentTargets: .iOS("17.0"),
                 sources: ["Testing/**"],
