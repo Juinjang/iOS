@@ -1,5 +1,8 @@
 import ComposableArchitecture
+import Common
+import Dependency
 import Foundation
+import Model
 
 @Reducer
 public struct SettingFeature: Sendable {
@@ -25,15 +28,19 @@ public struct SettingFeature: Sendable {
                 mode = .editing
                 return .startedEditing
             case .completed:
-                let toSave = input
-                mode = .beforeEdit
-                input = ""
-                return .save(toSave)
+                // mode/input 변경은 응답 처리 시점에. 실패 시 입력 보존.
+                return .save(input)
             case .editing, .validationFailed, .duplicate:
                 input = savedValue
                 mode = .beforeEdit
                 return .cancelled
             }
+        }
+
+        /// 저장 성공 시 호출 — 편집 상태 초기화
+        public mutating func resetAfterSaveSuccess() {
+            mode = .beforeEdit
+            input = ""
         }
 
         public mutating func handleTextChanged(
@@ -63,17 +70,26 @@ public struct SettingFeature: Sendable {
         public var nickname: String
         public var email: String
         public var oneLineIntroduction: String
+        public var imageURL: String?
+        public var provider: AuthProvider
+
         public var nicknameField: FieldEditState
         public var introField: FieldEditState
 
+        @Presents public var alert: AlertState<Action.Alert>?
+
         public init(
-            nickname: String = "땡땡",
-            email: String = "juinjang@daum.net",
-            oneLineIntroduction: String = ""
+            nickname: String = "",
+            email: String = "",
+            oneLineIntroduction: String = "",
+            imageURL: String? = nil,
+            provider: AuthProvider = .unknown
         ) {
             self.nickname = nickname
             self.email = email
             self.oneLineIntroduction = oneLineIntroduction
+            self.imageURL = imageURL
+            self.provider = provider
             self.nicknameField = FieldEditState()
             self.introField = FieldEditState()
         }
@@ -81,6 +97,12 @@ public struct SettingFeature: Sendable {
 
     public enum Action {
         case view(View)
+        case alert(PresentationAction<Alert>)
+
+        case profileLoaded(Result<UserProfile, JuinjangError>)
+        case nicknameSaveResponse(Result<String, JuinjangError>)
+        case introSaveResponse(Result<String, JuinjangError>)
+        case logoutResponse(Result<Void, JuinjangError>)
 
         @CasePathable
         public enum View: Equatable {
@@ -97,18 +119,53 @@ public struct SettingFeature: Sendable {
             case logoutButtonTapped
             case accountDeleteButtonTapped
         }
+
+        public enum Alert: Equatable { }
     }
+
+    @Dependency(\.apiClient) var apiClient
 
     public init() {}
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .view(.onAppear):
+                return .run { send in
+                    await send(.profileLoaded(
+                        Result {
+                            try await apiClient.fetchMyProfile()
+                        }
+                        .mapToJuinjangError()
+                    ))
+                }
+
+            case let .profileLoaded(.success(profile)):
+                state.nickname = profile.nickname
+                state.email = profile.email
+                state.oneLineIntroduction = profile.introduction ?? ""
+                state.imageURL = profile.imageURL
+                state.provider = profile.provider
+                return .none
+
+            case .profileLoaded(.failure):
+                state.alert = .profileLoadFailed
+                return .none
+
+            // MARK: - Nickname
+
             case .view(.nicknameFieldButtonTapped):
                 let result = state.nicknameField.handleButtonTap(savedValue: state.nickname)
-                logFieldButton(label: "nickname", result: result)
                 if case let .save(newValue) = result {
-                    state.nickname = newValue
+                    return .run { send in
+                        await send(.nicknameSaveResponse(
+                            Result {
+                                try await apiClient.updateNickname(newValue)
+                                return newValue
+                            }
+                            .mapToJuinjangError()
+                        ))
+                    }
                 }
                 return .none
 
@@ -120,11 +177,34 @@ public struct SettingFeature: Sendable {
                 )
                 return .none
 
+            case let .nicknameSaveResponse(.success(newValue)):
+                state.nickname = newValue
+                state.nicknameField.resetAfterSaveSuccess()
+                return .none
+
+            case let .nicknameSaveResponse(.failure(error)):
+                if error.isNicknameDuplicate {
+                    state.nicknameField.mode = .duplicate
+                } else {
+                    state.alert = .nicknameUpdateFailed
+                    // mode/input은 .completed로 유지 → 사용자 재시도 가능
+                }
+                return .none
+
+            // MARK: - Intro
+
             case .view(.introFieldButtonTapped):
                 let result = state.introField.handleButtonTap(savedValue: state.oneLineIntroduction)
-                logFieldButton(label: "intro", result: result)
                 if case let .save(newValue) = result {
-                    state.oneLineIntroduction = newValue
+                    return .run { send in
+                        await send(.introSaveResponse(
+                            Result {
+                                try await apiClient.updateIntroduction(newValue)
+                                return newValue
+                            }
+                            .mapToJuinjangError()
+                        ))
+                    }
                 }
                 return .none
 
@@ -136,21 +216,96 @@ public struct SettingFeature: Sendable {
                 )
                 return .none
 
+            case let .introSaveResponse(.success(newValue)):
+                state.oneLineIntroduction = newValue
+                state.introField.resetAfterSaveSuccess()
+                return .none
+
+            case .introSaveResponse(.failure):
+                state.alert = .introUpdateFailed
+                // mode/input은 .completed로 유지 → 사용자 재시도 가능
+                return .none
+
+            // MARK: - Logout
+
+            case .view(.logoutButtonTapped):
+                return .run { send in
+                    await send(.logoutResponse(
+                        Result {
+                            try await apiClient.logout()
+                        }
+                        .mapToJuinjangError()
+                    ))
+                }
+
+            case .logoutResponse(.success):
+                print("[SettingFeature] logout success")
+                return .none
+
+            case .logoutResponse(.failure):
+                state.alert = .logoutFailed
+                return .none
+
+            // MARK: - Other view actions (print only)
+
             case let .view(viewAction):
                 print("[SettingFeature] \(viewAction)")
                 return .none
+
+            case .alert:
+                return .none
             }
         }
+        .ifLet(\.$alert, action: \.alert)
+    }
+}
+
+// MARK: - Helpers
+
+private extension Result where Success: Sendable, Failure == Error {
+    func mapToJuinjangError() -> Result<Success, JuinjangError> {
+        mapError { ($0 as? JuinjangError) ?? .clientError($0.localizedDescription) }
+    }
+}
+
+private extension JuinjangError {
+    /// 닉네임 중복 (서버 code "NICKNAME4002")
+    var isNicknameDuplicate: Bool {
+        if case let .unknown(code, _) = self, code == "NICKNAME4002" {
+            return true
+        }
+        return false
+    }
+}
+
+// MARK: - Alert presets
+
+private extension AlertState where Action == SettingFeature.Action.Alert {
+    static var profileLoadFailed: Self {
+        .init(
+            title: { TextState("주인장") },
+            message: { TextState("프로필 정보를 불러오지 못했어요") }
+        )
     }
 
-    private func logFieldButton(label: String, result: FieldEditState.ButtonTapResult) {
-        switch result {
-        case .startedEditing:
-            print("[SettingFeature] \(label) editing started")
-        case let .save(value):
-            print("[SettingFeature] \(label) save: \(value)")
-        case .cancelled:
-            print("[SettingFeature] \(label) edit cancelled")
-        }
+    static var nicknameUpdateFailed: Self {
+        .init(
+            title: { TextState("주인장") },
+            message: { TextState("닉네임 변경에 실패했어요") }
+        )
+    }
+
+    static var introUpdateFailed: Self {
+        .init(
+            title: { TextState("주인장") },
+            message: { TextState("한줄소개 변경에 실패했어요") }
+        )
+    }
+
+    static var logoutFailed: Self {
+        .init(
+            title: { TextState("주인장") },
+            message: { TextState("로그아웃에 실패했어요\n다시 시도해주세요") }
+        )
     }
 }

@@ -45,6 +45,7 @@ public struct SettingView: View {
         }
         .background(Color.mainWhite)
         .onAppear { store.send(.view(.onAppear)) }
+        .alert($store.scope(state: \.alert, action: \.alert))
     }
 }
 
@@ -54,9 +55,7 @@ extension SettingView {
     @ViewBuilder
     var profileSection: some View {
         VStack(spacing: 8) {
-            Image.profileImage
-                .resizable()
-                .scaledToFill()
+            profileImage
                 .frame(width: 66, height: 66)
                 .clipShape(Circle())
 
@@ -70,6 +69,23 @@ extension SettingView {
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 28)
+    }
+
+    @ViewBuilder
+    private var profileImage: some View {
+        if let urlString = store.imageURL, let url = URL(string: urlString) {
+            AsyncImage(url: url) { image in
+                image.resizable().scaledToFill()
+            } placeholder: {
+                Image.profileImage
+                    .resizable()
+                    .scaledToFill()
+            }
+        } else {
+            Image.profileImage
+                .resizable()
+                .scaledToFill()
+        }
     }
 }
 
@@ -107,7 +123,7 @@ extension SettingView {
                 .textColor(.gray400)
 
             HStack(spacing: 8) {
-                Image.kakao
+                providerIcon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 20, height: 20)
@@ -116,6 +132,13 @@ extension SettingView {
                     .style(.body)
                     .textColor(.gray500)
             }
+        }
+    }
+
+    private var providerIcon: Image {
+        switch store.provider {
+        case .apple: return .appleLogo
+        case .kakao, .unknown: return .kakao
         }
     }
 }

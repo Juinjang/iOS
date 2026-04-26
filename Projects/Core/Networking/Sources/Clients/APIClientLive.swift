@@ -21,6 +21,42 @@ extension APIClient: @retroactive DependencyKey {
                     responseType: ResultResponse<User>.self
                 )
                 return try APIMapper.mapData(response, transform: { $0 })
+            },
+
+            fetchMyProfile: {
+                let response: ResultResponse<ProfileResponse> = try await client.request(
+                    UserAPI.getMyProfile,
+                    responseType: ResultResponse<ProfileResponse>.self
+                )
+                return try APIMapper.mapData(
+                    response,
+                    successCodes: ["COMMON200"],
+                    transform: { $0.toDomain() }
+                )
+            },
+
+            updateNickname: { nickname in
+                let response: VoidResponse = try await client.request(
+                    UserAPI.patchNickname(.init(nickname: nickname)),
+                    responseType: VoidResponse.self
+                )
+                try APIMapper.mapVoid(response, successCodes: ["COMMON200"])
+            },
+
+            updateIntroduction: { introduction in
+                let response: VoidResponse = try await client.request(
+                    UserAPI.patchIntroduction(.init(introduction: introduction)),
+                    responseType: VoidResponse.self
+                )
+                try APIMapper.mapVoid(response, successCodes: ["COMMON200"])
+            },
+
+            logout: {
+                let response: VoidResponse = try await client.request(
+                    UserAPI.logout,
+                    responseType: VoidResponse.self
+                )
+                try APIMapper.mapVoid(response, successCodes: ["COMMON200"])
             }
         )
     }()

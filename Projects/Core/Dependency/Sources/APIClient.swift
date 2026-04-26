@@ -14,6 +14,12 @@ public struct APIClient: Sendable {
 
     // MARK: - User
     public var fetchUserProfile: @Sendable (_ userId: String) async throws -> User
+
+    // MARK: - Setting
+    public var fetchMyProfile: @Sendable () async throws -> UserProfile
+    public var updateNickname: @Sendable (_ nickname: String) async throws -> Void
+    public var updateIntroduction: @Sendable (_ introduction: String) async throws -> Void
+    public var logout: @Sendable () async throws -> Void
 }
 
 // MARK: - TestDependencyKey

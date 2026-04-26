@@ -5,6 +5,11 @@ import Alamofire
 public enum UserAPI {
     case fetchProfile(userId: String)
     case updateProfile(body: UpdateProfileRequest)
+
+    case getMyProfile
+    case patchNickname(UpdateNicknameRequest)
+    case patchIntroduction(UpdateIntroductionRequest)
+    case logout
 }
 
 extension UserAPI: APITarget {
@@ -15,15 +20,25 @@ extension UserAPI: APITarget {
             return "/api/v1/users/\(userId)"
         case .updateProfile:
             return "/api/v1/users/me"
+        case .getMyProfile:
+            return "/profile"
+        case .patchNickname:
+            return "/nickname"
+        case .patchIntroduction:
+            return "/profile/introduction"
+        case .logout:
+            return "/auth/logout"
         }
     }
 
     public var method: HTTPMethod {
         switch self {
-        case .fetchProfile:
+        case .fetchProfile, .getMyProfile:
             return .get
-        case .updateProfile:
-            return .put
+        case .updateProfile, .patchNickname, .patchIntroduction:
+            return .patch
+        case .logout:
+            return .post
         }
     }
 
@@ -33,9 +48,13 @@ extension UserAPI: APITarget {
 
     public var task: RequestTask {
         switch self {
-        case .fetchProfile:
+        case .fetchProfile, .getMyProfile, .logout:
             return .requestPlain
         case .updateProfile(let body):
+            return .requestBody(body)
+        case .patchNickname(let body):
+            return .requestBody(body)
+        case .patchIntroduction(let body):
             return .requestBody(body)
         }
     }
