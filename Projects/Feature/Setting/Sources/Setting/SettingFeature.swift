@@ -6,6 +6,16 @@ import Model
 
 @Reducer
 public struct SettingFeature: Sendable {
+
+    // MARK: - Navigation Path
+
+    @Reducer(state: .equatable)
+    public enum Path {
+        case termsList(TermsListFeature)
+        case termsDetail(TermsDetailFeature)
+        case qna(QnAFeature)
+    }
+
     public struct FieldEditState: Equatable {
         public enum ButtonTapResult: Equatable {
             case startedEditing
@@ -79,6 +89,8 @@ public struct SettingFeature: Sendable {
         public var pickedImageData: Data?
         public var isUploadingImage: Bool
 
+        public var path: StackState<Path.State>
+
         @Presents public var alert: AlertState<Action.Alert>?
 
         public init(
@@ -86,7 +98,8 @@ public struct SettingFeature: Sendable {
             email: String = "",
             oneLineIntroduction: String = "",
             imageURL: String? = nil,
-            provider: AuthProvider = .unknown
+            provider: AuthProvider = .unknown,
+            path: StackState<Path.State> = StackState()
         ) {
             self.nickname = nickname
             self.email = email
@@ -97,12 +110,14 @@ public struct SettingFeature: Sendable {
             self.introField = FieldEditState()
             self.pickedImageData = nil
             self.isUploadingImage = false
+            self.path = path
         }
     }
 
     public enum Action {
         case view(View)
         case alert(PresentationAction<Alert>)
+        case path(StackActionOf<Path>)
 
         case profileLoaded(Result<UserProfile, JuinjangError>)
         case nicknameSaveResponse(Result<String, JuinjangError>)
@@ -278,6 +293,25 @@ public struct SettingFeature: Sendable {
                 state.alert = .logoutFailed
                 return .none
 
+            // MARK: - Navigation pushes
+
+            case .view(.termsButtonTapped):
+                state.path.append(.termsList(TermsListFeature.State()))
+                return .none
+
+            case .view(.qnaButtonTapped):
+                state.path.append(.qna(QnAFeature.State()))
+                return .none
+
+            // MARK: - Path delegate handling
+
+            case let .path(.element(_, .termsList(.delegate(.documentSelected(doc))))):
+                state.path.append(.termsDetail(TermsDetailFeature.State(document: doc)))
+                return .none
+
+            case .path:
+                return .none
+
             // MARK: - Other view actions (print only)
 
             case let .view(viewAction):
@@ -289,6 +323,7 @@ public struct SettingFeature: Sendable {
             }
         }
         .ifLet(\.$alert, action: \.alert)
+        .forEach(\.path, action: \.path)
     }
 }
 

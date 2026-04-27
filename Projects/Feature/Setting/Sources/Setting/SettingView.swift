@@ -14,6 +14,22 @@ public struct SettingView: View {
     }
 
     public var body: some View {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+            rootContent
+        } destination: { store in
+            switch store.case {
+            case let .termsList(store):
+                TermsListView(store: store)
+            case let .termsDetail(store):
+                TermsDetailView(store: store)
+            case let .qna(store):
+                QnAView(store: store)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var rootContent: some View {
         VStack(spacing: 0) {
             DSNavigationBar()
                 .title("설정")
@@ -48,6 +64,7 @@ public struct SettingView: View {
             .scrollDismissesKeyboard(.never)
         }
         .background(Color.mainWhite)
+        .navigationBarHidden(true)
         .onAppear { store.send(.view(.onAppear)) }
         .alert($store.scope(state: \.alert, action: \.alert))
     }
@@ -89,11 +106,13 @@ extension SettingView {
 
     @ViewBuilder
     private var profileImage: some View {
-        if let pickedData = store.pickedImageData, let uiImage = UIImage(data: pickedData) {
+        if let pickedData = store.pickedImageData,
+           let uiImage = UIImage(data: pickedData) {
             Image(uiImage: uiImage)
                 .resizable()
                 .scaledToFill()
-        } else if let urlString = store.imageURL, let url = URL(string: urlString) {
+        } else if let urlString = store.imageURL,
+                    let url = URL(string: urlString) {
             AsyncImage(url: url) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
@@ -211,9 +230,11 @@ extension SettingView {
             menuView(
                 icon: AnyView(
                     Image.qna
+                        .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
+                        .foregroundStyle(Color.main200)
                 ),
                 title: "자주 묻는 질문"
             ) {
