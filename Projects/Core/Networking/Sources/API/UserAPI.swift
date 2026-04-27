@@ -9,6 +9,7 @@ public enum UserAPI {
     case getMyProfile
     case patchNickname(UpdateNicknameRequest)
     case patchIntroduction(UpdateIntroductionRequest)
+    case patchProfileImage
     case logout
 }
 
@@ -26,6 +27,8 @@ extension UserAPI: APITarget {
             return "/nickname"
         case .patchIntroduction:
             return "/profile/introduction"
+        case .patchProfileImage:
+            return "/profile/image"
         case .logout:
             return "/auth/logout"
         }
@@ -35,7 +38,7 @@ extension UserAPI: APITarget {
         switch self {
         case .fetchProfile, .getMyProfile:
             return .get
-        case .updateProfile, .patchNickname, .patchIntroduction:
+        case .updateProfile, .patchNickname, .patchIntroduction, .patchProfileImage:
             return .patch
         case .logout:
             return .post
@@ -48,7 +51,7 @@ extension UserAPI: APITarget {
 
     public var task: RequestTask {
         switch self {
-        case .fetchProfile, .getMyProfile, .logout:
+        case .fetchProfile, .getMyProfile, .logout, .patchProfileImage:
             return .requestPlain
         case .updateProfile(let body):
             return .requestBody(body)

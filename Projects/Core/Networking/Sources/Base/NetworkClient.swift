@@ -11,6 +11,12 @@ public protocol NetworkClientProtocol: Sendable {
         _ target: APITarget,
         responseType: T.Type
     ) async throws -> T
+
+    func upload<T: Decodable>(
+        _ target: APITarget,
+        multipart: MultipartData,
+        responseType: T.Type
+    ) async throws -> T
 }
 
 public final class NetworkClient: NetworkClientProtocol, @unchecked Sendable {
@@ -27,6 +33,18 @@ public final class NetworkClient: NetworkClientProtocol, @unchecked Sendable {
     ) async throws -> T {
         do {
             return try await apiService.request(target, responseType: responseType)
+        } catch {
+            throw APIMapper.mapNetworkError(error)
+        }
+    }
+
+    public func upload<T: Decodable>(
+        _ target: APITarget,
+        multipart: MultipartData,
+        responseType: T.Type
+    ) async throws -> T {
+        do {
+            return try await apiService.upload(target, multipart: multipart, responseType: responseType)
         } catch {
             throw APIMapper.mapNetworkError(error)
         }

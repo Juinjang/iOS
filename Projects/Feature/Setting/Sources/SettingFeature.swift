@@ -76,6 +76,9 @@ public struct SettingFeature: Sendable {
         public var nicknameField: FieldEditState
         public var introField: FieldEditState
 
+        public var pickedImageData: Data?
+        public var isUploadingImage: Bool
+
         @Presents public var alert: AlertState<Action.Alert>?
 
         public init(
@@ -92,6 +95,8 @@ public struct SettingFeature: Sendable {
             self.provider = provider
             self.nicknameField = FieldEditState()
             self.introField = FieldEditState()
+            self.pickedImageData = nil
+            self.isUploadingImage = false
         }
     }
 
@@ -102,13 +107,14 @@ public struct SettingFeature: Sendable {
         case profileLoaded(Result<UserProfile, JuinjangError>)
         case nicknameSaveResponse(Result<String, JuinjangError>)
         case introSaveResponse(Result<String, JuinjangError>)
+        case profileImageUploadResponse(Result<String, JuinjangError>)
         case logoutResponse(Result<Void, JuinjangError>)
 
         @CasePathable
         public enum View: Equatable {
             case onAppear
             case backButtonTapped
-            case editProfileButtonTapped
+            case profileImagePicked(Data)
             case nicknameFieldButtonTapped
             case nicknameTextChanged(String)
             case introFieldButtonTapped
@@ -123,7 +129,7 @@ public struct SettingFeature: Sendable {
         public enum Alert: Equatable { }
     }
 
-    @Dependency(\.apiClient) var apiClient
+    @Dependency(\.userClient) var userClient
 
     public init() {}
 
@@ -134,7 +140,7 @@ public struct SettingFeature: Sendable {
                 return .run { send in
                     await send(.profileLoaded(
                         Result {
-                            try await apiClient.fetchMyProfile()
+                            try await userClient.fetchMyProfile()
                         }
                         .mapToJuinjangError()
                     ))
@@ -160,7 +166,7 @@ public struct SettingFeature: Sendable {
                     return .run { send in
                         await send(.nicknameSaveResponse(
                             Result {
-                                try await apiClient.updateNickname(newValue)
+                                try await userClient.updateNickname(newValue)
                                 return newValue
                             }
                             .mapToJuinjangError()
@@ -199,7 +205,7 @@ public struct SettingFeature: Sendable {
                     return .run { send in
                         await send(.introSaveResponse(
                             Result {
-                                try await apiClient.updateIntroduction(newValue)
+                                try await userClient.updateIntroduction(newValue)
                                 return newValue
                             }
                             .mapToJuinjangError()
@@ -226,13 +232,39 @@ public struct SettingFeature: Sendable {
                 // mode/input은 .completed로 유지 → 사용자 재시도 가능
                 return .none
 
+            // MARK: - Profile image
+
+            case let .view(.profileImagePicked(data)):
+                state.pickedImageData = data
+                state.isUploadingImage = true
+                return .run { send in
+                    await send(.profileImageUploadResponse(
+                        Result {
+                            try await userClient.uploadProfileImage(data)
+                        }
+                        .mapToJuinjangError()
+                    ))
+                }
+
+            case let .profileImageUploadResponse(.success(url)):
+                state.imageURL = url
+                state.pickedImageData = nil
+                state.isUploadingImage = false
+                return .none
+
+            case .profileImageUploadResponse(.failure):
+                state.pickedImageData = nil
+                state.isUploadingImage = false
+                state.alert = .profileImageUploadFailed
+                return .none
+
             // MARK: - Logout
 
             case .view(.logoutButtonTapped):
                 return .run { send in
                     await send(.logoutResponse(
                         Result {
-                            try await apiClient.logout()
+                            try await userClient.logout()
                         }
                         .mapToJuinjangError()
                     ))
@@ -306,6 +338,13 @@ private extension AlertState where Action == SettingFeature.Action.Alert {
         .init(
             title: { TextState("주인장") },
             message: { TextState("로그아웃에 실패했어요\n다시 시도해주세요") }
+        )
+    }
+
+    static var profileImageUploadFailed: Self {
+        .init(
+            title: { TextState("주인장") },
+            message: { TextState("프로필 사진 업로드에 실패했어요") }
         )
     }
 }

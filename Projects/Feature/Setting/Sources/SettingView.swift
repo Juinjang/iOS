@@ -1,9 +1,13 @@
 import ComposableArchitecture
+import Common
 import DesignSystem
+import PhotosUI
 import SwiftUI
 
 public struct SettingView: View {
     @Bindable var store: StoreOf<SettingFeature>
+
+    @State private var photoPickerItem: PhotosPickerItem?
 
     public init(store: StoreOf<SettingFeature>) {
         self.store = store
@@ -58,13 +62,25 @@ extension SettingView {
             profileImage
                 .frame(width: 66, height: 66)
                 .clipShape(Circle())
+                .overlay {
+                    if store.isUploadingImage {
+                        Circle().fill(Color.black.opacity(0.3))
+                        ProgressView()
+                            .tint(.white)
+                    }
+                }
 
-            Button {
-                store.send(.view(.editProfileButtonTapped))
-            } label: {
+            PhotosPicker(
+                selection: $photoPickerItem,
+                matching: .images,
+                photoLibrary: .shared()
+            ) {
                 DSText("수정")
                     .style(.body2)
                     .textColor(.main)
+            }
+            .onChange(of: photoPickerItem) { _, newItem in
+                handlePickerSelection(newItem)
             }
         }
         .frame(maxWidth: .infinity)
@@ -73,7 +89,11 @@ extension SettingView {
 
     @ViewBuilder
     private var profileImage: some View {
-        if let urlString = store.imageURL, let url = URL(string: urlString) {
+        if let pickedData = store.pickedImageData, let uiImage = UIImage(data: pickedData) {
+            Image(uiImage: uiImage)
+                .resizable()
+                .scaledToFill()
+        } else if let urlString = store.imageURL, let url = URL(string: urlString) {
             AsyncImage(url: url) { image in
                 image.resizable().scaledToFill()
             } placeholder: {
@@ -85,6 +105,19 @@ extension SettingView {
             Image.profileImage
                 .resizable()
                 .scaledToFill()
+        }
+    }
+
+    private func handlePickerSelection(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        Task { @MainActor in
+            guard
+                let rawData = try? await item.loadTransferable(type: Data.self),
+                let uiImage = UIImage(data: rawData),
+                let jpegData = uiImage.jpegData(compressionQuality: 0.2)
+            else { return }
+            store.send(.view(.profileImagePicked(jpegData)))
+            photoPickerItem = nil
         }
     }
 }
@@ -231,9 +264,52 @@ extension SettingView {
     }
 }
 
-#Preview("Setting") {
+// MARK: - Previews
+
+#Preview("Setting - 정상 (mock 데이터)") {
     SettingView(
         store: Store(initialState: SettingFeature.State()) {
+            SettingFeature()
+        }
+        // userClient는 자동으로 previewValue 사용 → 닉네임/이메일/한줄소개 채워서 표시
+    )
+}
+
+#Preview("Setting - 프로필 로드 실패") {
+    SettingView(
+        store: Store(initialState: SettingFeature.State()) {
+            SettingFeature()
+        } withDependencies: {
+            $0.userClient.fetchMyProfile = {
+                throw JuinjangError.unauthorized(nil)
+            }
+        }
+    )
+}
+
+#Preview("Setting - 닉네임 중복") {
+    SettingView(
+        store: Store(initialState: SettingFeature.State()) {
+            SettingFeature()
+        } withDependencies: {
+            $0.userClient.updateNickname = { _ in
+                throw JuinjangError.unknown(code: "NICKNAME4002", message: nil)
+            }
+        }
+    )
+}
+
+#Preview("Setting - 이미지 업로드 성공") {
+    SettingView(
+        store: Store(
+            initialState: SettingFeature.State(
+                nickname: "땡땡",
+                email: "juinjang@daum.net",
+                oneLineIntroduction: "업로드 직후 상태",
+                imageURL: "https://picsum.photos/seed/uploaded/200",
+                provider: .kakao
+            )
+        ) {
             SettingFeature()
         }
     )
