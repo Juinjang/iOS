@@ -70,80 +70,35 @@ public struct SettingView: View {
     }
 }
 
-// MARK: - Profile
+// MARK: - Sections
 
 extension SettingView {
     @ViewBuilder
     var profileSection: some View {
         VStack(spacing: 8) {
-            profileImage
-                .frame(width: 66, height: 66)
-                .clipShape(Circle())
-                .overlay {
-                    if store.isUploadingImage {
-                        Circle().fill(Color.black.opacity(0.3))
-                        ProgressView()
-                            .tint(.white)
-                    }
+            ProfileImageView(
+                pickedImageData: store.pickedImageData,
+                imageURL: store.imageURL
+            )
+            .frame(width: 66, height: 66)
+            .clipShape(Circle())
+            .overlay {
+                if store.isUploadingImage {
+                    Circle().fill(Color.black.opacity(0.3))
+                    ProgressView()
+                        .tint(.white)
                 }
+            }
 
-            PhotosPicker(
+            ProfileEditPhotoPicker(
                 selection: $photoPickerItem,
-                matching: .images,
-                photoLibrary: .shared()
-            ) {
-                DSText("수정")
-                    .style(.body2)
-                    .textColor(.main)
-            }
-            .onChange(of: photoPickerItem) { _, newItem in
-                handlePickerSelection(newItem)
-            }
+                onPick: handlePickerSelection
+            )
         }
         .frame(maxWidth: .infinity)
         .padding(.top, 28)
     }
 
-    @ViewBuilder
-    private var profileImage: some View {
-        if let pickedData = store.pickedImageData,
-           let uiImage = UIImage(data: pickedData) {
-            Image(uiImage: uiImage)
-                .resizable()
-                .scaledToFill()
-        } else if let urlString = store.imageURL,
-                    let url = URL(string: urlString) {
-            AsyncImage(url: url) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                Image.profileImage
-                    .resizable()
-                    .scaledToFill()
-            }
-        } else {
-            Image.profileImage
-                .resizable()
-                .scaledToFill()
-        }
-    }
-
-    private func handlePickerSelection(_ item: PhotosPickerItem?) {
-        guard let item else { return }
-        Task { @MainActor in
-            guard
-                let rawData = try? await item.loadTransferable(type: Data.self),
-                let uiImage = UIImage(data: rawData),
-                let jpegData = uiImage.jpegData(compressionQuality: 0.2)
-            else { return }
-            store.send(.view(.profileImagePicked(jpegData)))
-            photoPickerItem = nil
-        }
-    }
-}
-
-// MARK: - Account info
-
-extension SettingView {
     @ViewBuilder
     var accountInfoSection: some View {
         VStack(alignment: .leading, spacing: 28) {
@@ -167,6 +122,58 @@ extension SettingView {
         }
     }
 
+    var pencilShopView: some View {
+        SettingMenuRow(title: "연필상점") {
+            store.send(.view(.pencilShopButtonTapped))
+        } icon: {
+            Image.pencil
+                .resizable()
+                .scaledToFit()
+                .frame(width: 24, height: 24)
+        }
+    }
+
+    @ViewBuilder
+    var legalSection: some View {
+        VStack(spacing: 0) {
+            SettingMenuRow(title: "약관 및 정책") {
+                store.send(.view(.termsButtonTapped))
+            } icon: {
+                Image.documentText
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+            }
+
+            SettingMenuRow(title: "자주 묻는 질문") {
+                store.send(.view(.qnaButtonTapped))
+            } icon: {
+                Image.qna
+                    .renderingMode(.template)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(Color.main200)
+            }
+        }
+    }
+
+    var logoutView: some View {
+        SettingMenuRow(title: "로그아웃", titleColor: .main) {
+            store.send(.view(.logoutButtonTapped))
+        }
+    }
+
+    var accountDeleteView: some View {
+        SettingMenuRow(title: "계정 삭제하기", titleColor: .gray400) {
+            store.send(.view(.accountDeleteButtonTapped))
+        }
+    }
+}
+
+// MARK: - Subviews
+
+extension SettingView {
     @ViewBuilder
     var loginInfoView: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -195,92 +202,19 @@ extension SettingView {
     }
 }
 
-// MARK: - Menu rows
+// MARK: - Actions
 
 extension SettingView {
-    var pencilShopView: some View {
-        menuView(
-            icon: AnyView(
-                Image.pencil
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-            ),
-            title: "연필상점"
-        ) {
-            store.send(.view(.pencilShopButtonTapped))
-        }
-    }
-
-    @ViewBuilder
-    var legalSection: some View {
-        VStack(spacing: 0) {
-            menuView(
-                icon: AnyView(
-                    Image.documentText
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                ),
-                title: "약관 및 정책"
-            ) {
-                store.send(.view(.termsButtonTapped))
-            }
-
-            menuView(
-                icon: AnyView(
-                    Image.qna
-                        .renderingMode(.template)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .foregroundStyle(Color.main200)
-                ),
-                title: "자주 묻는 질문"
-            ) {
-                store.send(.view(.qnaButtonTapped))
-            }
-        }
-    }
-
-    func menuView(
-        icon: AnyView? = nil,
-        title: String,
-        titleColor: Color = .gray500,
-        action: @escaping () -> Void
-    ) -> some View {
-        Button(action: action) {
-            HStack(spacing: 8) {
-                if let icon {
-                    icon
-                }
-
-                DSText(title)
-                    .style(.title)
-                    .textColor(titleColor)
-
-                Spacer()
-            }
-            .contentShape(Rectangle())
-            .padding(.horizontal, 24)
-            .padding(.vertical, 18)
-        }
-        .buttonStyle(.plain)
-    }
-}
-
-// MARK: - Footer rows
-
-extension SettingView {
-    var logoutView: some View {
-        menuView(title: "로그아웃", titleColor: .main) {
-            store.send(.view(.logoutButtonTapped))
-        }
-    }
-
-    var accountDeleteView: some View {
-        menuView(title: "계정 삭제하기", titleColor: .gray400) {
-            store.send(.view(.accountDeleteButtonTapped))
+    private func handlePickerSelection(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+        Task { @MainActor in
+            guard
+                let rawData = try? await item.loadTransferable(type: Data.self),
+                let uiImage = UIImage(data: rawData),
+                let jpegData = uiImage.jpegData(compressionQuality: 0.2)
+            else { return }
+            store.send(.view(.profileImagePicked(jpegData)))
+            photoPickerItem = nil
         }
     }
 }

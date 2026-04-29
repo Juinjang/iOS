@@ -4,7 +4,7 @@ import SwiftUI
 /// 프로젝트 공통 폰트 스타일 정의
 /// Pretendard 커스텀 폰트 기반
 
-public enum DSFontStyle {
+public enum DSFontStyle: Sendable {
     case h1, h2, h3, h4
     case title, body, body2
     case regular

@@ -17,14 +17,14 @@ import SwiftUI
 ///     .maxLines(2)
 /// ```
 
-public struct DSText: View {
-    private let text: String
-    private var fontStyle: DSFontStyle = .body
-    private var color: Color = .gray600
-    private var alignment: TextAlignment = .leading
-    private var lineLimit: Int?
+public struct DSText: View, Sendable {
+    nonisolated private let text: String
+    nonisolated private var fontStyle: DSFontStyle = .body
+    nonisolated private var color: Color = .gray600
+    nonisolated private var alignment: TextAlignment = .leading
+    nonisolated private var lineLimit: Int?
 
-    public init(_ text: String) {
+    public nonisolated init(_ text: String) {
         self.text = text
     }
 
@@ -42,25 +42,25 @@ public struct DSText: View {
 // MARK: - Chaining Modifiers
 
 public extension DSText {
-    func style(_ style: DSFontStyle) -> DSText {
+    nonisolated func style(_ style: DSFontStyle) -> DSText {
         var copy = self
         copy.fontStyle = style
         return copy
     }
 
-    func textColor(_ color: Color) -> DSText {
+    nonisolated func textColor(_ color: Color) -> DSText {
         var copy = self
         copy.color = color
         return copy
     }
 
-    func textAlignment(_ alignment: TextAlignment) -> DSText {
+    nonisolated func textAlignment(_ alignment: TextAlignment) -> DSText {
         var copy = self
         copy.alignment = alignment
         return copy
     }
 
-    func maxLines(_ lines: Int?) -> DSText {
+    nonisolated func maxLines(_ lines: Int?) -> DSText {
         var copy = self
         copy.lineLimit = lines
         return copy
