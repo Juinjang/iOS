@@ -93,11 +93,13 @@ struct QnAItemView: View {
                         .foregroundStyle(Color.gray500)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                    Image.expandDown
+                        .renderingMode(.template)
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 14, height: 14)
-                        .foregroundStyle(Color.gray200)
+                        .frame(width: 22, height: 22)
+                        .foregroundStyle(isExpanded ? Color.gray420 : Color.gray200)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
                 .contentShape(Rectangle())
                 .padding(.horizontal, 22)
