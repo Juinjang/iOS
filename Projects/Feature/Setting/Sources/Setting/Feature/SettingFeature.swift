@@ -4,17 +4,60 @@ import Dependency
 import Foundation
 import Model
 
+// MARK: - SettingFeature
+/// 설정 화면 reducer.
+/// **본체엔 동작에 필수적인 것만**: State, Action, body, init, dependencies.
+///
+/// 별도 파일로 분리된 모델성 항목:
+///   - `+Path.swift`       : 네비게이션 destination 모델
+///   - `+Alert.swift`      : SettingAlert (alert state 모델)
+///   - `+ThrottleID.swift` : API throttle 식별자
+
 @Reducer
 public struct SettingFeature: Sendable {
 
-    // MARK: - Navigation Path
+    // MARK: - State
 
-    @Reducer(state: .equatable)
-    public enum Path {
-        case termsList(TermsListFeature)
-        case termsDetail(TermsDetailFeature)
-        case marketingNotice(MarketingNoticeFeature)
-        case qna(QnAFeature)
+    @ObservableState
+    public struct State: Equatable {
+        public static let nicknameMaxCount = 8
+        public static let introMaxCount = 20
+
+        public var nickname: String
+        public var email: String
+        public var oneLineIntroduction: String
+        public var imageURL: String?
+        public var provider: AuthProvider
+
+        public var nicknameField: FieldEditState
+        public var introField: FieldEditState
+
+        public var pickedImageData: Data?
+        public var isUploadingImage: Bool
+
+        public var path: StackState<Path.State>
+
+        @Presents public var alert: SettingAlert?
+
+        public init(
+            nickname: String = "",
+            email: String = "",
+            oneLineIntroduction: String = "",
+            imageURL: String? = nil,
+            provider: AuthProvider = .unknown,
+            path: StackState<Path.State> = StackState()
+        ) {
+            self.nickname = nickname
+            self.email = email
+            self.oneLineIntroduction = oneLineIntroduction
+            self.imageURL = imageURL
+            self.provider = provider
+            self.nicknameField = FieldEditState()
+            self.introField = FieldEditState()
+            self.pickedImageData = nil
+            self.isUploadingImage = false
+            self.path = path
+        }
     }
 
     public struct FieldEditState: Equatable {
@@ -73,76 +116,9 @@ public struct SettingFeature: Sendable {
         }
     }
 
-    // MARK: - Alert (DSAlert로 표시)
+    // MARK: - Action
 
-    public enum SettingAlert: Equatable, Identifiable {
-        // confirm
-        case logoutConfirm(nickname: String, email: String)
-        case accountDeleteConfirm
-
-        // info (single-button)
-        case profileLoadFailed
-        case nicknameUpdateFailed
-        case introUpdateFailed
-        case logoutFailed
-        case profileImageUploadFailed
-
-        public var id: String {
-            switch self {
-            case .logoutConfirm: return "logoutConfirm"
-            case .accountDeleteConfirm: return "accountDeleteConfirm"
-            case .profileLoadFailed: return "profileLoadFailed"
-            case .nicknameUpdateFailed: return "nicknameUpdateFailed"
-            case .introUpdateFailed: return "introUpdateFailed"
-            case .logoutFailed: return "logoutFailed"
-            case .profileImageUploadFailed: return "profileImageUploadFailed"
-            }
-        }
-    }
-
-    @ObservableState
-    public struct State: Equatable {
-        public static let nicknameMaxCount = 8
-        public static let introMaxCount = 20
-
-        public var nickname: String
-        public var email: String
-        public var oneLineIntroduction: String
-        public var imageURL: String?
-        public var provider: AuthProvider
-
-        public var nicknameField: FieldEditState
-        public var introField: FieldEditState
-
-        public var pickedImageData: Data?
-        public var isUploadingImage: Bool
-
-        public var path: StackState<Path.State>
-
-        @Presents public var alert: SettingAlert?
-
-        public init(
-            nickname: String = "",
-            email: String = "",
-            oneLineIntroduction: String = "",
-            imageURL: String? = nil,
-            provider: AuthProvider = .unknown,
-            path: StackState<Path.State> = StackState()
-        ) {
-            self.nickname = nickname
-            self.email = email
-            self.oneLineIntroduction = oneLineIntroduction
-            self.imageURL = imageURL
-            self.provider = provider
-            self.nicknameField = FieldEditState()
-            self.introField = FieldEditState()
-            self.pickedImageData = nil
-            self.isUploadingImage = false
-            self.path = path
-        }
-    }
-
-    public enum Action {
+    public enum Action: Sendable {
         case view(View)
         case alert(PresentationAction<Alert>)
         case path(StackActionOf<Path>)
@@ -154,7 +130,7 @@ public struct SettingFeature: Sendable {
         case logoutResponse(Result<Void, JuinjangError>)
 
         @CasePathable
-        public enum View: Equatable {
+        public enum View: Equatable, Sendable {
             case onAppear
             case backButtonTapped
             case profileImagePicked(Data)
@@ -169,15 +145,19 @@ public struct SettingFeature: Sendable {
             case accountDeleteButtonTapped
         }
 
-        public enum Alert: Equatable {
+        public enum Alert: Equatable, Sendable {
             case logoutConfirmed
             case accountDeleteConfirmed
         }
     }
 
+    // MARK: - Dependencies
+
     @Dependency(\.userClient) var userClient
 
     public init() {}
+
+    // MARK: - Body
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
@@ -191,6 +171,7 @@ public struct SettingFeature: Sendable {
                         .mapToJuinjangError()
                     ))
                 }
+                .apiThrottle(id: ThrottleID.profileLoad)
 
             case let .profileLoaded(.success(profile)):
                 state.nickname = profile.nickname
@@ -218,6 +199,7 @@ public struct SettingFeature: Sendable {
                             .mapToJuinjangError()
                         ))
                     }
+                    .apiThrottle(id: ThrottleID.nicknameSave)
                 }
                 return .none
 
@@ -257,6 +239,7 @@ public struct SettingFeature: Sendable {
                             .mapToJuinjangError()
                         ))
                     }
+                    .apiThrottle(id: ThrottleID.introSave)
                 }
                 return .none
 
@@ -291,6 +274,7 @@ public struct SettingFeature: Sendable {
                         .mapToJuinjangError()
                     ))
                 }
+                .apiThrottle(id: ThrottleID.profileImageUpload)
 
             case let .profileImageUploadResponse(.success(url)):
                 state.imageURL = url
@@ -322,6 +306,7 @@ public struct SettingFeature: Sendable {
                         .mapToJuinjangError()
                     ))
                 }
+                .apiThrottle(id: ThrottleID.logout)
 
             case .logoutResponse(.success):
                 print("[SettingFeature] logout success")
@@ -388,6 +373,7 @@ public struct SettingFeature: Sendable {
 }
 
 // MARK: - Helpers
+/// SettingFeature body에서만 쓰는 작은 외부 타입 확장.
 
 private extension Result where Success: Sendable, Failure == Error {
     func mapToJuinjangError() -> Result<Success, JuinjangError> {

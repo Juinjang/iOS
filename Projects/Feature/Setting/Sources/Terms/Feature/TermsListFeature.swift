@@ -5,7 +5,7 @@ import Model
 @Reducer
 public struct TermsListFeature: Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         public var documents: [TermsDocument]
 
         public init(documents: [TermsDocument] = TermsDocument.allCases) {
@@ -13,17 +13,17 @@ public struct TermsListFeature: Sendable {
         }
     }
 
-    public enum Action {
+    public enum Action: Sendable {
         case view(View)
         case delegate(Delegate)
 
         @CasePathable
-        public enum View: Equatable {
+        public enum View: Equatable, Sendable {
             case backButtonTapped
             case documentTapped(TermsDocument)
         }
 
-        public enum Delegate: Equatable {
+        public enum Delegate: Equatable, Sendable {
             case documentSelected(TermsDocument)
         }
     }

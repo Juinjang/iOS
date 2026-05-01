@@ -5,7 +5,7 @@ import Model
 @Reducer
 public struct TermsDetailFeature: Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         public let document: TermsDocument
         public var selectedVersionID: String
         public var isVersionSelectorExpanded: Bool
@@ -28,11 +28,11 @@ public struct TermsDetailFeature: Sendable {
         public var showsVersionSelector: Bool { versions.count > 1 }
     }
 
-    public enum Action: Equatable {
+    public enum Action: Equatable, Sendable {
         case view(View)
 
         @CasePathable
-        public enum View: Equatable {
+        public enum View: Equatable, Sendable {
             case backButtonTapped
             case versionSelectorExpandedChanged(Bool)
             case versionPicked(String)

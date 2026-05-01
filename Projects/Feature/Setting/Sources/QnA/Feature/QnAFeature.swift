@@ -5,7 +5,7 @@ import Model
 @Reducer
 public struct QnAFeature: Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         public var items: [QnAItem]
         /// 펼쳐진 항목들의 id 집합
         public var expandedIDs: Set<UUID>
@@ -23,11 +23,11 @@ public struct QnAFeature: Sendable {
         }
     }
 
-    public enum Action {
+    public enum Action: Sendable {
         case view(View)
 
         @CasePathable
-        public enum View: Equatable {
+        public enum View: Equatable, Sendable {
             case backButtonTapped
             case itemTapped(QnAItem.ID)
         }

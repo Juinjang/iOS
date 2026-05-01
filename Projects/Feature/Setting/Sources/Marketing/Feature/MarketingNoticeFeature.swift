@@ -9,21 +9,21 @@ import Model
 @Reducer
 public struct MarketingNoticeFeature: Sendable {
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, Sendable {
         public init() {}
     }
 
-    public enum Action {
+    public enum Action: Sendable {
         case view(View)
         case delegate(Delegate)
 
         @CasePathable
-        public enum View: Equatable {
+        public enum View: Equatable, Sendable {
             case backButtonTapped
             case termsRowTapped
         }
 
-        public enum Delegate: Equatable {
+        public enum Delegate: Equatable, Sendable {
             case openTermsDetail
         }
     }
