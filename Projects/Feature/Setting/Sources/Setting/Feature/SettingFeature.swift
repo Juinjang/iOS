@@ -82,7 +82,6 @@ public struct SettingFeature: Sendable {
                 mode = .editing
                 return .startedEditing
             case .completed:
-                // mode/input 변경은 응답 처리 시점에. 실패 시 입력 보존.
                 return .save(input)
             case .editing, .validationFailed, .duplicate:
                 input = savedValue
@@ -221,7 +220,6 @@ public struct SettingFeature: Sendable {
                     state.nicknameField.mode = .duplicate
                 } else {
                     state.alert = .nicknameUpdateFailed
-                    // mode/input은 .completed로 유지 → 사용자 재시도 가능
                 }
                 return .none
 
@@ -258,7 +256,6 @@ public struct SettingFeature: Sendable {
 
             case .introSaveResponse(.failure):
                 state.alert = .introUpdateFailed
-                // mode/input은 .completed로 유지 → 사용자 재시도 가능
                 return .none
 
             // MARK: - Profile image
@@ -341,7 +338,6 @@ public struct SettingFeature: Sendable {
 
             case let .path(.element(_, .termsList(.delegate(.documentSelected(doc))))):
                 if doc == .marketingConsent {
-                    // 마케팅 동의는 안내 페이지(Use3) 거쳐서 본문으로 이동
                     state.path.append(.marketingNotice(MarketingNoticeFeature.State()))
                 } else {
                     state.path.append(.termsDetail(TermsDetailFeature.State(document: doc)))

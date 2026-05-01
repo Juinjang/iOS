@@ -69,14 +69,14 @@ public struct DSAlert<Content: View>: View {
         VStack(spacing: 0) {
             if let title {
                 DSText(title)
-                    .style(.bodyLarge)         // medium 18 (develop 매칭)
+                    .style(.bodyLarge)
                     .textColor(titleColor)
                     .textAlignment(.center)
             }
 
             if let subtitle {
                 DSText(subtitle)
-                    .style(.body)              // medium 16 (develop 매칭)
+                    .style(.body)
                     .textColor(.gray400)
                     .textAlignment(.center)
                     .padding(.top, title == nil ? 0 : 4)
@@ -84,7 +84,7 @@ public struct DSAlert<Content: View>: View {
 
             if let message {
                 DSText(message)
-                    .style(.bodyLarge)         // medium 18 (develop 매칭)
+                    .style(.bodyLarge)
                     .textColor(.gray600)
                     .textAlignment(.center)
                     .padding(.top, (title == nil && subtitle == nil) ? 0 : 16)

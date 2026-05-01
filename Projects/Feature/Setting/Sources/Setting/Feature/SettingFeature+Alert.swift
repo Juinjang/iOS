@@ -6,11 +6,9 @@ import Foundation
 
 extension SettingFeature {
     public enum SettingAlert: Equatable, Identifiable, Sendable {
-        // confirm
         case logoutConfirm(nickname: String, email: String)
         case accountDeleteConfirm
 
-        // info (single-button)
         case profileLoadFailed
         case nicknameUpdateFailed
         case introUpdateFailed

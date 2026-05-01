@@ -68,8 +68,6 @@ public struct DSPolicyVersionSelector: View {
                     .scaledToFit()
                     .frame(width: 22, height: 22)
                     .foregroundStyle(Color.gray450)
-                    // 닫힘: 위쪽(^), 열림: 아래쪽(v)
-                    // expandDown은 기본 v 방향이므로 닫힌 상태에서 180° 회전 → ^
                     .rotationEffect(.degrees(isExpanded ? 0 : 180))
             }
             .padding(.horizontal, 16)

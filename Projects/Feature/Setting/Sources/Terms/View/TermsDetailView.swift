@@ -12,11 +12,9 @@ public struct TermsDetailView: View {
 
     public var body: some View {
         ZStack {
-            // 1. 본문 (셀렉터 자리 만큼 하단 패딩 확보)
             mainContent
                 .allowsHitTesting(!store.isVersionSelectorExpanded)
 
-            // 2. expanded 시 화면 전체 dim — 탭하면 닫힘
             if store.isVersionSelectorExpanded {
                 Color.black.opacity(0.4)
                     .ignoresSafeArea()
@@ -28,7 +26,6 @@ public struct TermsDetailView: View {
                     .zIndex(1)
             }
 
-            // 3. 셀렉터는 항상 하단 고정. expanded 되면 자기 위로 자라남(본문은 안 밀림)
             if store.showsVersionSelector {
                 VStack(spacing: 0) {
                     Spacer(minLength: 0)
@@ -50,8 +47,6 @@ public struct TermsDetailView: View {
         .navigationBarHidden(true)
         .animation(.easeInOut(duration: 0.25), value: store.isVersionSelectorExpanded)
     }
-
-    // MARK: - 본문 (네비바 + 스크롤 + 셀렉터 자리 차지하는 spacer)
 
     @ViewBuilder
     private var mainContent: some View {
@@ -83,10 +78,9 @@ public struct TermsDetailView: View {
             .padding(.horizontal, 24)
             .padding(.vertical, 16)
 
-            // 셀렉터 영역만큼 자리 비워두기 (셀렉터 높이 63 + bottom padding 33 + 윗 여백 16)
             if store.showsVersionSelector {
                 Color.clear
-                    .frame(height: 63 + 33)
+                    .frame(height: 96)
             }
         }
     }
