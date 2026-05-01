@@ -143,7 +143,7 @@ extension SettingView {
 
     @ViewBuilder
     var legalSection: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: -20) {
             SettingMenuRow(title: "약관 및 정책") {
                 store.send(.view(.termsButtonTapped))
             } icon: {
