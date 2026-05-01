@@ -66,30 +66,21 @@ public struct EditableProfileFieldView: View {
                         .style(.body2)
                         .textColor(.gray400)
 
-                    Group {
-                        if mode == .beforeEdit {
-                            if savedValue.isEmpty {
-                                DSText(config.defaultPlaceholder)
-                                    .style(.body2)
-                                    .textColor(.gray300)
-                            } else {
-                                DSText(savedValue)
-                                    .style(.body)
-                                    .textColor(.gray500)
-                            }
-                        } else {
-                            TextField(
-                                "",
-                                text: $input,
-                                prompt: Text(config.editingPlaceholder)
-                                    .foregroundStyle(Color.gray300)
-                                    .font(DSFontStyle.body2.font)
-                            )
-                            .font(DSFontStyle.body.font)
-                            .foregroundStyle(Color.gray500)
-                            .focused($isFocused)
-                        }
-                    }
+                    // 모드와 무관하게 TextField 한 종류만 렌더링 → view 트리 고정 → 레이아웃 시프트 0.
+                    // beforeEdit일 땐 savedValue 보여주면서 disabled (cursor 없음, 키보드 안 뜸).
+                    TextField(
+                        "",
+                        text: textFieldBinding,
+                        prompt: Text(currentPlaceholder)
+                            .foregroundStyle(Color.gray300)
+                            .font(DSFontStyle.body2.font)
+                            .kerning(DSFontStyle.body2.letterSpacing)
+                    )
+                    .font(DSFontStyle.body.font)
+                    .foregroundStyle(Color.gray500)
+                    .kerning(DSFontStyle.body.letterSpacing)
+                    .disabled(mode == .beforeEdit)
+                    .focused($isFocused)
                     .frame(height: 24)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
@@ -124,9 +115,26 @@ public struct EditableProfileFieldView: View {
             .opacity(warningMessage == nil ? 0 : 1)
             .accessibilityHidden(warningMessage == nil)
         }
+        .animation(.easeInOut(duration: 0.2), value: mode)   // 변경/취소/저장 전환 부드럽게
         .onChange(of: mode) { _, newMode in
             isFocused = (newMode != .beforeEdit)
         }
+    }
+
+    // MARK: - TextField bindings
+
+    /// `mode == .beforeEdit`이면 savedValue를 보여주고, 그 외엔 사용자가 입력하는 input을 보여줌.
+    /// disabled 상태일 땐 setter가 호출되지 않으므로 input은 안전하게 보존됨.
+    private var textFieldBinding: Binding<String> {
+        Binding(
+            get: { mode == .beforeEdit ? savedValue : input },
+            set: { input = $0 }
+        )
+    }
+
+    /// 모드별 placeholder 문구. 비어있을 때만 prompt가 노출됨.
+    private var currentPlaceholder: String {
+        mode == .beforeEdit ? config.defaultPlaceholder : config.editingPlaceholder
     }
 
     // MARK: - Mode-driven appearance
