@@ -14,20 +14,13 @@ public struct SettingView: View {
     }
 
     public var body: some View {
-        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
-            rootContent
-        } destination: { store in
-            switch store.case {
-            case let .termsList(store):
-                TermsListView(store: store)
-            case let .termsDetail(store):
-                TermsDetailView(store: store)
-            case let .marketingNotice(store):
-                MarketingNoticeView(store: store)
-            case let .qna(store):
-                QnAView(store: store)
+        rootContent
+            .fullScreenCover(item: $store.scope(state: \.qnaSheet, action: \.qnaSheet)) { qnaStore in
+                QnAView(store: qnaStore)
             }
-        }
+            .fullScreenCover(item: $store.scope(state: \.termsSheet, action: \.termsSheet)) { termsStore in
+                TermsListView(store: termsStore)
+            }
     }
 
     @ViewBuilder

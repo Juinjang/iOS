@@ -14,9 +14,9 @@ public struct QnAView: View {
         VStack(spacing: 0) {
             DSNavigationBar()
                 .title("자주 묻는 질문")
-                .leftItems([.pop])
+                .leftItems([.close])
                 .onAction { action in
-                    if case .popButtonTap = action {
+                    if case .closeButtonTap = action {
                         store.send(.view(.backButtonTapped))
                     }
                 }

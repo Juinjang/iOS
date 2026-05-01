@@ -4,19 +4,33 @@ import Model
 import SwiftUI
 
 public struct TermsListView: View {
-    let store: StoreOf<TermsListFeature>
+    @Bindable var store: StoreOf<TermsListFeature>
 
     public init(store: StoreOf<TermsListFeature>) {
         self.store = store
     }
 
     public var body: some View {
+        NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+            mainContent
+        } destination: { store in
+            switch store.case {
+            case let .termsDetail(store):
+                TermsDetailView(store: store)
+            case let .marketingNotice(store):
+                MarketingNoticeView(store: store)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var mainContent: some View {
         VStack(spacing: 0) {
             DSNavigationBar()
                 .title("이용 및 약관")
-                .leftItems([.pop])
+                .leftItems([.close])
                 .onAction { action in
-                    if case .popButtonTap = action {
+                    if case .closeButtonTap = action {
                         store.send(.view(.backButtonTapped))
                     }
                 }
@@ -42,11 +56,9 @@ public struct TermsListView: View {
 }
 
 #Preview("TermsList") {
-    NavigationStack {
-        TermsListView(
-            store: Store(initialState: TermsListFeature.State()) {
-                TermsListFeature()
-            }
-        )
-    }
+    TermsListView(
+        store: Store(initialState: TermsListFeature.State()) {
+            TermsListFeature()
+        }
+    )
 }

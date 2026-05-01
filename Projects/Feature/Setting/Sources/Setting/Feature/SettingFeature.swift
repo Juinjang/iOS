@@ -35,17 +35,16 @@ public struct SettingFeature: Sendable {
         public var pickedImageData: Data?
         public var isUploadingImage: Bool
 
-        public var path: StackState<Path.State>
-
         @Presents public var alert: SettingAlert?
+        @Presents public var qnaSheet: QnAFeature.State?
+        @Presents public var termsSheet: TermsListFeature.State?
 
         public init(
             nickname: String = "",
             email: String = "",
             oneLineIntroduction: String = "",
             imageURL: String? = nil,
-            provider: AuthProvider = .unknown,
-            path: StackState<Path.State> = StackState()
+            provider: AuthProvider = .unknown
         ) {
             self.nickname = nickname
             self.email = email
@@ -56,7 +55,6 @@ public struct SettingFeature: Sendable {
             self.introField = FieldEditState()
             self.pickedImageData = nil
             self.isUploadingImage = false
-            self.path = path
         }
     }
 
@@ -120,7 +118,8 @@ public struct SettingFeature: Sendable {
     public enum Action: Sendable {
         case view(View)
         case alert(PresentationAction<Alert>)
-        case path(StackActionOf<Path>)
+        case qnaSheet(PresentationAction<QnAFeature.Action>)
+        case termsSheet(PresentationAction<TermsListFeature.Action>)
 
         case profileLoaded(Result<UserProfile, JuinjangError>)
         case nicknameSaveResponse(Result<String, JuinjangError>)
@@ -327,28 +326,17 @@ public struct SettingFeature: Sendable {
             // MARK: - Navigation pushes
 
             case .view(.termsButtonTapped):
-                state.path.append(.termsList(TermsListFeature.State()))
+                state.termsSheet = TermsListFeature.State()
                 return .none
 
             case .view(.qnaButtonTapped):
-                state.path.append(.qna(QnAFeature.State()))
+                state.qnaSheet = QnAFeature.State()
                 return .none
 
-            // MARK: - Path delegate handling
-
-            case let .path(.element(_, .termsList(.delegate(.documentSelected(doc))))):
-                if doc == .marketingConsent {
-                    state.path.append(.marketingNotice(MarketingNoticeFeature.State()))
-                } else {
-                    state.path.append(.termsDetail(TermsDetailFeature.State(document: doc)))
-                }
+            case .qnaSheet:
                 return .none
 
-            case .path(.element(_, .marketingNotice(.delegate(.openTermsDetail)))):
-                state.path.append(.termsDetail(TermsDetailFeature.State(document: .marketingConsent)))
-                return .none
-
-            case .path:
+            case .termsSheet:
                 return .none
 
             // MARK: - Other view actions (print only)
@@ -364,7 +352,12 @@ public struct SettingFeature: Sendable {
         .ifLet(\.$alert, action: \.alert) {
             EmptyReducer()
         }
-        .forEach(\.path, action: \.path)
+        .ifLet(\.$qnaSheet, action: \.qnaSheet) {
+            QnAFeature()
+        }
+        .ifLet(\.$termsSheet, action: \.termsSheet) {
+            TermsListFeature()
+        }
     }
 }
 

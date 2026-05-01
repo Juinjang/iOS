@@ -4,27 +4,34 @@ import Model
 
 @Reducer
 public struct TermsListFeature: Sendable {
+    @Reducer(state: .equatable, .sendable, action: .sendable)
+    public enum Path {
+        case termsDetail(TermsDetailFeature)
+        case marketingNotice(MarketingNoticeFeature)
+    }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         public var documents: [TermsDocument]
+        public var path: StackState<Path.State>
 
-        public init(documents: [TermsDocument] = TermsDocument.allCases) {
+        public init(
+            documents: [TermsDocument] = TermsDocument.allCases,
+            path: StackState<Path.State> = StackState()
+        ) {
             self.documents = documents
+            self.path = path
         }
     }
 
     public enum Action: Sendable {
         case view(View)
-        case delegate(Delegate)
+        case path(StackActionOf<Path>)
 
         @CasePathable
         public enum View: Equatable, Sendable {
             case backButtonTapped
             case documentTapped(TermsDocument)
-        }
-
-        public enum Delegate: Equatable, Sendable {
-            case documentSelected(TermsDocument)
         }
     }
 
@@ -33,17 +40,27 @@ public struct TermsListFeature: Sendable {
     public init() {}
 
     public var body: some ReducerOf<Self> {
-        Reduce { _, action in
+        Reduce { state, action in
             switch action {
             case .view(.backButtonTapped):
                 return .run { _ in await dismiss() }
 
             case let .view(.documentTapped(doc)):
-                return .send(.delegate(.documentSelected(doc)))
+                if doc == .marketingConsent {
+                    state.path.append(.marketingNotice(MarketingNoticeFeature.State()))
+                } else {
+                    state.path.append(.termsDetail(TermsDetailFeature.State(document: doc)))
+                }
+                return .none
 
-            case .delegate:
+            case .path(.element(_, .marketingNotice(.delegate(.openTermsDetail)))):
+                state.path.append(.termsDetail(TermsDetailFeature.State(document: .marketingConsent)))
+                return .none
+
+            case .path:
                 return .none
             }
         }
+        .forEach(\.path, action: \.path)
     }
 }
