@@ -20,7 +20,7 @@ public struct SplashView: View {
             .frame(width: 250, height: 250)
 
             if store.showUpdatePopup {
-                UpdateAlertView(
+                DSUpdateAlertView(
                     onUpdate: { store.send(.updateButtonTapped) }
                 )
                 .transition(.opacity)

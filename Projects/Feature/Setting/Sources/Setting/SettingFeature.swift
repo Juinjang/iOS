@@ -13,6 +13,7 @@ public struct SettingFeature: Sendable {
     public enum Path {
         case termsList(TermsListFeature)
         case termsDetail(TermsDetailFeature)
+        case marketingNotice(MarketingNoticeFeature)
         case qna(QnAFeature)
     }
 
@@ -354,7 +355,16 @@ public struct SettingFeature: Sendable {
             // MARK: - Path delegate handling
 
             case let .path(.element(_, .termsList(.delegate(.documentSelected(doc))))):
-                state.path.append(.termsDetail(TermsDetailFeature.State(document: doc)))
+                if doc == .marketingConsent {
+                    // 마케팅 동의는 안내 페이지(Use3) 거쳐서 본문으로 이동
+                    state.path.append(.marketingNotice(MarketingNoticeFeature.State()))
+                } else {
+                    state.path.append(.termsDetail(TermsDetailFeature.State(document: doc)))
+                }
+                return .none
+
+            case .path(.element(_, .marketingNotice(.delegate(.openTermsDetail)))):
+                state.path.append(.termsDetail(TermsDetailFeature.State(document: .marketingConsent)))
                 return .none
 
             case .path:

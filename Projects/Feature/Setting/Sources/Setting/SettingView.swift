@@ -22,6 +22,8 @@ public struct SettingView: View {
                 TermsListView(store: store)
             case let .termsDetail(store):
                 TermsDetailView(store: store)
+            case let .marketingNotice(store):
+                MarketingNoticeView(store: store)
             case let .qna(store):
                 QnAView(store: store)
             }
