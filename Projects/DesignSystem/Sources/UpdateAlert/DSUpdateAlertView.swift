@@ -1,9 +1,16 @@
 import SwiftUI
 
-// MARK: - UpdateAlertView
+// MARK: - DSUpdateAlertView
 /// 앱 업데이트 안내 팝업
+///
+/// 사용법:
+/// ```
+/// DSUpdateAlertView {
+///     // App Store 이동 등
+/// }
+/// ```
 
-public struct UpdateAlertView: View {
+public struct DSUpdateAlertView: View {
     private let onUpdate: () -> Void
 
     public init(onUpdate: @escaping () -> Void) {

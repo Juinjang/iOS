@@ -246,11 +246,11 @@ enum PrivacyPolicyContent {
             ["Amplitude, Inc.",
              "유저 식별자, 방문 일시, 서비스 이용 기록, 기기정보 등",
              "이용자 서비스 이용 현황 데이터 분석",
-             "privacy@amplitude.com / 미국"],
+             "privacy@amplitude.com/미국"],
             ["Google",
              "앱 방문 데이터(페이지 뷰, 클릭 이벤트 등)",
              "구글 애널리틱스를 사용하여 데이터를 처리하며, 이 과정에서 일부 데이터가 구글의 서버로 전송될 수 있습니다.",
-             "privacy@google.com / 미국"]
+             "privacy@google.com/미국"]
         ]
     )
 }

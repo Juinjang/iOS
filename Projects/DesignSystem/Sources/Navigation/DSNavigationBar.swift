@@ -1,13 +1,5 @@
 import SwiftUI
 
-// MARK: - DSNavigationBarStyle
-
-public enum DSNavigationBarStyle {
-    case `default`
-    case search
-    case center
-}
-
 // MARK: - DSNavigationBar
 /// 커스텀 네비게이션 바 컴포넌트
 ///

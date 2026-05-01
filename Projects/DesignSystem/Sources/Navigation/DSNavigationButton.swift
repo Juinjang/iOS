@@ -1,7 +1,8 @@
 import SwiftUI
 
 // MARK: - DSNavigationButton
-/// 네비게이션 바 버튼 타입 정의
+/// 네비게이션 바 좌/우 영역에 들어가는 버튼 종류.
+/// 이미지·크기·틴트는 enum이 책임지고, 액션 매핑은 `DSNavigationAction`을 통해 표현.
 
 public enum DSNavigationButton: Equatable {
     case pop
@@ -44,22 +45,4 @@ public enum DSNavigationButton: Equatable {
         default: return .gray450
         }
     }
-}
-
-// MARK: - DSNavigationAction
-/// 네비게이션 바에서 발생하는 액션
-
-public enum DSNavigationAction: Equatable {
-    case popButtonTap
-    case searchButtonTap
-    case searchSubmit(keyword: String)
-    case searchActive(isActive: Bool)
-    case settingButtonTap
-    case recordButtonTap
-    case addButtonTap
-    case closeButtonTap
-    case textButtonTap
-    case trashButtonTap
-    case reportButtonTap
-    case startRecordButtonTap
 }
