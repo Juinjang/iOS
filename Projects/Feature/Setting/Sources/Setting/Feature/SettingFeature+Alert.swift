@@ -7,7 +7,6 @@ import Foundation
 extension SettingFeature {
     public enum SettingAlert: Equatable, Identifiable, Sendable {
         case logoutConfirm(nickname: String, email: String)
-        case accountDeleteConfirm
 
         case profileLoadFailed
         case nicknameUpdateFailed
@@ -18,7 +17,6 @@ extension SettingFeature {
         public var id: String {
             switch self {
             case .logoutConfirm: return "logoutConfirm"
-            case .accountDeleteConfirm: return "accountDeleteConfirm"
             case .profileLoadFailed: return "profileLoadFailed"
             case .nicknameUpdateFailed: return "nicknameUpdateFailed"
             case .introUpdateFailed: return "introUpdateFailed"

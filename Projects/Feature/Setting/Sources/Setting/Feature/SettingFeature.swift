@@ -38,6 +38,7 @@ public struct SettingFeature: Sendable {
         @Presents public var alert: SettingAlert?
         @Presents public var qnaSheet: QnAFeature.State?
         @Presents public var termsSheet: TermsListFeature.State?
+        @Presents public var accountDeleteFlow: AccountDeleteFlowFeature.State?
 
         public init(
             nickname: String = "",
@@ -120,6 +121,7 @@ public struct SettingFeature: Sendable {
         case alert(PresentationAction<Alert>)
         case qnaSheet(PresentationAction<QnAFeature.Action>)
         case termsSheet(PresentationAction<TermsListFeature.Action>)
+        case accountDeleteFlow(PresentationAction<AccountDeleteFlowFeature.Action>)
 
         case profileLoaded(Result<UserProfile, JuinjangError>)
         case nicknameSaveResponse(Result<String, JuinjangError>)
@@ -145,7 +147,6 @@ public struct SettingFeature: Sendable {
 
         public enum Alert: Equatable, Sendable {
             case logoutConfirmed
-            case accountDeleteConfirmed
         }
     }
 
@@ -312,15 +313,13 @@ public struct SettingFeature: Sendable {
                 state.alert = .logoutFailed
                 return .none
 
-            // MARK: - Account delete (확인 알림만 — 실제 호출은 추후)
+            // MARK: - Account delete (풀스크린 플로우 진입)
 
             case .view(.accountDeleteButtonTapped):
-                state.alert = .accountDeleteConfirm
+                state.accountDeleteFlow = AccountDeleteFlowFeature.State(nickname: state.nickname)
                 return .none
 
-            case .alert(.presented(.accountDeleteConfirmed)):
-                // TODO: userClient.deleteAccount() 연결
-                print("[SettingFeature] account delete confirmed")
+            case .accountDeleteFlow:
                 return .none
 
             // MARK: - Navigation pushes
@@ -357,6 +356,9 @@ public struct SettingFeature: Sendable {
         }
         .ifLet(\.$termsSheet, action: \.termsSheet) {
             TermsListFeature()
+        }
+        .ifLet(\.$accountDeleteFlow, action: \.accountDeleteFlow) {
+            AccountDeleteFlowFeature()
         }
     }
 }

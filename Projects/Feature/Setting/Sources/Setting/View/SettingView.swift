@@ -21,6 +21,9 @@ public struct SettingView: View {
             .fullScreenCover(item: $store.scope(state: \.termsSheet, action: \.termsSheet)) { termsStore in
                 TermsListView(store: termsStore)
             }
+            .sheet(item: $store.scope(state: \.accountDeleteFlow, action: \.accountDeleteFlow)) { flowStore in
+                AccountDeleteWarningView(store: flowStore)
+            }
     }
 
     @ViewBuilder

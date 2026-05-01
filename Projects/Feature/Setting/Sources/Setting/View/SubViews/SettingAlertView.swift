@@ -24,17 +24,6 @@ struct SettingAlertView: View {
                 ]
             )
 
-        case .accountDeleteConfirm:
-            DSAlert(
-                title: "정말 계정을 삭제하시겠어요?",
-                titleColor: .gray600,
-                message: "삭제된 계정과 데이터는 복구할 수 없어요.",
-                actions: [
-                    .secondary("아니요") { store.send(.alert(.dismiss)) },
-                    .destructive("삭제") { store.send(.alert(.presented(.accountDeleteConfirmed))) }
-                ]
-            )
-
         case .profileLoadFailed:
             failureAlert(message: "프로필 정보를 불러오지 못했어요")
 
