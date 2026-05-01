@@ -14,16 +14,18 @@ public struct TermsListView: View {
         VStack(spacing: 0) {
             DSNavigationBar()
                 .title("이용 및 약관")
-                .leftItems([.close])
+                .leftItems([.pop])
                 .onAction { action in
-                    if case .closeButtonTap = action {
+                    if case .popButtonTap = action {
                         store.send(.view(.backButtonTapped))
                     }
                 }
 
             VStack(spacing: 0) {
                 ForEach(store.documents, id: \.self) { document in
-                    documentRow(document)
+                    TermsDocumentRow(document: document) {
+                        store.send(.view(.documentTapped(document)))
+                    }
 
                     if document != store.documents.last {
                         Divider().background(Color.gray100)
@@ -36,34 +38,6 @@ public struct TermsListView: View {
         }
         .background(Color.mainWhite)
         .navigationBarHidden(true)
-    }
-
-    private func documentRow(_ document: TermsDocument) -> some View {
-        Button {
-            store.send(.view(.documentTapped(document)))
-        } label: {
-            HStack(spacing: 8) {
-                Image.documentText
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-
-                DSText(document.title)
-                    .style(.title)
-                    .textColor(.gray500)
-
-                Spacer()
-
-                Image.arrowRight
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-            }
-            .contentShape(Rectangle())
-            .padding(.horizontal, 24)
-            .frame(height: 64)
-        }
-        .buttonStyle(.plain)
     }
 }
 

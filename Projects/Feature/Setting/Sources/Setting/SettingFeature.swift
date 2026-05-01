@@ -72,6 +72,33 @@ public struct SettingFeature: Sendable {
         }
     }
 
+    // MARK: - Alert (DSAlert로 표시)
+
+    public enum SettingAlert: Equatable, Identifiable {
+        // confirm
+        case logoutConfirm(nickname: String, email: String)
+        case accountDeleteConfirm
+
+        // info (single-button)
+        case profileLoadFailed
+        case nicknameUpdateFailed
+        case introUpdateFailed
+        case logoutFailed
+        case profileImageUploadFailed
+
+        public var id: String {
+            switch self {
+            case .logoutConfirm: return "logoutConfirm"
+            case .accountDeleteConfirm: return "accountDeleteConfirm"
+            case .profileLoadFailed: return "profileLoadFailed"
+            case .nicknameUpdateFailed: return "nicknameUpdateFailed"
+            case .introUpdateFailed: return "introUpdateFailed"
+            case .logoutFailed: return "logoutFailed"
+            case .profileImageUploadFailed: return "profileImageUploadFailed"
+            }
+        }
+    }
+
     @ObservableState
     public struct State: Equatable {
         public static let nicknameMaxCount = 8
@@ -91,7 +118,7 @@ public struct SettingFeature: Sendable {
 
         public var path: StackState<Path.State>
 
-        @Presents public var alert: AlertState<Action.Alert>?
+        @Presents public var alert: SettingAlert?
 
         public init(
             nickname: String = "",
@@ -141,7 +168,10 @@ public struct SettingFeature: Sendable {
             case accountDeleteButtonTapped
         }
 
-        public enum Alert: Equatable { }
+        public enum Alert: Equatable {
+            case logoutConfirmed
+            case accountDeleteConfirmed
+        }
     }
 
     @Dependency(\.userClient) var userClient
@@ -273,9 +303,16 @@ public struct SettingFeature: Sendable {
                 state.alert = .profileImageUploadFailed
                 return .none
 
-            // MARK: - Logout
+            // MARK: - Logout (확인 알림 → 확인 시 실제 로그아웃)
 
             case .view(.logoutButtonTapped):
+                state.alert = .logoutConfirm(
+                    nickname: state.nickname,
+                    email: state.email
+                )
+                return .none
+
+            case .alert(.presented(.logoutConfirmed)):
                 return .run { send in
                     await send(.logoutResponse(
                         Result {
@@ -291,6 +328,17 @@ public struct SettingFeature: Sendable {
 
             case .logoutResponse(.failure):
                 state.alert = .logoutFailed
+                return .none
+
+            // MARK: - Account delete (확인 알림만 — 실제 호출은 추후)
+
+            case .view(.accountDeleteButtonTapped):
+                state.alert = .accountDeleteConfirm
+                return .none
+
+            case .alert(.presented(.accountDeleteConfirmed)):
+                // TODO: userClient.deleteAccount() 연결
+                print("[SettingFeature] account delete confirmed")
                 return .none
 
             // MARK: - Navigation pushes
@@ -322,7 +370,9 @@ public struct SettingFeature: Sendable {
                 return .none
             }
         }
-        .ifLet(\.$alert, action: \.alert)
+        .ifLet(\.$alert, action: \.alert) {
+            EmptyReducer()
+        }
         .forEach(\.path, action: \.path)
     }
 }
@@ -342,44 +392,5 @@ private extension JuinjangError {
             return true
         }
         return false
-    }
-}
-
-// MARK: - Alert presets
-
-private extension AlertState where Action == SettingFeature.Action.Alert {
-    static var profileLoadFailed: Self {
-        .init(
-            title: { TextState("주인장") },
-            message: { TextState("프로필 정보를 불러오지 못했어요") }
-        )
-    }
-
-    static var nicknameUpdateFailed: Self {
-        .init(
-            title: { TextState("주인장") },
-            message: { TextState("닉네임 변경에 실패했어요") }
-        )
-    }
-
-    static var introUpdateFailed: Self {
-        .init(
-            title: { TextState("주인장") },
-            message: { TextState("한줄소개 변경에 실패했어요") }
-        )
-    }
-
-    static var logoutFailed: Self {
-        .init(
-            title: { TextState("주인장") },
-            message: { TextState("로그아웃에 실패했어요\n다시 시도해주세요") }
-        )
-    }
-
-    static var profileImageUploadFailed: Self {
-        .init(
-            title: { TextState("주인장") },
-            message: { TextState("프로필 사진 업로드에 실패했어요") }
-        )
     }
 }

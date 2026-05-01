@@ -66,7 +66,77 @@ public struct SettingView: View {
         .background(Color.mainWhite)
         .navigationBarHidden(true)
         .onAppear { store.send(.view(.onAppear)) }
-        .alert($store.scope(state: \.alert, action: \.alert))
+        .dsAlert(
+            item: Binding(
+                get: { store.alert },
+                set: { if $0 == nil { store.send(.alert(.dismiss)) } }
+            )
+        ) { alert in
+            settingAlert(alert)
+        }
+    }
+
+    @ViewBuilder
+    private func settingAlert(_ alert: SettingFeature.SettingAlert) -> some View {
+        switch alert {
+        case let .logoutConfirm(nickname, email):
+            DSAlert(
+                title: nickname,
+                titleColor: .main,
+                subtitle: email,
+                message: "계정에서 로그아웃할까요?",
+                actions: [
+                    .secondary("아니요") { store.send(.alert(.dismiss)) },
+                    .primary("로그아웃") { store.send(.alert(.presented(.logoutConfirmed))) }
+                ]
+            )
+
+        case .accountDeleteConfirm:
+            DSAlert(
+                title: "정말 계정을 삭제하시겠어요?",
+                titleColor: .gray600,
+                message: "삭제된 계정과 데이터는 복구할 수 없어요.",
+                actions: [
+                    .secondary("아니요") { store.send(.alert(.dismiss)) },
+                    .destructive("삭제") { store.send(.alert(.presented(.accountDeleteConfirmed))) }
+                ]
+            )
+
+        case .profileLoadFailed:
+            DSAlert(
+                title: "주인장",
+                message: "프로필 정보를 불러오지 못했어요",
+                actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
+            )
+
+        case .nicknameUpdateFailed:
+            DSAlert(
+                title: "주인장",
+                message: "닉네임 변경에 실패했어요",
+                actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
+            )
+
+        case .introUpdateFailed:
+            DSAlert(
+                title: "주인장",
+                message: "한줄소개 변경에 실패했어요",
+                actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
+            )
+
+        case .logoutFailed:
+            DSAlert(
+                title: "주인장",
+                message: "로그아웃에 실패했어요\n다시 시도해주세요",
+                actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
+            )
+
+        case .profileImageUploadFailed:
+            DSAlert(
+                title: "주인장",
+                message: "프로필 사진 업로드에 실패했어요",
+                actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
+            )
+        }
     }
 }
 
@@ -101,7 +171,7 @@ extension SettingView {
 
     @ViewBuilder
     var accountInfoSection: some View {
-        VStack(alignment: .leading, spacing: 28) {
+        VStack(alignment: .leading, spacing: 0) {
             EditableProfileFieldView(
                 config: .nickname,
                 savedValue: store.nickname,
@@ -117,8 +187,10 @@ extension SettingView {
                 input: $store.introField.input.sending(\.view.introTextChanged),
                 onButtonTap: { store.send(.view(.introFieldButtonTapped)) }
             )
+            .padding(.top, 20)
 
             loginInfoView
+                .padding(.top, 45)
         }
     }
 
@@ -149,11 +221,9 @@ extension SettingView {
                 store.send(.view(.qnaButtonTapped))
             } icon: {
                 Image.qna
-                    .renderingMode(.template)
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
-                    .foregroundStyle(Color.main200)
             }
         }
     }

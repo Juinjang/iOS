@@ -1,6 +1,10 @@
 import DesignSystem
 import SwiftUI
 
+// MARK: - 갑자기 Edit 모드일떄만 텍스트뷰 width값 각 text의 간격?이 늘어나는 문제 하나
+// - 지금 height값이 너무 커..
+//
+
 public struct EditableProfileFieldView: View {
     public enum Mode: Equatable {
         case beforeEdit
@@ -108,17 +112,17 @@ public struct EditableProfileFieldView: View {
 
             bottomLine
 
-            if let warning = warningMessage {
-                HStack(spacing: 3) {
-                    Image.warn
-                        .resizable()
-                        .frame(width: 16, height: 16)
+            HStack(spacing: 3) {
+                Image.warn
+                    .resizable()
+                    .frame(width: 16, height: 16)
 
-                    DSText(warning)
-                        .style(.body2)
-                        .textColor(.main)
-                }
+                DSText(warningMessage ?? config.warningText)
+                    .style(.body2)
+                    .textColor(.main)
             }
+            .opacity(warningMessage == nil ? 0 : 1)
+            .accessibilityHidden(warningMessage == nil)
         }
         .onChange(of: mode) { _, newMode in
             isFocused = (newMode != .beforeEdit)
