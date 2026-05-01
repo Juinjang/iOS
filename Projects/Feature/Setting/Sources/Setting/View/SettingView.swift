@@ -22,7 +22,7 @@ public struct SettingView: View {
                 TermsListView(store: termsStore)
             }
             .sheet(item: $store.scope(state: \.accountDeleteFlow, action: \.accountDeleteFlow)) { flowStore in
-                AccountDeleteWarningView(store: flowStore)
+                AccountDeleteFlowView(store: flowStore)
             }
     }
 

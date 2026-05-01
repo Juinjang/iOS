@@ -78,8 +78,6 @@ public struct AccountDeleteReasonView: View {
             .padding(.bottom, 33)
         }
         .background(Color.mainWhite)
-        .navigationBarHidden(true)
-        .navigationBarBackButtonHidden(true)
     }
 }
 

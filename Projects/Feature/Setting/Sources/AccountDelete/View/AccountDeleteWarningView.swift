@@ -3,28 +3,13 @@ import DesignSystem
 import SwiftUI
 
 public struct AccountDeleteWarningView: View {
-    @Bindable var store: StoreOf<AccountDeleteFlowFeature>
+    let store: StoreOf<AccountDeleteFlowFeature>
 
     public init(store: StoreOf<AccountDeleteFlowFeature>) {
         self.store = store
     }
 
     public var body: some View {
-        NavigationStack {
-            content
-                .navigationDestination(
-                    isPresented: Binding(
-                        get: { store.isShowingReason },
-                        set: { store.send(.view(.isShowingReasonChanged($0))) }
-                    )
-                ) {
-                    AccountDeleteReasonView(store: store)
-                }
-        }
-    }
-
-    @ViewBuilder
-    private var content: some View {
         VStack(alignment: .leading, spacing: 0) {
             Image.deleteLogo
                 .resizable()
@@ -83,7 +68,6 @@ public struct AccountDeleteWarningView: View {
             .padding(.bottom, 33)
         }
         .background(Color.mainWhite)
-        .navigationBarHidden(true)
     }
 }
 
