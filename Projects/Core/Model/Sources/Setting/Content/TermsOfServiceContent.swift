@@ -1,9 +1,21 @@
 // MARK: - 주인장 이용약관 본문
-/// develop 브랜치 Use1ViewController의 텍스트를 그대로 가져온 것.
-/// 약관 개정 시 이 파일만 수정.
+/// develop 브랜치 Use1ViewController의 텍스트를 가져와 버전 모델로 정리.
+/// 약관 개정 시 새 TermsVersion을 versions 배열의 첫 원소로 추가.
 
 enum TermsOfServiceContent {
-    static let body: String = """
+    static let versions: [TermsVersion] = [v1_0_0]
+
+    // MARK: - v1.0.0 (시행일 2024.01.26)
+
+    private static let v1_0_0 = TermsVersion(
+        id: "1.0.0",
+        effectiveDate: "2024.01.26",
+        segments: [
+            .text(v1_0_0_body)
+        ]
+    )
+
+    private static let v1_0_0_body: String = """
     **제1장 총칙**
 
     **제 1조(목적)**

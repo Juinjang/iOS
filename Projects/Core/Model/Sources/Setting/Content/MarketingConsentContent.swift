@@ -1,7 +1,47 @@
-// MARK: - 마케팅 동의 및 이벤트 수신 안내 본문
+// MARK: - 마케팅 동의 및 이벤트 수신
+/// develop 브랜치:
+///   Use3ViewController       — 안내 페이지 (notice + "이용약관" link)
+///   MarketingUseViewController — 실제 마케팅 활용동의 본문 7개 섹션
+/// 둘 다 데이터로 보존.
 
-enum MarketingConsentContent {
-    static let body: String = """
+public enum MarketingConsentContent {
+    /// 마케팅 안내 페이지 상단의 설명 문구.
+    public static let notice: String = """
     약관에 동의하시면 주인장 관련 정보 및 이벤트 혜택 정보를 알림으로 받으실 수 있습니다. 정보를 받지 않기를 원하신다면, 동의 철회 또는 회원 탈퇴로 가능합니다.
+    """
+
+    /// 안내 페이지에서 "이용약관" 행을 탭하면 보이는 본문.
+    static let versions: [TermsVersion] = [v1_0_0]
+
+    private static let v1_0_0 = TermsVersion(
+        id: "1.0.0",
+        effectiveDate: "2024.01.26",
+        segments: [
+            .text(v1_0_0_body)
+        ]
+    )
+
+    private static let v1_0_0_body: String = """
+    **1. 마케팅 활용 동의 (선택)**
+    주인장은 개인정보 보호법 제 22조 제4항과 제39조의 3에 따라 사용자의 광고성 정보 수신과 이에 따른 개인정보 처리에 대한 동의를 받고 있습니다. 약관에 동의하지 않으셔도 주인장의 모든 서비스를 이용하실 수 있습니다. 다만, 이벤트, 혜택 등의 제한이 있을 수 있습니다.
+
+    **2. 개인정보 수집 항목**
+    - 이메일, 생년월일, 성별, 거주지, 계좌
+
+    **3. 개인정보 수집 이용 목적**
+    - 이벤트 운영 및 광고성 정보 전송
+    - 서비스 관련 정보 전송
+
+    **4. 보유 및 이용 기간**
+    - 동의 철회 시 또는 회원 탈퇴 시까지
+
+    **5. 동의 철회 방법**
+    - 개인정보관리 페이지에서 변경 혹은 이메일으로 문의
+
+    **6. 전송 방법**
+    - 앱 자체 알림
+
+    **7. 전송 내용**
+    - 혜택 정보, 이벤트 정보, 상품 정보, 신규 서비스 안내 등의 광고성 정보 제공
     """
 }
