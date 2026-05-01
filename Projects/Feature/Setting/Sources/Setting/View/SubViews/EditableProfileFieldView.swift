@@ -1,10 +1,6 @@
 import DesignSystem
 import SwiftUI
 
-// MARK: - 갑자기 Edit 모드일떄만 텍스트뷰 width값 각 text의 간격?이 늘어나는 문제 하나
-// - 지금 height값이 너무 커..
-//
-
 public struct EditableProfileFieldView: View {
     public enum Mode: Equatable {
         case beforeEdit
@@ -59,15 +55,13 @@ public struct EditableProfileFieldView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 4.5) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .bottom, spacing: 8) {
                 VStack(alignment: .leading, spacing: 9.5) {
                     DSText(config.title)
                         .style(.body2)
                         .textColor(.gray400)
 
-                    // 모드와 무관하게 TextField 한 종류만 렌더링 → view 트리 고정 → 레이아웃 시프트 0.
-                    // beforeEdit일 땐 savedValue 보여주면서 disabled (cursor 없음, 키보드 안 뜸).
                     TextField(
                         "",
                         text: textFieldBinding,
@@ -81,7 +75,7 @@ public struct EditableProfileFieldView: View {
                     .kerning(DSFontStyle.body.letterSpacing)
                     .disabled(mode == .beforeEdit)
                     .focused($isFocused)
-                    .frame(height: 24)
+                    .frame(height: 20)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
@@ -102,6 +96,7 @@ public struct EditableProfileFieldView: View {
             }
 
             bottomLine
+                .padding(.top, 4.5)
 
             HStack(spacing: 3) {
                 Image.warn
@@ -115,7 +110,7 @@ public struct EditableProfileFieldView: View {
             .opacity(warningMessage == nil ? 0 : 1)
             .accessibilityHidden(warningMessage == nil)
         }
-        .animation(.easeInOut(duration: 0.2), value: mode)   // 변경/취소/저장 전환 부드럽게
+        .animation(.easeInOut(duration: 0.2), value: mode)
         .onChange(of: mode) { _, newMode in
             isFocused = (newMode != .beforeEdit)
         }
@@ -132,7 +127,6 @@ public struct EditableProfileFieldView: View {
         )
     }
 
-    /// 모드별 placeholder 문구. 비어있을 때만 prompt가 노출됨.
     private var currentPlaceholder: String {
         mode == .beforeEdit ? config.defaultPlaceholder : config.editingPlaceholder
     }

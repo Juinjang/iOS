@@ -28,9 +28,10 @@ struct SettingMenuRow<Icon: View>: View {
                     .textColor(titleColor)
                 Spacer()
             }
-            .contentShape(Rectangle())
             .padding(.horizontal, 24)
-            .padding(.vertical, 18)
+            .frame(maxWidth: .infinity)
+            .frame(height: 80)
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

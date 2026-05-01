@@ -126,10 +126,11 @@ extension SettingView {
                 input: $store.introField.input.sending(\.view.introTextChanged),
                 onButtonTap: { store.send(.view(.introFieldButtonTapped)) }
             )
-            .padding(.top, 20)
+            .padding(.top, 4)
+            
 
             loginInfoView
-                .padding(.top, 45)
+                .padding(.top, 29)
         }
     }
 
