@@ -28,8 +28,11 @@ struct OnboardingPageView: View {
                         !isOutroPhase ? page.title1Highlight : page.title2Highlight,
                         style: DSText.HighlightStyle(color: .main, fontStyle: .h1)
                     )
+                    .id(isOutroPhase)
+                    .transition(.opacity)
             }
             .padding(.top, 50)
+            .animation(.easeInOut(duration: 0.3), value: isOutroPhase)
             
             Spacer()
                 .frame(height: 40)
@@ -40,7 +43,9 @@ struct OnboardingPageView: View {
         }
         .onChange(of: isCurrentPage) { _, isCurrent in
             if isCurrent {
-                isOutroPhase = false
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isOutroPhase = false
+                }
             }
         }
     }
@@ -53,7 +58,9 @@ struct OnboardingPageView: View {
                 .frame(height: 360)
         } else {
             DSLottieView(name: page.introLottieName, loopMode: .playOnce) {
-                isOutroPhase = true
+                withAnimation(.easeInOut(duration: 0.3)) {
+                    isOutroPhase = true
+                }
             }
             .padding(.horizontal, 40)
             .frame(height: 280)

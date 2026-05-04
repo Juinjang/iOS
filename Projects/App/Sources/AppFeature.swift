@@ -48,8 +48,7 @@ public struct AppFeature {
                 case .onboarding:
                     state.onboarding = OnboardingFeature.State()
                 case .login:
-//                    state.login = LoginFeature.State()
-                    state.onboarding = OnboardingFeature.State()
+                    state.login = LoginFeature.State()
                 case .home:
                     state.home = HomeFeature.State()
                 }
