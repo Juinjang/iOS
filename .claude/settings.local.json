@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find /Users/joyujin/Desktop/iOSProject/Juinjang/Projects/DesignSystem/Sources -name \"*.swift\" -exec grep -l \"public\\\\|@.*public\" {} \\\\;)"
+    ]
+  }
+}
