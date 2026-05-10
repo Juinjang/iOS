@@ -24,7 +24,6 @@ extension UserClient: @retroactive DependencyKey {
                 )
                 return try APIMapper.mapData(
                     response,
-                    successCodes: ["COMMON200"],
                     transform: { $0.toDomain() }
                 )
             },
@@ -34,7 +33,7 @@ extension UserClient: @retroactive DependencyKey {
                     UserAPI.patchNickname(.init(nickname: nickname)),
                     responseType: VoidResponse.self
                 )
-                try APIMapper.mapVoid(response, successCodes: ["COMMON200"])
+                try APIMapper.mapVoid(response)
             },
 
             updateIntroduction: { introduction in
@@ -42,7 +41,7 @@ extension UserClient: @retroactive DependencyKey {
                     UserAPI.patchIntroduction(.init(introduction: introduction)),
                     responseType: VoidResponse.self
                 )
-                try APIMapper.mapVoid(response, successCodes: ["COMMON200"])
+                try APIMapper.mapVoid(response)
             },
 
             uploadProfileImage: { jpegData in
@@ -61,7 +60,6 @@ extension UserClient: @retroactive DependencyKey {
                 )
                 return try APIMapper.mapData(
                     response,
-                    successCodes: ["COMMON200"],
                     transform: { $0.image }
                 )
             },
@@ -71,7 +69,7 @@ extension UserClient: @retroactive DependencyKey {
                     UserAPI.logout,
                     responseType: VoidResponse.self
                 )
-                try APIMapper.mapVoid(response, successCodes: ["COMMON200"])
+                try APIMapper.mapVoid(response)
             }
         )
     }()

@@ -14,7 +14,7 @@ extension APIMapper {
 
     public static func mapData<T: Decodable, Output>(
         _ response: ResultResponse<T>,
-        successCodes: Set<String> = ["200"],
+        successCodes: Set<String> = ["COMMON200"],
         transform: @escaping (T) -> Output,
         onEmptyData: (() -> Output)? = nil
     ) throws -> Output {
@@ -38,7 +38,7 @@ extension APIMapper {
 
     public static func mapVoid(
         _ response: VoidResponse,
-        successCodes: Set<String> = ["200"]
+        successCodes: Set<String> = ["COMMON200"]
     ) throws {
         guard successCodes.contains(response.code) else {
             throw JuinjangError(code: response.code, message: response.message)
