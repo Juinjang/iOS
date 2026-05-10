@@ -1,6 +1,6 @@
 import Model
 
-public struct ProfileResponse: Decodable, Sendable {
+public struct FetchProfileResponse: Decodable, Sendable {
     public let nickname: String
     public let introduction: String?
     public let email: String

@@ -18,9 +18,9 @@ extension UserClient: @retroactive DependencyKey {
 
         return UserClient(
             fetchMyProfile: {
-                let response: ResultResponse<ProfileResponse> = try await client.request(
+                let response: ResultResponse<FetchProfileResponse> = try await client.request(
                     UserAPI.getMyProfile,
-                    responseType: ResultResponse<ProfileResponse>.self
+                    responseType: ResultResponse<FetchProfileResponse>.self
                 )
                 return try APIMapper.mapData(
                     response,
