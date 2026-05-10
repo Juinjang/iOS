@@ -34,7 +34,7 @@ public struct AccountDeleteReasonView: View {
 
             VStack(spacing: 8) {
                 ForEach(AccountDeleteReason.allCases) { reason in
-                    ReasonOptionRow(
+                    ReasonOptionRowView(
                         reason: reason,
                         isSelected: store.selectedReasons.contains(reason)
                     ) {

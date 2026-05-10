@@ -37,7 +37,7 @@ public struct TermsListView: View {
 
             VStack(spacing: 0) {
                 ForEach(store.documents, id: \.self) { document in
-                    TermsDocumentRow(document: document) {
+                    TermsDocumentRowView(document: document) {
                         store.send(.documentTapped(document))
                     }
 

@@ -2,7 +2,7 @@ import DesignSystem
 import PhotosUI
 import SwiftUI
 
-struct ProfileEditPhotoPicker: View {
+struct ProfileEditPhotoPickerView: View {
     @Binding var selection: PhotosPickerItem?
     let onPick: (PhotosPickerItem?) -> Void
 

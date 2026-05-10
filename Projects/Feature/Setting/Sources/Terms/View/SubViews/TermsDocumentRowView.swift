@@ -2,7 +2,7 @@ import DesignSystem
 import Model
 import SwiftUI
 
-struct TermsDocumentRow: View {
+struct TermsDocumentRowView: View {
     let document: TermsDocument
     let onTap: () -> Void
 

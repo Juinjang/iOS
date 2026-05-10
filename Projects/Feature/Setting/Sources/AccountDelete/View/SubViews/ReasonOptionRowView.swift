@@ -2,7 +2,7 @@ import DesignSystem
 import Model
 import SwiftUI
 
-struct ReasonOptionRow: View {
+struct ReasonOptionRowView: View {
     let reason: AccountDeleteReason
     let isSelected: Bool
     let onTap: () -> Void

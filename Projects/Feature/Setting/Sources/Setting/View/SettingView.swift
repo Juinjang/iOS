@@ -95,7 +95,7 @@ extension SettingView {
                 }
             }
 
-            ProfileEditPhotoPicker(
+            ProfileEditPhotoPickerView(
                 selection: $photoPickerItem,
                 onPick: handlePickerSelection
             )
@@ -131,7 +131,7 @@ extension SettingView {
     }
 
     var pencilShopView: some View {
-        SettingMenuRow(title: "연필상점") {
+        SettingMenuRowView(title: "연필상점") {
             store.send(.pencilShopButtonTapped)
         } icon: {
             Image.pencil
@@ -144,7 +144,7 @@ extension SettingView {
     @ViewBuilder
     var legalSection: some View {
         VStack(spacing: -20) {
-            SettingMenuRow(title: "약관 및 정책") {
+            SettingMenuRowView(title: "약관 및 정책") {
                 store.send(.termsButtonTapped)
             } icon: {
                 Image.documentText
@@ -153,7 +153,7 @@ extension SettingView {
                     .frame(width: 24, height: 24)
             }
 
-            SettingMenuRow(title: "자주 묻는 질문") {
+            SettingMenuRowView(title: "자주 묻는 질문") {
                 store.send(.qnaButtonTapped)
             } icon: {
                 Image.qna
@@ -165,13 +165,13 @@ extension SettingView {
     }
 
     var logoutView: some View {
-        SettingMenuRow(title: "로그아웃", titleColor: .main) {
+        SettingMenuRowView(title: "로그아웃", titleColor: .main) {
             store.send(.logoutButtonTapped)
         }
     }
 
     var accountDeleteView: some View {
-        SettingMenuRow(title: "계정 삭제하기", titleColor: .gray400) {
+        SettingMenuRowView(title: "계정 삭제하기", titleColor: .gray400) {
             store.send(.accountDeleteButtonTapped)
         }
     }

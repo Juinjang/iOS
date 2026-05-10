@@ -1,7 +1,7 @@
 import DesignSystem
 import SwiftUI
 
-struct SettingMenuRow<Icon: View>: View {
+struct SettingMenuRowView<Icon: View>: View {
     let title: String
     let titleColor: Color
     let action: () -> Void
@@ -37,7 +37,7 @@ struct SettingMenuRow<Icon: View>: View {
     }
 }
 
-extension SettingMenuRow where Icon == EmptyView {
+extension SettingMenuRowView where Icon == EmptyView {
     init(
         title: String,
         titleColor: Color = .gray500,
