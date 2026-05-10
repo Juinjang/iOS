@@ -21,17 +21,11 @@ public struct AccountDeleteFlowFeature: Sendable {
         }
     }
 
-    @CasePathable
-    public enum Action: Sendable {
-        case view(View)
-
-        @CasePathable
-        public enum View: Equatable, Sendable {
-            case isShowingReasonChanged(Bool)
-            case reasonToggled(AccountDeleteReason)
-            case cancelTapped
-            case finalDeleteTapped
-        }
+    public enum Action: Equatable, Sendable {
+        case isShowingReasonChanged(Bool)
+        case reasonToggled(AccountDeleteReason)
+        case cancelTapped
+        case finalDeleteTapped
     }
 
     @Dependency(\.dismiss) var dismiss
@@ -41,11 +35,11 @@ public struct AccountDeleteFlowFeature: Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case let .view(.isShowingReasonChanged(value)):
+            case let .isShowingReasonChanged(value):
                 state.isShowingReason = value
                 return .none
 
-            case let .view(.reasonToggled(reason)):
+            case let .reasonToggled(reason):
                 if state.selectedReasons.contains(reason) {
                     state.selectedReasons.remove(reason)
                 } else {
@@ -53,10 +47,10 @@ public struct AccountDeleteFlowFeature: Sendable {
                 }
                 return .none
 
-            case .view(.cancelTapped):
+            case .cancelTapped:
                 return .run { _ in await dismiss() }
 
-            case .view(.finalDeleteTapped):
+            case .finalDeleteTapped:
                 print("[AccountDeleteFlow] mock final delete, reasons: \(state.selectedReasons.map(\.rawValue))")
                 return .run { _ in await dismiss() }
             }

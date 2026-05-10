@@ -25,14 +25,9 @@ public struct TermsListFeature: Sendable {
     }
 
     public enum Action: Sendable {
-        case view(View)
+        case backButtonTapped
+        case documentTapped(TermsDocument)
         case path(StackActionOf<Path>)
-
-        @CasePathable
-        public enum View: Equatable, Sendable {
-            case backButtonTapped
-            case documentTapped(TermsDocument)
-        }
     }
 
     @Dependency(\.dismiss) var dismiss
@@ -42,10 +37,10 @@ public struct TermsListFeature: Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .view(.backButtonTapped):
+            case .backButtonTapped:
                 return .run { _ in await dismiss() }
 
-            case let .view(.documentTapped(doc)):
+            case let .documentTapped(doc):
                 if doc == .marketingConsent {
                     state.path.append(.marketingNotice(MarketingNoticeFeature.State()))
                 } else {

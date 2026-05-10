@@ -17,7 +17,7 @@ public struct QnAView: View {
                 .leftItems([.close])
                 .onAction { action in
                     if case .closeButtonTap = action {
-                        store.send(.view(.backButtonTapped))
+                        store.send(.backButtonTapped)
                     }
                 }
 
@@ -35,7 +35,7 @@ public struct QnAView: View {
                                 isExpanded: store.expandedIDs.contains(item.id)
                             ) {
                                 store.send(
-                                    .view(.itemTapped(item.id)),
+                                    .itemTapped(item.id),
                                     animation: .easeInOut(duration: 0.25)
                                 )
                             }

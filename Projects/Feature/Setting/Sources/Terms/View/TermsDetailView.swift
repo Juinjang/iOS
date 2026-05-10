@@ -20,7 +20,7 @@ public struct TermsDetailView: View {
                     .ignoresSafeArea()
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        store.send(.view(.versionSelectorExpandedChanged(false)))
+                        store.send(.versionSelectorExpandedChanged(false))
                     }
                     .transition(.opacity)
                     .zIndex(1)
@@ -33,9 +33,9 @@ public struct TermsDetailView: View {
                         versions: store.versions.map {
                             .init(id: $0.id, label: $0.displayLabel)
                         },
-                        selectedID: $store.selectedVersionID.sending(\.view.versionPicked),
+                        selectedID: $store.selectedVersionID.sending(\.versionPicked),
                         isExpanded: $store.isVersionSelectorExpanded
-                            .sending(\.view.versionSelectorExpandedChanged)
+                            .sending(\.versionSelectorExpandedChanged)
                     )
                     .padding(.horizontal, 24)
                     .padding(.bottom, 33)
@@ -56,7 +56,7 @@ public struct TermsDetailView: View {
                 .leftItems([.pop])
                 .onAction { action in
                     if case .popButtonTap = action {
-                        store.send(.view(.backButtonTapped))
+                        store.send(.backButtonTapped)
                     }
                 }
 

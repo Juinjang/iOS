@@ -38,7 +38,7 @@ public struct AccountDeleteReasonView: View {
                         reason: reason,
                         isSelected: store.selectedReasons.contains(reason)
                     ) {
-                        store.send(.view(.reasonToggled(reason)))
+                        store.send(.reasonToggled(reason))
                     }
                 }
             }
@@ -49,7 +49,7 @@ public struct AccountDeleteReasonView: View {
 
             VStack(spacing: 8) {
                 Button {
-                    store.send(.view(.cancelTapped))
+                    store.send(.cancelTapped)
                 } label: {
                     DSText("취소하고 돌아갈래요")
                         .style(.title)
@@ -62,7 +62,7 @@ public struct AccountDeleteReasonView: View {
                 .buttonStyle(.plain)
 
                 Button {
-                    store.send(.view(.finalDeleteTapped))
+                    store.send(.finalDeleteTapped)
                 } label: {
                     DSText("계정 삭제하기")
                         .style(.title)

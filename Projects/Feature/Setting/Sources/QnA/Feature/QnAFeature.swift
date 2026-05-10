@@ -24,13 +24,8 @@ public struct QnAFeature: Sendable {
     }
 
     public enum Action: Sendable {
-        case view(View)
-
-        @CasePathable
-        public enum View: Equatable, Sendable {
-            case backButtonTapped
-            case itemTapped(QnAItem.ID)
-        }
+        case backButtonTapped
+        case itemTapped(QnAItem.ID)
     }
 
     @Dependency(\.dismiss) var dismiss
@@ -40,10 +35,10 @@ public struct QnAFeature: Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .view(.backButtonTapped):
+            case .backButtonTapped:
                 return .run { _ in await dismiss() }
 
-            case let .view(.itemTapped(id)):
+            case let .itemTapped(id):
                 if state.expandedIDs.contains(id) {
                     state.expandedIDs.remove(id)
                 } else {

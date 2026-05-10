@@ -17,7 +17,7 @@ public struct MarketingNoticeView: View {
                 .leftItems([.pop])
                 .onAction { action in
                     if case .popButtonTap = action {
-                        store.send(.view(.backButtonTapped))
+                        store.send(.backButtonTapped)
                     }
                 }
 
@@ -31,7 +31,7 @@ public struct MarketingNoticeView: View {
             Divider().background(Color.gray100)
 
             Button {
-                store.send(.view(.termsRowTapped))
+                store.send(.termsRowTapped)
             } label: {
                 HStack(spacing: 8) {
                     Image.documentText

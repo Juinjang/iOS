@@ -34,7 +34,7 @@ public struct SettingView: View {
                 .leftItems([.pop])
                 .onAction { action in
                     if case .popButtonTap = action {
-                        store.send(.view(.backButtonTapped))
+                        store.send(.backButtonTapped)
                     }
                 }
 
@@ -63,7 +63,7 @@ public struct SettingView: View {
         }
         .background(Color.mainWhite)
         .navigationBarHidden(true)
-        .onAppear { store.send(.view(.onAppear)) }
+        .onAppear { store.send(.onAppear) }
         .dsAlert(
             item: Binding(
                 get: { store.alert },
@@ -111,16 +111,16 @@ extension SettingView {
                 config: .nickname,
                 savedValue: store.nickname,
                 mode: store.nicknameField.mode,
-                input: $store.nicknameField.input.sending(\.view.nicknameTextChanged),
-                onButtonTap: { store.send(.view(.nicknameFieldButtonTapped)) }
+                input: $store.nicknameField.input.sending(\.nicknameTextChanged),
+                onButtonTap: { store.send(.nicknameFieldButtonTapped) }
             )
 
             EditableProfileFieldView(
                 config: .intro,
                 savedValue: store.oneLineIntroduction,
                 mode: store.introField.mode,
-                input: $store.introField.input.sending(\.view.introTextChanged),
-                onButtonTap: { store.send(.view(.introFieldButtonTapped)) }
+                input: $store.introField.input.sending(\.introTextChanged),
+                onButtonTap: { store.send(.introFieldButtonTapped) }
             )
             .padding(.top, 4)
             
@@ -132,7 +132,7 @@ extension SettingView {
 
     var pencilShopView: some View {
         SettingMenuRow(title: "연필상점") {
-            store.send(.view(.pencilShopButtonTapped))
+            store.send(.pencilShopButtonTapped)
         } icon: {
             Image.pencil
                 .resizable()
@@ -145,7 +145,7 @@ extension SettingView {
     var legalSection: some View {
         VStack(spacing: -20) {
             SettingMenuRow(title: "약관 및 정책") {
-                store.send(.view(.termsButtonTapped))
+                store.send(.termsButtonTapped)
             } icon: {
                 Image.documentText
                     .resizable()
@@ -154,7 +154,7 @@ extension SettingView {
             }
 
             SettingMenuRow(title: "자주 묻는 질문") {
-                store.send(.view(.qnaButtonTapped))
+                store.send(.qnaButtonTapped)
             } icon: {
                 Image.qna
                     .resizable()
@@ -166,13 +166,13 @@ extension SettingView {
 
     var logoutView: some View {
         SettingMenuRow(title: "로그아웃", titleColor: .main) {
-            store.send(.view(.logoutButtonTapped))
+            store.send(.logoutButtonTapped)
         }
     }
 
     var accountDeleteView: some View {
         SettingMenuRow(title: "계정 삭제하기", titleColor: .gray400) {
-            store.send(.view(.accountDeleteButtonTapped))
+            store.send(.accountDeleteButtonTapped)
         }
     }
 }
@@ -219,7 +219,7 @@ extension SettingView {
                 let uiImage = UIImage(data: rawData),
                 let jpegData = uiImage.jpegData(compressionQuality: 0.2)
             else { return }
-            store.send(.view(.profileImagePicked(jpegData)))
+            store.send(.profileImagePicked(jpegData))
             photoPickerItem = nil
         }
     }

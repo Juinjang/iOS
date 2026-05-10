@@ -31,14 +31,14 @@ public struct TermsListView: View {
                 .leftItems([.close])
                 .onAction { action in
                     if case .closeButtonTap = action {
-                        store.send(.view(.backButtonTapped))
+                        store.send(.backButtonTapped)
                     }
                 }
 
             VStack(spacing: 0) {
                 ForEach(store.documents, id: \.self) { document in
                     TermsDocumentRow(document: document) {
-                        store.send(.view(.documentTapped(document)))
+                        store.send(.documentTapped(document))
                     }
 
                     if document != store.documents.last {

@@ -14,6 +14,6 @@ struct SettingFeatureTests {
             SettingFeature()
         }
 
-        await store.send(.view(.onAppear))
+        await store.send(.onAppear)
     }
 }

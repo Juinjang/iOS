@@ -29,14 +29,9 @@ public struct TermsDetailFeature: Sendable {
     }
 
     public enum Action: Equatable, Sendable {
-        case view(View)
-
-        @CasePathable
-        public enum View: Equatable, Sendable {
-            case backButtonTapped
-            case versionSelectorExpandedChanged(Bool)
-            case versionPicked(String)
-        }
+        case backButtonTapped
+        case versionSelectorExpandedChanged(Bool)
+        case versionPicked(String)
     }
 
     @Dependency(\.dismiss) var dismiss
@@ -46,14 +41,14 @@ public struct TermsDetailFeature: Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .view(.backButtonTapped):
+            case .backButtonTapped:
                 return .run { _ in await dismiss() }
 
-            case let .view(.versionSelectorExpandedChanged(value)):
+            case let .versionSelectorExpandedChanged(value):
                 state.isVersionSelectorExpanded = value
                 return .none
 
-            case let .view(.versionPicked(id)):
+            case let .versionPicked(id):
                 state.selectedVersionID = id
                 state.isVersionSelectorExpanded = false
                 return .none

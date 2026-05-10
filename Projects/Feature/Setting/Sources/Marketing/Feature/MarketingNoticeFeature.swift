@@ -14,14 +14,9 @@ public struct MarketingNoticeFeature: Sendable {
     }
 
     public enum Action: Sendable {
-        case view(View)
+        case backButtonTapped
+        case termsRowTapped
         case delegate(Delegate)
-
-        @CasePathable
-        public enum View: Equatable, Sendable {
-            case backButtonTapped
-            case termsRowTapped
-        }
 
         public enum Delegate: Equatable, Sendable {
             case openTermsDetail
@@ -35,10 +30,10 @@ public struct MarketingNoticeFeature: Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { _, action in
             switch action {
-            case .view(.backButtonTapped):
+            case .backButtonTapped:
                 return .run { _ in await dismiss() }
 
-            case .view(.termsRowTapped):
+            case .termsRowTapped:
                 return .send(.delegate(.openTermsDetail))
 
             case .delegate:

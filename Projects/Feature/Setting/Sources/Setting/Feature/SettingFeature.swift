@@ -117,7 +117,19 @@ public struct SettingFeature: Sendable {
     // MARK: - Action
 
     public enum Action: Sendable {
-        case view(View)
+        case onAppear
+        case backButtonTapped
+        case profileImagePicked(Data)
+        case nicknameFieldButtonTapped
+        case nicknameTextChanged(String)
+        case introFieldButtonTapped
+        case introTextChanged(String)
+        case pencilShopButtonTapped
+        case termsButtonTapped
+        case qnaButtonTapped
+        case logoutButtonTapped
+        case accountDeleteButtonTapped
+
         case alert(PresentationAction<Alert>)
         case qnaSheet(PresentationAction<QnAFeature.Action>)
         case termsSheet(PresentationAction<TermsListFeature.Action>)
@@ -128,22 +140,6 @@ public struct SettingFeature: Sendable {
         case introSaveResponse(Result<String, JuinjangError>)
         case profileImageUploadResponse(Result<String, JuinjangError>)
         case logoutResponse(Result<Void, JuinjangError>)
-
-        @CasePathable
-        public enum View: Equatable, Sendable {
-            case onAppear
-            case backButtonTapped
-            case profileImagePicked(Data)
-            case nicknameFieldButtonTapped
-            case nicknameTextChanged(String)
-            case introFieldButtonTapped
-            case introTextChanged(String)
-            case pencilShopButtonTapped
-            case termsButtonTapped
-            case qnaButtonTapped
-            case logoutButtonTapped
-            case accountDeleteButtonTapped
-        }
 
         public enum Alert: Equatable, Sendable {
             case logoutConfirmed
@@ -161,7 +157,7 @@ public struct SettingFeature: Sendable {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .view(.onAppear):
+            case .onAppear:
                 return .run { send in
                     await send(.profileLoaded(
                         Result {
@@ -186,7 +182,7 @@ public struct SettingFeature: Sendable {
 
             // MARK: - Nickname
 
-            case .view(.nicknameFieldButtonTapped):
+            case .nicknameFieldButtonTapped:
                 let result = state.nicknameField.handleButtonTap(savedValue: state.nickname)
                 if case let .save(newValue) = result {
                     return .run { send in
@@ -202,7 +198,7 @@ public struct SettingFeature: Sendable {
                 }
                 return .none
 
-            case let .view(.nicknameTextChanged(text)):
+            case let .nicknameTextChanged(text):
                 state.nicknameField.handleTextChanged(
                     text,
                     savedValue: state.nickname,
@@ -225,7 +221,7 @@ public struct SettingFeature: Sendable {
 
             // MARK: - Intro
 
-            case .view(.introFieldButtonTapped):
+            case .introFieldButtonTapped:
                 let result = state.introField.handleButtonTap(savedValue: state.oneLineIntroduction)
                 if case let .save(newValue) = result {
                     return .run { send in
@@ -241,7 +237,7 @@ public struct SettingFeature: Sendable {
                 }
                 return .none
 
-            case let .view(.introTextChanged(text)):
+            case let .introTextChanged(text):
                 state.introField.handleTextChanged(
                     text,
                     savedValue: state.oneLineIntroduction,
@@ -260,7 +256,7 @@ public struct SettingFeature: Sendable {
 
             // MARK: - Profile image
 
-            case let .view(.profileImagePicked(data)):
+            case let .profileImagePicked(data):
                 state.pickedImageData = data
                 state.isUploadingImage = true
                 return .run { send in
@@ -287,7 +283,7 @@ public struct SettingFeature: Sendable {
 
             // MARK: - Logout (확인 알림 → 확인 시 실제 로그아웃)
 
-            case .view(.logoutButtonTapped):
+            case .logoutButtonTapped:
                 state.alert = .logoutConfirm(
                     nickname: state.nickname,
                     email: state.email
@@ -315,7 +311,7 @@ public struct SettingFeature: Sendable {
 
             // MARK: - Account delete (풀스크린 플로우 진입)
 
-            case .view(.accountDeleteButtonTapped):
+            case .accountDeleteButtonTapped:
                 state.accountDeleteFlow = AccountDeleteFlowFeature.State(nickname: state.nickname)
                 return .none
 
@@ -324,11 +320,11 @@ public struct SettingFeature: Sendable {
 
             // MARK: - Navigation pushes
 
-            case .view(.termsButtonTapped):
+            case .termsButtonTapped:
                 state.termsSheet = TermsListFeature.State()
                 return .none
 
-            case .view(.qnaButtonTapped):
+            case .qnaButtonTapped:
                 state.qnaSheet = QnAFeature.State()
                 return .none
 
@@ -338,10 +334,9 @@ public struct SettingFeature: Sendable {
             case .termsSheet:
                 return .none
 
-            // MARK: - Other view actions (print only)
+            // MARK: - Other view actions
 
-            case let .view(viewAction):
-                print("[SettingFeature] \(viewAction)")
+            case .backButtonTapped, .pencilShopButtonTapped:
                 return .none
 
             case .alert:

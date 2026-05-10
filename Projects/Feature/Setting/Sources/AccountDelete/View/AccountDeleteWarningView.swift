@@ -39,7 +39,7 @@ public struct AccountDeleteWarningView: View {
 
             VStack(spacing: 8) {
                 Button {
-                    store.send(.view(.cancelTapped))
+                    store.send(.cancelTapped)
                 } label: {
                     DSText("취소하고 돌아갈래요")
                         .style(.title)
@@ -52,7 +52,7 @@ public struct AccountDeleteWarningView: View {
                 .buttonStyle(.plain)
 
                 Button {
-                    store.send(.view(.isShowingReasonChanged(true)))
+                    store.send(.isShowingReasonChanged(true))
                 } label: {
                     DSText("네, 계정을 삭제할게요")
                         .style(.title)
