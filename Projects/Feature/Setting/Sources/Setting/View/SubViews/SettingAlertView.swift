@@ -12,41 +12,28 @@ struct SettingAlertView: View {
 
     var body: some View {
         switch alert {
-        case let .logoutConfirm(nickname, email):
+        case .logoutConfirm:
             DSAlert(
-                title: nickname,
+                title: alert.title,
                 titleColor: .main,
-                subtitle: email,
-                message: "계정에서 로그아웃할까요?",
+                subtitle: alert.subtitle,
+                message: alert.message,
                 actions: [
                     .secondary("아니요") { store.send(.alert(.dismiss)) },
                     .primary("로그아웃") { store.send(.alert(.presented(.logoutConfirmed))) }
                 ]
             )
 
-        case .profileLoadFailed:
-            failureAlert(message: "프로필 정보를 불러오지 못했어요")
-
-        case .nicknameUpdateFailed:
-            failureAlert(message: "닉네임 변경에 실패했어요")
-
-        case .introUpdateFailed:
-            failureAlert(message: "한줄소개 변경에 실패했어요")
-
-        case .logoutFailed:
-            failureAlert(message: "로그아웃에 실패했어요\n다시 시도해주세요")
-
-        case .profileImageUploadFailed:
-            failureAlert(message: "프로필 사진 업로드에 실패했어요")
+        case .profileLoadFailed,
+             .nicknameUpdateFailed,
+             .introUpdateFailed,
+             .logoutFailed,
+             .profileImageUploadFailed:
+            DSAlert(
+                title: alert.title,
+                message: alert.message,
+                actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
+            )
         }
-    }
-
-    /// 단일 "확인" 버튼 알림 — 모든 정보성 실패 알림이 공유.
-    private func failureAlert(message: String) -> DSAlert<EmptyView> {
-        DSAlert(
-            title: "주인장",
-            message: message,
-            actions: [.primary("확인") { store.send(.alert(.dismiss)) }]
-        )
     }
 }
