@@ -16,7 +16,7 @@ public struct MarketingNoticeView: View {
                 .title("마케팅 동의 및 이벤트 수신")
                 .leftItems([.pop])
                 .onAction { action in
-                    if case .popButtonTap = action {
+                    if case .popButtonTapped = action {
                         store.send(.backButtonTapped)
                     }
                 }

@@ -30,7 +30,7 @@ public struct TermsListView: View {
                 .title("이용 및 약관")
                 .leftItems([.close])
                 .onAction { action in
-                    if case .closeButtonTap = action {
+                    if case .closeButtonTapped = action {
                         store.send(.backButtonTapped)
                     }
                 }

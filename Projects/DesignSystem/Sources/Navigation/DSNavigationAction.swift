@@ -5,18 +5,18 @@ import Foundation
 /// 각 버튼 탭, 검색 활성화/제출 등을 호출부가 `onAction(_:)`으로 처리.
 
 public enum DSNavigationAction: Equatable, Sendable {
-    case popButtonTap
-    case closeButtonTap
-    case textButtonTap
+    case popButtonTapped
+    case closeButtonTapped
+    case textButtonTapped
 
-    case searchButtonTap
-    case searchSubmit(keyword: String)
-    case searchActive(isActive: Bool)
+    case searchButtonTapped
+    case searchSubmitted(keyword: String)
+    case searchActiveChanged(isActive: Bool)
 
-    case settingButtonTap
-    case recordButtonTap
-    case addButtonTap
-    case trashButtonTap
-    case reportButtonTap
-    case startRecordButtonTap
+    case settingButtonTapped
+    case recordButtonTapped
+    case addButtonTapped
+    case trashButtonTapped
+    case reportButtonTapped
+    case startRecordButtonTapped
 }

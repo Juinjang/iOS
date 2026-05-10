@@ -33,7 +33,7 @@ public struct SettingView: View {
                 .title("설정")
                 .leftItems([.pop])
                 .onAction { action in
-                    if case .popButtonTap = action {
+                    if case .popButtonTapped = action {
                         store.send(.backButtonTapped)
                     }
                 }

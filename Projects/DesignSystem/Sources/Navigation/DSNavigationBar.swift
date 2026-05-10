@@ -126,16 +126,16 @@ public struct DSNavigationBar<CenterContent: View>: View {
             TextField(searchPlaceholder, text: $searchText)
                 .font(DSFontStyle.body2.font)
                 .onSubmit {
-                    actionHandler?(.searchSubmit(keyword: searchText))
+                    actionHandler?(.searchSubmitted(keyword: searchText))
                 }
                 .padding(.leading, 16)
 
             Button {
                 if searchText.isEmpty {
-                    actionHandler?(.searchButtonTap)
+                    actionHandler?(.searchButtonTapped)
                 } else {
                     searchText = ""
-                    actionHandler?(.searchActive(isActive: false))
+                    actionHandler?(.searchActiveChanged(isActive: false))
                 }
             } label: {
                 (searchText.isEmpty ? Image.search : Image.close)
@@ -151,7 +151,7 @@ public struct DSNavigationBar<CenterContent: View>: View {
         .background(Color.gray200)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .onChange(of: searchText) { _, newValue in
-            actionHandler?(.searchActive(isActive: !newValue.isEmpty))
+            actionHandler?(.searchActiveChanged(isActive: !newValue.isEmpty))
         }
     }
 
@@ -198,16 +198,16 @@ public struct DSNavigationBar<CenterContent: View>: View {
 
     private func buttonAction(_ button: DSNavigationButton) -> DSNavigationAction {
         switch button {
-        case .pop: return .popButtonTap
-        case .search: return .searchButtonTap
-        case .setting: return .settingButtonTap
-        case .record: return .recordButtonTap
-        case .add: return .addButtonTap
-        case .close: return .closeButtonTap
-        case .trash: return .trashButtonTap
-        case .report: return .reportButtonTap
-        case .startRecord: return .startRecordButtonTap
-        case .text: return .textButtonTap
+        case .pop: return .popButtonTapped
+        case .search: return .searchButtonTapped
+        case .setting: return .settingButtonTapped
+        case .record: return .recordButtonTapped
+        case .add: return .addButtonTapped
+        case .close: return .closeButtonTapped
+        case .trash: return .trashButtonTapped
+        case .report: return .reportButtonTapped
+        case .startRecord: return .startRecordButtonTapped
+        case .text: return .textButtonTapped
         }
     }
 }

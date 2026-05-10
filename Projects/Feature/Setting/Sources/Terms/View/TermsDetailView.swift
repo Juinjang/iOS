@@ -55,7 +55,7 @@ public struct TermsDetailView: View {
                 .title(store.document.title)
                 .leftItems([.pop])
                 .onAction { action in
-                    if case .popButtonTap = action {
+                    if case .popButtonTapped = action {
                         store.send(.backButtonTapped)
                     }
                 }

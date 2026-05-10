@@ -16,7 +16,7 @@ public struct QnAView: View {
                 .title("자주 묻는 질문")
                 .leftItems([.close])
                 .onAction { action in
-                    if case .closeButtonTap = action {
+                    if case .closeButtonTapped = action {
                         store.send(.backButtonTapped)
                     }
                 }

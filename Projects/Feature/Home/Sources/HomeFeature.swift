@@ -33,9 +33,9 @@ public struct HomeFeature {
 
     private func handleNavigationAction(_ action: DSNavigationAction) -> Effect<Action> {
         switch action {
-        case .settingButtonTap:
+        case .settingButtonTapped:
             return .none // TODO: 설정 화면 이동
-        case .recordButtonTap:
+        case .recordButtonTapped:
             return .none // TODO: 녹음 화면 이동
         default:
             return .none
