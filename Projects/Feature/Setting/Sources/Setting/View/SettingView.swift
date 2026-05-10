@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import Common
 import DesignSystem
+import Model
 import PhotosUI
 import SwiftUI
 
@@ -272,6 +273,16 @@ extension SettingView {
             )
         ) {
             SettingFeature()
+        } withDependencies: {
+            $0.userClient.fetchMyProfile = {
+                UserProfile(
+                    nickname: "땡땡",
+                    introduction: "업로드 직후 상태",
+                    email: "juinjang@daum.net",
+                    imageURL: "https://picsum.photos/seed/uploaded/200",
+                    provider: .kakao
+                )
+            }
         }
     )
 }
