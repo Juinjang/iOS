@@ -84,6 +84,7 @@
 	<string>임장 활동에 대한 녹음을 텍스트로 변환하기 위해 음성 인식 권한이 필요합니다.</string>
 	<key>UIAppFonts</key>
 	<array>
+		<string>KCC-Ganpan.ttf</string>
 		<string>Pretendard-Black.otf</string>
 		<string>Pretendard-ExtraBold.otf</string>
 		<string>Pretendard-Bold.otf</string>
