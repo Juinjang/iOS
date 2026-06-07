@@ -46,6 +46,8 @@ final class SplashViewController: UIViewController, View {
                     owner.changeLoginVC()
                 case .home:
                     owner.changeHome()
+                case .maintenanceNotice:
+                    owner.changeRootView(to: MaintenanceNoticeViewController())
                 }
             })
             .disposed(by: disposeBag)

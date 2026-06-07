@@ -58,20 +58,28 @@ final class SplashViewReactor: Reactor {
     
     private func checkAppVersion() -> Observable<Mutation> {
         // 앱 스토어 앱 버전 조회
-        InAppUpdateManager.shared.requestLatestVersion()
+        return InAppUpdateManager.shared.requestLatestVersion()
             .asObservable()
             .flatMap { [weak self] appVersion -> Observable<Mutation> in
                 guard let self = self, let latestVersion = appVersion else { return .empty() }
                 print("@@@ Latest AppVersion: \(latestVersion)")
-                return handleAppUpdate(latestVersion: latestVersion)
+                return self.handleAppUpdate(latestVersion: latestVersion)
             }
     }
-    
+
     private func handleAppUpdate(latestVersion: String) -> Observable<Mutation> {
         if InAppUpdateManager.shared.isNeedAppUpdate(latestVersion: latestVersion) {
             return .just(.setShowUpdateAppPopup(true))
         } else {
-            return setNavigation()
+            return FirebaseStoreManager.shared.fetchMaintenanceAsObservable()
+                .flatMap { [weak self] maintenance -> Observable<Mutation> in
+                    guard let self = self else { return .empty() }
+                    if maintenance.needsMaintenance {
+                        return .just(.setNavigation(.maintenanceNotice))
+                    } else {
+                        return self.setNavigation()
+                    }
+                }
         }
     }
     
@@ -103,5 +111,6 @@ extension SplashViewReactor {
         case onbording
         case login
         case home
+        case maintenanceNotice
     }
 }

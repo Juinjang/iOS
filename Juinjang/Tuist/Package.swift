@@ -48,7 +48,7 @@ let package = Package(
         .package(url: "https://github.com/hackiftekhar/IQKeyboardManager.git", from: "6.5.16"),
         .package(url: "https://github.com/kakao/kakao-ios-sdk", exact: "2.22.5"),
         .package(url: "https://github.com/onevcat/Kingfisher", from: "7.10.2"),
-        .package(url: "https://github.com/airbnb/lottie-ios", from: "4.4.0"),
+        .package(url: "https://github.com/airbnb/lottie-ios", from: "4.5.2"),
         .package(url: "https://github.com/ReactorKit/ReactorKit", from: "3.2.0"),
         .package(url: "https://github.com/realm/realm-swift", exact: "10.47.0"),
         .package(url: "https://github.com/ReactiveX/RxSwift", from: "6.8.0"),
