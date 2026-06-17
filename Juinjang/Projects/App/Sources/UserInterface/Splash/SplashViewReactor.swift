@@ -17,11 +17,13 @@ final class SplashViewReactor: Reactor {
     enum Mutation {
         case setNavigation(SplashNavigation)
         case setShowUpdateAppPopup(Bool)
+        case setErrorMessage(String)
     }
     
     struct State {
         var navigation: SplashNavigation?
         var showUpdateAppPopup: Bool = false
+        var showErrorMessage: String? = nil
     }
     
     let initialState: State = State()
@@ -52,6 +54,8 @@ final class SplashViewReactor: Reactor {
             state.navigation = splashNavigation
         case .setShowUpdateAppPopup(let show):
             state.showUpdateAppPopup = show
+        case .setErrorMessage(let message):
+            state.showErrorMessage = message
         }
         return state
     }
@@ -75,10 +79,14 @@ final class SplashViewReactor: Reactor {
                 .flatMap { [weak self] maintenance -> Observable<Mutation> in
                     guard let self = self else { return .empty() }
                     if maintenance.needsMaintenance {
-                        return .just(.setNavigation(.maintenanceNotice))
+                        return .just(.setNavigation(.maintenanceNotice(maintenance)))
                     } else {
                         return self.setNavigation()
                     }
+                }
+                .catch { [weak self] _ in
+                    guard let self else { return .empty() }
+                    return .just(.setErrorMessage("오류가 발생하였습니다.\n앱을 다시 실행해주세요."))
                 }
         }
     }
@@ -111,6 +119,6 @@ extension SplashViewReactor {
         case onbording
         case login
         case home
-        case maintenanceNotice
+        case maintenanceNotice(Maintenance)
     }
 }

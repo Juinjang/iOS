@@ -46,8 +46,8 @@ final class SplashViewController: UIViewController, View {
                     owner.changeLoginVC()
                 case .home:
                     owner.changeHome()
-                case .maintenanceNotice:
-                    owner.changeRootView(to: MaintenanceNoticeViewController())
+                case .maintenanceNotice(let maintenance):
+                    owner.changeRootView(to: MaintenanceNoticeViewController(maintenance: maintenance))
                 }
             })
             .disposed(by: disposeBag)
@@ -58,6 +58,23 @@ final class SplashViewController: UIViewController, View {
             .drive(with: self) { owner, show in
                 guard show else { return }
                 owner.showUpdateAlert()
+            }
+            .disposed(by: disposeBag)
+        
+        reactor.state
+            .compactMap { $0.showErrorMessage }
+            .compactMap { $0 }
+            .asDriver(onErrorDriveWith: .empty())
+            .drive(with: self) { owner, message in
+                let alertController = UIAlertController(title: message, message: nil, preferredStyle: .alert)
+                let alertAction = UIAlertAction(title: "확인", style: .default) { action in
+                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        exit(0)
+                    }
+                }
+                alertController.addAction(alertAction)
+                owner.present(alertController, animated: true)
             }
             .disposed(by: disposeBag)
     }

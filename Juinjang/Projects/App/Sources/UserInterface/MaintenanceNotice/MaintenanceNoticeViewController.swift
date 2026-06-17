@@ -6,25 +6,32 @@
 //
 
 import UIKit
-import ReactorKit
 
 final class MaintenanceNoticeViewController: UIViewController {
     private let contentView = MaintenanceNoticeView()
     
-    private var disposeBag = DisposeBag()
+    private let maintenance: Maintenance
+    
+    // MARK: - Init
+     
+    init(maintenance: Maintenance) {
+        self.maintenance = maintenance
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - LifeCycle
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        FirebaseStoreManager.shared.fetchMaintenanceAsObservable()
-            .asObservable()
-            .subscribe(with: self) { owner, maintenance in
-                owner.contentView.configureDurationDate(
-                    startDate: maintenance.startDate,
-                    endDate: maintenance.endDate
-                )
-            }
-            .disposed(by: disposeBag)
+        contentView.configureDurationDate(
+            startDate: maintenance.startDate,
+            endDate: maintenance.endDate
+        )
     }
     
     override func loadView() {
