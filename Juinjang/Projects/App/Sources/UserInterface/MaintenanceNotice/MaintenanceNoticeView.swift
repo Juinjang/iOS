@@ -140,12 +140,15 @@ final class MaintenanceNoticeView: BaseView {
 }
 
 private extension MaintenanceNoticeView {
+    static let noticeDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "yyyy년 MM월 dd일 a h시 mm분"
+        return formatter
+    }()
+    
     func formatAsNoticeString(_ date: Date) -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.timeZone = TimeZone(identifier: "Asia/Seoul")
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일 a h시 mm분"
-        
-        return dateFormatter.string(from: date)
+        Self.noticeDateFormatter.string(from: date)
     }
 }
