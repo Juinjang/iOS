@@ -96,7 +96,7 @@ public struct TermsDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
         case let .table(table):
-            DSPolicyTable(
+            PolicyTableView(
                 headers: table.headers,
                 rows: table.rows
             )

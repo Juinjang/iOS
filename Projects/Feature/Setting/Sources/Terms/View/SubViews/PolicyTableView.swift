@@ -1,30 +1,18 @@
+import DesignSystem
 import SwiftUI
 
-// MARK: - DSPolicyTable
-/// 약관/정책 본문 사이에 박히는 데이터 표.
-/// (구 develop의 useImage1~4 PNG를 SwiftUI 네이티브로 대체)
-///
-/// - Setting의 약관 상세, Onboarding의 약관 동의 화면 등 **여러 feature가 공유**.
-/// - 헤더 1행 + 데이터 N행 구조.
-/// - 셀 배경: mainWhite, 보더: stroke (gray100 컨테이너 위에서도 선이 보이도록).
-/// - 헤더는 Pretendard bold 14pt, 본문은 Pretendard medium 14pt — useImage 원본과 동일.
-///
-/// 사용 예:
-/// ```
-/// DSPolicyTable(
-///     headers: ["법령", "수집 항목", "보유기간"],
-///     rows: [["통신비밀보호법", "로그기록", "3개월"]]
-/// )
-/// ```
+// MARK: - PolicyTableView
+/// 약관/정책 본문 사이에 박히는 데이터 표. (구 develop의 useImage1~4 PNG 대체)
+/// 헤더 1행 + 데이터 N행. 헤더는 Pretendard bold 14pt, 본문은 medium 14pt.
 
-public struct DSPolicyTable: View {
+struct PolicyTableView: View {
     private let headers: [String]
     private let rows: [[String]]
     private let borderColor: Color
     private let cellBackground: Color
     private let cellPadding: EdgeInsets
 
-    public init(
+    init(
         headers: [String],
         rows: [[String]],
         borderColor: Color = .stroke,
@@ -38,19 +26,16 @@ public struct DSPolicyTable: View {
         self.cellPadding = cellPadding
     }
 
-    public var body: some View {
+    var body: some View {
         Grid(alignment: .topLeading, horizontalSpacing: 0, verticalSpacing: 0) {
-            // Header row
             GridRow {
                 ForEach(Array(headers.enumerated()), id: \.offset) { index, title in
                     tableCell(text: title, isHeader: true, isLastColumn: index == headers.count - 1)
                 }
             }
 
-            // Header → Body 사이 가로선
             rowDivider
 
-            // Body rows
             ForEach(Array(rows.enumerated()), id: \.offset) { rowIndex, row in
                 GridRow {
                     ForEach(Array(row.enumerated()), id: \.offset) { index, value in
@@ -121,7 +106,7 @@ public struct DSPolicyTable: View {
                 .style(.body)
                 .textColor(.gray500)
 
-            DSPolicyTable(
+            PolicyTableView(
                 headers: ["법령", "수집/이용 목적", "수집 항목", "보유/이용기간"],
                 rows: [
                     ["통신비밀보호법", "통신사실 확인자료 제공", "로그기록, 접속지 정보 등", "3개월"],
@@ -136,23 +121,11 @@ public struct DSPolicyTable: View {
 }
 
 #Preview("추가 수집 항목 표 (2열)") {
-    DSPolicyTable(
+    PolicyTableView(
         headers: ["구분", "수집 이용 항목"],
         rows: [
             ["서비스 문의 상담 시", "이메일주소, 상담내용"],
             ["프로필 사진 지정 시", "프로필 사진"]
-        ]
-    )
-    .padding(20)
-    .background(Color.gray100)
-}
-
-#Preview("국외 위탁 현황 표 (4열)") {
-    DSPolicyTable(
-        headers: ["위탁사", "위탁하는 항목", "위탁 업무 내용", "위탁업체의 연락처 및 국가"],
-        rows: [
-            ["Amplitude, Inc.", "유저 식별자, 방문 일시 등", "이용자 서비스 이용 현황 데이터 분석", "privacy@amplitude.com/미국"],
-            ["Google", "앱 방문 데이터", "구글 애널리틱스를 사용하여 데이터를 처리", "privacy@google.com/미국"]
         ]
     )
     .padding(20)
