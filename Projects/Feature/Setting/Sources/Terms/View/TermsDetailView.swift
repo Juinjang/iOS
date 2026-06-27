@@ -29,8 +29,8 @@ public struct TermsDetailView: View {
             if store.showsVersionSelector {
                 VStack(spacing: 0) {
                     Spacer(minLength: 0)
-                    DSPolicyVersionSelector(
-                        versions: store.versions.map {
+                    DSDropdownSelector(
+                        items: store.versions.map {
                             .init(id: $0.id, label: $0.displayLabel)
                         },
                         selectedID: $store.selectedVersionID.sending(\.versionPicked),

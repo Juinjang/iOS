@@ -1,16 +1,15 @@
 import SwiftUI
 
-// MARK: - DSPolicyVersionSelector
-/// 약관/정책 화면 하단의 버전 드롭다운.
-/// - 닫힌 상태: 단일 행 (현재 버전 라벨 + chevron down)
-/// - 열린 상태: 위쪽으로 펼쳐서 다른 버전 행이 보이고 + 현재 버전 행이 마지막에 chevron up과 남음
-/// - 단일 버전이면 호출부에서 셀렉터 자체를 숨길 것 (`versions.count > 1` 분기).
+// MARK: - DSDropdownSelector
+/// 위로 펼쳐지는 단일 선택 드롭다운.
+/// - 닫힘: 현재 선택 항목 1행 + chevron
+/// - 열림: 위로 다른 항목들이 펼쳐지고, 현재 항목 행은 chevron up과 함께 맨 아래 유지
+/// - 항목이 1개뿐이면 호출부에서 셀렉터 자체를 숨길 것 (`items.count > 1` 분기).
 ///
-/// **표시 방식**: 셀렉터 자체는 자기 영역만 그리기 때문에,
-/// 호출부가 `ZStack` 등으로 위에 오버레이로 띄워야 expanded 시 본문을 밀지 않음.
+/// 셀렉터는 자기 영역만 그리므로, expanded 시 본문을 밀지 않으려면 호출부가 `ZStack` 오버레이로 띄울 것.
 
-public struct DSPolicyVersionSelector: View {
-    public struct VersionItem: Identifiable, Equatable {
+public struct DSDropdownSelector: View {
+    public struct Item: Identifiable, Equatable {
         public let id: String
         public let label: String
 
@@ -20,16 +19,16 @@ public struct DSPolicyVersionSelector: View {
         }
     }
 
-    private let versions: [VersionItem]
+    private let items: [Item]
     @Binding private var selectedID: String
     @Binding private var isExpanded: Bool
 
     public init(
-        versions: [VersionItem],
+        items: [Item],
         selectedID: Binding<String>,
         isExpanded: Binding<Bool>
     ) {
-        self.versions = versions
+        self.items = items
         self._selectedID = selectedID
         self._isExpanded = isExpanded
     }
@@ -77,18 +76,18 @@ public struct DSPolicyVersionSelector: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - 펼쳐진 상태에서 위로 보이는 다른 버전들
+    // MARK: - 펼쳐진 상태에서 위로 보이는 다른 항목들
 
     @ViewBuilder
     private var expandedList: some View {
         VStack(spacing: 0) {
-            ForEach(otherVersions) { version in
+            ForEach(otherItems) { item in
                 Button {
-                    selectedID = version.id
+                    selectedID = item.id
                     isExpanded = false
                 } label: {
                     HStack {
-                        DSText(version.label)
+                        DSText(item.label)
                             .style(.title)
                             .textColor(.gray450)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -108,24 +107,24 @@ public struct DSPolicyVersionSelector: View {
     // MARK: - 헬퍼
 
     private var currentLabel: String {
-        versions.first(where: { $0.id == selectedID })?.label
-            ?? versions.first?.label
+        items.first(where: { $0.id == selectedID })?.label
+            ?? items.first?.label
             ?? ""
     }
 
-    private var otherVersions: [VersionItem] {
-        versions.filter { $0.id != selectedID }
+    private var otherItems: [Item] {
+        items.filter { $0.id != selectedID }
     }
 }
 
 // MARK: - Previews
 
-#Preview("Two versions, collapsed") {
+#Preview("Two items, collapsed") {
     StateWrapper(initialID: "1.1.0", expanded: false)
         .padding(24)
 }
 
-#Preview("Two versions, expanded") {
+#Preview("Two items, expanded") {
     StateWrapper(initialID: "1.1.0", expanded: true)
         .padding(24)
 }
@@ -140,8 +139,8 @@ private struct StateWrapper: View {
     }
 
     var body: some View {
-        DSPolicyVersionSelector(
-            versions: [
+        DSDropdownSelector(
+            items: [
                 .init(id: "1.1.0", label: "이용약관 버전 1.1.0 (시행일 2025.01.12)"),
                 .init(id: "1.0.0", label: "이용약관 버전 1.0.0 (시행일 2024.09.11)")
             ],
