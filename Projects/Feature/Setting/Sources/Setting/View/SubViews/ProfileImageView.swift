@@ -13,12 +13,19 @@ struct ProfileImageView: View {
                 .scaledToFill()
         } else if let imageURL,
                   let url = URL(string: imageURL) {
-            AsyncImage(url: url) { image in
-                image.resizable().scaledToFill()
-            } placeholder: {
-                Image.profileImage
-                    .resizable()
-                    .scaledToFill()
+            AsyncImage(url: url) { phase in
+                switch phase {
+                case let .success(image):
+                    image.resizable().scaledToFill()
+                case .empty, .failure:
+                    Image.profileImage
+                        .resizable()
+                        .scaledToFill()
+                @unknown default:
+                    Image.profileImage
+                        .resizable()
+                        .scaledToFill()
+                }
             }
         } else {
             Image.profileImage
