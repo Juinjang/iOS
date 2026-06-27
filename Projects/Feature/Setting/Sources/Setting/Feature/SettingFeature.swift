@@ -259,6 +259,7 @@ public struct SettingFeature: Sendable {
             // MARK: - Profile image
 
             case let .profileImagePicked(data):
+                guard !state.isUploadingImage else { return .none }
                 state.pickedImageData = data
                 state.isUploadingImage = true
                 return .run { send in
