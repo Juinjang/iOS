@@ -10,32 +10,35 @@ public struct AccountDeleteWarningView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Image.deleteLogo
-                .resizable()
-                .scaledToFit()
-                .frame(width: 49, height: 51)
-                .padding(.top, 33)
-                .padding(.leading, 24)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    Image.deleteLogo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 49, height: 51)
+                        .padding(.top, 33)
+                        .padding(.leading, 24)
 
-            (Text("\(store.nickname)님,\n").foregroundStyle(Color.gray600)
-             + Text("정말 계정을 삭제하시겠어요?").foregroundStyle(Color.gray600))
-                .font(DSFontStyle.h2.font)
-                .lineSpacing(3)
-                .padding(.top, 31)
-                .padding(.horizontal, 24)
+                    (Text("\(store.nickname)님,\n").foregroundStyle(Color.gray600)
+                     + Text("정말 계정을 삭제하시겠어요?").foregroundStyle(Color.gray600))
+                        .font(DSFontStyle.h2.font)
+                        .lineSpacing(3)
+                        .padding(.top, 31)
+                        .padding(.horizontal, 24)
 
-            DSText("계정을 없애면 임장노트의 내용은 복구할 수 없게 돼요.\n지금 취소하면 아래의 혜택을 계속 누릴 수 있어요.")
-                .style(.body)
-                .textColor(.gray500)
-                .padding(.top, 32)
-                .padding(.horizontal, 24)
+                    DSText("계정을 없애면 임장노트의 내용은 복구할 수 없게 돼요.\n지금 취소하면 아래의 혜택을 계속 누릴 수 있어요.")
+                        .style(.body)
+                        .textColor(.gray500)
+                        .padding(.top, 32)
+                        .padding(.horizontal, 24)
 
-            BenefitListView()
-                .padding(.top, 36)
-                .padding(.horizontal, 24)
-
-            Spacer()
+                    BenefitListView()
+                        .padding(.top, 36)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 24)
+                }
+            }
 
             VStack(spacing: 8) {
                 Button {
@@ -65,6 +68,7 @@ public struct AccountDeleteWarningView: View {
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 24)
+            .padding(.top, 12)
             .padding(.bottom, 33)
         }
         .background(Color.mainWhite)

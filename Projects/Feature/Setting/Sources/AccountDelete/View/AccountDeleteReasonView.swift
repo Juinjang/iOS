@@ -11,41 +11,44 @@ public struct AccountDeleteReasonView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Image.deleteLogo
-                .resizable()
-                .scaledToFit()
-                .frame(width: 49, height: 51)
-                .padding(.top, 33)
-                .padding(.leading, 24)
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 0) {
+                    Image.deleteLogo
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 49, height: 51)
+                        .padding(.top, 33)
+                        .padding(.leading, 24)
 
-            (Text("더 나은 주인장").foregroundStyle(Color.main)
-             + Text("이 되도록\n노력할게요").foregroundStyle(Color.gray600))
-                .font(DSFontStyle.h2.font)
-                .lineSpacing(3)
-                .padding(.top, 31)
-                .padding(.horizontal, 24)
+                    (Text("더 나은 주인장").foregroundStyle(Color.main)
+                     + Text("이 되도록\n노력할게요").foregroundStyle(Color.gray600))
+                        .font(DSFontStyle.h2.font)
+                        .lineSpacing(3)
+                        .padding(.top, 31)
+                        .padding(.horizontal, 24)
 
-            DSText("불편했던 점을 남겨주시면 주인장 팀에 큰 도움이 됩니다.\n다음에 또 만나요!")
-                .style(.body)
-                .textColor(.gray500)
-                .padding(.top, 32)
-                .padding(.horizontal, 24)
+                    DSText("불편했던 점을 남겨주시면 주인장 팀에 큰 도움이 됩니다.\n다음에 또 만나요!")
+                        .style(.body)
+                        .textColor(.gray500)
+                        .padding(.top, 32)
+                        .padding(.horizontal, 24)
 
-            VStack(spacing: 8) {
-                ForEach(AccountDeleteReason.allCases) { reason in
-                    ReasonOptionRowView(
-                        reason: reason,
-                        isSelected: store.selectedReasons.contains(reason)
-                    ) {
-                        store.send(.reasonToggled(reason))
+                    VStack(spacing: 8) {
+                        ForEach(AccountDeleteReason.allCases) { reason in
+                            ReasonOptionRowView(
+                                reason: reason,
+                                isSelected: store.selectedReasons.contains(reason)
+                            ) {
+                                store.send(.reasonToggled(reason))
+                            }
+                        }
                     }
+                    .padding(.top, 20)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
                 }
             }
-            .padding(.top, 20)
-            .padding(.horizontal, 24)
-
-            Spacer()
 
             VStack(spacing: 8) {
                 Button {
@@ -75,6 +78,7 @@ public struct AccountDeleteReasonView: View {
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 24)
+            .padding(.top, 12)
             .padding(.bottom, 33)
         }
         .background(Color.mainWhite)
