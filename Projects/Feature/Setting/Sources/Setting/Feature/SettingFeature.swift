@@ -305,7 +305,7 @@ public struct SettingFeature: Sendable {
                 .apiThrottle(id: ThrottleID.logout)
 
             case .logoutResponse(.success):
-                print("[SettingFeature] logout success")
+                // TODO: 앱 루트 전환 작업 시 로그인 화면으로 전환 연결
                 return .none
 
             case .logoutResponse(.failure):
