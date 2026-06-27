@@ -361,12 +361,6 @@ public struct SettingFeature: Sendable {
 // MARK: - Helpers
 /// SettingFeature body에서만 쓰는 작은 외부 타입 확장.
 
-private extension Result where Success: Sendable, Failure == Error {
-    func mapToJuinjangError() -> Result<Success, JuinjangError> {
-        mapError { ($0 as? JuinjangError) ?? .clientError($0.localizedDescription) }
-    }
-}
-
 private extension JuinjangError {
     /// 닉네임 중복 (서버 code "NICKNAME4002")
     var isNicknameDuplicate: Bool {
