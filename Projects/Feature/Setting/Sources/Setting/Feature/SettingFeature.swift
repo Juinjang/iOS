@@ -81,7 +81,7 @@ public struct SettingFeature: Sendable {
                 mode = .editing
                 return .startedEditing
             case .completed:
-                return .save(input)
+                return .save(input.trimmingCharacters(in: .whitespacesAndNewlines))
             case .editing, .validationFailed, .duplicate:
                 input = savedValue
                 mode = .beforeEdit
@@ -104,9 +104,11 @@ public struct SettingFeature: Sendable {
 
             input = text
 
-            if text.count > maxCount {
+            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+
+            if trimmed.count > maxCount {
                 mode = .validationFailed
-            } else if text.isEmpty || text == savedValue {
+            } else if trimmed.isEmpty || trimmed == savedValue {
                 mode = .editing
             } else {
                 mode = .completed
