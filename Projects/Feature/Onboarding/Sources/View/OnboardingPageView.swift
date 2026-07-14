@@ -58,10 +58,12 @@ struct OnboardingPageView: View {
                 .frame(height: 360)
         } else {
             DSLottieView(name: page.introLottieName, loopMode: .playOnce) {
+                guard isCurrentPage else { return }
                 withAnimation(.easeInOut(duration: 0.3)) {
                     isOutroPhase = true
                 }
             }
+            .id(isCurrentPage)
             .padding(.horizontal, 40)
             .frame(height: 280)
         }
