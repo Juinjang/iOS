@@ -24,13 +24,15 @@ struct SplashFeatureTests {
 
     // MARK: - animationCompleted
 
-    @Test
-    func animationCompleted_navigatesToOnboarding_whenUserStatusIsFalse() async {
+    @Test("userStatus가 false면 온보딩으로 이동한다")
+    func navigatesToOnboardingWhenUserStatusIsFalse() async {
         let store = TestStore(
             initialState: SplashFeature.State()
         ) {
             SplashFeature()
         } withDependencies: {
+            $0.appVersionClient.latestVersion = { "1.0.0" }
+            $0.appVersionClient.currentVersion = { "1.0.0" }
             $0.userDefaultsClient.hasValue = { _ in false }
             $0.userDefaultsClient.get = { key in
                 switch key {
@@ -47,13 +49,15 @@ struct SplashFeatureTests {
         await store.receive(\.delegate.navigateTo)
     }
 
-    @Test
-    func animationCompleted_navigatesToLogin_whenUserStatusTrueAndAccessTokenEmpty() async {
+    @Test("userStatus가 true이고 accessToken이 없으면 로그인으로 이동한다")
+    func navigatesToLoginWhenAccessTokenEmpty() async {
         let store = TestStore(
             initialState: SplashFeature.State()
         ) {
             SplashFeature()
         } withDependencies: {
+            $0.appVersionClient.latestVersion = { "1.0.0" }
+            $0.appVersionClient.currentVersion = { "1.0.0" }
             $0.userDefaultsClient.get = { key in
                 switch key {
                 case .userStatus:
@@ -71,13 +75,15 @@ struct SplashFeatureTests {
         await store.receive(\.delegate.navigateTo)
     }
 
-    @Test
-    func animationCompleted_navigatesToHome_whenUserStatusTrueAndAccessTokenPresent() async {
+    @Test("userStatus가 true이고 accessToken이 있으면 홈으로 이동한다")
+    func navigatesToHomeWhenAccessTokenPresent() async {
         let store = TestStore(
             initialState: SplashFeature.State()
         ) {
             SplashFeature()
         } withDependencies: {
+            $0.appVersionClient.latestVersion = { "1.0.0" }
+            $0.appVersionClient.currentVersion = { "1.0.0" }
             $0.userDefaultsClient.get = { key in
                 switch key {
                 case .userStatus:
