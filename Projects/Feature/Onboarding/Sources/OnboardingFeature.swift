@@ -22,6 +22,7 @@ public struct OnboardingFeature: Sendable {
         case loginButtonTapped
         case delegate(Delegate)
 
+        @CasePathable
         public enum Delegate: Equatable {
             case navigateToLogin
         }
