@@ -17,11 +17,13 @@ final class SplashViewReactor: Reactor {
     enum Mutation {
         case setNavigation(SplashNavigation)
         case setShowUpdateAppPopup(Bool)
+        case setErrorMessage(String)
     }
     
     struct State {
         var navigation: SplashNavigation?
         var showUpdateAppPopup: Bool = false
+        var showErrorMessage: String? = nil
     }
     
     let initialState: State = State()
@@ -52,26 +54,40 @@ final class SplashViewReactor: Reactor {
             state.navigation = splashNavigation
         case .setShowUpdateAppPopup(let show):
             state.showUpdateAppPopup = show
+        case .setErrorMessage(let message):
+            state.showErrorMessage = message
         }
         return state
     }
     
     private func checkAppVersion() -> Observable<Mutation> {
         // 앱 스토어 앱 버전 조회
-        InAppUpdateManager.shared.requestLatestVersion()
+        return InAppUpdateManager.shared.requestLatestVersion()
             .asObservable()
             .flatMap { [weak self] appVersion -> Observable<Mutation> in
                 guard let self = self, let latestVersion = appVersion else { return .empty() }
                 print("@@@ Latest AppVersion: \(latestVersion)")
-                return handleAppUpdate(latestVersion: latestVersion)
+                return self.handleAppUpdate(latestVersion: latestVersion)
             }
     }
-    
+
     private func handleAppUpdate(latestVersion: String) -> Observable<Mutation> {
         if InAppUpdateManager.shared.isNeedAppUpdate(latestVersion: latestVersion) {
             return .just(.setShowUpdateAppPopup(true))
         } else {
-            return setNavigation()
+            return FirebaseStoreManager.shared.fetchMaintenanceAsObservable()
+                .flatMap { [weak self] maintenance -> Observable<Mutation> in
+                    guard let self = self else { return .empty() }
+                    if maintenance.needsMaintenance {
+                        return .just(.setNavigation(.maintenanceNotice(maintenance)))
+                    } else {
+                        return self.setNavigation()
+                    }
+                }
+                .catch { [weak self] _ in
+                    guard let self else { return .empty() }
+                    return .just(.setErrorMessage("오류가 발생하였습니다.\n앱을 다시 실행해주세요."))
+                }
         }
     }
     
@@ -103,5 +119,6 @@ extension SplashViewReactor {
         case onbording
         case login
         case home
+        case maintenanceNotice(Maintenance)
     }
 }
