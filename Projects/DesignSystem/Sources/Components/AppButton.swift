@@ -13,20 +13,18 @@ public struct AppButton: View {
     
     private let title: String
     private let style: AppButtonStyle
-    private let isEnabled: Bool
+    private var isEnabled: Bool = true
     private let action: () -> Void
-    
+
     // MARK: Init
-    
+
     public init(
         _ title: String,
         style: AppButtonStyle = .main,
-        isEnabled: Bool = true,
         action: @escaping () -> Void
     ) {
         self.title = title
         self.style = style
-        self.isEnabled = isEnabled
         self.action = action
     }
     
@@ -56,6 +54,8 @@ public struct AppButton: View {
 
 public extension AppButton {
     func enabled(_ isEnabled: Bool) -> AppButton {
-        AppButton(title, style: style, isEnabled: isEnabled, action: action)
+        var copy = self
+        copy.isEnabled = isEnabled
+        return copy
     }
 }
