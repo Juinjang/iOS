@@ -42,17 +42,20 @@ public struct AppFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
-            case .splash(.delegate(.navigateTo(.onboarding))):
+            case .splash(.delegate(.navigateTo(let route))):
                 state.splash = nil
-                state.onboarding = OnboardingFeature.State()
+                switch route {
+                case .onboarding:
+                    state.onboarding = OnboardingFeature.State()
+                case .login:
+                    state.login = LoginFeature.State()
+                case .home:
+                    state.home = HomeFeature.State()
+                }
                 return .none
-            case .splash(.delegate(.navigateTo(.login))):
-                state.splash = nil
+            case .onboarding(.delegate(.navigateToLogin)):
+                state.onboarding = nil
                 state.login = LoginFeature.State()
-                return .none
-            case .splash(.delegate(.navigateTo(.home))):
-                state.splash = nil
-                state.home = HomeFeature.State()
                 return .none
             default:
                 return .none

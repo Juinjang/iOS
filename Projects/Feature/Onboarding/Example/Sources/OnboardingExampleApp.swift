@@ -1,6 +1,8 @@
-import ComposableArchitecture
-import Onboarding
 import SwiftUI
+
+import Onboarding
+
+import ComposableArchitecture 
 
 @main
 struct OnboardingExampleApp: App {

@@ -46,15 +46,9 @@ public struct UpdateAlertView: View {
                 Spacer()
 
                 // MARK: - 업데이트 버튼
-                Button(action: onUpdate) {
-                    DSText("업데이트하러 가기")
-                        .style(.title)
-                        .textColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 52)
-                        .background(Color.gray500)
-                        .clipShape(RoundedRectangle(cornerRadius: 10))
-                }
+                AppButton("업데이트하러 가기", style: .gray) {
+                    onUpdate()
+                 }
                 .padding(.horizontal, 12)
                 .padding(.bottom, 13)
             }
